@@ -252,6 +252,21 @@ def get_ev_dict_by_array_and_clock(array, clock):
 
     return ev_dict
 
+def generate_all_ev_dicts(array):
+    """
+    Returns a list containing all possible ev_dicts.
+    Hmm... needs to have some reference to the clock...
+
+    ({EV_DICT}, array([]))?
+    """
+    clocks = generate_all_clocks(array = array)
+    ev_dicts = []
+    for this_clock in clocks:
+        ev_dicts.append(get_ev_dict_by_array_and_clock(array = array, clock = this_clock))
+
+    return ev_dicts
+
+'''
 povel_ex3 = np.array([1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0])
 for this_clock in generate_all_clocks(array = povel_ex3):
     #print(this_clock)
@@ -259,6 +274,11 @@ for this_clock in generate_all_clocks(array = povel_ex3):
 
 test_clock1 = np.array([2, 5, 8, 11])
 print(get_ev_dict_by_array_and_clock(array = mark_accents(povel_ex3), clock = test_clock1))
+'''
+povel_ex3 = np.array([1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0])
+for this_dict in generate_all_ev_dicts(array = mark_accents(povel_ex3)):
+    print(this_dict)
+
 
 if __name__ == "__main__":
     import doctest
