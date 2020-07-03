@@ -20,7 +20,9 @@ from __future__ import division, print_function, unicode_literals
 
 import copy
 import datetime
+import decimal
 import fractions
+import math
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
@@ -37,7 +39,7 @@ from music21 import pitch
 from music21 import stream
 
 decitala_path = '/Users/lukepoeppel/decitala_v.2.0/Decitalas'
-greek_path = '/Users/lukepoeppel/Greek_Metrics/XML'
+greek_path = '/Users/lukepoeppel/decitala_v.2.0/Greek_Metrics/XML'
 
 #Doesn't make much sense for these to be np.arrays because of the mixed types... 
 carnatic_symbols = np.array([
@@ -50,10 +52,10 @@ carnatic_symbols = np.array([
 	#['kakapadam', '8X', 2.0]       #Decide what the appropriate convention is...
 ])
 
-greek_diacritics = np.array([
+greek_diacritics = [
 	['breve', '⏑', 1.0],
 	['macron', '––', 2.0]
-])
+]
 
 multiplicative_augmentations = np.array([
 	['Tiers', 4/3],
@@ -128,6 +130,73 @@ def _difference(array, start_index):
 		return difference
 	except IndexError:
 		pass
+
+def dotProduct(vector1, vector2):
+	'''
+	Returns the dot product (i.e. component by component product) of two vectors. 
+
+	>>> v1 = [1.0, 2.0, 0.75]
+	>>> v2 = [0.5, 0.5, 0.75]
+	>>> dotProduct(v1, v2)
+	2.0625
+	'''
+	if len(vector1) != len(vector2):
+		raise Exception('Vector dimensions do not match.')
+	else:
+		dot_product = 0
+		for i in range(0, len(vector1)):
+			dot_product += vector1[i] * vector2[i]
+
+	return round(dot_product, 5)
+
+def cauchy_schwartz(vector1, vector2):
+	'''
+	Tests the cauchy-schwartz inequality between two vectors. Namely, if the absolute value of 
+	the dot product of the two vectors is less than the product of the norms, the vectors are 
+	linearly independant (and the function returns True); if they are equal, they are dependant 
+	(and the function returns False). 
+
+	Linear Independance:
+	>>> vectorI1 = [0.375, 1.0, 0.25]
+	>>> vectorI2 = [1.0, 0.0, 0.5]
+	>>> cauchy_schwartz(vectorI1, vectorI2)
+	True
+
+	Test:
+	>>> cauchy_schwartz([0.75, 0.5], [1.5, 1.0])
+	False
+
+	Linear Dependance (D1 = 2D2):
+	>>> vectorD1 = [1.0, 2.0, 4.0, 8.0]
+	>>> vectorD2 = [0.5, 1.0, 2.0, 4.0]
+	>>> cauchy_schwartz(vectorD1, vectorD2)
+	False
+
+	Direct Equality:
+	>>> vectorE1 = [0.25, 0.25, 0.25, 0.25]
+	>>> vectorE2 = [0.25, 0.25, 0.25, 0.25]
+	>>> cauchy_schwartz(vectorE1, vectorE2)
+	False
+	'''
+	def _euclidianNorm(vector):
+		'''
+		Returns the euclidian norm of a duration vector (rounded to 5 decimal places). Defined as the 
+		square root of the inner product of a vector with itself.
+
+		>>> euclidianNorm([1.0, 1.0, 1.0])
+		Decimal('1.73205')
+		>>> euclidianNorm([1, 2, 3, 4])
+		Decimal('5.47722')
+		'''
+		norm_squared = dotProduct(vector, vector)
+		norm = decimal.Decimal(str(math.sqrt(norm_squared)))
+
+		return norm.quantize(decimal.Decimal('0.00001'), decimal.ROUND_DOWN)
+
+	if abs(dotProduct(vector1, vector2)) <  (_euclidianNorm(vector1) * _euclidianNorm(vector2)):
+		return True
+	else:
+		return False
 
 ########################################################################
 class GeneralFragment(object):
@@ -338,7 +407,6 @@ g1 = GeneralFragment(path = random_fragment_path)
 l = np.array([0.5, 0.25, 0.25, 0.5, 0.5, 1.0, 1.0])
 print(l)
 '''
-
 ########################################################################
 '''
 Inheritance notes:
@@ -456,7 +524,76 @@ class Decitala(GeneralFragment):
 	def numMatras(self):
 		return (self.ql_duration / 0.5)
 
-########################################################################
+class GreekFoot(GeneralFragment):
+	"""
+	Class that stores greek foot data. Reads from a folder containing all greek feet XML files.
+	Inherits from GeneralFragment. 
+
+	>>> bacchius = GreekFoot('Bacchius')
+	>>> bacchius
+	<decitala.GreekFoot Bacchius>
+	>>> bacchius.filename
+	'Bacchius.xml'
+	>>> bacchius.name
+	'Bacchius'
+	>>> bacchius.num_onsets
+	3
+
+	>>> bacchius.ql_array()
+	array([1., 2., 2.])
+	>>> bacchius.successive_ratio_list()
+	array([1., 2., 1.])
+	>>> bacchius.greek_string
+	'⏑ –– ––'
+
+	>>> bacchius.dseg(as_str = True)
+	'<0 1 1>'
+	>>> bacchius.std()
+	0.4714
+
+	bacchius.morris_symmetry_class()
+	'VII. Stream'
+
+	>>> for this_cycle in bacchius.get_cyclic_permutations():
+	...     print(this_cycle)
+	...
+	[1. 2. 2.]
+	[2. 2. 1.]
+	[2. 1. 2.]
+	"""
+	def __init__(self, name, **kwargs):
+		if name:
+			if name.endswith('.xml'):
+				searchName = name
+			elif name.endswith('.mxl'):
+				searchName = name
+			else:
+				searchName = name + '.xml'
+					
+			for thisFile in os.listdir(greek_path):
+				x = re.search(searchName, thisFile)
+				if bool(x) == True:
+					self.full_path = greek_path + '/' + thisFile
+					self.name = os.path.splitext(thisFile)[0]
+					self.filename = thisFile
+					self.stream = converter.parse(greek_path + '/' + thisFile)
+
+		super().__init__(path=self.full_path, name = self.name)
+	
+	def __repr__(self):
+		return '<decitala.GreekFoot {}>'.format(self.name)
+	
+	@property
+	def greek_string(self):
+		greek_string_lst = []
+		for this_val in self.ql_array():
+			for this_diacritic_name, this_diacritic_symbol, this_diacritic_val in greek_diacritics:
+				if this_val == this_diacritic_val:
+					greek_string_lst.append(this_diacritic_symbol)
+
+		return ' '.join(greek_string_lst)
+
+################################### TREES ###################################
 
 class NaryTree(object):
 	"""
@@ -836,6 +973,126 @@ class NaryTree(object):
 			else:
 				i += 1
 
+############################### FRAGMENT TREES ##################################
+class FragmentTree(NaryTree):
+	"""
+	Nary tree for holding ratio and different representation of rhythmic fragments. 
+
+	TODO
+	- keep track of rests in all cases. The indices of occurrence can't be based
+	upon placement of notes, but have to be based on placement of *all* musical objects. 
+	- cauchy-schwartz inequality is completely unnecessary (I think) since we're using ratio representations.
+	not sure how this applies for difference representations.
+	- decide on double-onset fragment convention. I'm leaning towards keep them since some of them are odd. 
+	"""
+	def __init__(self, root_path, rep_type, **kwargs):
+		if type(root_path) != str:
+			raise Exception('Path must be a string.')
+		
+		self.root_path = root_path
+		self.rep_type = rep_type
+
+		super().__init__()
+
+		rawData = []
+		for thisFile in os.listdir(root_path):
+			rawData.append(Decitala(thisFile))
+
+		self.rawData = rawData
+
+		def filterData(rawData):
+			'''
+			Given a list of decitala objects (i.e. converted to a matrix of duration vectors), 
+			filterData() removes:
+			- Trivial fragments (single-onset fragments and double onset fragments, the latter 
+			by convention). 
+			- Duplicate fragments
+			- Multiplicative Augmentations/Diminutions (by using the cauchy-schwarz inequality); if 
+			two duration vectors are found to be linearly dependant, one is removed.
+
+			Consider the following set of rhythmic fragments.
+			[3.0, 1.5, 1.5, 0.75, 0.75],
+			1.5, 1.0],
+			[0.75, 0.5, 0.75],
+			[0.25, 0.25, 0.5],
+			[0.75, 0.5],
+			[0.5, 1.0, 2.0, 4.0],
+			[1.5, 1.0, 1.5],
+			[1.0, 1.0, 2.0],
+			[1.0, 0.5, 0.5, 0.25, 0.25],
+			[0.25, 0.5, 1.0, 2.0]
+			This function reduces this list to:
+			[0.75, 0.5], 
+			[0.75, 0.5, 0.75], 
+			[0.25, 0.25, 0.5], 
+			[0.25, 0.5, 1.0, 2.0], 
+			[1.0, 0.5, 0.5, 0.25, 0.25]
+
+			NOTE: this function is one of the many reasons I should have the Greek Metric and Decitala
+			classes inherit from some greater class RhythmicFragment. I wouldn't have to have the data
+			be a list of decitalas, but instead a list of RhythmicFragments
+			'''
+			copied = copy.copy(rawData)
+			size = len(copied)
+
+			i = 0
+			while i < size:
+				try:
+					if len(copied[i].ql_array()) <= 2:
+						del copied[i]
+					else:
+						pass
+				except IndexError:
+					pass
+
+				for j, cursor_vector in enumerate(copied):
+					try: 
+						if i == j:
+							pass
+						elif len(copied[i].ql_array()) != len(copied[j].ql_array()):
+							pass
+						elif cauchy_schwartz(copied[i].ql_array(), copied[j].ql_array()) == True:
+							pass
+						elif cauchy_schwartz(copied[i].ql_array(), copied[j].ql_array()) == False:
+							firsti = copied[i].ql_array()[0]
+							firstj = copied[j].ql_array()[0]
+
+							#Equality removes the second one; random choice. 
+							if firsti == firstj:
+								del copied[j]
+							elif firsti > firstj:
+								del copied[i]
+							else:
+								del copied[j]
+						else:
+							pass
+					except IndexError:
+						pass
+
+				i += 1
+
+			return copied
+
+		self.filteredData = filterData(self.rawData)
+	
+		rootNode = self.Node(value = 1.0, name = 'ROOT')
+
+		possibleOnsetNums = [3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
+		i = 0
+		while i < len(possibleOnsetNums):
+			currOnsetList = []
+			for thisTala in self.filteredData:
+				if len(thisTala.ql_array()) == possibleOnsetNums[i]:
+					currOnsetList.append(thisTala)
+			for thisTala in currOnsetList:
+				rootNode.add_path_of_children(path = list(thisTala.successive_ratio_list()), final_node_name = thisTala)
+			i += 1
+
+		self.root = rootNode
+		
+t = FragmentTree(root_path = decitala_path, rep_type = 'ratio')
+print(t)
+
 ############################### ANALYSIS ##################################
 def binary_search(lst, search_val):
 	def _checkSorted(lstIn):
@@ -916,27 +1173,6 @@ for this in tqdm.tqdm(get_all_end_overlapping_indices(lst = indices, i = 0, out 
 	print(this)
 '''
 
-############################### FRAGMENT TREES ##################################
-class FragmentTree(object):
-	"""
-	Class for the ratio and different representation of rhythmic fragments in Nary trees. 
-	In creating the tree, it automatically creates a list that holds Decitala(fileName) for 
-	each filename in the input directory. 
-
-	TODO
-	- 
-	- keep track of rests in all cases. The indices of occurrence can't be based
-	upon placement of notes, but have to be based on placement of *all* musical objects. 
-	- cauchy-schwartz inequality is completely unnecessary (I think) since we're using ratio representations.
-	not sure how this applies for difference representations.
-	- decide on double-onset fragment convention. I'm leaning towards keep them since some of them are odd. 
-	"""
-	def __init__(self, root_path):
-		if type(root_path) != str:
-			raise Exception('Path to directory must be a string.')
-		else:
-			self.root_path = root_path
-
 if __name__ == '__main__':
 	import doctest
-	doctest.testmod()
+	#doctest.testmod()
