@@ -8,12 +8,14 @@
 #
 # Location: Kent, CT 2020
 ####################################################################################################
-'''
+"""
 CODE SPRING TODO: 
 - fix and shorten helper functions below.
 - decide convention for kakpadam from Rowley.
 - standardize fully to np.array(). Also matplotlib will be easier. 
-'''
+- fix morris symmetry class
+- figure out what the problem is with the c-score. 
+"""
 from __future__ import division, print_function, unicode_literals
 
 import copy
@@ -27,12 +29,14 @@ import re
 import statistics
 import tqdm
 
+from povel_essens_clock import get_average_c_score
+
 from music21 import converter
 from music21 import note
 from music21 import pitch
 from music21 import stream
 
-decitala_path = '/Users/lukepoeppel/Decitalas'
+decitala_path = '/Users/lukepoeppel/decitala_v.2.0/Decitalas'
 greek_path = '/Users/lukepoeppel/Greek_Metrics/XML'
 
 #Doesn't make much sense for these to be np.arrays because of the mixed types... 
@@ -75,27 +79,27 @@ subdecitala_array = np.array([26, 38, 55, 65, 68])
 ############ HELPER FUNCTIONS ############
 #Notational Conversion Functions
 def carnatic_string_to_ql_array(string):
-	'''
+	"""
 	Converts a string of carnatic rhythmic values to a quarter length numpy array. Note that the carnatic characters 
 	must have a spaces between them or the string will be converted incorrectly. 
 
 	>>> carnatic_string_to_ql_array(string = 'oc o | | Sc S o o o')
 	array([0.375, 0.25 , 0.5  , 0.5  , 1.5  , 1.   , 0.25 , 0.25 , 0.25 ])
-	'''
+	"""
 	split_string = string.split()
 	return np.array([float(this_carnatic_val[2]) for this_token in split_string for this_carnatic_val in carnatic_symbols if (this_carnatic_val[1] == this_token)])
 
 def ql_array_to_carnatic_string(ql_array):
-	'''
+	"""
 	Converts a list of quarter length values to a string of carnatic rhythmic values.
 	
 	>>> ql_array_to_carnatic_string([0.5, 0.25, 0.25, 0.375, 1.0, 1.5, 1.0, 0.5, 1.0])
 	'| o o oc S Sc S | S'
-	'''
+	"""
 	return ' '.join(np.array([this_carnatic_val[1] for this_val in ql_array for this_carnatic_val in carnatic_symbols if (float(this_carnatic_val[2]) == this_val)]))
 
 def _ratio(array, start_index):
-	'''
+	"""
 	Given an array and a starting index, returns the ratio of the element at the provided index 
 	to the element at the following one. A ZeroDivision error will only occur if it encounters a 
 	difference list.
@@ -106,7 +110,7 @@ def _ratio(array, start_index):
 	3.0
 	>>> _ratio(np.array([1.5, 1.0]), 0)
 	0.66667
-	'''
+	"""
 	if not (0 <= start_index and start_index <= len(array) - 1):
 		raise IndexError('Input ``start_index`` not in appropriate range!')
 	try: 
@@ -116,19 +120,231 @@ def _ratio(array, start_index):
 		raise Exception('Something is off...')
 
 def _difference(array, start_index):
-	'''
+	"""
 	Returns the difference between two elements. 
-	'''
+	"""
 	try:
 		difference = array[start_index + 1] - array[start_index]
 		return difference
 	except IndexError:
 		pass
 
-############ HELPER FUNCTIONS ############
+########################################################################
+class GeneralFragment(object):
+	"""
+	Class for representing a more general rhythmic fragment. This allows for the 
+	creation of FragmentTrees with more abstract data sets, beyond the two encoded. 
+
+	Input: path for now.
+	>>> random_fragment_path = '/users/lukepoeppel/decitala_v.2.0/Decitalas/63_Nandi.xml'
+	>>> g1 = GeneralFragment(path = random_fragment_path, name = 'test')
+	>>> g1
+	<GeneralFragment_test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]>
+	>>> g1.filename
+	'63_Nandi.xml'
+
+	>>> g1.coolness_level = 'pretty cool'
+	>>> g1.coolness_level
+	'pretty cool'
+
+	>>> g1.num_onsets
+	7
+	>>> g1.ql_array()
+	array([0.5 , 0.25, 0.25, 0.5 , 0.5 , 1.  , 1.  ])
+	>>> g1.successive_ratio_list()
+	array([1. , 0.5, 1. , 2. , 1. , 2. , 1. ])
+	>>> g1.carnatic_string
+	'| o o | | S S'
+	>>> g1.dseg(as_str = True)
+	'<1 0 0 1 1 2 2>'
+	>>> g1.std()
+	0.29014
+	
+	g1.morris_symmetry_class()
+	'VII. Stream'
+
+	>>> for this_cycle in g1.get_cyclic_permutations():
+	...     print(this_cycle)
+	...
+	[0.5  0.25 0.25 0.5  0.5  1.   1.  ]
+	[0.25 0.25 0.5  0.5  1.   1.   0.5 ]
+	[0.25 0.5  0.5  1.   1.   0.5  0.25]
+	[0.5  0.5  1.   1.   0.5  0.25 0.25]
+	[0.5  1.   1.   0.5  0.25 0.25 0.5 ]
+	[1.   1.   0.5  0.25 0.25 0.5  0.5 ]
+	[1.   0.5  0.25 0.25 0.5  0.5  1.  ]
+	"""
+	def __init__(self, path, name = None, **kwargs):
+		self.path = path
+		self.filename = self.path.split('/')[-1]
+		self.name = name
+
+		stream = converter.parse(path)
+		self.stream = stream
+
+	def __repr__(self):
+		if self.name is None:
+			return '<GeneralFragment: {}>'.format(self.ql_array())
+		else:
+			return '<GeneralFragment_{0}: {1}>'.format(self.name, self.ql_array())
+	
+	def __hash__(self):
+		return hash(self.name)
+	
+	def ql_array(self, retrograde=False):
+		'''
+		INPUTS
+		*-*-*-*-*-*-*-*-
+		retrograde : type = ``bool``
+		'''
+		if not(retrograde):
+			return np.array([this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)])
+		else:
+			return np.flip(np.array([this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)]))
+
+	@property
+	def num_onsets(self):
+		count = 0
+		for _ in self.stream.flat.getElementsByClass(note.Note):
+			count += 1
+		return count
+
+	@property
+	def carnatic_string(self):
+		return ql_array_to_carnatic_string(self.ql_array())
+
+	@property
+	def ql_duration(self):
+		return sum(self.ql_array())
+
+	def dseg(self, as_str=False):
+		"""
+		Marvin's d-seg as introducted in "The perception of rhythm in non-tonal music" (1991). Maps a fragment
+		into a sequence of relative durations. This allows cross comparison of rhythmic fragments beyond 
+		exact augmentation; we may, for instance, filter rhythms by similar the familiar dseg <1 0 0> which 
+		corresponds to long-short-short (e.g. dactyl). 
+
+		INPUTS
+		*-*-*-*-*-*-*-*-
+		as_str : type = ``bool``
+		"""
+		dseg_vals = copy.copy(self.ql_array())
+		valueDict = dict()
+
+		for i, thisVal in zip(range(0, len(sorted(set(dseg_vals)))), sorted(set(dseg_vals))):
+			valueDict[thisVal] = str(i)
+
+		for i, thisValue in enumerate(dseg_vals):
+			for thisKey in valueDict:
+				if thisValue == thisKey:
+					dseg_vals[i] = valueDict[thisKey]
+
+		if as_str == True:
+			return '<' + ' '.join([str(int(val)) for val in dseg_vals]) + '>'
+		else:
+			return np.array([int(val) for val in dseg_vals])
+
+	def reduced_dseg(self, as_str=False):
+		"""
+		Technique used in this paper. Takes a dseg and returns a new dseg where contiguous values are removed. 
+
+		INPUTS
+		*-*-*-*-*-*-*-*-
+		as_str : type = ``bool``
+		"""
+		def _remove_adjacent_equal_elements(array):
+			as_lst = list(array)
+			filtered = [a for a, b in zip(as_lst, as_lst[1:] + [not as_lst[-1]]) if a != b]
+			return np.array(filtered)
+
+		orig = self.dseg(as_str = False)
+		as_array = _remove_adjacent_equal_elements(array = orig)
+
+		if not(as_str):
+			return np.array([int(val) for val in as_array])
+		else:
+			return '<' + ' '.join([str(int(val)) for val in as_array]) + '>'
+
+	def successive_ratio_list(self):
+		"""
+		Returns an array of the successive duration ratios. By convention, we set the first value to 1.0. 
+		"""
+		ratio_array = [1.0] #np.array([1.0])
+		i = 0
+		while i < len(self.ql_array()) - 1:
+			ratio_array.append(_ratio(self.ql_array(), i))
+			i += 1
+
+		return np.array(ratio_array)
+
+	def get_cyclic_permutations(self):
+		"""
+		Returns all cyclic permutations. 
+		"""
+		return np.array([np.roll(self.ql_array(), -i) for i in range(self.num_onsets)])
+
+	################ ANALYSIS ################
+	def is_non_retrogradable(self):
+		return self.ql_array(retrograde = False) == self.ql_array(retrograde = True)
+
+	def morris_symmetry_class(self):
+		"""
+		Robert Morris (year?) notes 7 kinds of interesting rhythmic symmetries. I provided the names.
+
+		I.) Maximally Trivial:				of the form X (one onset, one anga class)
+		II.) Trivial Symmetry: 				of the form XXXXXX (multiple onsets, same anga class)
+		III.) Trivial Dual Symmetry:  		of the form XY (two onsets, two anga classes)
+		IV.) Maximally Trivial Palindrome: 	of the form XXX...XYX...XXX (multiple onsets, two anga classes)
+		V.) Trivial Dual Palindromic:		of the form XXX...XYYYX...XXX (multiple onsets, two anga classes)
+		VI.) Palindromic: 					of the form XY...Z...YX (multiple onsets, n/2 anga classes)
+		VII.) Stream:						of the form XYZ...abc... (n onsets, n anga classes)
+		"""
+		dseg = self.dseg(as_str = False)
+		reduced_dseg = self.reduced_dseg(as_str = False)
+
+		if len(dseg) == 1:
+			return 'I. Maximally Trivial'
+		elif len(dseg) > 1 and len(np.unique(dseg)) == 1:
+			return 'II. Trivial Symmetry'
+		elif len(dseg) == 2 and len(np.unique(dseg)) == 2:
+			return 'III. Trivial Dual Symmetry'
+		elif len(dseg) > 2 and len(np.unique(dseg)) == 2:
+			return 'IV. Maximally Trivial Palindrome'
+		elif len(dseg) > 2 and len(reduced_dseg) == 3:
+			return 'V. Trivial Dual Palindrome'
+		elif len(dseg) > 2 and len(np.unique(dseg)) == len(dseg) // 2:
+			return 'VI. Palindrome'
+		else:
+			return 'VII. Stream'
+
+	def std(self):
+		return round(np.std(self.ql_array()), 5)
+
+	def c_score(self):
+		"""
+		Povel and Essens (1985) C-Score. Returns the average across all clocks. 
+		Doesn't seem to work...
+		"""
+		return get_average_c_score(array = self.ql_array())
+	
+	def show(self):
+		if self.stream:
+			return self.stream.show() 
+
+'''
+random_fragment_path = '/users/lukepoeppel/decitala_v.2.0/Decitalas/63_Nandi.xml'
+print(random_fragment_path.split('/'))
+g1 = GeneralFragment(path = random_fragment_path)
+l = np.array([0.5, 0.25, 0.25, 0.5, 0.5, 1.0, 1.0])
+print(l)
+'''
+
+########################################################################
+
 class Decitala(object):
 	'''    
 	Class that stores Decitala data. Reads from a folder containing all Decitala XML files.
+	Inherits from GeneralFragment. 
 
 	>>> ragavardhana = Decitala('Ragavardhana')
 	>>> ragavardhana
@@ -371,18 +587,22 @@ class Decitala(object):
 	def std(self):
 		return round(np.std(self.ql_array()), 5)
 
-	def cscore(self):
+	def c_score(self):
 		'''
-		Povel and Essens (1985) C-Score.
+		Povel and Essens (1985) C-Score. Returns the average across all clocks. 
+		Doesn't seem to work...
 		'''
-		raise NotImplementedError
+		return get_average_c_score(array = self.ql_array())
 
 	def show(self):
 		if self.stream:
 			return self.stream.show()
 
+d = Decitala('Gajajhampa')
+#print(d.c_score())
+
 class NaryTree(object):
-	'''
+	"""
 	A single-rooted nary tree for ratio and difference representations of rhythmic fragments. Nodes are 
 	hashed by their value and are stored in a set. For demonstration, we will create the following tree: 
 	(If a string appears next to a node value, this means the path from the root to that node is an encoded fragment.) 
@@ -393,7 +613,7 @@ class NaryTree(object):
 						1.0D				 1.0 'Overwrite'|	0.5						LEVEL 4
 														    |		2.0 'Full Path'		LEVEL 5
 
-	>>> rootNode = NaryTree().Node(value = 1.0, name = None)			# LEVEL 1
+	>>> root = NaryTree().Node(value = 1.0, name = None)			# LEVEL 1
 
 	>>> c1 = NaryTree().Node(value = 0.5, name = None)					# LEVEL 2				
 	>>> c2 = NaryTree().Node(value = 1.0, name = None)
@@ -407,59 +627,59 @@ class NaryTree(object):
 
 	>>> ggc = NaryTree().Node(value = 1.0, name = 'D')					# LEVEL 4
 
-	>>> rootNode.parent = None
-	>>> rootNode.children = {c1, c2, c3}
-	>>> rootNode.children
+	>>> root.parent = None
+	>>> root.children = {c1, c2, c3}
+	>>> root.children
 	{<NODE: value=0.5, name=None>, <NODE: value=1.0, name=None>, <NODE: value=3.0, name=A>}
-	>>> c1 in rootNode.children
+	>>> c1 in root.children
 	True
 	
-	>>> rootNode.orderedChildren()
+	>>> root.ordered_children()
 	[<NODE: value=0.5, name=None>, <NODE: value=1.0, name=None>, <NODE: value=3.0, name=A>]
 
-	>>> c1.addChildren([gc1, gc2])
-	>>> c1.numChildren
+	>>> c1.add_children([gc1, gc2])
+	>>> c1.num_children
 	2
-	>>> c2.addChild(gc3)
-	>>> gc1.addChild(ggc)
+	>>> c2.add_child(gc3)
+	>>> gc1.add_child(ggc)
 
 	(January 16 Addition)
-	We have also implemented the addPathOfChildren() method. This allows the creation of a path from
+	I implemented an add_path_of_children() method. This allows for the creation of a path from
 	a node through its children. 
 
-	>>> rootNode.addPathOfChildren(path = [rootNode.value, 4.0, 1.0, 0.5, 2.0], finalNodeName = 'Full Path')
-	>>> rootNode.children
+	>>> root.add_path_of_children(path = [root.value, 4.0, 1.0, 0.5, 2.0], final_node_name = 'Full Path')
+	>>> root.children
 	{<NODE: value=0.5, name=None>, <NODE: value=1.0, name=None>, <NODE: value=3.0, name=A>, <NODE: value=4.0, name=None>}
 
 	Check for overwriting data...
-	>>> rootNode.addPathOfChildren(path = [rootNode.value, 1.0, 2.0, 1.0], finalNodeName = 'Test Overwrite')
+	>>> root.add_path_of_children(path = [root.value, 1.0, 2.0, 1.0], final_node_name = 'Test Overwrite')
 
 	We can access children by referencing a node or by calling to its representative value. 
 
-	>>> newValue = rootNode.getChildByValue(4.0)
+	>>> newValue = root.get_child_by_value(4.0)
 	>>> newValue.children
 	{<NODE: value=1.0, name=None>}
 
-	>>> c2.getChild(gc3)
+	>>> c2.get_child(gc3)
 	<NODE: value=2.0, name=C>
 
-	>>> c2.getChildByValue(2.0)
+	>>> c2.get_child_by_value(2.0)
 	<NODE: value=2.0, name=C>
-	>>> c2.getChildByValue(4.0)
+	>>> c2.get_child_by_value(4.0)
 
 	>>> TestTree = NaryTree()
 
-	>>> TestTree.root = rootNode
+	>>> TestTree.root = root
 	>>> TestTree
 	<NaryTree: nodes=13>
-	>>> TestTree.isEmpty()
+	>>> TestTree.is_empty()
 	False
 
 	Calling the size returns the number of nodes in the tree. 
 	>>> TestTree.size()
 	13
 
-	>>> TestTree.allPossiblePaths()
+	>>> TestTree.all_possible_paths()
 	[1.0]
 	[1.0, 0.5]
 	[1.0, 0.5, 0.5]
@@ -486,29 +706,26 @@ class NaryTree(object):
 	('Full Path', [1.0, 4.0, 1.0, 0.5, 2.0])
 
 	Get paths of a particular length:
-	>>> for thisPath in TestTree.allNamedPathsOfLengthN(n = 3):
+	>>> for thisPath in TestTree.all_named_paths_of_length_n(length = 3):
 	...     print(thisPath)
 	('B', [1.0, 0.5, 3.0])
 	('C', [1.0, 1.0, 2.0])
 
 	We can search for paths as follows. 
 
-	>>> TestTree.searchForPath([1.0, 0.5, 0.5, 1.0])
+	>>> TestTree.search_for_path([1.0, 0.5, 0.5, 1.0])
 	'D'
-	>>> TestTree.searchForPath([1.0, 0.5, 3.0])
+	>>> TestTree.search_for_path([1.0, 0.5, 3.0])
 	'B'
-	>>> TestTree.searchForPath([1.0, 2.0, 4.0])
-	>>> TestTree.searchForPath([1.0, 1.0, 2.0])
+	>>> TestTree.search_for_path([1.0, 2.0, 4.0])
+	>>> TestTree.search_for_path([1.0, 1.0, 2.0])
 	'C'
-
-	To have an insight into what the tree looks like, run the following.
-	TestTree.stupidVisualizer()
-	'''
+	"""
 	class Node(object):
-		'''
+		"""
 		A Node object stores an item and references its parent and children. In an nary tree, a parent
 		may have any arbitrary number of children, but each child has only 1 parent. 
-		'''
+		"""
 		def __init__(self, value, name = None):
 			self.value = value
 			self.name = name
@@ -522,121 +739,101 @@ class NaryTree(object):
 			return hash(self.value)
 
 		def __eq__(self, other):
-			'''
-			You need this function! Without this, you can add nodes with the same value to the set 
-			of children!
-			'''
+			"""
+			Without this, you can add nodes with the same value to the set of children.
+			"""
 			return (self.value == other.value) 
 
 		def __lt__(self, other):
-			'''
-			Implementation of a 'less-than' relation between nodes. The standard relation based on 
-			the value of two nodes.  
-			'''
 			return (self.value < other.value)
 
-		def addChild(self, childNode):
-			'''
+		def add_child(self, child_node):
+			"""
 			Adds a single child to the set of children in a node.
-			'''
-			self.children.add(childNode)
+			"""
+			self.children.add(child_node)
 			return
 
-		def addChildren(self, childrenNodes = []):
-			'''
+		def add_children(self, children_nodes = []):
+			"""
 			Adds multiple children to self.children. 
-			'''
-			if type(childrenNodes) != list: raise Exception('Nodes must be contained in a list!')
-			for thisChild in childrenNodes:
-				self.addChild(thisChild)
+			"""
+			if type(children_nodes) != list: 
+				raise Exception('Nodes must be contained in a list.')
+			
+			for this_child in children_nodes:
+				self.add_child(this_child)
 			return
 
-		def addPathOfChildren(self, path, finalNodeName):
-			'''
-			This is kind of a funny, but a pretty convenient idea! Allows the addition of a path of 
-			values from a node down through its children. Include the value of the node from which 
-			the path is starting (i.e. self.value). By doing this, we can just run a for loop over 
-			the reduced set of fragments to generate the ratio tree and, for each fragment, just run 
-			addPathOfChildren(thisFragment, finalName = thisFragment). 
-			'''
+		def add_path_of_children(self, path, final_node_name):
+			"""
+			Allows for the the addition of a path of values from a node down through its children. 
+			"""
 			if path[0] != self.value:
 				raise Exception('First value in the path must be self.value.')
 
 			curr = self
 			i = 1
 			while i < len(path):
-				check = curr.getChildByValue(path[i])
+				check = curr.get_child_by_value(path[i])
 				if check is not None:
 					curr = check
 					i += 1
 				else:
 					if i == len(path) - 1:
-							child = NaryTree().Node(value = path[i], name = finalNodeName)
+							child = NaryTree().Node(value = path[i], name = final_node_name)
 					else:
 						child = NaryTree().Node(value = path[i])
 
-					curr.addChild(child)
+					curr.add_child(child)
 					curr = child
 					i += 1
 
 			return
 
-		def removeChild(self, childNode):
-			'''
-			Removes a single child from self.children. 
-			'''
-			if childNode.item.value not in self.children:
+		def remove_child(self, child_node):
+			if child_node.item.value not in self.children:
 				raise Exception('This parent does not have that child!')
-			self.children.remove(childNode.item.value)
+			self.children.remove(child_node.item.value)
 			return
 
-		def removeChildren(self, childrenNodes):
-			'''
-			Removes multiple children from self.children.
-			'''
-			for thisChild in childrenNodes:
-				self.removeChild(thisChild)
+		def remove_children(self, children_nodes):
+			for this_child in children_nodes:
+				self.remove_child(this_child)
 			return
 
-		def getChild(self, node):
-			'''
-			Given a value, returns the node in the set of children with the associated value. 
-			'''
-			for thisChild in self.children:
-				if thisChild.value == node.value:
-					return thisChild
+		def get_child(self, node):
+			"""
+			Given a ``value``, returns the node in the set of children with that associated value. 
+			"""
+			for this_child in self.children:
+				if this_child.value == node.value:
+					return this_child
 			else:
 				return None
 
-		def getChildByValue(self, value):
-			'''
-			Given a value, returns the node in the set of children with the associated value. 
-			'''
-			for thisChild in self.children:
-				if thisChild.value == value:
-					return thisChild
+		def get_child_by_value(self, value):
+			"""
+			Same as the above, but allows for search just by value without Node object. 
+			"""
+			for this_child in self.children:
+				if this_child.value == value:
+					return this_child
 			else:
 				return None
 
 		@property
-		def numChildren(self) -> int:
-			'''
-			Returns the number of children that a node holds. 
-			'''
+		def num_children(self) -> int:
 			return len(self.children)
 
 		@property
-		def hasChildren(self) -> bool:
-			'''
-			Is the above notation old-fashioned? I don't think I've seen this before for a bool
-			return type... 
-			'''
-			return (self.numChildren != 0)
+		def has_children(self) -> bool:
+			return (self.num_children != 0)
 
-		def orderedChildren(self):
-			'''
+		def ordered_children(self):
+			"""
 			Returns the children of a node in list format, ordered by value. 
-			'''
+			"""
 			return sorted([child for child in self.children])
 
 	def __init__(self):
@@ -646,60 +843,58 @@ class NaryTree(object):
 		return '<NaryTree: nodes={0}>'.format(self.size())
 
 	def __iter__(self):
-		'''
-		Iterates through all concluding *paths* in the tree (not nodes), beginning with the 
+		"""
+		Iterates through all named paths in the tree (not nodes), beginning with the 
 		shortest paths (of length 2) and ending with paths from the root to the leaves. Ignores 
-		paths that do not correspond to a tala. For example, [1.0, 1.0, 1.0, 0.5, 0.75, 0.5] will 
-		appear in the iteration of the decitalas (it is Varied_Ragavardhana), but the path 
-		[1.0, 1.0, 1.0, 0.5, 0.75] will not. 
-		'''
-		for thisNamedPath in self.allNamedPaths():
-			yield thisNamedPath
+		paths that do not conclude with a labeled node. 
+		"""
+		for this_named_path in self.all_named_paths():
+			yield this_named_path
 
-	def _sizeHelper(self, node):
-		'''
+	def _size_helper(self, node):
+		"""
 		Helper function for self.size()
-		'''
-		numNodes = 1
+		"""
+		num_nodes = 1
 		for child in node.children:
-			numNodes += self._sizeHelper(child)
+			num_nodes += self._size_helper(child)
 
-		return numNodes
+		return num_nodes
 
 	def size(self):
-		'''
+		"""
 		Returns the number of nodes in the nary tree. 
-		'''
-		return self._sizeHelper(self.root)
+		"""
+		return self._size_helper(self.root)
 
-	def isEmpty(self) -> bool:
+	def is_empty(self) -> bool:
 		return (self.size() == 0)
 
 	################################################################################################
-	def _allPossiblePathsHelper(self, node, path = []):
-		'''
-		Helper function for self.allPossiblePaths()
-		'''
+	def _all_possible_paths_helper(self, node, path = []):
+		"""
+		Helper function for self.all_possible_paths()
+		"""
 		path.append(node.value)
 		print(path)
 		if len(node.children) == 0:
 			pass
 		else:
 			for child in node.children:
-				self._allPossiblePathsHelper(child, path)
+				self._all_possible_paths_helper(child, path)
 		path.pop()
 
-	def allPossiblePaths(self):
-		'''
-		Prints all possible paths from the root node, all unnamed. 
-		'''
-		return self._allPossiblePathsHelper(self.root)
+	def all_possible_paths(self):
+		"""
+		Prints all possible paths from the root node, not all of which are necesarrily named. 
+		"""
+		return self._all_possible_paths_helper(self.root)
 
 	################################################################################################
-	def _allNamedPathsHelper(self, node, path = []):
-		'''
-		Helper function for self.allNamedPaths. 
-		'''
+	def _all_named_paths_helper(self, node, path = []):
+		"""
+		Helper function for self.all_named_paths. 
+		"""
 		path.append(node)
 
 		if path[-1].name is not None:
@@ -712,27 +907,28 @@ class NaryTree(object):
 			pass
 		else:
 			for child in node.children:
-				yield from self._allNamedPathsHelper(child, path)
+				yield from self._all_named_paths_helper(child, path)
 
 		path.pop()
 
-	def allNamedPaths(self):
-		'''
-		Returns all paths from the root that have names. Each path is returned as a tuple consisting
+	def all_named_paths(self):
+		"""
+		Returns all paths from the root that are named. Each path is returned as a tuple consisting
 		of the path followed by its name, i.e., ([PATH], 'NAME'). 
-		'''
-		for thisNamedPath in self._allNamedPathsHelper(self.root):
-			yield thisNamedPath
+		"""
+		for this_named_path in self._all_named_paths_helper(self.root):
+			yield this_named_path
 
-	def _allNamedPathsOfLengthNHelper(self, node, nIn, path = []):
+	################################################################################################
+	def _all_mamed_paths_of_length_n_helper(self, node, length_in, path = []):
 		'''
-		Helper function for allNamedPathsOfLengthN
+		Helper function for self.all_named_paths_of_length_n
 		'''
 		path.append(node)
 
 		if path[-1].name is not None:
 			p = [node.value for node in path]
-			if len(p) == nIn:
+			if len(p) == length_in:
 				yield (path[-1].name, p)
 		else:
 			pass
@@ -741,53 +937,148 @@ class NaryTree(object):
 			pass
 		else:
 			for child in node.children:
-				yield from self._allNamedPathsOfLengthNHelper(child, nIn, path)
+				yield from self._all_mamed_paths_of_length_n_helper(child, length_in, path)
 
 		path.pop()
 
-	def allNamedPathsOfLengthN(self, n):
-		'''
+	def all_named_paths_of_length_n(self, length):
+		"""
 		Returns all named paths from the root of provided length. 
-		'''
-		for thisNamedPathOfLengthN in self._allNamedPathsOfLengthNHelper(node = self.root, nIn = n):
-			yield thisNamedPathOfLengthN
+		"""
+		for this_named_path_of_length_n in self._all_mamed_paths_of_length_n_helper(node = self.root, length_in = length):
+			yield this_named_path_of_length_n
 
 	################################################################################################
-	def searchForPath(self, pathFromRoot):
-		'''
-		Searches through the nary tree for a path consisting of the values in the pathFromRoot
+	def search_for_path(self, path_from_root):
+		"""
+		Searches through the nary tree for a path consisting of the values in the path_from_root
 		list. Note: the first value of the path must either be 1 (ratio representation search) or 
 		0 (difference representation search). Call me old-fashioned, but I feel like there should be 
 		a difference in output between a path being present but unnamed and path not existing. 
-		'''
+		"""
 		#if pathFromRoot[0] != 1.0 or 0.0:
 			#raise Exception('Path provided is invalid.')
-		if len(pathFromRoot) <= 2:
+		if len(path_from_root) <= 2:
 			raise Exception('Path provided must be at least 3 values long.')
 
 		curr = self.root
 		i = 1
 		
-		while i < len(pathFromRoot):
+		while i < len(path_from_root):
 			try:
-				curr = curr.getChildByValue(value = pathFromRoot[i])
+				curr = curr.get_child_by_value(value = path_from_root[i])
 				if curr is None:
 					return None
 			except AttributeError:
 				break
 
-			if (i == len(pathFromRoot) - 1) and len(curr.children) == 0:
+			if (i == len(path_from_root) - 1) and len(curr.children) == 0:
 				return curr.name
-			elif (i == len(pathFromRoot) - 1) and curr.name is not None:
+			elif (i == len(path_from_root) - 1) and curr.name is not None:
 				return curr.name
 			else:
 				i += 1
 
-	def stupidVisualizer(self):
-		'''
-		TODO
-		'''
-		raise NotImplementedError
+############################### ANALYSIS ##################################
+def binary_search(lst, search_val):
+	def _checkSorted(lstIn):
+		if len(lstIn) == 1:
+			return True
+		else:
+			remainder = _checkSorted(lstIn[1:])
+			return lstIn[0] <= lstIn[1] and remainder
+
+	startIndex = 0
+	endIndex = len(lst) - 1
+	found = False
+
+	if _checkSorted(lst) == False:
+		raise Exception('Input list is not sorted.')
+
+	while startIndex <= endIndex and not found:
+		midpoint = (startIndex + endIndex) // 2
+		if lst[midpoint] == search_val:
+			found = True 
+		else:
+			if lst[midpoint] > search_val:
+				endIndex = midpoint - 1
+			else:
+				startIndex = midpoint + 1
+
+	return found
+
+def get_all_end_overlapping_indices(lst, i, out):
+	"""
+	Change to make it a binary search –– this is far too slow. 
+
+	Possible paths: 
+	[(0.0, 4.0), (4.0, 5.5), (6.0, 7.25)]
+	[(0.0, 2.0), (2.5, 4.5), (6.0, 7.25)]
+	[(0.0, 2.0), (2.0, 5.75), (6.0, 7.25)]
+	[(0.0, 2.0), (2.0, 4.0), (4.0, 5.5), (6.0, 7.25)]
+
+	Eliminate the waste!
+	"""
+	all_possibilities = []
+
+	def _get_all_end_overlapping_indices_helper(list_in, i, out):
+		r = -1
+		if i == len(list_in):
+			if out:
+				if len(all_possibilities) == 0:
+					all_possibilities.append(out)
+				else:						
+					all_possibilities.append(out)
+
+			return 
+
+		n = i + 1
+
+		while n < len(list_in) and r > list_in[n][0]:
+			n += 1
+		_get_all_end_overlapping_indices_helper(list_in, n, out)
+
+		r = list_in[i][1]
+
+		n = i + 1
+		while n < len(list_in) and r > list_in[n][0]:
+			n += 1
+
+		_get_all_end_overlapping_indices_helper(list_in, n, out + [list_in[i]])
+
+	_get_all_end_overlapping_indices_helper.count = 0
+	lst.sort()
+	_get_all_end_overlapping_indices_helper(list_in = lst, i = 0, out = [])
+	
+	return all_possibilities
+
+'''
+indices = [(0.0, 2.0), (0.0, 4.0), (2.5, 4.5), (2.0, 5.75), (2.0, 4.0), (6.0, 7.25), (4.0, 5.5)]
+indices.sort()
+for this in tqdm.tqdm(get_all_end_overlapping_indices(lst = indices, i = 0, out = [])):
+	print(this)
+'''
+
+############################### FRAGMENT TREES ##################################
+class FragmentTree(object):
+	"""
+	Class for the ratio and different representation of rhythmic fragments in Nary trees. 
+	In creating the tree, it automatically creates a list that holds Decitala(fileName) for 
+	each filename in the input directory. 
+
+	TODO
+	- 
+	- keep track of rests in all cases. The indices of occurrence can't be based
+	upon placement of notes, but have to be based on placement of *all* musical objects. 
+	- cauchy-schwartz inequality is completely unnecessary (I think) since we're using ratio representations.
+	not sure how this applies for difference representations.
+	- decide on double-onset fragment convention. I'm leaning towards keep them since some of them are odd. 
+	"""
+	def __init__(self, root_path):
+		if type(root_path) != str:
+			raise Exception('Path to directory must be a string.')
+		else:
+			self.root_path = root_path
 
 if __name__ == '__main__':
 	import doctest
