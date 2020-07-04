@@ -9,7 +9,10 @@
 # Location: Kent, CT 2020
 ####################################################################################################
 """
-CODE SPRING TODO: 
+CODE SPRINT TODO: 
+- should notation conversion functions be standalone? 
+- check out added value situation
+- change names of successive_X_array
 - fix and shorten helper functions below.
 - decide convention for kakpadam from Rowley.
 - standardize fully to np.array(). Also matplotlib will be easier. 
@@ -99,6 +102,9 @@ def ql_array_to_carnatic_string(ql_array):
 	'| o o oc S Sc S | S'
 	"""
 	return ' '.join(np.array([this_carnatic_val[1] for this_val in ql_array for this_carnatic_val in carnatic_symbols if (float(this_carnatic_val[2]) == this_val)]))
+
+def ql_array_to_greek_diacritics(ql_array):
+	pass
 
 def _ratio(array, start_index):
 	"""
@@ -198,6 +204,117 @@ def cauchy_schwartz(vector1, vector2):
 	else:
 		return False
 
+def successive_ratio_list(lst):
+	"""
+	Returns an array of the successive duration ratios. By convention, we set the first value to 1.0. 
+	"""
+	ratio_array = [1.0] #np.array([1.0])
+	i = 0
+	while i < len(lst) - 1:
+		ratio_array.append(_ratio(lst, i))
+		i += 1
+
+	return np.array(ratio_array)
+	
+def successive_difference_array(lst):
+	"""
+	Returns a list containing differences between successive durations. By convention, we set the 
+	first value to 0.0. 
+	"""
+	difference_lst = [0.0]
+	i = 0
+	while i < len(lst) - 1:
+		difference_lst.append(_difference(lst, i))
+		i += 1
+
+	return difference_lst
+
+########################## LA VALEUR AJOUTEE #############################
+
+def get_added_values(ql_lst, print_type = True):
+	'''
+	Given a quarter length list, returns all indices and types of added values found, according to 
+	the examples dicussed in Technique de Mon Langage Musical (1944)). 
+
+	>>> get_added_values([0.25, 0.5, 0.5, 0.75, 0.25])
+	[(0, 'du Note'), (4, 'du Note')]
+	>>> get_added_values([0.5, 0.25, 0.5, 0.25, 1.0])
+	[(1, 'du Note'), (3, 'du Note')]
+	>>> get_added_values(qlList = [0.75, 0.75, 0.75, 0.25, 0.5])
+	[(3, 'du Note')]
+	>>> get_added_values([0.75, 0.75, 0.75, 0.75, 0.25, 0.25])
+
+	>>> get_added_values([0.5, 0.25, 0.5, 0.75, 1.25, 1.5])
+	[(1, 'du Note'), (3, 'du Point'), (4, 'du Tie')]
+
+	>>> l = [1.0, 0.5, 0.25, 1.0, 0.5, 0.75, 0.5]
+	>>> get_added_values(l)
+	[(2, 'du Note'), (5, 'du Point')]
+
+	?????
+	>>> get_added_values([0.5, 0.5, 0.75, 1.25, 0.75])
+	[(2, 'du Point'), (3, 'du Tie')]
+
+	>>> get_added_values([1.0, 0.25, 0.5], print_type = False)
+	[1]
+
+	>>> get_added_values([0.25, 0.25, 0.75, 2.0])
+	[(2, 'du Point')]
+	>>> get_added_values([0.5, 0.25, 0.75, 0.25, 0.5])
+	[(1, 'du Note'), (2, 'du Point'), (3, 'du Note')]
+	'''
+	if len(ql_lst) < 3:
+		raise Exception('List must be of length 3 or greater.')
+
+	addedVals = []
+	if ql_lst[0] == 0.25 and ql_lst[1] != 0.25:
+		addedVals.append((0, 'du Note'))
+	if ql_lst[-1] == 0.25 and ql_lst[-2] != 0.25:
+		addedVals.append((len(ql_lst) - 1, 'du Note'))
+	if ql_lst[-1] == 0.75 and ql_lst[-2] % 0.5 == 0:
+		addedVals.append((len(ql_lst) - 1, 'du Point'))
+
+	for currIndex in range(1, len(ql_lst) - 1):
+		prevVal = ql_lst[currIndex - 1]
+		currVal = ql_lst[currIndex]
+		nextVal = ql_lst[currIndex + 1]
+
+		x = currVal - 0.25
+		if x >= 1.0 and x.is_integer():
+			addedVals.append((currIndex, 'du Tie'))
+
+		if currVal == 0.25:
+			if prevVal != currVal != nextVal:
+				if prevVal % 0.5 == 0 and nextVal % 0.5 == 0:
+					addedVals.append((currIndex, 'du Note'))
+				elif prevVal % 0.75 == 0:
+					addedVals.append((currIndex, 'du Note'))
+				elif nextVal % 0.75 == 0:
+					addedVals.append((currIndex, 'du Note'))
+		elif currVal == 0.75:
+			if prevVal % 0.5 == 0 and nextVal % 0.5 == 0:
+				addedVals.append((currIndex, 'du Point'))
+			elif prevVal < currVal and nextVal > currVal:
+				addedVals.append((currIndex, 'du Point'))
+			elif prevVal == 0.25:
+				addedVals.append((currIndex, 'du Point'))
+
+	if len(addedVals) == 0:
+		return None
+
+	if print_type == False:
+		return [a[0] for a in addedVals]
+	else:
+		return addedVals
+
+#NOTE: Double check this works.
+def removeAddedValuesFromList(lst):
+	added_val_indices = get_added_values(ql_lst=lst, print_type=False)
+	for i in added_val_indices:
+		del lst[i]
+
+	return lst
+
 ########################################################################
 class GeneralFragment(object):
 	"""
@@ -270,6 +387,9 @@ class GeneralFragment(object):
 			return np.array([this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)])
 		else:
 			return np.flip(np.array([this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)]))
+
+	def __len__(self):
+		return len(self.ql_array())
 
 	@property
 	def num_onsets(self):
@@ -345,6 +465,23 @@ class GeneralFragment(object):
 			i += 1
 
 		return np.array(ratio_array)
+	
+	def successive_difference_array(self):
+		'''
+		Returns a list containing differences between successive durations. By convention, we set the 
+		first value to 0.0. 
+		
+		>>> d = Decitala().getByidNum(119).successive_difference_array()
+		>>> d
+		array([0.5, 1.0, 1.0, 1.5, 1.0, 1.0, 1.0, 0.5])
+		'''
+		difference_lst = [0.0]
+		i = 0
+		while i < len(self.ql_array()) - 1:
+			difference_lst.append(_difference(self.ql_array(), i))
+			i += 1
+
+		return difference_lst
 
 	def get_cyclic_permutations(self):
 		"""
@@ -923,7 +1060,8 @@ class NaryTree(object):
 		if path[-1].name is not None:
 			p = [node.value for node in path]
 			if len(p) == length_in:
-				yield (path[-1].name, p)
+				yield path[-1].name
+				#yield (path[-1].name, p)
 		else:
 			pass
 
@@ -982,28 +1120,42 @@ class FragmentTree(NaryTree):
 	- keep track of rests in all cases. The indices of occurrence can't be based
 	upon placement of notes, but have to be based on placement of *all* musical objects. 
 	- cauchy-schwartz inequality is completely unnecessary (I think) since we're using ratio representations.
-	not sure how this applies for difference representations.
+	not sure how this applies for difference representations. 
 	- decide on double-onset fragment convention. I'm leaning towards keep them since some of them are odd. 
 	"""
-	def __init__(self, root_path, rep_type, **kwargs):
+	def __init__(self, root_path, frag_type, rep_type, **kwargs):
 		if type(root_path) != str:
 			raise Exception('Path must be a string.')
 		
+		if rep_type.lower() not in ['ratio', 'difference']:
+			raise Exception('The only possible types are "ratio" and "difference"')
+		
 		self.root_path = root_path
+		self.frag_type = frag_type
 		self.rep_type = rep_type
 
 		super().__init__()
 
-		rawData = []
-		for thisFile in os.listdir(root_path):
-			rawData.append(Decitala(thisFile))
+		if frag_type.lower() == 'decitala':
+			raw_data = []
+			for this_file in os.listdir(root_path):
+				raw_data.append(Decitala(this_file))
+			self.raw_data = raw_data
+		elif frag_type.lower() == 'greek_foot':
+			raw_data = []
+			for this_file in os.listdir(root_path):
+				raw_data.append(GreekFoot(this_file))
+			self.raw_data = raw_data
+		else:
+			raw_data = []
+			for this_file in os.listdir(root_path):
+				raw_data.append(GeneralFragment(this_file))
+			self.raw_data = raw_data
 
-		self.rawData = rawData
-
-		def filterData(rawData):
-			'''
+		def filter_data(raw_data):
+			"""
 			Given a list of decitala objects (i.e. converted to a matrix of duration vectors), 
-			filterData() removes:
+			filter_data() removes:
 			- Trivial fragments (single-onset fragments and double onset fragments, the latter 
 			by convention). 
 			- Duplicate fragments
@@ -1011,11 +1163,11 @@ class FragmentTree(NaryTree):
 			two duration vectors are found to be linearly dependant, one is removed.
 
 			Consider the following set of rhythmic fragments.
-			[3.0, 1.5, 1.5, 0.75, 0.75],
-			1.5, 1.0],
-			[0.75, 0.5, 0.75],
-			[0.25, 0.25, 0.5],
-			[0.75, 0.5],
+			[3.0, 1.5, 1.5, 0.75, 0.75]
+			[1.5, 1.0]
+			[0.75, 0.5, 0.75]
+			[0.25, 0.25, 0.5]
+			[0.75, 0.5]
 			[0.5, 1.0, 2.0, 4.0],
 			[1.5, 1.0, 1.5],
 			[1.0, 1.0, 2.0],
@@ -1027,25 +1179,23 @@ class FragmentTree(NaryTree):
 			[0.25, 0.25, 0.5], 
 			[0.25, 0.5, 1.0, 2.0], 
 			[1.0, 0.5, 0.5, 0.25, 0.25]
-
-			NOTE: this function is one of the many reasons I should have the Greek Metric and Decitala
-			classes inherit from some greater class RhythmicFragment. I wouldn't have to have the data
-			be a list of decitalas, but instead a list of RhythmicFragments
-			'''
-			copied = copy.copy(rawData)
+			"""
+			copied = copy.copy(raw_data)
 			size = len(copied)
 
 			i = 0
 			while i < size:
 				try:
-					if len(copied[i].ql_array()) <= 2:
+					if len(copied[i].ql_array()) == 1:
 						del copied[i]
+					#if len(copied[i].ql_array()) < 2:
+						#del copied[i]
 					else:
 						pass
 				except IndexError:
 					pass
 
-				for j, cursor_vector in enumerate(copied):
+				for j, _ in enumerate(copied):
 					try: 
 						if i == j:
 							pass
@@ -1057,7 +1207,7 @@ class FragmentTree(NaryTree):
 							firsti = copied[i].ql_array()[0]
 							firstj = copied[j].ql_array()[0]
 
-							#Equality removes the second one; random choice. 
+							#Equality removes the second one by convention
 							if firsti == firstj:
 								del copied[j]
 							elif firsti > firstj:
@@ -1073,25 +1223,105 @@ class FragmentTree(NaryTree):
 
 			return copied
 
-		self.filteredData = filterData(self.rawData)
+		self.filtered_data = filter_data(self.raw_data)
+
+		if rep_type == 'ratio':
+			root_node = self.Node(value = 1.0, name = 'ROOT')
 	
-		rootNode = self.Node(value = 1.0, name = 'ROOT')
+			possible_num_onsets = [3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
+			i = 0
+			while i < len(possible_num_onsets):
+				curr_onset_list = []
+				for thisTala in self.filtered_data:
+					if len(thisTala.ql_array()) == possible_num_onsets[i]:
+						curr_onset_list.append(thisTala)
+				for thisTala in curr_onset_list:
+					root_node.add_path_of_children(path = list(thisTala.successive_ratio_list()), final_node_name = thisTala)
+				i += 1
 
-		possibleOnsetNums = [3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
-		i = 0
-		while i < len(possibleOnsetNums):
-			currOnsetList = []
-			for thisTala in self.filteredData:
-				if len(thisTala.ql_array()) == possibleOnsetNums[i]:
-					currOnsetList.append(thisTala)
-			for thisTala in currOnsetList:
-				rootNode.add_path_of_children(path = list(thisTala.successive_ratio_list()), final_node_name = thisTala)
-			i += 1
-
-		self.root = rootNode
+			self.root = root_node
 		
-t = FragmentTree(root_path = decitala_path, rep_type = 'ratio')
-print(t)
+		if rep_type == 'difference':
+			root_node = NaryTree().Node(value = 0.0, name = 'ROOT')
+
+			possible_num_onsets = [3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
+			i = 0
+			while i < len(possible_num_onsets):
+				curr_onset_list = []
+				for thisTala in self.filtered_data:
+					if len(thisTala.ql_array()) == possible_num_onsets[i]:
+						curr_onset_list.append(thisTala)
+				for thisTala in curr_onset_list:
+					root_node.add_path_of_children(path = thisTala.successive_difference_array(), final_node_name = thisTala)
+				i += 1
+
+			self.root = root_node
+	
+	def get_by_ql_list(self, ql_list, try_all_methods = True):
+		'''
+		Given a quarter length list, returns whether the fragment is found in the tree. If
+		try_all_methods is set to true, searches the tree for the exact ratio/difference representation. 
+		Otherwise, checks in the following order. 
+
+		NOTE: want ql -> retro -> ratio/difference! 
+
+		1.) Check ratio/difference tree normal.
+		2.) Check ratio/difference tree retrograde.
+		4.) Checks all permutations of added values removed. 
+		'''
+		retrograde = ql_list[::-1]
+		ratio_list = successive_ratio_list(ql_list)
+		difference_list = successive_difference_array(ql_list)
+		retrograde_ratio_list = successive_ratio_list(retrograde)
+		retrograde_difference_list = successive_difference_array(retrograde)
+
+		if self.rep_type == 'ratio':
+			if not (try_all_methods):
+				return self.search_for_path(ratio_list)
+			else:
+				ratio_search = self.search_for_path(ratio_list)
+				if ratio_search is None:
+					retrograde_ratio_search = self.search_for_path(retrograde_ratio_list)
+					if retrograde_ratio_search is None:
+						#ADDED VALUE PERMUTATIONS
+						return None	
+					else:
+						return retrograde_ratio_search, '(retrograde)'
+				else:
+					return ratio_search, '(ratio)'
+
+		if self.rep_type == 'difference':
+			if not (try_all_methods):
+				return self.search_for_path(difference_list)
+			else:
+				difference_search = self.search_for_path(difference_list)
+				if difference_search is None:
+					retrograde_difference_search = self.search_for_path(retrograde_difference_list)
+					if retrograde_difference_search is None:
+						#ADDED VALUE PERMUTATIONS
+						return None	
+					else:
+						return retrograde_difference_search, '(retrograde)'
+				else:
+					return difference_search, '(difference)'
+	
+	def get_by_num_onsets(self, num_onsets):
+		"""
+		Searches the ratio tree for all paths of length numOnsets. 
+		"""
+		for thisTala in self.all_named_paths_of_length_n(length = num_onsets):
+			yield thisTala
+
+'''
+t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
+for this in t.get_by_num_onsets(num_onsets = 3):
+	print(this, this.ql_array())
+'''
+
+#print(t.search_for_path(path_from_root = [0.5, 0.5, 1.0]))
+
+#for this_tala in t.filtered_data:
+#	print(this_tala, this_tala.num_onsets)#, this_tala.c_score())
 
 ############################### ANALYSIS ##################################
 def binary_search(lst, search_val):
