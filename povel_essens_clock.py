@@ -396,13 +396,11 @@ def get_best_clock(ev_dicts, array):
     #need to return the actual clock. 
     return curr_min
 
-#povel_ex3 = np.array([1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0])
+povel_ex3 = np.array([1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0])
 #print(get_average_c_score(array = povel_ex3))
 #print(get_best_clock(ev_dicts='H', array = povel_ex3))
-
-
-
-first_clock = {'+ev': 5, '0ev': 2, '-ev': 5}
+#[0.375 0.375 0.25  0.25 ]
+#first_clock = {'+ev': 5, '0ev': 2, '-ev': 5}
 
 '''
 for this_clock in generate_all_clocks(array=povel_ex3):

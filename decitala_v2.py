@@ -9,7 +9,12 @@
 # Location: Kent, CT 2020
 ####################################################################################################
 """
+Big TODO:
+- bird decisions
+- modify Povel and Essens algorithm to account for fragment length
+
 CODE SPRINT TODO: 
+- note to self: doctests are for short examples; doctests are for *actual* testing. 
 - should notation conversion functions be standalone? 
 - check out added value situation
 - change names of successive_X_array
@@ -25,6 +30,7 @@ import copy
 import datetime
 import decimal
 import fractions
+import itertools
 import math
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -33,8 +39,13 @@ import os
 import re
 import statistics
 import tqdm
+import unittest
+
+from itertools import chain, combinations
+from statistics import StatisticsError
 
 from povel_essens_clock import get_average_c_score
+from povel_essens_clock import transform_to_time_scale
 
 from music21 import converter
 from music21 import note
@@ -80,6 +91,11 @@ fraction_dict = {
 
 #id_number(s) of decitalas with "subtalas"
 subdecitala_array = np.array([26, 38, 55, 65, 68])
+
+############### EXCEPTIONS ###############
+class IDException(Exception):
+	pass
+	#return 'That fragment likely has multiple subfragments under the same ID number.'
 
 ############ HELPER FUNCTIONS ############
 #Notational Conversion Functions
@@ -229,6 +245,23 @@ def successive_difference_array(lst):
 
 	return difference_lst
 
+def powerList(lst):
+	"""
+	Given a list, returns it's 'power set' (excluding, of course, the empty list). 
+
+	>>> l = [1, 2, 3]
+	>>> powerList(l)
+	[(1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]
+	"""
+	s = list(lst)
+	preList = list(chain.from_iterable(combinations(s, r) for r in range(len(s) + 1)))
+
+	for x in preList:
+		if len(x) == 0:
+			preList.remove(x)
+
+	return preList
+
 ########################## LA VALEUR AJOUTEE #############################
 
 def get_added_values(ql_lst, print_type = True):
@@ -240,7 +273,7 @@ def get_added_values(ql_lst, print_type = True):
 	[(0, 'du Note'), (4, 'du Note')]
 	>>> get_added_values([0.5, 0.25, 0.5, 0.25, 1.0])
 	[(1, 'du Note'), (3, 'du Note')]
-	>>> get_added_values(qlList = [0.75, 0.75, 0.75, 0.25, 0.5])
+	>>> get_added_values([0.75, 0.75, 0.75, 0.25, 0.5])
 	[(3, 'du Note')]
 	>>> get_added_values([0.75, 0.75, 0.75, 0.75, 0.25, 0.25])
 
@@ -471,9 +504,9 @@ class GeneralFragment(object):
 		Returns a list containing differences between successive durations. By convention, we set the 
 		first value to 0.0. 
 		
-		>>> d = Decitala().getByidNum(119).successive_difference_array()
+		>>> d = Decitala.get_by_id(119).successive_difference_array()
 		>>> d
-		array([0.5, 1.0, 1.0, 1.5, 1.0, 1.0, 1.0, 0.5])
+		[0.0, 0.5, 0.0, 0.5, -0.5, 0.0, 0.0, -0.5]
 		'''
 		difference_lst = [0.0]
 		i = 0
@@ -531,7 +564,8 @@ class GeneralFragment(object):
 		Povel and Essens (1985) C-Score. Returns the average across all clocks. 
 		Doesn't seem to work...
 		"""
-		return get_average_c_score(array = self.ql_array())
+		as_time_scale = transform_to_time_scale(array = self.ql_array())
+		return get_average_c_score(array = as_time_scale)
 	
 	def show(self):
 		if self.stream:
@@ -578,7 +612,8 @@ class Decitala(GeneralFragment):
 	'<0 1 0 2>'
 	>>> ragavardhana.std()
 	0.52571
-
+	>>> ragavardhana.c_score()
+	12.47059
 	>>> ragavardhana.morris_symmetry_class()
 	'VII. Stream'
 
@@ -647,7 +682,8 @@ class Decitala(GeneralFragment):
 			raise Exception('Input must be between 1 and 120!')
 		
 		if input_id in subdecitala_array:
-			raise Exception('There are multiple talas with this ID. Please consult the Lavignac.')
+			raise IDException('There are multiple talas with this ID. Please consult the Lavignac.')
+			#raise Exception('There are multiple talas with this ID. Please consult the Lavignac.')
 
 		for thisFile in os.listdir(decitala_path):
 			x = re.search(r'\d+', thisFile)
@@ -729,6 +765,78 @@ class GreekFoot(GeneralFragment):
 					greek_string_lst.append(this_diacritic_symbol)
 
 		return ' '.join(greek_string_lst)
+
+################################# WINDOWS ###################################
+def partitionByWindows(lst, partitionLengths = [], repeat = True):
+	'''
+	This function takes in a sequence and a list of partition lengths. It generates sub-lists,
+	each with a length corresponding to the values in partitionLengths. If repeat is set to True,
+	it will do so repeatedly. Given that there may be a remainder (modulus), the final subset 
+	returned may be of a different size. 
+
+	>>> s = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+	>>> for thisPartition in partitionByWindows(s, partitionLengths = [1, 2, 3]):
+	...     print(thisPartition)
+	[3]
+	[1, 4]
+	[1, 5, 9]
+	[2]
+	[6, 5]
+	[3, 5]
+
+	>>> s2 = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7]
+	>>> partitionByWindows(s2, partitionLengths = [7, 4])
+	[[3, 1, 4, 1, 5, 9, 2], [6, 5, 3, 5], [8, 9, 7]]
+	'''
+	it = iter(lst)
+
+	numOfRepeats = (len(lst) // sum(partitionLengths)) + 1
+	newPartitions = numOfRepeats * partitionLengths
+	allSlices = [s for s in (list(itertools.islice(it, 0, i)) for i in newPartitions)]
+
+	remainder = list(it)
+	if remainder:
+		allSlices.append(remainder)
+
+	for thisSlice in allSlices:
+		if len(thisSlice) == 0:
+			allSlices.remove(thisSlice)
+
+	return allSlices
+
+def rollWindow(lst, window):
+	'''
+	This function takes in a list and returns a list of all windows of a provided length, rolling
+	from the starting index to the point at which the window hits the final value of the list. 
+
+	>>> l = ['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet']
+	>>> for this in rollWindow(l, 3):
+	...     print(this)
+	['Mozart', 'Monteverdi', 'Messiaen']
+	['Monteverdi', 'Messiaen', 'Mahler']
+	['Messiaen', 'Mahler', 'MacDowell']
+	['Mahler', 'MacDowell', 'Massenet']
+	'''
+	if type(window) != int:
+		raise Exception('The window must be an integer!')
+
+	l = []
+
+	iterable = iter(lst)
+	win = []
+	for _ in range(0, window):
+		win.append(next(iterable))
+	
+	l.append(win)
+
+	for thisElem in iterable:
+		win = win[1:] + [thisElem]
+		l.append(win)
+
+	return l
+
+#l = [(1.0, 'a'), (2.0, 'b'), (3.0, 'c'), (4.0, 'd'), (5.0, 'e'), (6.0, 'f')]
+#print(rollWindow(lst = l, window = 3))
 
 ################################### TREES ###################################
 
@@ -839,8 +947,8 @@ class NaryTree(object):
 	Get paths of a particular length:
 	>>> for thisPath in TestTree.all_named_paths_of_length_n(length = 3):
 	...     print(thisPath)
-	('B', [1.0, 0.5, 3.0])
-	('C', [1.0, 1.0, 2.0])
+	B
+	C
 
 	We can search for paths as follows. 
 
@@ -1305,23 +1413,400 @@ class FragmentTree(NaryTree):
 				else:
 					return difference_search, '(difference)'
 	
+	def _searchWithAddedValuesRemoved(self, qlList):
+		'''
+		Given a qlList, checks if there are any added values in it. If so, removes them and searches
+		the tree. One *very* important thing to note is that some of the fragments do, in fact, have
+		added values in them –– we must be sure not to remove any added values that already belong 
+		to the fragment... 
+
+		We generate the 'power list' of the set of indices where added values have been found. We 
+		then run the standard search with all possible combinations of indices included/removed. 
+		There will be 2^n - 1 possible combinations of indices to remove. 
+		'''
+		indices = get_added_values(qlList, print_type=False)
+		allCombinations = powerList(lst = indices)
+
+		print(allCombinations)
+
+		for thisCombination in allCombinations:
+			asLst = list(thisCombination)
+			newQlList = copy.copy(qlList)
+			for thisIndex in sorted(asLst, reverse = True):
+				del newQlList[thisIndex]
+
+			x = self.get_by_ql_list(ql_list = newQlList)
+			if x is not None:
+				return x
+			else:
+				continue
+				'''
+				if thisCombiation is allCombinations[-1]:
+					return None
+				else:
+					continue
+				'''
+	
 	def get_by_num_onsets(self, num_onsets):
 		"""
 		Searches the ratio tree for all paths of length numOnsets. 
 		"""
 		for thisTala in self.all_named_paths_of_length_n(length = num_onsets):
 			yield thisTala
+	
+	############################# Search #############################
 
-'''
-t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
-for this in t.get_by_num_onsets(num_onsets = 3):
-	print(this, this.ql_array())
-'''
+	def _getStrippedQlListOfStream(self, filePath, part):
+		'''
+		Returns the quarter length list of an input stream (with all ties removed).  
+		'''
+		fullScore = converter.parse(filePath)
+		part = fullScore.parts[part]
+
+		flattenedAndStripped = part.flat.stripTies()
+
+		qlList = []
+		for thisNote in flattenedAndStripped.notes:
+			qlList.append(thisNote.quarterLength)
+
+		return qlList
+	
+	def _getStrippedObjectList(self, f, p = 0):
+		'''
+		Returns the quarter length list of an input stream (with ties removed), but also includes 
+		spaces for rests! 
+		'''
+		score = converter.parse(f)
+		partIn = score.parts[p]
+		objLst = []
+
+		stripped = partIn.stripTies(retainContainers = True)
+		for thisObj in stripped.recurse().iter.notesAndRests:
+			objLst.append(thisObj)
+
+		return objLst
+	
+	def getIndicesOfObjectOccurrence(self, filePath, partNum):
+		'''
+		Given a file path and part number, returns a list containing tuples
+
+		[(OBJ, (start, end))]
+		'''
+		indices = []
+		strippedObjects = self._getStrippedObjectList(f = filePath, p = partNum)
+		for thisObj in strippedObjects:
+			indices.append((thisObj, (thisObj.offset, thisObj.offset + thisObj.quarterLength)))
+
+		return indices
+	
+	def partitionSearch(self, filePath, pathToWrite, part, partitions = [], showScore = False):
+		"""
+		This method of search is not as comprehensive as rollingSearch, but it still has useful 
+		applications. 
+
+		TODO: implement the set check. If tala is not found, try the translational augmentation and 
+		then the retrograde. 
+		TODO: If the fragment is not found on partition, lyric shouldn't be STOP, it should be nff or 
+		something similar.
+		TODO: Data should have a count under every tala. 
+		TODO: Since the hashing algorithm has been improved (should this be in Decitala...?), after 
+		a fragment has been found, add it to a set. Before searching the tree for a fragment, check
+		for inclusion in the set. 
+		"""
+		fullScore = converter.parse(filePath)
+		p = fullScore.parts[part]
+		objectList = []
+		qlList = []
+
+		title = fullScore.metadata.title
+		pName = p.partName
+
+		foundTalas = set()
+
+		#TOP OF FILE
+		current = datetime.datetime.now()
+		currStr = current.strftime('%Y-%m-%d_%H:%M')
+		fileName = 'Tala_Data_{}'.format(currStr)
+		complete = os.path.join(pathToWrite, fileName+ '.txt')
+		data = open(complete, 'w+')
+		data.write('DECITALA DATA: ' + title + '\n')
+		data.write('PART: ' + pName + ' ({0})'.format(str(part)) + '\n')
+		data.write('SEARCH TYPE: Partition \n')
+		data.write('Partition Lengths: ' + str(partitions) + '\n')
+		data.write('--------------------------------------------------------- \n')
+
+		#--------------------------------------
+		#QL-LIST
+		'''
+		Double for loop for ql list and min-offset. Can they be combined?
+		'''
+		for thisObj in p.recurse().iter.notes:
+			objectList.append(thisObj)
+
+		for i, thisObj in enumerate(objectList):
+			if thisObj.tie is not None:
+				nextObj = objectList[i + 1]
+				qlList.append(thisObj.duration.quarterLength + nextObj.duration.quarterLength)
+				del objectList[i + 1]
+			else:
+				qlList.append(thisObj.duration.quarterLength)
+
+		#--------------------------------------
+		#MIN OFFSET
+		for thisObj in p.recurse().iter.notes:
+			try:
+				if thisObj.isNote:
+					minMusOffset = thisObj.offset
+					break
+				elif thisObj.isChord:
+					minMusOffset = thisObj.offset
+					break
+			except AttributeError:
+				break
+
+		data.write('[0.0-{0}]: Empty\n'.format(str(minMusOffset)))
+
+		partitions = partitionByWindows(lst = qlList, partitionLengths = partitions)
+		partitions_copy = copy.copy(partitions)
+		offsets = [minMusOffset]
+		netSum = sum(qlList)
+
+		i = minMusOffset
+		talas = []
+
+		while (i < netSum):
+			for j, thisChunk in enumerate(partitions_copy):
+				if len(thisChunk) < 3:
+					pass
+				else:
+					x = self.get_by_ql_list(ql_list = thisChunk)
+				if x is not 'Tala Not Found in Search Tree.': # not None? 
+					foundTalas.add(x)
+					talas.append(x)
+
+					sumTo = sum(partitions_copy[j][0:-1]) + i
+					try: 
+						offsets.append(sumTo)
+						data.write('[{0}-{1}]: '.format(str(i), str(sumTo)))
+						data.write(x.name + '\n')
+					except (IndexError, AttributeError) as e:
+						pass
+
+					offsets.append(sum(partitions_copy[j]) + i)
+					i += sum(partitions_copy[j])
+				else:
+					pass
+
+		#ADD TEXT
+		for thisObj in p.recurse().iter.notes:
+			for thisOffset, thisTala in zip(offsets[0::2], talas):
+				try:
+					if thisOffset == thisObj.offset:
+						thisObj.lyric = thisTala.name
+						thisObj.style.color = 'green'
+				except AttributeError:
+					pass
+			for thisOffset in offsets[1::2]:
+				try:
+					if thisOffset == thisObj.offset:
+						thisObj.lyric = 'STOP'
+						thisObj.style.color = 'red'
+				except AttributeError:
+					pass
+
+		if showScore == True:
+			p.show()
+		else:
+			return
+	
+	def rollingSearch(self, filePath, partNum, possibleWindows = [3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]):
+		'''
+		Given a filepath and a part number, runs a rolling search algorithm on the part that 
+		returns all decitalas found in the tree. Returns a list of tuples that holds the name of 
+		the tala and the indices of occurrence. 
+
+		TODO: include the pathToWrite input –– easier for data processing. 
+		TODO: time this function with a function that ALSO checks a catalogue. See which is faster. 
+		TODO: add restrictWindow that only searches windows of length n. 
+		'''
+		qlList = self._getStrippedQlListOfStream(filePath, part = partNum)
+
+		lists = []
+		for thisWin in possibleWindows:
+			for thisFrame in rollWindow(qlList, thisWin):
+				lists.append(thisFrame)
+
+		#append to list and add indicies of occurrence. 
+		for thisList in lists:
+			searched = self.get_by_ql_list(ql_list=thisList, try_all_methods=True)
+			if searched is not None:
+				print(searched[0], searched[0].qlList())
+
+		return
+
+	def rollingSearch2(self, filePath, partNum, possibleWindows = [3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]):
+		'''
+		Returns the decitalas found and they're window of occurrence. 
+
+		Get the list of everything to keep track of the onsets –– only search for windows of notes 
+		and, at most, rests of length 0.25. 
+
+		outLst is the list of all decitalas with their windows of occurrence. Will require some kind
+		of summing over a range...
+		'''
+		objLst = self.getIndicesOfObjectOccurrence(filePath = filePath, partNum = partNum)
+		outLst = []
+		frames = []
+
+		for thisWin in possibleWindows:
+			for thisFrame in rollWindow(lst = objLst, window = thisWin):
+				frames.append(thisFrame)
+
+		for thisFrame in frames:
+			'''
+			With thisFrame, I have all of the data I need stored! 
+			'''
+			asQl = []
+			for thisObj, thisRange in thisFrame:
+				if thisObj.isRest:
+					if thisObj.quarterLength == 0.25:
+						asQl.append(thisObj)
+					else:
+						pass		
+				asQl.append(thisObj.quarterLength)
+
+			searched = self.get_by_ql_list(ql_list = asQl, try_all_methods=True)
+			if searched is not None:
+				off1 = thisFrame[0][0]
+				off2 = thisFrame[-1][0]
+
+				outLst.append((searched, (off1.offset, off2.offset + off2.quarterLength)))
+				#outLst.append((searched, (thisFrame[0][0].offset, thisFrame[0][-1].offset))) #SUM OVER FOR RANGE!#
+
+			#if thisFrame has a rest that isn't 0.25: skip, else: keep going. 
+		#return frames
+
+		return outLst
+
+#t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
+path_to_data = '/Users/lukepoeppel/decitala_v.2.0/data'
+liturgiePath = '/Users/lukepoeppel/Dropbox/Luke_Myke/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl'
+sept_haikai = '/Users/lukepoeppel/Desktop/Sept_Haikai/1_Introduction.xml'
+
+#good = []
+#i = 0
+#for thisTala in t.rollingSearch2(filePath = sept_haikai, partNum = 0):
+	#print(thisTala)
+#
+#new = [y for x, y in good]
+#new.sort()
+
+
+#t.partitionSearch(filePath = liturgiePath, pathToWrite = path_to_data, part = 3, partitions = [6, 7, 4], showScore = True)
+
+
 
 #print(t.search_for_path(path_from_root = [0.5, 0.5, 1.0]))
 
 #for this_tala in t.filtered_data:
 #	print(this_tala, this_tala.num_onsets)#, this_tala.c_score())
+
+
+
+#for this in t.get_by_num_onsets(num_onsets = 3):
+	#print(this, this.ql_array())
+#print(f._searchWithAddedValuesRemoved([1.0, 0.25, 1.0, 0.25, 1.0, 0.5, 0.75, 0.5]))
+'''
+print(f.getByQlList([1.0, 1.0, 1.0, 0.5, 1.5, 1.0, 1.5])) #Simhavikrama
+print(f.getByQlList([1.5, 1.0, 1.5, 0.5, 1.0, 1.0, 1.0], tryAllMethods = True)) #Simhavikrama retrograde
+print(f.getByQlList([0.5, 1.0, 1.0, 1.5, 1.0, 1.0, 1.0, 0.5])) #Niccanka 
+print(f.getByQlList([0.5, 1.0, 1.0, 1.0, 1.5, 1.0, 1.0, 0.5])) #Niccanka 
+print(f.getByQlList([1.5, 1.0, 1.5])) #Vijaya 
+print(f.getByQlList([1.0, 0.25, 0.25, 0.375])) #Gajajhampa
+print(f.getByQlList([0.375, 0.25, 0.25, 1.0], tryAllMethods = True)) #Gajajhampa retrograde
+print(f.getByQlList([0.125, 0.125, 0.125, 0.125, 0.25, 0.25, 0.375])) #Bhagna
+print(f.getByQlList([0.375, 0.375, 0.5, 0.5], tryAllMethods = True)) #Sama retrograde
+print(f.getByQlList([1.0, 1.0, 1.0, 0.5, 0.75, 0.5])) #varied ragavardhana
+print(f.getByQlList([0.5, 0.5, 1.0, 1.0])) #Kudukka
+print(f.getByQlList([0.5, 1.0, 0.25, 0.25])) #Rajavidyadhara
+print(f.getByQlList([0.25, 0.25, 1.0, 0.5])) #Rajavidyadhara retrograde
+print(f.getByQlList([0.5, 0.5, 1.0])) #Dvitiya
+print(f.getByQlList([0.125, 0.125, 0.125, 0.125, 0.25, 0.25, 0.375]))
+print(f.getByQlList([1.0, 0.5, 1.5, 1.5, 1.5, 1.0, 1.5, 0.25, 0.25, 0.25]))
+print(f.getByQlList([0.75, 1.25, 1.25, 1.75, 1.25, 1.25, 1.25, 0.75]))
+
+#objects = f.getIndicesOfObjectOccurrence(filePath = liturgiePath, partNum = 3)
+#print([x.quarterLength for x, y in objects])
+
+good = []
+i = 0
+for thisTala in f.rollingSearch2(filePath = sept_haikai, partNum = 0):
+	good.append(thisTala)
+
+new = [y for x, y in good]
+new.sort()
+
+#for this in getAllEndOverlappingIndices(lst = new, i = 0, out = []):
+	#print(this)
+
+for thisTala in f.filteredData:
+	print(thisTala.qlList())
+	print(getAddedValues(qlList = thisTala.qlList()))
+	print('')
+
+Figure this out soon! If the fragment starts with 1.0... what do you do...? This may become a 
+problem. Possible temporary solution: if first value is 1.0, try running the qlList itself without 
+conversion, then try with conversion. 
+
+print(successiveRatioList([1.0, 0.25, 1.5]))
+
+#indices = [(0.0, 2.0), (0.0, 4.0), (2.5, 4.5), (2.0, 5.75), (2.0, 4.0), (6.0, 7.25), (4.0, 5.5)]
+#indices = [(0.0, 2.0), (0.0, 4.0), (2.5, 4.5), (2.0, 5.75), (2.0, 4.0), (6.0, 7.25), (4.0, 5.5), \
+#(8.0, 9.5), (9.5, 10.75), (9.75, 10.0)]
+
+indices_pre = f.getIndicesOfObjectOccurrence(filePath = sept_haikai, partNum = 0)
+indices = [y for x, y in indices_pre]
+print(indices)
+print(len(indices_pre))
+indices = [y for x, y in indices_pre]
+indices.sort()
+print(len(indices))
+
+#for this in f._getStrippedObjectList(f = liturgiePath, p = 3):
+	#print(this)
+
+print(f.getIndicesOfObjectOccurrence(filePath = liturgiePath, partNum = 3))
+
+Things to consider: 
+- number of talas
+- complexity of the talas 
+- distance between the occurrences
+
+You can use the bisect method to insert options inPlace. 
+#f.rollingSearch(filePath = sept_haikai, partNum = 0)
+
+print(f.rollingSearch(filePath = subtilite, partNum = 0))
+
+for i in range(2):
+	print(i)
+	f.rollingSearch(filePath = sept_haikai, partNum = i)
+	print('------------------------------------------------')
+
+print(f._getStrippedQlListOfStream(filePath = sept_haikai, part = 0))
+
+This is a great test case, because it has an added value inherant to the rhythm! 
+print(f._searchWithAddedValuesRemoved([1.0, 1.0, 0.25, 1.0, 0.5, 0.75, 0.5]))
+print(f.getByQlList(qlList = [4.0, 1.0, 6.0], tryAllMethods = False))
+print(f.getByQlList(qlList = successiveRatioList([4.0, 1.0, 6.0])))
+
+Talas from Sept Haikai
+1.) [1.5, 1.0, 1.5] = 'Vijaya Retrograde'
+2.) [0.375, 0.375 ,0.5, 0.5] = 'Sama Retrograde'
+3.) [1.5, 1.0, 1.5, 0.5, 1.0, 1.0, 1.0] = 'Simhavikrama Retrograde'
+4.) [0.375, 0.25, 0.25, 1.0] = 'Gajajampa Retrograde'
+5.) [0.5, 1.5, 1.5, 1.5, 1.0, 1.0, 1.0] = Candrakala Retrograde 
+6.) [1.0, 0.5, 0.375, 0.25] = Laksmica Retrograde
+'''
 
 ############################### ANALYSIS ##################################
 def binary_search(lst, search_val):
@@ -1403,6 +1888,60 @@ for this in tqdm.tqdm(get_all_end_overlapping_indices(lst = indices, i = 0, out 
 	print(this)
 '''
 
+###############################################################################
+#---------------------------------------------------------------------------------------------------
+class Test(unittest.TestCase):
+	def runTest(self):
+		pass
+	
+	def testDecitalaName(self):
+		kumudaName = Decitala('Vanamali').name
+		self.assertEqual(kumudaName, '29_Vanamali')
+		
+	def testCarnaticStrings(self):
+		carnaticStrings = []
+		for i in range(21, 24):
+			carnaticStrings.append([Decitala.get_by_id(i).carnatic_string])
+			
+		expectedStrings = [['| S Sx'], ['o o | | | o o | S'], ['S S S | Sx']]
+		self.assertEqual(carnaticStrings, expectedStrings)
+	
+	def testidNum(self):
+		'''
+		This generates all decitalas with prime id num below 20.
+		'''
+		talaList = []
+		for num in range(2,18):
+			if all(num%i!=0 for i in range(2,num)):
+				talaList.append(Decitala.get_by_id(num).name)
+		
+		expectedTalas = ['2_Dvitiya', '3_Tritiya', '5_Pancama', '7_Darpana', '11_Kandarpa', '13_Ranga', '17_Yatilagna']
+		
+		self.assertEqual(talaList, expectedTalas)
+		
+	def testConversionA(self):
+		'''
+		List to Carnatic
+		'''
+		danseQlList = [0.25, 0.375, 0.5, 0.25, 0.5, 1.0, 0.5, 1.5, 0.375, 1.0]
+		
+		converted = ql_array_to_carnatic_string(ql_array=danseQlList)
+		expectedConversion = 'o ox | o | S | Sx ox S'
+		
+		self.assertEqual(converted, expectedConversion)
+	
+	def testConversionB(self):
+		'''
+		Carnatic to List
+		'''
+		abime = '| | o |x | ox o Sx'
+		
+		converted = carnatic_string_to_ql_array(abime)
+		expected = [0.5, 0.5, 0.25, 0.75, 0.5, 0.375, 0.25, 1.5]
+		
+		self.assertEqual(converted, expected)
+
 if __name__ == '__main__':
 	import doctest
-	#doctest.testmod()
+	doctest.testmod()
+	#unittest.main()
