@@ -304,7 +304,7 @@ def graphPitchContour(streamsIn = []):
 	])
 
 	x, y = data.T
-	#plt.plot(x, y, 'o-')
-	#plt.show()
+	plt.plot(x, y, 'o-')
+	plt.show()
 
 graphPitchContour()
