@@ -1668,7 +1668,7 @@ for thisTala in t.rolling_search(path = sept_haikai, part_num = 0):
 	decitala_onset_ranges.append(thisTala)
 	#print(thisTala)
 
-#print(decitala_onset_ranges)
+print(decitala_onset_ranges)
 
 ############################### ANALYSIS ##################################
 def binary_search(lst, search_val):
@@ -1724,22 +1724,37 @@ def get_all_end_overlapping_indices(lst, i, out):
 			return 
 
 		n = i + 1
-
 		while n < len(list_in) and r > list_in[n][0]:
 			n += 1
 		_get_all_end_overlapping_indices_helper(list_in, n, out)
-		r = list_in[i][1]
 
+		r = list_in[i][1]
 		n = i + 1
+
 		while n < len(list_in) and r > list_in[n][0]:
 			n += 1
 		_get_all_end_overlapping_indices_helper(list_in, n, out + [list_in[i]])
 
-	_get_all_end_overlapping_indices_helper.count = 0
-	lst.sort()
 	_get_all_end_overlapping_indices_helper(list_in = lst, i = 0, out = [])
 	
 	return all_possibilities
+
+indices = [(0.0, 2.0), (0.0, 4.0), (2.5, 4.5), (2.0, 5.75), (2.0, 4.0), (6.0, 7.25), (4.0, 5.5)]
+indices.sort()
+
+for this in tqdm.tqdm(get_all_end_overlapping_indices(lst = indices, i = 0, out = [])):
+	print(this)
+
+
+#print(sept_haikai_indices)
+
+#print(get_all_end_overlapping_indices(lst = indices))
+#print(len(sept_haikai_indices))
+#sept_haikai_indices.sort()
+#print(sept_haikai_indices)
+
+#pre = datetime.now()
+#print(pre)
 
 def _isInRange(num, tupleRange) -> bool:
 	'''
@@ -1803,9 +1818,10 @@ WANT:
 [(0.0, 4.0), (4.0, 5.5), (6.0, 7.25)]
 '''
 
-indices = [(0.0, 2.0), (0.0, 4.0), (2.5, 4.5), (2.0, 5.75), (2.0, 4.0), (6.0, 7.25), (4.0, 5.5)]
-indices.sort()
+#indices = [(0.0, 2.0), (0.0, 4.0), (2.5, 4.5), (2.0, 5.75), (2.0, 4.0), (6.0, 7.25), (4.0, 5.5)]
+#indices.sort()
 sept_haikai_indices = [x[1] for x in decitala_onset_ranges]
+print(sept_haikai_indices)
 
 #print(get_all_end_overlapping_indices2(lst = indices))
 #print(len(sept_haikai_indices))
@@ -1815,7 +1831,7 @@ sept_haikai_indices = [x[1] for x in decitala_onset_ranges]
 #pre = datetime.now()
 #print(pre)
 #for this in tqdm.tqdm(get_all_end_overlapping_indices(lst = indices, i = 0, out = [])):
-	#print(this)
+#	print(this)
 #post = datetime.now()
 #print(post)
 

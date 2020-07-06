@@ -21,12 +21,22 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import os
 import random 
+import re
 
 from pathlib import Path
+
+from music21 import converter
 
 birds_data_path = '/Users/lukepoeppel/decitala_v.2.0/Birds'
 
 class Bird(object):
+    """
+    Data structure for holding information about birdsongs encoded in Volume 5 of Messiaen's 
+    Traite de Rhythme, de Couleur, d'Ornithologie.
+
+    BIRDS:
+    Le_Chocard_des_Alpes
+    """
     def __init__(self, name):
         for x in Path(birds_data_path).rglob('*'):
             if x.is_dir() and x.name == name:
@@ -36,18 +46,44 @@ class Bird(object):
                         self.photo_path = x
                 
                     if x.name == 'XML':
-                        self.streams_path = x
+                        self.xml_path = x
                     
                     if x.is_file():
                         self.info_path = x
+            
+        txt = open(self.info_path, 'r').read().split('\n')
+        for line in txt:
+            s = line.split('=')
+            if 'Name' in line:
+                self.name = s[1]
+            if 'Name_Translation' in line:
+                self.name_translation = s[1]
+            if 'Binomial' in line:
+                self.binomial_name = s[1]
+            if 'Country' in line:
+                self.country = s[1]
+            if 'Region=' in line:
+                self.region = s[1]
+            if 'Region_Translation' in line:
+                self.region_translation = s[1]
+        
+        streams = []
+        for this_file in self.xml_path.iterdir():
+            streams.append(converter.parse(this_file))
+        #for this_file in os.listdir(self.xml_path):
+            #if not(this_file.startswith('.')):
+                #print(self.xml_path)
+                #streams.append(converter.parse(str(self.xml_path) + '/' + this_file))
+
+        self.streams = streams
 
     def __repr__(self):
-        return '<Chocard des Alpes (Alpine Chough)>'
+        return '<{0} ({1})>'.format(self.name, self.name_translation)
     
     @property
     def num_transcriptions(self):
         count = 0
-        for f in os.listdir(self.streams_path):
+        for f in os.listdir(self.xml_path):
             if not(f.startswith('.')):
                 count += 1
         
@@ -62,14 +98,21 @@ class Bird(object):
     
         return count
     
+    def show_transcription(self, num=0):
+        for this_stream in self.streams:
+            stream_title = this_stream.metadata.title
+
+        return self.streams[num].show()
+    
     def show_photo(self):
         photo = random.choice([x for x in os.listdir(self.photo_path) if not(x.startswith('.'))])
         this_photo_path = str(self.photo_path) + '/' + photo
         img = mpimg.imread(this_photo_path)
         plt.imshow(img)
-        plt.title('Chocard des Alpes (Alpine Chough) \n $Pyrrhocorax \: graculus$')
+        binomial_split = self.binomial_name.split()
+        plt.title('{0} ({1}) \n ${2} \: {3}$'.format(self.name, self.name_translation, binomial_split[0], binomial_split[1]))
         plt.show()
-  
+
 class Country(object):
     pass
 
