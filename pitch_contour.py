@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 ####################################################################################################
 # File:     pitch_contour.py
-# Purpose:  Tools for analyzing pitch contour in collections of found-talas. 
+# Purpose:  Tools for analyzing & graphing pitch contour in collections of found-talas. 
 # 
 # Author:   Luke Poeppel
 #
 # Location: Kent, CT 2020
 ####################################################################################################
 """
-NOTE:
-- table as follows:
+TODO:
+- elegant pitch normalization functions
+- elegant pitch contour function *as* a normalizer
+	- find the name of the term used by Marvin
 """
 import matplotlib.pyplot as plt
 import numpy as np
@@ -62,10 +64,8 @@ def lowestNoteOrChordOffset(streamIn):
 		try:
 			if this.isNote:
 				return this.offset
-				break
 			elif this.isChord:
 				return this.offset
-				break
 		except AttributeError:
 			break
 
@@ -303,8 +303,14 @@ def graphPitchContour(streamsIn = []):
 		[4.25, 84],
 	])
 
-	x, y = data.T
-	plt.plot(x, y, 'o-')
+	x_coords = [x[0] for x in data]
+	y_coords = [x[1] for x in data]
+
+	#x, y = data.T
+	plt.plot(x_coords, y_coords, 'o-')
+	plt.xlabel('Offset')
+	plt.xticks(np.arange(0, 5.0, 0.5))
+	#plt.xticks(range(min(x_coords), max(x_coords) +1))
 	plt.show()
 
 graphPitchContour()

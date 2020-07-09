@@ -578,6 +578,26 @@ class GeneralFragment(object):
 		as_time_scale = transform_to_time_scale(array = self.ql_array())
 		return get_average_c_score(array = as_time_scale)
 	
+	def nPVI(self):
+		"""
+		Normalized pairwise variability index (Low, Grabe, & Nolan, 2000)
+		"""
+		IOI = self.ql_array()
+		num_onsets = len(IOI)
+		summation = 0
+		prev = IOI[0]
+		for i in range(1, num_onsets):
+			curr = IOI[i]
+			if curr > 0 and prev > 0:
+				summation += abs(curr - prev) / ((curr + prev) / 2.0)
+			else:
+				pass
+			prev = curr
+
+		final = summation * 100 / (num_onsets - 1)
+		
+		return round(final, 6)
+	
 	def show(self):
 		if self.stream:
 			return self.stream.show() 
@@ -625,6 +645,8 @@ class Decitala(GeneralFragment):
 	0.52571
 	>>> ragavardhana.c_score()
 	12.47059
+	>>> ragavardhana.nPVI()
+	74.285714
 	>>> ragavardhana.morris_symmetry_class()
 	'VII. Stream'
 
@@ -1655,188 +1677,7 @@ class FragmentTree(NaryTree):
 
 		return fragments_found
 
-t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
-path_to_data = '/Users/lukepoeppel/decitala_v.2.0/data'
-liturgiePath = '/Users/lukepoeppel/Dropbox/Luke_Myke/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl'
-sept_haikai = '/Users/lukepoeppel/Desktop/Sept_Haikai/1_Introduction.xml'
-
-#for tala in t.search_with_added_values_removed([1.0, 0.25, 1.0, 0.25, 1.0, 0.5, 0.75, 0.5]):
-	#print(tala)
-
-decitala_onset_ranges = []
-for thisTala in t.rolling_search(path = sept_haikai, part_num = 0):
-	decitala_onset_ranges.append(thisTala)
-	#print(thisTala)
-
-print(decitala_onset_ranges)
-
-############################### ANALYSIS ##################################
-def binary_search(lst, search_val):
-	def _checkSorted(lstIn):
-		if len(lstIn) == 1:
-			return True
-		else:
-			remainder = _checkSorted(lstIn[1:])
-			return lstIn[0] <= lstIn[1] and remainder
-
-	startIndex = 0
-	endIndex = len(lst) - 1
-	found = False
-
-	if _checkSorted(lst) == False:
-		raise Exception('Input list is not sorted.')
-
-	while startIndex <= endIndex and not found:
-		midpoint = (startIndex + endIndex) // 2
-		if lst[midpoint] == search_val:
-			found = True 
-		else:
-			if lst[midpoint] > search_val:
-				endIndex = midpoint - 1
-			else:
-				startIndex = midpoint + 1
-
-	return found
-
-def get_all_end_overlapping_indices(lst, i, out):
-	"""
-	Change to make it a binary search –– this is far too slow. 
-
-	Possible paths: 
-	[(0.0, 4.0), (4.0, 5.5), (6.0, 7.25)]
-	[(0.0, 2.0), (2.5, 4.5), (6.0, 7.25)]
-	[(0.0, 2.0), (2.0, 5.75), (6.0, 7.25)]
-	[(0.0, 2.0), (2.0, 4.0), (4.0, 5.5), (6.0, 7.25)]
-
-	Eliminate the waste!
-	"""
-	all_possibilities = []
-
-	def _get_all_end_overlapping_indices_helper(list_in, i, out):
-		r = -1
-		if i == len(list_in):
-			if out:
-				if len(all_possibilities) == 0:
-					all_possibilities.append(out)
-				else:						
-					all_possibilities.append(out)
-
-			return 
-
-		n = i + 1
-		while n < len(list_in) and r > list_in[n][0]:
-			n += 1
-		_get_all_end_overlapping_indices_helper(list_in, n, out)
-
-		r = list_in[i][1]
-		n = i + 1
-
-		while n < len(list_in) and r > list_in[n][0]:
-			n += 1
-		_get_all_end_overlapping_indices_helper(list_in, n, out + [list_in[i]])
-
-	_get_all_end_overlapping_indices_helper(list_in = lst, i = 0, out = [])
-	
-	return all_possibilities
-
-indices = [(0.0, 2.0), (0.0, 4.0), (2.5, 4.5), (2.0, 5.75), (2.0, 4.0), (6.0, 7.25), (4.0, 5.5)]
-indices.sort()
-
-for this in tqdm.tqdm(get_all_end_overlapping_indices(lst = indices, i = 0, out = [])):
-	print(this)
-
-
-#print(sept_haikai_indices)
-
-#print(get_all_end_overlapping_indices(lst = indices))
-#print(len(sept_haikai_indices))
-#sept_haikai_indices.sort()
-#print(sept_haikai_indices)
-
-#pre = datetime.now()
-#print(pre)
-
-def _isInRange(num, tupleRange) -> bool:
-	'''
-	Given an input number and a tuple representing a range (i.e. from startVal to endVal), returns
-	whether or not the input number is in that range. 
-
-	>>> _isInRange(2.0, (2.0, 2.0))
-	True
-	>>> _isInRange(3.0, (2.0, 4.0))
-	True
-	>>> _isInRange(4.0, (2.0, 2.5))
-	False
-	>>> _isInRange(4.0, (3.0, 4.0))
-	True
-	'''
-	if tupleRange[0] > tupleRange[1]:
-		raise Exception('Invalid Range')
-	elif tupleRange[0] == tupleRange[1] and num == tupleRange[0]:
-		return True
-	elif tupleRange[0] == tupleRange[1] and num != tupleRange[0]:
-		return False
-	else:
-		if num > tupleRange[0] or num == tupleRange[0]:
-			if num < tupleRange[1] or num == tupleRange[1]:
-				return True
-			else:
-				return False
-		else:
-			return False
-
-def get_all_end_overlapping_indices2(lst):
-	"""
-	The recursive solution above is confusing and extremely slow. I need a better solution.
-	Operates under the assumption that the second value of each tuple is greater than the first
-	value. 
-	"""
-	#all_possibilities = []
-	#i = 0
-
-	'''
-	while i < len(lst):
-		curr_set = []
-		j = 0
-		while j < len(lst):
-			if j == i:
-				pass
-			else:
-				...
-			j += 1
-
-		i += 1
-		all_possibilities.append(curr_set)
-	'''
-
-'''
-WANT:
-[(0.0, 2.0), (4.0, 5.5), (6.0, 7.25)]
-[(0.0, 2.0), (2.5, 4.5), (6.0, 7.25)]
-[(0.0, 2.0), (2.0, 5.75), (6.0, 7.25)]
-[(0.0, 2.0), (2.0, 4.0), (4.0, 5.5), (6.0, 7.25)]
-[(0.0, 4.0), (4.0, 5.5), (6.0, 7.25)]
-'''
-
-#indices = [(0.0, 2.0), (0.0, 4.0), (2.5, 4.5), (2.0, 5.75), (2.0, 4.0), (6.0, 7.25), (4.0, 5.5)]
-#indices.sort()
-sept_haikai_indices = [x[1] for x in decitala_onset_ranges]
-print(sept_haikai_indices)
-
-#print(get_all_end_overlapping_indices2(lst = indices))
-#print(len(sept_haikai_indices))
-#sept_haikai_indices.sort()
-#print(sept_haikai_indices)
-
-#pre = datetime.now()
-#print(pre)
-#for this in tqdm.tqdm(get_all_end_overlapping_indices(lst = indices, i = 0, out = [])):
-#	print(this)
-#post = datetime.now()
-#print(post)
-
 ###############################################################################
-#---------------------------------------------------------------------------------------------------
 class Test(unittest.TestCase):
 	def runTest(self):
 		pass
