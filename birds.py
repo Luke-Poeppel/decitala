@@ -8,6 +8,8 @@
 # Location: Kent, CT 2020
 ####################################################################################################
 """
+Note: use my ``python3 jpg2png.py <PATH> remove/keep`` tool after scraping for some pics! (It's in the
+home directory).
 TODO:
 - bird.regions
 - bird.num_transcriptions
@@ -36,6 +38,7 @@ class Bird(object):
 
     BIRDS:
     Le_Chocard_des_Alpes
+    Le_Grand_Corbeau
     """
     def __init__(self, name):
         for x in Path(birds_data_path).rglob('*'):
@@ -54,7 +57,7 @@ class Bird(object):
         txt = open(self.info_path, 'r').read().split('\n')
         for line in txt:
             s = line.split('=')
-            if 'Name' in line:
+            if 'Name=' in line:
                 self.name = s[1]
             if 'Name_Translation' in line:
                 self.name_translation = s[1]
@@ -113,8 +116,19 @@ class Bird(object):
         plt.title('{0} ({1}) \n ${2} \: {3}$'.format(self.name, self.name_translation, binomial_split[0], binomial_split[1]))
         plt.show()
 
+chocard = Bird('Le_Chocard_des_Alpes')
+#chocard.show_photo()
+
+from playsound import playsound
+bier = '/Users/lukepoeppel/Projects/psynet/psynet/demos/fixed-singing-experiment/static/bier.wav'
+
+playsound(bier)
+
 class Country(object):
     pass
 
 class Region(Country):
     pass
+
+
+
