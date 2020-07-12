@@ -54,7 +54,6 @@ def _check_tuple_in_tuple_range(tup1, tup2):
 #function that takes in (0.0, 4.0) and returns [(<music21.note.Note F>, (0.0, 1.5)), (<music21.note.Note F>, (1.5, 2.5)), (<music21.note.Note F>, (2.5, 4.0))]
 # Likely just the midi tones, n.pitch.ps or n.pitch.midi; ps accomadates floats which I don't really need here.
 
-
 def pitch_info_from_onset_range(onset_range, data):
     note_data = []
     for this_object in data:

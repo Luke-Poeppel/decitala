@@ -23,12 +23,13 @@ for thisTala in t.rolling_search(path = sept_haikai, part_num = 0):
 	sept_haikai_onset_ranges.append(list(thisTala))
 
 sorted_sept_haikai_onset_ranges = sorted(sept_haikai_onset_ranges, key = lambda x: x[1][0])
+print([x[1] for x in sorted_sept_haikai_onset_ranges])
 
 note_data = t.get_indices_of_object_occurrence(sept_haikai, 0)
-for x in sorted_sept_haikai_onset_ranges:
-    print(x)
+#for x in sorted_sept_haikai_onset_ranges:
+ #   print(x)
 
-print(note_data)
+#print(note_data)
 
 #partitioning is a bit annoying and complicated –– do it by hand, for now.
 sept_partition_1 = sorted_sept_haikai_onset_ranges[0:12]

@@ -14,6 +14,8 @@ TODO:
 - The data I'm dealing with generally consist of a tala *and* its indices. If I move over to 
 SQLite, this isn't a problem, but, right now, it is.
 '''
+import copy
+import itertools
 import matplotlib.pyplot as plt
 
 ###################### Code Courtesy of M. Raynard ######################
@@ -73,6 +75,7 @@ def get_all_end_overlap_tups(tup_lst):
     adj_mat = adj_mat_from_tup_list(tup_lst)
     return [tup_lst[i] for i in get_longest_path(adj_mat, sorted_v)]
 
+####################################################################################################
 def get_pareto_optimal_longest_paths(tup_lst):
     sources = {
         (a, b)
@@ -118,26 +121,118 @@ def get_pareto_optimal_longest_paths(tup_lst):
     
     return pareto_optimal_paths
 
-#for now, just do it by hand. 
-def partition_onset_list(onset_list):
-    if len(onset_list) < 15:
-        return onset_list
-    else:
-        partitioned = []
-        i = 0
-        while i < len(onset_list):
-            #increment by the number of element included in the list
-            curr_partition = []
-            i += 1
+####################################################################################################
+'''
+There's a lot of unnecessary memory loss because of repeated paths. What we need to do is split
+a tup_lst into segments that are, at maximum, end-overlapping and less than 15 tuples long. Example data:
+'''
+sept_haikai_data = [(0.0, 4.0), (2.5, 4.75), (4.0, 5.25), (4.0, 5.75), (5.75, 9.75), (5.75, 13.25), (8.25, 11.25), (8.25, 13.25), (9.75, 12.25), (10.25, 13.25), (13.25, 14.5), (13.25, 15.0), (15.0, 19.0), (19.0, 19.875), (19.0, 20.875), (19.375, 20.875), (20.875, 22.125), (20.875, 22.625), (21.625, 23.125), (22.625, 30.625), (23.125, 27.625), (24.625, 29.625), (26.125, 29.625), (26.125, 30.625), (27.625, 30.625), (30.625, 31.5), (30.625, 32.5), (31.0, 32.5), (31.0, 33.5), (31.5, 34.0), (32.5, 34.625), (34.0, 35.0), (34.625, 35.875), (34.625, 36.375), (35.375, 37.125), (35.875, 37.125), (36.375, 37.625), (36.375, 38.125), (38.125, 39.0), (38.125, 40.0), (38.5, 40.0), (40.0, 41.25), (40.0, 41.75), (41.75, 45.75), (45.75, 46.625), (45.75, 47.625), (46.125, 47.625), (47.625, 48.875), (47.625, 49.375), (49.375, 53.375), (49.375, 56.875), (51.875, 54.875), (51.875, 56.875), (53.375, 55.875), (53.875, 56.875), (56.875, 58.125), (56.875, 58.625), (58.625, 62.625), (61.125, 63.375), (62.625, 63.875), (62.625, 64.375)]
 
-            #partitioned.append(curr_partition)
-            #i += len(curr_partition)
+#sept_haikai_data = [(15.0, 19.0), (19.0, 19.875), (19.0, 20.875), (19.375, 20.875), (20.875, 22.125), (20.875, 22.625), (21.625, 23.125), (22.625, 30.625), (23.125, 27.625), (24.625, 29.625), (26.125, 29.625), (26.125, 30.625), (27.625, 30.625), (30.625, 31.5), (30.625, 32.5), (31.0, 32.5), (31.0, 33.5), (31.5, 34.0), (32.5, 34.625), (34.0, 35.0), (34.625, 35.875), (34.625, 36.375), (35.375, 37.125), (35.875, 37.125), (36.375, 37.625), (36.375, 38.125), (38.125, 39.0), (38.125, 40.0), (38.5, 40.0), (40.0, 41.25), (40.0, 41.75), (41.75, 45.75), (45.75, 46.625), (45.75, 47.625), (46.125, 47.625), (47.625, 48.875), (47.625, 49.375), (49.375, 53.375), (49.375, 56.875), (51.875, 54.875), (51.875, 56.875), (53.375, 55.875), (53.875, 56.875), (56.875, 58.125), (56.875, 58.625), (58.625, 62.625), (61.125, 63.375), (62.625, 63.875), (62.625, 64.375)]
+#new = [x for x in sept_haikai_data if sept_haikai_data.index(x) <= 15 and sept_haikai_data.index(x) >= 10 and x[1] <= sept_haikai_data[sept_haikai_data.index(x) + 1][0]]
+
+def partition_onset_list(onset_list):
+    data_length = len(sept_haikai_data)
+    num_partitions = (data_length // 15)  #somewhat arbitrary, just fast.
+    partitions = []
+
+    def max_end_overlap(tup1, tup2):
+        if tup1[1] == tup2[0]:
+            return True
+        elif tup1[1] < tup2[0]:
+            return True
+        else:
+            return False
+
+    copied = copy.copy(sept_haikai_data)
+    partitions = []
+    j = 0
+    while j < num_partitions:
+        i = 0
+        first_partition = []
+        while i < len(copied):
+            curr_range = copied[i]
+            next_range = copied[i + 1]
+
+            if max_end_overlap(curr_range, next_range) == True:
+                if len(first_partition) > 10 and len(first_partition) <= 20:
+                    first_partition.append(curr_range)
+                    break
+                else:
+                    first_partition.append(curr_range)
+            else:
+                first_partition.append(curr_range)
+            
+            i += 1
+        partitions.append(first_partition)
+        end_index = copied.index(first_partition[-1])
+        copied = copied[end_index + 1:]
+        j += 1
+
+    partitions.append(copied)
+
+    return partitions
+
+#for x in partition_onset_list(sept_haikai_data):
+#    print(x)
+
+#################### OLDY BUT GOOD ######################
+'''
+i = 0
+first_partition = []
+while i < len(sept_haikai_data):
+    curr_range = sept_haikai_data[i]
+    next_range = sept_haikai_data[i + 1]
+
+    if max_end_overlap(curr_range, next_range) == True:
+        if len(first_partition) > 10 and len(first_partition) <= 20:
+            first_partition.append(curr_range)
+            break
+        else:
+            first_partition.append(curr_range)
+    else:
+        first_partition.append(curr_range)
+    
+    i += 1
+'''
+#print(first_partition)
+
+
+'''
+i = 0
+while i < num_partitions:
+    this_partition = []
+    j = 0
+    while j < len(sept_haikai_data) - 1:
+        curr_range = sept_haikai_data[j]
+        next_range = sept_haikai_data[j + 1]
+
+        #just write an end-overlap checker, LOL
+
+        #if len(this_partition) > 10 and len(this_partition) < 16
+        
+        if max_end_overlap(curr_range, next_range) == False:
+            this_partition.append(curr_range)
+            j += 1
+        else:
+            j += 1
+
+    partitions.insert(i, this_partition)
+    i += 1
+
+for x in partitions:
+    print(x)
+'''
+
 
 
 tup_lst = [
     (0.0, 2.0), (0.0, 4.0), (2.5, 4.5), (2.0, 5.75),
     (2.0, 4.0), (6.0, 7.25), (4.0, 5.5)
 ]
+
+####################################################################################################
+
 
 #print(partition_onset_list(onset_list=tup_lst))
 
@@ -146,6 +241,9 @@ one thing that would make this faster is to first search through and find any ra
 this could significantly shorten this process.
 '''
 
+
+
+'''
 #import matplotlib.pyplot as plt
 import itertools
 import numpy as np
@@ -162,12 +260,19 @@ for thisTala in t.rolling_search(path = sept_haikai, part_num = 0):
 	sept_haikai_onset_ranges.append(list(thisTala))
 
 sorted_sept_haikai_onset_ranges = sorted(sept_haikai_onset_ranges, key = lambda x: x[1][0])
-#partitioning is a bit annoying and complicated –– do it by hand, for now.
-sept_partition_1 = sorted_sept_haikai_onset_ranges[0:12]
 
-onset_data = []
-for x in sept_partition_1:
-    onset_data.append(x[1])
+just_onsets = [x[1] for x in sorted_sept_haikai_onset_ranges]
+#print(just_onsets[0:15])
+for x in get_pareto_optimal_longest_paths(just_onsets[0:15]):
+    print(x)
+'''
+
+#partitioning is a bit annoying and complicated –– do it by hand, for now.
+#sept_partition_1 = sorted_sept_haikai_onset_ranges[0:12]
+
+#onset_data = []
+#for x in sept_partition_1:
+#    onset_data.append(x[1])
 
 #for i, x in enumerate(get_pareto_optimal_longest_paths(onset_data)):
 #    print(i, x)
