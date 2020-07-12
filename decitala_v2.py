@@ -1502,13 +1502,15 @@ class FragmentTree(NaryTree):
 		'''
 		Returns the quarter length list of an input stream (with ties removed), but also includes 
 		spaces for rests! 
+
+		NOTE: this used to be .iter.notesAndRest, but I took it away, for now, to avoid complications.
 		'''
 		score = converter.parse(f)
 		partIn = score.parts[p]
 		objLst = []
 
 		stripped = partIn.stripTies(retainContainers = True)
-		for thisObj in stripped.recurse().iter.notesAndRests:
+		for thisObj in stripped.recurse().iter.notes: 
 			objLst.append(thisObj)
 
 		return objLst
@@ -1679,7 +1681,13 @@ class FragmentTree(NaryTree):
 
 		return fragments_found
 
-#t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
+t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
+c = converter.parse('/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml')
+sept = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
+
+new = t.get_indices_of_object_occurrence(sept, 0)
+#print(new)
+
 #print(t.get_by_ql_list([1.0, 1.0, 1.0, 0.5, 0.75, 0.5]))
 #print(Decitala.get_by_id(21).ql_array())
 #print(Decitala.get_by_id(21).successive_ratio_list())
