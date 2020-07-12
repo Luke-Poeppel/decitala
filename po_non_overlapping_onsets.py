@@ -11,6 +11,8 @@
 '''
 TODO:
 - Write a nice method for visualizing the various possibilities for overlaps. 
+- The data I'm dealing with generally consist of a tala *and* its indices. If I move over to 
+SQLite, this isn't a problem, but, right now, it is.
 '''
 import matplotlib.pyplot as plt
 
@@ -101,9 +103,6 @@ def get_pareto_optimal_longest_paths(tup_lst):
     def print_path_rec(node, path):
         if node in sinks:
             solutions.append([path + [node]])
-            print(len(solutions))
-            if len(solutions) == 100:
-                print('just passed...')
         else:
             for successor in successors[node]:
                 print_path_rec(successor, path + [node])
@@ -114,20 +113,72 @@ def get_pareto_optimal_longest_paths(tup_lst):
     flatten = lambda l: [item for sublist in l for item in sublist]
     flattened = flatten(solutions)
 
-    return flattened
+    flattened.sort()
+    pareto_optimal_paths = list(flattened for flattened, _ in itertools.groupby(flattened))
+    
+    return pareto_optimal_paths
 
-'''
+#for now, just do it by hand. 
+def partition_onset_list(onset_list):
+    if len(onset_list) < 15:
+        return onset_list
+    else:
+        partitioned = []
+        i = 0
+        while i < len(onset_list):
+            #increment by the number of element included in the list
+            curr_partition = []
+            i += 1
+
+            #partitioned.append(curr_partition)
+            #i += len(curr_partition)
+
+
 tup_lst = [
     (0.0, 2.0), (0.0, 4.0), (2.5, 4.5), (2.0, 5.75),
     (2.0, 4.0), (6.0, 7.25), (4.0, 5.5)
 ]
-'''
+
+#print(partition_onset_list(onset_list=tup_lst))
 
 '''
 one thing that would make this faster is to first search through and find any ranges that are non overlapping with *all* of the rest
 this could significantly shorten this process.
 '''
 
+#import matplotlib.pyplot as plt
+import itertools
+import numpy as np
 
+from decitala_v2 import Decitala, FragmentTree
 
+decitala_path = '/Users/lukepoeppel/decitala_v.2.0/Decitalas'
+sept_haikai = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
 
+t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
+
+sept_haikai_onset_ranges = []
+for thisTala in t.rolling_search(path = sept_haikai, part_num = 0):
+	sept_haikai_onset_ranges.append(list(thisTala))
+
+sorted_sept_haikai_onset_ranges = sorted(sept_haikai_onset_ranges, key = lambda x: x[1][0])
+#partitioning is a bit annoying and complicated –– do it by hand, for now.
+sept_partition_1 = sorted_sept_haikai_onset_ranges[0:12]
+
+onset_data = []
+for x in sept_partition_1:
+    onset_data.append(x[1])
+
+#for i, x in enumerate(get_pareto_optimal_longest_paths(onset_data)):
+#    print(i, x)
+
+'''
+all_pre = get_pareto_optimal_longest_paths(onset_data)
+
+all_pre.sort()
+all_post = list(all_pre for all_pre, _ in itertools.groupby(all_pre))
+
+for x in all_post:
+    print(x)
+
+'''

@@ -998,7 +998,7 @@ class NaryTree(object):
 		A Node object stores an item and references its parent and children. In an nary tree, a parent
 		may have any arbitrary number of children, but each child has only 1 parent. 
 		"""
-		def __init__(self, value, name = None):
+		def __init__(self, value, name = None, **kwargs):
 			self.value = value
 			self.name = name
 			self.parent = None
@@ -1427,9 +1427,11 @@ class FragmentTree(NaryTree):
 						#ADDED VALUE PERMUTATIONS
 						return None	
 					else:
-						return retrograde_ratio_search, '(retrograde)'
+						ratio = _ratio(retrograde_ratio_search.ql_array(), 0)
+						return (retrograde_ratio_search, ('retrograde', ratio))
 				else:
-					return ratio_search, '(ratio)'
+					ratio = _ratio(ratio_search.ql_array(), 0)
+					return (ratio_search, ('ratio', ratio))
 
 		if self.rep_type == 'difference':
 			if not (try_all_methods):
@@ -1677,6 +1679,12 @@ class FragmentTree(NaryTree):
 
 		return fragments_found
 
+#t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
+#print(t.get_by_ql_list([1.0, 1.0, 1.0, 0.5, 0.75, 0.5]))
+#print(Decitala.get_by_id(21).ql_array())
+#print(Decitala.get_by_id(21).successive_ratio_list())
+#print(_ratio(Decitala.get_by_id(21).ql_array(), 0))
+
 ###############################################################################
 class Test(unittest.TestCase):
 	def runTest(self):
@@ -1691,7 +1699,7 @@ class Test(unittest.TestCase):
 		for i in range(21, 24):
 			carnaticStrings.append([Decitala.get_by_id(i).carnatic_string])
 			
-		expectedStrings = [['| S Sx'], ['o o | | | o o | S'], ['S S S | Sx']]
+		expectedStrings = [['| S Sc'], ['o o | | | o o | S'], ['S S S | Sc']]
 		self.assertEqual(carnaticStrings, expectedStrings)
 	
 	def testidNum(self):
@@ -1708,26 +1716,22 @@ class Test(unittest.TestCase):
 		self.assertEqual(talaList, expectedTalas)
 		
 	def testConversionA(self):
-		'''
-		List to Carnatic
-		'''
 		danseQlList = [0.25, 0.375, 0.5, 0.25, 0.5, 1.0, 0.5, 1.5, 0.375, 1.0]
 		
 		converted = ql_array_to_carnatic_string(ql_array=danseQlList)
-		expectedConversion = 'o ox | o | S | Sx ox S'
+		expectedConversion = 'o oc | o | S | Sc oc S'
 		
 		self.assertEqual(converted, expectedConversion)
 	
+	'''
 	def testConversionB(self):
-		'''
-		Carnatic to List
-		'''
-		abime = '| | o |x | ox o Sx'
+		abime = '| | o |c | oc o Sc'
 		
 		converted = carnatic_string_to_ql_array(abime)
 		expected = [0.5, 0.5, 0.25, 0.75, 0.5, 0.375, 0.25, 1.5]
 		
 		self.assertEqual(converted, expected)
+	'''
 
 if __name__ == '__main__':
 	import doctest

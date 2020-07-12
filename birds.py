@@ -116,13 +116,8 @@ class Bird(object):
         plt.title('{0} ({1}) \n ${2} \: {3}$'.format(self.name, self.name_translation, binomial_split[0], binomial_split[1]))
         plt.show()
 
-chocard = Bird('Le_Chocard_des_Alpes')
-#chocard.show_photo()
-
-from playsound import playsound
-bier = '/Users/lukepoeppel/Projects/psynet/psynet/demos/fixed-singing-experiment/static/bier.wav'
-
-playsound(bier)
+chocard = Bird('Le_Grand_Corbeau')
+chocard.show_photo()
 
 class Country(object):
     pass
