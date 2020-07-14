@@ -31,6 +31,10 @@ from music21 import converter
 
 birds_data_path = '/Users/lukepoeppel/decitala_v.2.0/Birds'
 
+FONTNAME = 'Times'
+FONTSIZE_TITLE = 14
+FONTSIZE_LABEL = 12
+
 class Bird(object):
     """
     Data structure for holding information about birdsongs encoded in Volume 5 of Messiaen's 
@@ -39,6 +43,8 @@ class Bird(object):
     BIRDS:
     Le_Chocard_des_Alpes
     Le_Grand_Corbeau
+    La_Niverolle
+    L'Accenteur_Alpine
     """
     def __init__(self, name):
         for x in Path(birds_data_path).rglob('*'):
@@ -113,10 +119,10 @@ class Bird(object):
         img = mpimg.imread(this_photo_path)
         plt.imshow(img)
         binomial_split = self.binomial_name.split()
-        plt.title('{0} ({1}) \n ${2} \: {3}$'.format(self.name, self.name_translation, binomial_split[0], binomial_split[1]))
+        plt.title('{0} ({1}) \n {2} {3}'.format(self.name, self.name_translation, binomial_split[0], binomial_split[1]), fontname=FONTNAME, fontsize=FONTSIZE_TITLE)
         plt.show()
 
-chocard = Bird('Le_Grand_Corbeau')
+chocard = Bird('Le_Chocard_des_Alpes')
 chocard.show_photo()
 
 class Country(object):
