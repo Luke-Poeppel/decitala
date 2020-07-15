@@ -19,6 +19,7 @@ TODO:
 	- find the name of the term used by Marvin
 - average pitch contour
 - plot by onset_num or by offset indexed at 0?  
+- another more discrete method of plotting pitch contour is just Up/Down! 
 """
 import copy
 import matplotlib.pyplot as plt

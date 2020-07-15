@@ -76,6 +76,7 @@ def get_all_end_overlap_tups(tup_lst):
     return [tup_lst[i] for i in get_longest_path(adj_mat, sorted_v)]
 
 ####################################################################################################
+"""
 def get_pareto_optimal_longest_paths(tup_lst):
     sources = {
         (a, b)
@@ -120,11 +121,74 @@ def get_pareto_optimal_longest_paths(tup_lst):
     pareto_optimal_paths = list(flattened for flattened, _ in itertools.groupby(flattened))
     
     return pareto_optimal_paths
+"""
+####################################################################################################
+"""
+The last few lines of this are really stupid; I just couldn't figure out the solution today. 
+Something is different about hashing the list of tuples such that it works for the code above
+but not the code when all the data is included. If you make the switch, sources and sinks 
+are fine; the problem begins with min_successor, so it's probably just a coding error. 
+"""
+def get_pareto_optimal_longest_paths(tup_lst_in):
+    tup_lst = [x[1] for x in tup_lst_in]
+    sources = {
+        (a, b)
+        for (a, b) in tup_lst
+        if not any(d <= a for (c, d) in tup_lst)
+    } 
+
+    sinks = {
+        (a, b)
+        for (a, b) in tup_lst
+        if not any(b <= c for (c, d) in tup_lst)
+    }
+
+    min_successor = {
+        (a, b): min(d for c, d in tup_lst if c >= b)
+        for (a, b) in set(tup_lst) - sinks
+    }
+
+    successors = {
+        (a, b): [
+            (c, d)
+            for (c, d) in tup_lst
+            if b <= c <= d and c < min_successor[(a, b)]
+        ] for (a, b) in tup_lst
+    }
+
+    solutions = []
+    def print_path_rec(node, path):
+        if node in sinks:
+            solutions.append([path + [node]])
+        else:
+            for successor in successors[node]:
+                print_path_rec(successor, path + [node])
+
+    for source in sources:
+        print_path_rec(source, [])
+
+    flatten = lambda l: [item for sublist in l for item in sublist]
+    flattened = flatten(solutions)
+
+    flattened.sort()
+    pareto_optimal_paths = list(flattened for flattened, _ in itertools.groupby(flattened))
+
+    stupid_out = []
+    for this_path in pareto_optimal_paths:
+        new_path = []
+        for this_range in this_path:
+            for this_data in tup_lst_in:
+                if this_range == this_data[-1]:
+                    new_path.append([this_data[0], this_range])
+                    continue
+        stupid_out.append(new_path)
+
+    return stupid_out
 
 ####################################################################################################
 '''
 There's a lot of unnecessary memory loss because of repeated paths. What we need to do is split
-a tup_lst into segments that are, at maximum, end-overlapping and less than 15 tuples long. Example data:
+a tup_lst into segments that are, at maximum, end-overlapping and less than, 15 tuples long. Example data:
 '''
 sept_haikai_data = [(0.0, 4.0), (2.5, 4.75), (4.0, 5.25), (4.0, 5.75), (5.75, 9.75), (5.75, 13.25), (8.25, 11.25), (8.25, 13.25), (9.75, 12.25), (10.25, 13.25), (13.25, 14.5), (13.25, 15.0), (15.0, 19.0), (19.0, 19.875), (19.0, 20.875), (19.375, 20.875), (20.875, 22.125), (20.875, 22.625), (21.625, 23.125), (22.625, 30.625), (23.125, 27.625), (24.625, 29.625), (26.125, 29.625), (26.125, 30.625), (27.625, 30.625), (30.625, 31.5), (30.625, 32.5), (31.0, 32.5), (31.0, 33.5), (31.5, 34.0), (32.5, 34.625), (34.0, 35.0), (34.625, 35.875), (34.625, 36.375), (35.375, 37.125), (35.875, 37.125), (36.375, 37.625), (36.375, 38.125), (38.125, 39.0), (38.125, 40.0), (38.5, 40.0), (40.0, 41.25), (40.0, 41.75), (41.75, 45.75), (45.75, 46.625), (45.75, 47.625), (46.125, 47.625), (47.625, 48.875), (47.625, 49.375), (49.375, 53.375), (49.375, 56.875), (51.875, 54.875), (51.875, 56.875), (53.375, 55.875), (53.875, 56.875), (56.875, 58.125), (56.875, 58.625), (58.625, 62.625), (61.125, 63.375), (62.625, 63.875), (62.625, 64.375)]
 
@@ -177,34 +241,8 @@ def partition_onset_list(onset_list):
 
     return partitions
 
-#for x in partition_onset_list(sept_haikai_data):
-#    print(x)
-
 tup_lst = [
     (0.0, 2.0), (0.0, 4.0), (2.5, 4.5), (2.0, 5.75),
     (2.0, 4.0), (6.0, 7.25), (4.0, 5.5)
 ]
 
-####################################################################################################
-'''
-]import itertools
-import numpy as np
-
-from decitala_v2 import Decitala, FragmentTree
-
-decitala_path = '/Users/lukepoeppel/decitala_v.2.0/Decitalas'
-sept_haikai = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
-
-t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
-
-sept_haikai_onset_ranges = []
-for thisTala in t.rolling_search(path = sept_haikai, part_num = 0):
-	sept_haikai_onset_ranges.append(list(thisTala))
-
-sorted_sept_haikai_onset_ranges = sorted(sept_haikai_onset_ranges, key = lambda x: x[1][0])
-
-just_onsets = [x[1] for x in sorted_sept_haikai_onset_ranges]
-#print(just_onsets[0:15])
-for x in get_pareto_optimal_longest_paths(just_onsets[0:15]):
-    print(x)
-'''
