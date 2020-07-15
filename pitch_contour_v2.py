@@ -14,6 +14,7 @@ and
 Inverse pitch d segs? That could be interesting
 
 TODO:
+- rough pitch contour
 - elegant pitch normalization functions
 - elegant pitch contour function *as* a normalizer
 	- find the name of the term used by Marvin
@@ -23,6 +24,7 @@ TODO:
 """
 import copy
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import numpy as np
 
 FONTNAME = 'Times'
@@ -76,10 +78,22 @@ def transform_om_to_opc(data):
 
 	return np.array(list(zip(onset_data, pc)))
 
+def rough_contour(midi_array):
+	"""
+	TODO implementation of "rough" contour based only on up, down, and same pitch motions. 
+	"""
+	raise NotImplementedError
+
+def cosine_similarity(vector_a, vector_b):
+	numerator = np.dot(vector_a, vector_b)
+	denominator = np.linalg.norm(vector_a) * np.linalg.norm(vector_b)
+	return (numerator / denominator)
+
 def graphPitchContour(all_data, as_pitch_space_contour=True):
 	"""
 	TODO docs, as_pitch_space_contour = True
 	"""
+	mpl.style.use('seaborn')
 	if not(as_pitch_space_contour):
 		for this_tala in all_data:
 			x_coords = [x[0] for x in this_tala]
@@ -254,7 +268,7 @@ up = np.array([
 ])
 
 #print(all_data[0:2])
-#graphPitchContour(all_data , as_pitch_space_contour=False)
+graphPitchContour(all_data, as_pitch_space_contour=True)
 
 if __name__ == '__main__':
 	import doctest

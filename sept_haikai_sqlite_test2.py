@@ -59,23 +59,20 @@ for thisTala in t.rolling_search(path = sept_haikai, part_num = 0):
 	sept_haikai_onset_ranges.append(list(thisTala))
 
 sorted_sept_haikai_onset_ranges = sorted(sept_haikai_onset_ranges, key = lambda x: x[1][0])
-#print(sorted_sept_haikai_onset_ranges)
+
 partitioned = partition_onset_list(sorted_sept_haikai_onset_ranges)
-#for x in partitioned:
-#    print(x)
-#sept_partition_1 = sorted_sept_haikai_onset_ranges[0:12]
 
 #### pitch information for this stream
 pitches_full = t.get_indices_of_object_occurrence(sept_haikai, 0)
 
-'''
-conn = lite.connect('sept_haikai_test_4.db')
+conn = lite.connect('sept_haikai_test_5.db')
 with conn:
     cur = conn.cursor()
     cur.execute("CREATE TABLE Fragment (Onset_Start REAL, Onset_Stop REAL, Tala BLOB, Mod TEXT, Factor INT)")
 
-    for x in sept_partition_1:
-        cur.execute("INSERT INTO Fragment VALUES({0}, {1}, '{2}', '{3}', {4})".format(x[1][0], x[1][1], x[0][0], x[0][1][0], x[0][1][1]))
+    for this_partition in partitioned:
+        for x in this_partition:
+            cur.execute("INSERT INTO Fragment VALUES({0}, {1}, '{2}', '{3}', {4})".format(x[1][0], x[1][1], x[0][0], x[0][1][0], x[0][1][1]))
 
     cur.execute("SELECT * FROM Fragment")
     rows = cur.fetchall()
@@ -84,58 +81,58 @@ with conn:
         onset_data.append((row[0], row[1]))
     
     #paths
-    pareto_optimal_paths = get_pareto_optimal_longest_paths(onset_data)
-    lengths = [len(path) for path in pareto_optimal_paths]
-    longest_path = max(lengths)
+    for i, this_partition in enumerate(partitioned):
+        pareto_optimal_paths = get_pareto_optimal_longest_paths(this_partition)
+        lengths = [len(path) for path in pareto_optimal_paths]
+        longest_path = max(lengths)
 
-    columns = ['Onset_Range_{}'.format(i) for i in range(1, longest_path + 1)]
-    columns_declaration = ', '.join('%s BLOB' % c for c in columns)
-    #newer = columns_declaration + ', Avg_nPVI REAL, Pitch_Content BLOB'
-    newer = columns_declaration + ', Pitch_Content BLOB'
+        columns = ['Onset_Range_{}'.format(i) for i in range(1, longest_path + 1)]
+        columns_declaration = ', '.join('%s BLOB' % c for c in columns)
+        #newer = columns_declaration + ', Avg_nPVI REAL, Pitch_Content BLOB'
+        newer = columns_declaration + ', Pitch_Content BLOB'
 
-    cur.execute("CREATE TABLE Paths (%s)" % newer)
-    for path in pareto_optimal_paths:
-        #Get nPVI information for the path.
-        cur.execute("SELECT * FROM Fragment")
-        rows = cur.fetchall()
+        #cur.execute("CREATE TABLE Paths (%s)" % newer)
+        cur.execute("CREATE TABLE Paths_{0} ({1})".format(str(i), newer))
+        for path in pareto_optimal_paths:
+            #Get nPVI information for the path.
+            cur.execute("SELECT * FROM Fragment")
+            rows = cur.fetchall()
 
-        nPVI_vals = []
-        pitch_content = []
+            nPVI_vals = []
+            pitch_content = []
 
-        for this_range in path:
-            pitch_content.append(pitch_info_from_onset_range(this_range, pitches_full))
-            for row in rows:
-                if this_range[0] == row[0] and this_range[1] == row[1]:
-                    tala = name_from_tala_string(row[2])
-                    nPVI_vals.append(tala.nPVI())
-        
-        avg_nPVI = np.mean(nPVI_vals)
-        flattened = [note for tala in pitch_content for note in tala]
-        #formatted_pitch_content = '(' + ', '.join(map(str, flattened)) + ')'
-        formatted_pitch_content = str(tuple([tuple(sublist) for sublist in pitch_content]))
-
-        #format the pitch content as one continous string.
-
-        if len(path) == longest_path:
-            data = []
             for this_range in path:
-                data.append('{0}'.format(this_range))
+                pitch_content.append(pitch_info_from_onset_range(this_range[-1], pitches_full))
+                for row in rows:
+                    if this_range[-1][0] == row[0] and this_range[-1][1] == row[1]:
+                        tala = name_from_tala_string(row[2])
+                        nPVI_vals.append(tala.nPVI())
             
-            mid = "', '".join(data)
-            post = "INSERT INTO Paths VALUES('" + mid + "', '{}')".format(formatted_pitch_content)
-            cur.execute(post)
-        else:
-            diff = longest_path - len(path)
-            data = []
-            for this_range in path:
-                data.append('{0}'.format(this_range))
-            
-            mid = "', '".join(data)
-            nulls = ["'NULL'"] * diff
-            post_nulls = ", ".join(nulls)
-            new = "INSERT INTO Paths VALUES('{0}', {1}, '{2}')".format(mid, post_nulls, formatted_pitch_content)
-            cur.execute(new)
-'''
+            avg_nPVI = np.mean(nPVI_vals)
+            flattened = [note for tala in pitch_content for note in tala]
+            #formatted_pitch_content = '(' + ', '.join(map(str, flattened)) + ')'
+            formatted_pitch_content = str(tuple([tuple(sublist) for sublist in pitch_content]))
+
+            #format the pitch content as one continous string.
+            if len(path) == longest_path:
+                data = []
+                for this_range in path:
+                    data.append('{0}'.format(this_range[-1]))
+                
+                mid = "', '".join(data)
+                post = "INSERT INTO Paths_{0} VALUES('".format(str(i)) + mid + "', '{0}')".format(formatted_pitch_content)
+                cur.execute(post)
+            else:
+                diff = longest_path - len(path)
+                data = []
+                for this_range in path:
+                    data.append('{0}'.format(this_range[-1]))
+                
+                mid = "', '".join(data)
+                nulls = ["'NULL'"] * diff
+                post_nulls = ", ".join(nulls)
+                new = "INSERT INTO Paths_{0} VALUES('{1}', {2}, '{3}')".format(str(i), mid, post_nulls, formatted_pitch_content)
+                cur.execute(new)
 
 if __name__ == '__main__':
     import doctest

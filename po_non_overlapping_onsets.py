@@ -173,6 +173,7 @@ def get_pareto_optimal_longest_paths(tup_lst_in):
     flattened.sort()
     pareto_optimal_paths = list(flattened for flattened, _ in itertools.groupby(flattened))
 
+    #temporary solution
     stupid_out = []
     for this_path in pareto_optimal_paths:
         new_path = []
@@ -188,7 +189,7 @@ def get_pareto_optimal_longest_paths(tup_lst_in):
 ####################################################################################################
 '''
 There's a lot of unnecessary memory loss because of repeated paths. What we need to do is split
-a tup_lst into segments that are, at maximum, end-overlapping and less than, 15 tuples long. Example data:
+a tup_lst into segments that are, at maximum, end-overlapping and less than, say, 15 tuples long. Example data:
 '''
 sept_haikai_data = [(0.0, 4.0), (2.5, 4.75), (4.0, 5.25), (4.0, 5.75), (5.75, 9.75), (5.75, 13.25), (8.25, 11.25), (8.25, 13.25), (9.75, 12.25), (10.25, 13.25), (13.25, 14.5), (13.25, 15.0), (15.0, 19.0), (19.0, 19.875), (19.0, 20.875), (19.375, 20.875), (20.875, 22.125), (20.875, 22.625), (21.625, 23.125), (22.625, 30.625), (23.125, 27.625), (24.625, 29.625), (26.125, 29.625), (26.125, 30.625), (27.625, 30.625), (30.625, 31.5), (30.625, 32.5), (31.0, 32.5), (31.0, 33.5), (31.5, 34.0), (32.5, 34.625), (34.0, 35.0), (34.625, 35.875), (34.625, 36.375), (35.375, 37.125), (35.875, 37.125), (36.375, 37.625), (36.375, 38.125), (38.125, 39.0), (38.125, 40.0), (38.5, 40.0), (40.0, 41.25), (40.0, 41.75), (41.75, 45.75), (45.75, 46.625), (45.75, 47.625), (46.125, 47.625), (47.625, 48.875), (47.625, 49.375), (49.375, 53.375), (49.375, 56.875), (51.875, 54.875), (51.875, 56.875), (53.375, 55.875), (53.875, 56.875), (56.875, 58.125), (56.875, 58.625), (58.625, 62.625), (61.125, 63.375), (62.625, 63.875), (62.625, 64.375)]
 
