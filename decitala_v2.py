@@ -1682,10 +1682,40 @@ class FragmentTree(NaryTree):
 		return fragments_found
 
 t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
-c = converter.parse('/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml')
-sept = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
+#c = converter.parse('/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml')
+#sept = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
 
-new = t.get_indices_of_object_occurrence(sept, 0)
+#new = t.get_indices_of_object_occurrence(sept, 0)
+
+'''
+d = Decitala('Jhampa')
+d2 = Decitala('Gajajhampa')
+d3 = Decitala('Jhampa')
+
+lst = [d, d2, d3]
+
+from collections import Counter
+
+print(lst)
+new = []
+for x in lst:
+	new.append(x.name)
+
+print(new)
+print(Counter(new))
+'''
+#print(Counter(lst))
+
+'''
+num_onsets = []
+for this_file in os.listdir(decitala_path):
+	d = Decitala(this_file)
+	num_onsets.append(d.num_onsets)
+
+print(sorted(num_onsets, reverse=True))
+'''
+
+
 #print(new)
 
 #print(t.get_by_ql_list([1.0, 1.0, 1.0, 0.5, 0.75, 0.5]))

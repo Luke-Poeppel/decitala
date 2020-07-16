@@ -14,6 +14,9 @@ from ast import literal_eval
 import numpy as np
 import sqlite3 as lite 
 
+from collections import Counter
+from scipy import stats
+
 from music21 import converter
 from music21 import stream
 
@@ -80,9 +83,31 @@ class Path(object):
         cur.execute(path_string)
         rows = cur.fetchall()
 
+        #really stupid, but this is the only thing working right now.
+        #not sure how to fetch by column name; really stupid. 
+        all_pitch_data = []
+        for this_row in rows:
+            for this_elem in this_row:
+                if this_elem[0:2] == '((':
+                    all_pitch_data.append(literal_eval(this_elem))
+        
+        lengths = []
+        for x in all_pitch_data:
+            count = 0
+            for this_range in x:
+                count += len(this_range)
+            lengths.append(count)
+        
+        self.all_num_onset_data = sorted(lengths)
+
         path = []
         pitch_data = []
+        all_pitch_data = []
         for i, this_row in enumerate(rows):
+            ############ get onset data
+            for this_elem in this_row:
+                if this_elem[0:2] == '((':
+                    all_pitch_data.append(literal_eval(this_elem))
             if self.path_num == (i + 1):
                 ######### GET DATA
                 stop_index = 0
@@ -101,7 +126,7 @@ class Path(object):
                 break
             else:
                 pass
-                
+        
         self.path = path
         self.pitch_data = pitch_data
 
@@ -149,6 +174,12 @@ class Path(object):
             i += 1
         
         return total_duration
+
+    def num_onsets(self):
+        count = 0
+        for x in self.pitch_data:
+            count += len(x)
+        return count
 
     def nPVI(self):
         nPVI_vals = []
@@ -219,68 +250,98 @@ class Path(object):
         #for x in s:
         #    print(x)
 
-    def score(self):
-        """
-        Testing various parameters for preference rules. 
-        """
-        if self.is_end_overlapping:
-            end_overlapping_score_pre = 100
-        else:
-            end_overlapping_score_pre = (self.total_gaps() / self.total_duration) * 100
-        
-        end_overlapping_score = 0.5 * end_overlapping_score_pre
+    ###################### Individual Scores ######################
+    def gap_score(self):
+        initial_val = self.path[0][0]
+        end_val = self.path[-1][-1]
+        total_range = end_val - initial_val
 
+        percentage_gap = (self.total_gaps() / total_range) * 100
+        
+        return (100 - percentage_gap)
+
+    def non_retrogradable_score(self):
+        """
+        TODO: figure out why tala.is_non_retrogradable() is behaving strangely here.
+        """
         num_non_retrogradable = 0
         for this_tala in self.decitalas:
             if np.array_equal(this_tala.ql_array(), this_tala.ql_array(retrograde = True)):
                 num_non_retrogradable += 1
         
-        non_retrogradable_score_pre = (num_non_retrogradable / len(self.path)) * 100
-        non_retrogradable_score = 0.3 * non_retrogradable_score_pre
+        return (num_non_retrogradable / len(self.path)) * 100
 
-        nPVI_score = 0.20 * self.average_nPVI()
+    def recycling_score(self):
+        """
+        Proportion of decitalas in a path that repeat.
+        """
+        names = []
+        for this_tala in self.decitalas:
+            names.append(this_tala.name)
 
-        score = end_overlapping_score + non_retrogradable_score + nPVI_score
-        return score
+        count = 0
+        c = Counter(names)
+        for x in c:
+            if c[x] > 1:
+                count += 1
+
+        recycle_score = (count / len(self.decitalas))
+
+        return recycle_score
+
+    def num_onsets_score(self):
+        """
+        Method: get a list that is simply the sorted total number of onsets (from pitch content)
+        for each path. Use stats.percentileofscore(data, this_path.total_num_onsets)
+        """
+        return stats.percentileofscore(self.all_num_onset_data, self.num_onsets())
+
+    def score(self):
+        """
+        Testing various parameters for preference rules. 
+
+        End-Overlapping:    30%
+        Non-Retrogradable:  20%
+        Average nPVI:       20%
+        Recycling Rate:     20%
+        Average onsets:     10%
+
+        I think for num_onsets, we should basically (and unforunately) make a ranking of all the talas
+        in the list... 
+        """
+        gap_score = 0.3 * self.gap_score()
+        non_retrogradable_score = 0.2 * self.non_retrogradable_score()
+        average_nPVI_score = 0.2 * self.average_nPVI()
+        recycling_score = 0.2 * self.recycling_score()
+        num_onsets_score = 0.1 * self.num_onsets_score()
+
+        return gap_score + non_retrogradable_score + average_nPVI_score + recycling_score + num_onsets_score
 
 haikai_database_path = '/Users/lukepoeppel/decitala_v.2.0/sept_haikai_test_5.db'
 p1 = Path(table='Paths_4', path_num=4, db_path=haikai_database_path)
-#p1.annotate_score('/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml', 0)
-#print(p1.score())
 
-'''
+paths = []
 for this_path_num in [1, 2, 3, 4, 5, 6]:
-    print('*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-')
-    path = Path(table='Paths_4', path_num=this_path_num, db_path=haikai_database_path)
-    print(path, path.score())
-    print(path.average_nPVI())
-    #print(path, path.average_nPVI())
-    print(path.decitalas)
+    paths.append(Path(table='Paths_4', path_num=this_path_num, db_path=haikai_database_path))
+
+s = sorted(paths, reverse = True, key = lambda x: x.score())
+
+for x in s:
+    print(x)
+    print(x.decitalas)
+    print('GAP:', x.gap_score())
+    print('RETROGRADE:', x.non_retrogradable_score())
+    print('nPVI:', x.average_nPVI())
+    print('RECYCLING:', x.recycling_score())
+    print('ONSETS:', x.num_onsets_score())
+    print('*-*-*-*-*')
+    print('TOTAL SCORE:', x.score())
     print()
-
-    #print(path.all_pitch_content())
-'''
-
-################### Testing ###################
-'''
-First question: how can you get information from two tables simultanously? 
-We need both the range information (in a mathematically readable format, hence literal_eval)
-and the tala/tala modification data. 
-
-Double parentheses indicates start of pitch content data.
-'''
-'''
-conn = lite.connect('/Users/lukepoeppel/decitala_v.2.0/sept_haikai_test_5.db')
-cur = conn.cursor()
-
-cur.execute("SELECT * FROM Paths_4")
-rows = cur.fetchall()
-'''
-
+    print()
 
 if __name__ == '__main__':
     import doctest
-    doctest.testmod()
+    #doctest.testmod()
 
 
 
