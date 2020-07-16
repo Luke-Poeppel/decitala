@@ -296,8 +296,9 @@ class Path(object):
         """
         return stats.percentileofscore(self.all_num_onset_data, self.num_onsets())
 
-    def score(self):
+    def score(self, weights = [0.3, 0.2, 0.2, 0.2, 0.1]):
         """
+        TODO: weight should be a parameter. 
         Testing various parameters for preference rules. 
 
         End-Overlapping:    30%
@@ -309,16 +310,29 @@ class Path(object):
         I think for num_onsets, we should basically (and unforunately) make a ranking of all the talas
         in the list... 
         """
-        gap_score = 0.3 * self.gap_score()
-        non_retrogradable_score = 0.2 * self.non_retrogradable_score()
-        average_nPVI_score = 0.2 * self.average_nPVI()
-        recycling_score = 0.2 * self.recycling_score()
-        num_onsets_score = 0.1 * self.num_onsets_score()
+        
+        individual_scores = [self.gap_score(), 
+                            self.non_retrogradable_score(),
+                            self.average_nPVI(),
+                            self.recycling_score(),
+                            self.num_onsets_score()]
 
-        return gap_score + non_retrogradable_score + average_nPVI_score + recycling_score + num_onsets_score
+        score = 0
+        for weight, score in zip(weights, individual_scores):
+            score += weight * score
+
+        return score
 
 ####################################################################################################
 # Path ranking
+'''
+Weight work:
+End-Overlapping:    30%
+Non-Retrogradable:  20%
+Average nPVI:       20%
+Recycling Rate:     20%
+Average onsets:     10%
+'''
 
 def sorted_paths(path_table, num_paths, db):
     """
