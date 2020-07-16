@@ -144,7 +144,7 @@ class Path(object):
         self.decitalas = [name_from_tala_string(string) for string in decitalas]
 
     def __repr__(self):
-        return '<Path: {}>'.format(str(self.path))
+        return '<Path_{0}: {1}>'.format(str(self.path_num), str(self.path))
 
     def gaps(self):
         gaps = []
@@ -317,13 +317,35 @@ class Path(object):
 
         return gap_score + non_retrogradable_score + average_nPVI_score + recycling_score + num_onsets_score
 
+####################################################################################################
+# Path ranking
+
+def sorted_paths(path_table, num_paths, db):
+    """
+    Given a database, returns a list holding the paths sorted (reverse) by score.
+
+    TODO: nobody wants to manually go through and count the number of rows; do it manually!
+    """
+    paths = []
+    for this_path_num in list(range(1, num_paths + 1)):
+        paths.append(Path(table=path_table, path_num=this_path_num, db_path=db))
+
+    return sorted(paths, reverse = True, key = lambda x: x.score())
+
 haikai_database_path = '/Users/lukepoeppel/decitala_v.2.0/sept_haikai_test_5.db'
-p1 = Path(table='Paths_4', path_num=4, db_path=haikai_database_path)
 
-paths = []
-for this_path_num in [1, 2, 3, 4, 5, 6]:
-    paths.append(Path(table='Paths_4', path_num=this_path_num, db_path=haikai_database_path))
+paths0 = sorted_paths(path_table = 'Paths_0', num_paths = 30, db = haikai_database_path)
 
+for x in paths0:
+    print(x, x.path_num)
+    print(x.decitalas)
+    print(x.score())
+    print()
+    print()
+
+
+#p1 = Path(table='Paths_4', path_num=4, db_path=haikai_database_path)
+'''
 s = sorted(paths, reverse = True, key = lambda x: x.score())
 
 for x in s:
@@ -338,6 +360,7 @@ for x in s:
     print('TOTAL SCORE:', x.score())
     print()
     print()
+'''
 
 if __name__ == '__main__':
     import doctest
