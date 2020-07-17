@@ -323,6 +323,12 @@ class Path(object):
 
         return score
 
+    def show(self):
+        """
+        TODO: should definitely be able to display the file.
+        """
+        pass
+
 ####################################################################################################
 # Path ranking
 '''
@@ -332,24 +338,38 @@ Non-Retrogradable:  20%
 Average nPVI:       20%
 Recycling Rate:     20%
 Average onsets:     10%
+
+Good next try: high weight for end-overlapping and recycling rate.
+
+Fix one and change around the other ones. 
+If you set it to 0 and the scores doesn't change much, that parameter doesn't matter much;
+alternatively, if you set it to 0 and it completelely changes, it matters a lot. 
 '''
 
-def sorted_paths(path_table, num_paths, db):
+def sorted_paths(path_table, db):
     """
     Given a database, returns a list holding the paths sorted (reverse) by score.
 
     TODO: nobody wants to manually go through and count the number of rows; do it manually!
     """
+    conn = lite.connect(db)
+    cur = conn.cursor()
+    path_string = "SELECT * FROM {}".format(path_table)
+    cur.execute(path_string)
+    rows = cur.fetchall()
+
+    count = len(rows)
+
     paths = []
-    for this_path_num in list(range(1, num_paths + 1)):
+    for this_path_num in list(range(1, count + 1)):
         paths.append(Path(table=path_table, path_num=this_path_num, db_path=db))
 
     return sorted(paths, reverse = True, key = lambda x: x.score())
 
 haikai_database_path = '/Users/lukepoeppel/decitala_v.2.0/sept_haikai_test_5.db'
 
-paths0 = sorted_paths(path_table = 'Paths_0', num_paths = 30, db = haikai_database_path)
-
+paths0 = sorted_paths(path_table = 'Paths_4', db = haikai_database_path)
+#bug: returning 110..... 
 for x in paths0:
     print(x, x.path_num)
     print(x.decitalas)

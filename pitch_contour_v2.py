@@ -268,7 +268,11 @@ up = np.array([
 ])
 
 #print(all_data[0:2])
-graphPitchContour(all_data, as_pitch_space_contour=True)
+graphPitchContour(all_data, as_pitch_space_contour=False)
+
+'''
+look at other ones that are six notes long.
+'''
 
 if __name__ == '__main__':
 	import doctest
