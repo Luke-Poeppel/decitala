@@ -7,11 +7,27 @@
 #
 # Location: Kent, CT 2020
 ####################################################################################################
+"""
+Notes
 
+TODO:
+"""
 import sqlite3 as lite
 
 from music21 import converter
 from music21 import stream
 
-def create_database():
+from decitala_v2 import Decitala, FragmentTree
+from po_non_overlapping_onsets import partition_onset_list, get_pareto_optimal_longest_paths
+
+def create_database(score_path, part_num):
+    """
+    Function for creating a decitala and paths database in the cwd. 
+    """
     pass
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+
+

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 ####################################################################################################
-# File:     decitala_v2.py
+# File:     decitala.py
 # Purpose:  Version 2.0 of decitala.py. Dynamic functions for tala search (e.g. deçi-tâlas), primarily
 #			in the music and birdsong transcriptions of Olivier Messiaen. 
 # 
