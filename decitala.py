@@ -53,8 +53,8 @@ from music21 import note
 from music21 import pitch
 from music21 import stream
 
-decitala_path = '/Users/lukepoeppel/decitala_v.2.0/Decitalas'
-greek_path = '/Users/lukepoeppel/decitala_v.2.0/Greek_Metrics/XML'
+decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
+greek_path = '/Users/lukepoeppel/decitala_v2/Greek_Metrics/XML'
 
 #Doesn't make much sense for these to be np.arrays because of the mixed types... 
 carnatic_symbols = np.array([
