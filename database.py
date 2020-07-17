@@ -8,7 +8,10 @@
 # Location: Kent, CT 2020
 ####################################################################################################
 """
-Notes
+Notes: 
+- Should have the option to create a decitala database, greek foot database, combined 
+database, etc...
+- 
 
 TODO:
 """
@@ -17,7 +20,7 @@ import sqlite3 as lite
 from music21 import converter
 from music21 import stream
 
-from decitala_v2 import Decitala, FragmentTree
+from decitala import Decitala, FragmentTree
 from po_non_overlapping_onsets import partition_onset_list, get_pareto_optimal_longest_paths
 
 def create_database(score_path, part_num):

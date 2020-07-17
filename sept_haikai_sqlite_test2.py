@@ -7,7 +7,7 @@ import re
 import sqlite3 as lite
 
 from ast import literal_eval
-from decitala_v2 import Decitala, FragmentTree
+from decitala import Decitala, FragmentTree
 from po_non_overlapping_onsets import get_pareto_optimal_longest_paths, partition_onset_list
 
 ####################################################################################################

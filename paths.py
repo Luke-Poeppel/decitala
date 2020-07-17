@@ -20,7 +20,7 @@ from scipy import stats
 from music21 import converter
 from music21 import stream
 
-from decitala_v2 import Decitala, get_added_values
+from decitala import Decitala, get_added_values
 
 preference_rule_points = {
     'non-retrogradable' : 10,
