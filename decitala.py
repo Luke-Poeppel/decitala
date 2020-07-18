@@ -366,7 +366,7 @@ class GeneralFragment(object):
 	creation of FragmentTrees with more abstract data sets, beyond the two encoded. 
 
 	Input: path for now.
-	>>> random_fragment_path = '/users/lukepoeppel/decitala_v.2.0/Decitalas/63_Nandi.xml'
+	>>> random_fragment_path = '/users/lukepoeppel/decitala_v2/Decitalas/63_Nandi.xml'
 	>>> g1 = GeneralFragment(path = random_fragment_path, name = 'test')
 	>>> g1
 	<GeneralFragment_test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]>
@@ -1681,7 +1681,22 @@ class FragmentTree(NaryTree):
 
 		return fragments_found
 
+'''
 t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
+
+decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
+sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
+
+for this_tala in t.rolling_search(sept_haikai_path, 1):
+	print(this_tala)
+
+'''
+
+
+
+
+
+
 #c = converter.parse('/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml')
 #sept = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
 

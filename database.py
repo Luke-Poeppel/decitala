@@ -25,7 +25,7 @@ from music21 import converter
 from music21 import stream
 
 from decitala import Decitala, FragmentTree
-from po_non_overlapping_onsets import partition_onset_list, get_pareto_optimal_longest_paths
+from pofp import partition_onset_list, get_pareto_optimal_longest_paths
 
 decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
 
@@ -152,9 +152,10 @@ def create_database(score_path, part_num, db_name):
 
 ##################### TESTING #####################
 if __name__ == "__main__":
-    #sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
-    #create_database(score_path=sept_haikai_path, part_num=0, db_name="/Users/lukepoeppel/new_tool_test.db")
-    import doctest
-    doctest.testmod()
+    sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
+    #liturgie_path = '/Users/lukepoeppel/Dropbox/Luke_Myke/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl'
+    create_database(score_path=sept_haikai_path, part_num=0, db_name="/Users/lukepoeppel/sept_haikai_test.db")
+    #import doctest
+    #doctest.testmod()
 
 
