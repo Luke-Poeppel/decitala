@@ -19,14 +19,19 @@ TODO:
 - visualization of the various possibilities for overlaps. 
 '''
 import copy
+import doctest
 import itertools
 import matplotlib.pyplot as plt
 import unittest
+import warnings
 
 def partition_onset_list(onset_list):
     """
     A function that takes in data of the form [(<decitala>, (<mod>), ...), (<onset_range>)]
     and returns a new list that holds the same data partitioned into chunks of length less than 20.
+
+    TODO: a more dynamic approach would be to *find* all the places where it's non overlapping and figure
+    out the partition size calculation after the fact! 
      
     >>> sept_haikai_data = [
     ...         (('info_0',), (0.0, 4.0)), (('info_1',), (2.5, 4.75)), (('info_2',), (4.0, 5.25)), (('info_3',), (4.0, 5.75)), (('info_4',), (5.75, 9.75)), (('info_5',), (5.75, 13.25)), 
@@ -73,15 +78,16 @@ def partition_onset_list(onset_list):
     copied = copy.copy(onset_list)
     partitions = []
     j = 0
+
     while j < num_partitions:
         i = 0
         first_partition = []
-        while i < len(copied):
+        while i < len(copied) - 1:
             curr_range = copied[i]
             next_range = copied[i + 1]
 
             if max_end_overlap(curr_range[-1], next_range[-1]) == True:
-                if len(first_partition) > 10 and len(first_partition) <= 20:
+                if len(first_partition) >= 10 and len(first_partition) <= 20:
                     first_partition.append(curr_range)
                     break
                 else:
@@ -90,9 +96,11 @@ def partition_onset_list(onset_list):
                 first_partition.append(curr_range)
             
             i += 1
+            
         partitions.append(first_partition)
         end_index = copied.index(first_partition[-1])
         copied = copied[end_index + 1:]
+
         j += 1
 
     #append whatever is left over
@@ -191,45 +199,53 @@ def show_paths(paths: list, title: str):
     """
     raise NotImplementedError
 
-####################################################################################################
-# Testing
+# Helper function to ignore annoying warnings 
+# source: https://www.neuraldump.net/2017/06/how-to-suppress-python-unittest-warnings/
+def ignore_warnings(test_func):
+    def do_test(self, *args, **kwargs):
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            test_func(self, *args, **kwargs)
+    return do_test
 
-'''
-from decitala import Decitala, FragmentTree
+class Test(unittest.TestCase):
+    """
+    Unittest(s)
+    """
+    def setUp(self):
+        warnings.simplefilter('ignore', category=ImportWarning)
+        
+    def test_unittest(self):
+        test_string = "Is this thing on?"
+        assert test_string != "This thing is on!"
 
-decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
-sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
+    @ignore_warnings
+    def test_partition_lengths(self):
+        """
+        Check that the number of talas in the rolling search is equal to the number of talas
+        in the partitions. 
+        """
+        from decitala import Decitala, FragmentTree
+        
+        decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
+        sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml' 
 
-tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
+        tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
-onset_ranges = []
-for this_tala in tree.rolling_search(path = sept_haikai_path, part_num = 1):
-    onset_ranges.append(list(this_tala))
+        onset_ranges = []
+        for this_tala in tree.rolling_search(path = sept_haikai_path, part_num = 1):
+            onset_ranges.append(list(this_tala))
 
-sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
+        sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
+        partitioned = partition_onset_list(sorted_onset_ranges)
+        full_count = 0
+        for x in partitioned:
+            for this_range in x:
+                full_count += 1
 
-partitioned = partition_onset_list(onset_ranges)
-partitions = []
-for this_partition in partitioned:
-    partitions.append(this_partition)
+        assert len(sorted_onset_ranges) == full_count
 
-for x in partitioned[0]:
-    print(x)
-'''
-'''
-po_paths = get_pareto_optimal_longest_paths(partitions[0])
-
-for x in po_paths:
-    for y in x:
-        print(y)
-    print()
-    print()
-'''
-'''
-    [(<decitala.Decitala 51_Vijaya>, ('ratio', 0.66667)), (0.0, 4.0)]
-
-'''
 if __name__ == '__main__':
-    import doctest
     doctest.testmod()
+    unittest.main()
 
