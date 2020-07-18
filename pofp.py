@@ -64,6 +64,11 @@ def partition_onset_list(onset_list):
     (13.25, 15.0)
     """
     data_length = len(onset_list)
+    if data_length < 20:
+        return onset_list
+    else:
+        pass
+
     num_partitions = (data_length // 15)  #somewhat arbitrary, just fast.
     partitions = []
 

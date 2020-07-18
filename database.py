@@ -154,7 +154,7 @@ def create_database(score_path, part_num, db_name):
 if __name__ == "__main__":
     sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
     #liturgie_path = '/Users/lukepoeppel/Dropbox/Luke_Myke/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl'
-    create_database(score_path=sept_haikai_path, part_num=0, db_name="/Users/lukepoeppel/sept_haikai_test.db")
+    create_database(score_path=sept_haikai_path, part_num=1, db_name="/Users/lukepoeppel/decitala_v2/sept_haikai_1.db")
     #import doctest
     #doctest.testmod()
 
