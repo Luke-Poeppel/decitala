@@ -15,6 +15,7 @@ database, etc... For now, let's just assume it's a decitala databse.
 
 TODO:
 - get_indices_of_object_occurrence really shouldn't be a tree function; it should be separate. 
+- you should be able to build a database on exact matches only. this is more of a TODO for get_by_ql_list.
 """
 import click
 import numpy as np
@@ -153,8 +154,8 @@ def create_database(score_path, part_num, db_name):
 ##################### TESTING #####################
 if __name__ == "__main__":
     sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
-    #liturgie_path = '/Users/lukepoeppel/Dropbox/Luke_Myke/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl'
-    create_database(score_path=sept_haikai_path, part_num=1, db_name="/Users/lukepoeppel/decitala_v2/sept_haikai_1.db")
+    liturgie_path = '/Users/lukepoeppel/Dropbox/Luke_Myke/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl'
+    #create_database(score_path=liturgie_path, part_num=0, db_name="/Users/lukepoeppel/decitala_v2/liturgie_violin.db")
     #import doctest
     #doctest.testmod()
 

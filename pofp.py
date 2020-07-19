@@ -113,6 +113,35 @@ def partition_onset_list(onset_list):
 
     return partitions
 
+####################################################################################################
+"""
+The above partition function works great for Sept Haikai but has trouble with other pieces. I think 
+a far more elegant solution would be to make it more dynamic. 
+
+Find all the indices in which we could insert a breakpoint. From those indices, partition by some range.
+"""
+def dynamically_partition_onset_list(onset_list):
+    pass
+
+from decitala import Decitala, FragmentTree
+        
+decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
+liturgie_path = '/Users/lukepoeppel/Dropbox/Luke_Myke/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl'
+#sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml' 
+
+tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
+
+onset_ranges = []
+for this_tala in tree.rolling_search(path = liturgie_path, part_num = 3):
+    onset_ranges.append(list(this_tala))
+
+sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
+
+for x in sorted_onset_ranges:
+    print(x)#, print(x[0][0].num_onsets))
+
+####################################################################################################
+
 def get_pareto_optimal_longest_paths(tup_lst_in):
     """
     The last few lines of this are really stupid; I just couldn't figure out the solution today. 
@@ -204,6 +233,8 @@ def show_paths(paths: list, title: str):
     """
     raise NotImplementedError
 
+####################################################################################################
+
 # Helper function to ignore annoying warnings 
 # source: https://www.neuraldump.net/2017/06/how-to-suppress-python-unittest-warnings/
 def ignore_warnings(test_func):
@@ -249,8 +280,11 @@ class Test(unittest.TestCase):
                 full_count += 1
 
         assert len(sorted_onset_ranges) == full_count
+    
+    #TODO: partition function for liturgie (violin, say?)
+    #TODO: all paths for other piece? 
 
 if __name__ == '__main__':
     doctest.testmod()
-    unittest.main()
+    #unittest.main()
 
