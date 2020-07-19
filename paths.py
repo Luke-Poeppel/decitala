@@ -363,16 +363,6 @@ class Path(object):
         pass
 
 ####################################################################################################
-haikai_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
-
-p16 = Path('Paths_2', 16, haikai_database_path)
-#print(p16.average_num_onsets_per_tala_score())
-#print(p16.num_onsets_score())
-
-paths = []
-for i in range(1, 31):
-    p = Path('Paths_4', path_num = i, db_path=haikai_database_path)
-    paths.append(p)
 
 def model2(x, weights):
     """
@@ -398,36 +388,34 @@ def model3(x, weights):
     
     return round(sum(sums), 6)
 
-sorted_paths = sorted(paths, key = lambda x: model3(x, [0.7, 0.3]), reverse=True)
 
-for x in sorted_paths:
+class FullPath(object):
+    """
+    Object for concatenating multiple path objects into a new path.
+    """
+    pass
+
+haikai_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_1.db'
+
+def get_model3_path():
+    continuous_paths = []
+    for i in range(0, 5):
+        curr_path = []
+        for j in range(1, 31):
+            p = Path('Paths_{}'.format(str(i)), path_num = j, db_path=haikai_database_path)
+            curr_path.append(p)
+        
+        sorted_paths = sorted(curr_path, key = lambda x: model3(x, [0.7, 0.3]), reverse=True)
+
+        continuous_paths.append(sorted_paths[0])
+    
+    return continuous_paths
+
+for x in get_model3_path():
     print(x)
     print(x.decitalas)
-    print(model3(x, weights = [0.7, 0.3]))
     print()
-
-def get_modeled_path():
-    """
-    TODO: (first thing: get all top rated paths and see if the concatenation forms the whole path! very exciting, seems to work when done manually, nearly.)
-    """
-    paths = []
-    for i in range(1, 31):
-        p = Path('Paths_4', path_num = i, db_path=haikai_database_path)
-        paths.append(p)
     
-    sorted_paths = sorted(paths, key = lambda x: model3(x, [0.7, 0.3]), reverse=True)
-
-    #still going...
-
-
-
-
-
-
-
-
-
-
 ####################################################################################################
 
 # Path ranking
