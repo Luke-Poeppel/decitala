@@ -117,17 +117,128 @@ def partition_onset_list(onset_list):
 """
 The above partition function works great for Sept Haikai but has trouble with other pieces. I think 
 a far more elegant solution would be to make it more dynamic. 
-
-Find all the indices in which we could insert a breakpoint. From those indices, partition by some range.
 """
+def _check_all_prev(onset_list, i):
+    """
+    Checks at a particular index if all values prior to it are less than or equal to it.
+
+    >>> tup_lst = [
+    ...     (("info1",), (0.0, 2.0)), (("info2",), (0.0, 4.0)), (("info3",), (2.5, 4.5)), (("info4",), (2.0, 5.75)),
+    ...     (("info5",), (2.0, 4.0)), (("info6",), (6.0, 7.25)), (("info7",), (4.0, 5.5))]
+    >>> print(_check_all_prev(tup_lst, 2))
+    False
+    >>> print(_check_all_prev(tup_lst, 5))
+    True
+    """
+    check = []
+    for this_data in onset_list[0:i]:
+        range_data = this_data[1]
+        if onset_list[i][1][0] >= range_data[0] and onset_list[i][1][0] >= range_data[1]:
+            check.append(1)
+        else:
+            check.append(0)
+    
+    if set(check) == {1}:
+        return True
+    else:
+        return False
+
+def naive_partition(onset_list):
+    """
+    Partitions the onset list without regard for nice breakpoints into chunks of length 18. 
+    The remainder is the last partitions. 
+    """
+    copied = copy.copy(onset_list)
+    length = len(copied)
+
+    partition_indices = list(range(0, length, 18))
+    diff = length - partition_indices[-1]
+
+    if diff == 0:
+        del partition_indices[0]
+    else:
+        del partition_indices[0]
+        partition_indices.append(partition_indices[-1] + 1)
+
+    partitions = []
+    for this_partition_index in partition_indices:
+        partitions.append(copied[0:partition_indices[0]])
+        copied = copied[partition_indices[0]:]
+
+    return partitions
+
 def dynamically_partition_onset_list(onset_list):
-    pass
+    """
+    I think it's possible that the original solution above just happens to work because of the breakpoints.
+    The best solution is as follows:
+    NOTE: end-overlapping data ranges are preferred. 
+
+    1.) Go through and check if we can find breakpoints for end-overlapping paths. To do this, we need to use
+    the check_all_prev function; confused about why it was working for the other one. 
+    2.) If breakpoints can be found, check if there are enough (and are of appropriate size) to form partitions. 
+    3.) If no breakpoints can be found (or they are of inappropriate lengths, i.e., > 20), partition the data 
+    randomly into chunks of 18 and append the remaining. 
+    """
+    data_length = len(onset_list)
+    if data_length <= 18:
+        return onset_list
+
+    copied = copy.copy(onset_list)
+
+    i = 0
+    break_points = []
+    while i < len(copied) - 1:
+        if _check_all_prev(onset_list, i):
+            break_points.append(i)
+            
+        i += 1
+    
+    if break_points:
+        # TODO: check if the break points are appropriate
+        # if so, partition, otherwise, send to the arbitrary partition function.
+        # if no break points, send to arbitrary partition function. 
+        return break_points
+    else:
+        return 'That will not work!'
+    
+    '''
+    if break_points:
+        processed_break_points = []
+        j = 0
+        while j < len(break_points) - 1:
+            curr_break_point = break_points[j]
+            next_break_point = break_points[j + 1]
+            diff = next_break_point - curr_break_point
+            if 10 <= diff <= 20:
+                processed_break_points.append(next_break_point)
+            else:
+                pass
+
+            j += 1
+        
+        return processed_break_points
+        
+        #partitions = []
+        #for this_break_point in processed_break_points:
+        #    partitions.append(copied[0:this_break_point])
+        #    copied = copied[this_break_point:]
+        
+        #return partitions
+    else:
+        return [1, 2, 3, 4]
+    '''
+def filter_out_single_anga_class_talas(onset_list):
+    """
+    Given the output tala data from the rolling window search, returns a new list 
+    with all single anga class talas removed. 
+    """
+    return list(filter(lambda x: x[0][0].num_anga_classes != 1, onset_list))
 
 from decitala import Decitala, FragmentTree
         
 decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
 liturgie_path = '/Users/lukepoeppel/Dropbox/Luke_Myke/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl'
-#sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml' 
+sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml' 
 
 tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
@@ -136,9 +247,17 @@ for this_tala in tree.rolling_search(path = liturgie_path, part_num = 3):
     onset_ranges.append(list(this_tala))
 
 sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
+filtered = filter_out_single_anga_class_talas(sorted_onset_ranges)
 
-for x in sorted_onset_ranges:
-    print(x)#, print(x[0][0].num_onsets))
+for x in naive_partition(filtered):
+    print(x, len(x))
+    print()
+'''
+for x in dynamically_partition_onset_list(filtered):
+    print(x)#, len(x))
+    print()
+'''
+#print(dynamically_partition_onset_list(filtered))
 
 ####################################################################################################
 
@@ -233,6 +352,19 @@ def show_paths(paths: list, title: str):
     """
     raise NotImplementedError
 
+#for x in filtered[0:15]:
+#    print(x)
+
+'''
+p = get_pareto_optimal_longest_paths(filtered[0:15])
+count = 0
+for x in p:
+    count += 1
+    print(x)
+    print()
+
+print(count)
+'''
 ####################################################################################################
 
 # Helper function to ignore annoying warnings 

@@ -729,6 +729,10 @@ class Decitala(GeneralFragment):
 	@property
 	def numMatras(self):
 		return (self.ql_duration / 0.5)
+	
+	@property
+	def num_anga_classes(self):
+		return len(set(self.ql_array()))
 
 class GreekFoot(GeneralFragment):
 	"""
