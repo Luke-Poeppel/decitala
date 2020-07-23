@@ -169,12 +169,8 @@ def naive_partition(onset_list):
 
 def dynamically_partition_onset_list(onset_list):
     """
-    I think it's possible that the original solution above just happens to work because of the breakpoints.
-    The best solution is as follows:
-    NOTE: end-overlapping data ranges are preferred. 
-
     1.) Go through and check if we can find breakpoints for end-overlapping paths. To do this, we need to use
-    the check_all_prev function; confused about why it was working for the other one. 
+    the check_all_prev function.
     2.) If breakpoints can be found, check if there are enough (and are of appropriate size) to form partitions. 
     3.) If no breakpoints can be found (or they are of inappropriate lengths, i.e., > 20), partition the data 
     randomly into chunks of 18 and append the remaining. 
@@ -192,41 +188,41 @@ def dynamically_partition_onset_list(onset_list):
             break_points.append(i)
             
         i += 1
+
+    return break_points
     
+    '''
     if break_points:
+        print(break_points)
         # TODO: check if the break points are appropriate
         # if so, partition, otherwise, send to the arbitrary partition function.
         # if no break points, send to arbitrary partition function. 
-        return break_points
-    else:
-        return 'That will not work!'
-    
-    '''
-    if break_points:
-        processed_break_points = []
-        j = 0
-        while j < len(break_points) - 1:
-            curr_break_point = break_points[j]
-            next_break_point = break_points[j + 1]
-            diff = next_break_point - curr_break_point
-            if 10 <= diff <= 20:
-                processed_break_points.append(next_break_point)
-            else:
-                pass
+        if len(break_points) > 7:
+            processed_break_points = []
+            j = 0
+            while j < len(break_points) - 1:
+                curr_break_point = break_points[j]
+                next_break_point = break_points[j + 1]
+                diff = next_break_point - curr_break_point
+                if 10 <= diff <= 20:
+                    processed_break_points.append(next_break_point)
+                else:
+                    pass
 
-            j += 1
-        
-        return processed_break_points
-        
-        #partitions = []
-        #for this_break_point in processed_break_points:
-        #    partitions.append(copied[0:this_break_point])
-        #    copied = copied[this_break_point:]
-        
-        #return partitions
+                j += 1
+            
+            partitions = []
+            for this_break_point in processed_break_points:
+                partitions.append(copied[0:this_break_point])
+                copied = copied[this_break_point:]
+            
+            return partitions
+        else:
+            return naive_partition(onset_list)
     else:
-        return [1, 2, 3, 4]
+        return naive_partition(onset_list)
     '''
+    
 def filter_out_single_anga_class_talas(onset_list):
     """
     Given the output tala data from the rolling window search, returns a new list 
@@ -243,21 +239,48 @@ sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introducti
 tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
 onset_ranges = []
-for this_tala in tree.rolling_search(path = liturgie_path, part_num = 3):
+for this_tala in tree.rolling_search(path = sept_haikai_path, part_num = 0):
     onset_ranges.append(list(this_tala))
 
 sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
 filtered = filter_out_single_anga_class_talas(sorted_onset_ranges)
 
+'''
 for x in naive_partition(filtered):
     print(x, len(x))
     print()
 '''
+
+#print(filtered)
+break_points = dynamically_partition_onset_list(filtered)
+copy_filtered = copy.copy(filtered)
+
+new_break_points = break_points[1:]
+partitions = []
+
+print(break_points)
+break_points_copy = copy.copy(break_points)
+i = 0
+partition_start = 0
+while i < len(break_points_copy):
+    if 9 <= break_points_copy[i] - partition_start <= 19:
+        partition_start = break_points_copy[i] + 1
+        i += 1
+    else:
+        del break_points_copy[i]
+
+print(break_points_copy)
+print(len(copy_filtered))
+
+#NOTE: still need to append what's left over (if anything is left over!)
+
+'''
 for x in dynamically_partition_onset_list(filtered):
     print(x)#, len(x))
+    print(filtered[0:x])
     print()
 '''
-#print(dynamically_partition_onset_list(filtered))
+
 
 ####################################################################################################
 
