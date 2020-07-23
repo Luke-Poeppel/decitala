@@ -190,7 +190,6 @@ def dynamically_partition_onset_list(onset_list):
         i += 1
 
     filtered_break_points = copy.copy(break_points)
-    print(filtered_break_points)
     i = 0
     partition_start = 0
     while i < len(filtered_break_points):
@@ -200,66 +199,27 @@ def dynamically_partition_onset_list(onset_list):
         else:
             del filtered_break_points[i]
 
-    print(filtered_break_points)
+    new_break_points = [0] + [filtered_break_points[0]] + [x - 2 for x in filtered_break_points[1:]]
 
-    new_break_points = [filtered_break_points[0]] + [x - 2 for x in filtered_break_points[1:]]# if break_points.index(x) != 0]
-    print(new_break_points)
-
-    for i, this_data in enumerate(onset_list):
-        if i in new_break_points:
-            print(this_data, 'HERE!!!!!')
+    partitions = []
+    for i in range(0, len(new_break_points) - 1):
+        if i == 0:
+            partitions.append(onset_list[new_break_points[i]:new_break_points[i + 1] + 1])
         else:
-            print(this_data)
-
-    #print(filtered_break_points)
-    #print()
-
-    #print(onset_list[0:filtered_break_points[0]+1])
-    #print(onset_list[filtered_break_points[0] + 1:filtered_break_points[1] - 1])
-    #print(onset_list[filtered_break_points[1] - 1:filtered_break_points[2] - 1])
-
-    #partitions = []
-    #partitions.append(onset_list[0:filtered_break_points[0] + 2])
-    #partitions.append(onset_list[filtered_break_points[0] + 2:filtered_break_points[1] + 2])
-    #print(partitions)
-
-
-
-
-    #NOTE: still need to append what's left over (if anything is left over!)
-
+            partitions.append(onset_list[new_break_points[i] + 1:new_break_points[i + 1] + 1])
     
-    '''
-    if break_points:
-        print(break_points)
-        # TODO: check if the break points are appropriate
-        # if so, partition, otherwise, send to the arbitrary partition function.
-        # if no break points, send to arbitrary partition function. 
-        if len(break_points) > 7:
-            processed_break_points = []
-            j = 0
-            while j < len(break_points) - 1:
-                curr_break_point = break_points[j]
-                next_break_point = break_points[j + 1]
-                diff = next_break_point - curr_break_point
-                if 10 <= diff <= 20:
-                    processed_break_points.append(next_break_point)
-                else:
-                    pass
-
-                j += 1
-            
-            partitions = []
-            for this_break_point in processed_break_points:
-                partitions.append(copied[0:this_break_point])
-                copied = copied[this_break_point:]
-            
-            return partitions
-        else:
-            return naive_partition(onset_list)
+    count = 0
+    for x in partitions:
+        count += len(x)
+    diff = len(onset_list) - count
+    if diff == 0:
+        return partitions
     else:
-        return naive_partition(onset_list)
-    '''
+        final_partition = onset_list[(-1) * diff:]
+        partitions.append(final_partition)
+        return partitions
+
+    return partitions
     
 def filter_out_single_anga_class_talas(onset_list):
     """
@@ -283,9 +243,10 @@ for this_tala in tree.rolling_search(path = sept_haikai_path, part_num = 0):
 sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
 filtered = filter_out_single_anga_class_talas(sorted_onset_ranges)
 
-print(dynamically_partition_onset_list(filtered))
-#for x in dynamically_partition_onset_list(filtered):
-#    print(x)
+#print(dynamically_partition_onset_list(filtered))
+for x in dynamically_partition_onset_list(filtered):
+    print(x)
+    print()
 
 ####################################################################################################
 
