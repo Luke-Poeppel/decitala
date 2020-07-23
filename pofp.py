@@ -185,11 +185,49 @@ def dynamically_partition_onset_list(onset_list):
     break_points = []
     while i < len(copied) - 1:
         if _check_all_prev(onset_list, i):
-            break_points.append(i)
+            break_points.append(i+1)
             
         i += 1
 
-    return break_points
+    filtered_break_points = copy.copy(break_points)
+    print(filtered_break_points)
+    i = 0
+    partition_start = 0
+    while i < len(filtered_break_points):
+        if 9 <= filtered_break_points[i] - partition_start <= 19:
+            partition_start = filtered_break_points[i]
+            i += 1
+        else:
+            del filtered_break_points[i]
+
+    print(filtered_break_points)
+
+    new_break_points = [filtered_break_points[0]] + [x - 2 for x in filtered_break_points[1:]]# if break_points.index(x) != 0]
+    print(new_break_points)
+
+    for i, this_data in enumerate(onset_list):
+        if i in new_break_points:
+            print(this_data, 'HERE!!!!!')
+        else:
+            print(this_data)
+
+    #print(filtered_break_points)
+    #print()
+
+    #print(onset_list[0:filtered_break_points[0]+1])
+    #print(onset_list[filtered_break_points[0] + 1:filtered_break_points[1] - 1])
+    #print(onset_list[filtered_break_points[1] - 1:filtered_break_points[2] - 1])
+
+    #partitions = []
+    #partitions.append(onset_list[0:filtered_break_points[0] + 2])
+    #partitions.append(onset_list[filtered_break_points[0] + 2:filtered_break_points[1] + 2])
+    #print(partitions)
+
+
+
+
+    #NOTE: still need to append what's left over (if anything is left over!)
+
     
     '''
     if break_points:
@@ -245,42 +283,9 @@ for this_tala in tree.rolling_search(path = sept_haikai_path, part_num = 0):
 sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
 filtered = filter_out_single_anga_class_talas(sorted_onset_ranges)
 
-'''
-for x in naive_partition(filtered):
-    print(x, len(x))
-    print()
-'''
-
-#print(filtered)
-break_points = dynamically_partition_onset_list(filtered)
-copy_filtered = copy.copy(filtered)
-
-new_break_points = break_points[1:]
-partitions = []
-
-print(break_points)
-break_points_copy = copy.copy(break_points)
-i = 0
-partition_start = 0
-while i < len(break_points_copy):
-    if 9 <= break_points_copy[i] - partition_start <= 19:
-        partition_start = break_points_copy[i] + 1
-        i += 1
-    else:
-        del break_points_copy[i]
-
-print(break_points_copy)
-print(len(copy_filtered))
-
-#NOTE: still need to append what's left over (if anything is left over!)
-
-'''
-for x in dynamically_partition_onset_list(filtered):
-    print(x)#, len(x))
-    print(filtered[0:x])
-    print()
-'''
-
+print(dynamically_partition_onset_list(filtered))
+#for x in dynamically_partition_onset_list(filtered):
+#    print(x)
 
 ####################################################################################################
 
