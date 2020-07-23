@@ -26,7 +26,7 @@ from music21 import converter
 from music21 import stream
 
 from decitala import Decitala, FragmentTree
-from pofp import partition_onset_list, get_pareto_optimal_longest_paths
+from pofp import dynamically_partition_onset_list, get_pareto_optimal_longest_paths
 
 decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
 
@@ -37,6 +37,9 @@ def _name_from_tala_string(tala_string):
     '<decitala.Decitala 51_Vijaya>' -> Decitala
     """
     new_str = tala_string.split()[1][:-1]
+    if new_str == '121_Varied_Ragavardhana':
+        return Decitala('121_Varied_Ragavardhana.mxl')
+    
     return Decitala(new_str)
 
 def _check_tuple_in_tuple_range(tup1, tup2):
@@ -60,13 +63,19 @@ def _pitch_info_from_onset_range(onset_range, data):
     """
     Function that takes in (0.0, 4.0) and returns, for instance, [62, 62, 62].
     Note that n.pitch.ps or n.pitch.midi both work; ps accomadates floats which I don't need here.
+
+    Oooo, here we actually need something a tiny bit more complicated! What if the part is playing chords.
+    Assume monophonic for now. 
     """
     note_data = []
     for this_object in data:
         if _check_tuple_in_tuple_range(this_object[1], onset_range):
             note_data.append(this_object)
     
-    return [n[0].pitch.midi for n in note_data]
+    pitches = [n[0].pitches for n in note_data]
+    out = [x.midi for y in pitches for x in y]
+
+    return out#[n[0].pitch.midi for n in note_data]
 
 ####################################################################################################
 
@@ -81,7 +90,7 @@ def create_database(score_path, part_num, db_name):
 
     sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
 
-    partitioned = partition_onset_list(sorted_onset_ranges)
+    partitioned = dynamically_partition_onset_list(sorted_onset_ranges)
     all_objects = tree.get_indices_of_object_occurrence(score_path, part_num)
 
     conn = lite.connect(db_name)
@@ -155,7 +164,7 @@ def create_database(score_path, part_num, db_name):
 if __name__ == "__main__":
     sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
     liturgie_path = '/Users/lukepoeppel/Dropbox/Luke_Myke/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl'
-    #create_database(score_path=liturgie_path, part_num=0, db_name="/Users/lukepoeppel/decitala_v2/liturgie_violin.db")
+    #create_database(score_path=liturgie_path, part_num=3, db_name="/Users/lukepoeppel/decitala_v2/liturgie_piano3_test1.db")
     #import doctest
     #doctest.testmod()
 

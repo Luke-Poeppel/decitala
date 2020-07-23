@@ -711,7 +711,7 @@ class Decitala(GeneralFragment):
 		problematic.
 		'''
 		assert type(input_id) == int
-		if input_id > 120 or input_id < 1:
+		if input_id > 121 or input_id < 1:
 			raise Exception('Input must be between 1 and 120!')
 		
 		if input_id in subdecitala_array:

@@ -254,6 +254,7 @@ def filter_out_single_anga_class_talas(onset_list):
     """
     return list(filter(lambda x: x[0][0].num_anga_classes != 1, onset_list))
 
+'''
 from decitala import Decitala, FragmentTree
         
 decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
@@ -268,6 +269,7 @@ for this_tala in tree.rolling_search(path = liturgie_path, part_num = 0):
 
 sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
 filtered = filter_out_single_anga_class_talas(sorted_onset_ranges)
+'''
 
 ####################################################################################################
 
