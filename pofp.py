@@ -167,6 +167,23 @@ def naive_partition(onset_list):
 
     return partitions
 
+def check_good(lst):
+    """
+    Checks if for every increment of 20, there exists a value. 
+    """
+    if len(lst) == 0:
+        return False
+
+    vals = []
+    i = 0
+    while i < len(lst) - 1:
+        curr_val = lst[i]
+        next_val = lst[i + 1]
+        vals.append(next_val - curr_val <= 20)
+        i += 1
+    
+    return all(vals)
+
 def dynamically_partition_onset_list(onset_list):
     """
     1.) Go through and check if we can find breakpoints for end-overlapping paths. To do this, we need to use
@@ -189,38 +206,47 @@ def dynamically_partition_onset_list(onset_list):
             
         i += 1
 
-    filtered_break_points = copy.copy(break_points)
-    i = 0
-    partition_start = 0
-    while i < len(filtered_break_points):
-        if 9 <= filtered_break_points[i] - partition_start <= 19:
-            partition_start = filtered_break_points[i]
-            i += 1
-        else:
-            del filtered_break_points[i]
+    if break_points:
+        """
+        What about if there *are* break points but they're at inappropriate places? 
+        """ 
+        filtered_break_points = copy.copy(break_points)
+        i = 0
+        partition_start = 0
+        while i < len(filtered_break_points):
+            if 9 <= filtered_break_points[i] - partition_start <= 19:
+                partition_start = filtered_break_points[i]
+                i += 1
+            else:
+                del filtered_break_points[i]
 
-    new_break_points = [0] + [filtered_break_points[0]] + [x - 2 for x in filtered_break_points[1:]]
-
-    partitions = []
-    for i in range(0, len(new_break_points) - 1):
-        if i == 0:
-            partitions.append(onset_list[new_break_points[i]:new_break_points[i + 1] + 1])
+        if check_good(filtered_break_points):
+            pass
         else:
-            partitions.append(onset_list[new_break_points[i] + 1:new_break_points[i + 1] + 1])
-    
-    count = 0
-    for x in partitions:
-        count += len(x)
-    diff = len(onset_list) - count
-    if diff == 0:
-        return partitions
+            return naive_partition(onset_list)
+
+        new_break_points = [0] + [filtered_break_points[0]] + [x - 2 for x in filtered_break_points[1:]]
+
+        partitions = []
+        for i in range(0, len(new_break_points) - 1):
+            if i == 0:
+                partitions.append(onset_list[new_break_points[i]:new_break_points[i + 1] + 1])
+            else:
+                partitions.append(onset_list[new_break_points[i] + 1:new_break_points[i + 1] + 1])
+        
+        count = 0
+        for x in partitions:
+            count += len(x)
+        diff = len(onset_list) - count
+        if diff == 0:
+            return partitions
+        else:
+            final_partition = onset_list[(-1) * diff:]
+            partitions.append(final_partition)
+            return partitions
     else:
-        final_partition = onset_list[(-1) * diff:]
-        partitions.append(final_partition)
-        return partitions
+        return naive_partition(onset_list)
 
-    return partitions
-    
 def filter_out_single_anga_class_talas(onset_list):
     """
     Given the output tala data from the rolling window search, returns a new list 
@@ -237,16 +263,11 @@ sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introducti
 tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
 onset_ranges = []
-for this_tala in tree.rolling_search(path = sept_haikai_path, part_num = 0):
+for this_tala in tree.rolling_search(path = liturgie_path, part_num = 0):
     onset_ranges.append(list(this_tala))
 
 sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
 filtered = filter_out_single_anga_class_talas(sorted_onset_ranges)
-
-#print(dynamically_partition_onset_list(filtered))
-for x in dynamically_partition_onset_list(filtered):
-    print(x)
-    print()
 
 ####################################################################################################
 
