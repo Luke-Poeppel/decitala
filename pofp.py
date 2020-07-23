@@ -184,6 +184,17 @@ def check_good(lst):
     
     return all(vals)
 
+def get_break_points(lst):
+    i = 0
+    break_points = []
+    while i < len(lst) - 1:
+        if _check_all_prev(lst, i):
+            break_points.append(i+1)
+            
+        i += 1
+    
+    return break_points
+
 def dynamically_partition_onset_list(onset_list):
     """
     1.) Go through and check if we can find breakpoints for end-overlapping paths. To do this, we need to use
@@ -197,14 +208,7 @@ def dynamically_partition_onset_list(onset_list):
         return onset_list
 
     copied = copy.copy(onset_list)
-
-    i = 0
-    break_points = []
-    while i < len(copied) - 1:
-        if _check_all_prev(onset_list, i):
-            break_points.append(i+1)
-            
-        i += 1
+    break_points = get_break_points(onset_list)
 
     if break_points:
         """
@@ -254,7 +258,7 @@ def filter_out_single_anga_class_talas(onset_list):
     """
     return list(filter(lambda x: x[0][0].num_anga_classes != 1, onset_list))
 
-'''
+
 from decitala import Decitala, FragmentTree
         
 decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
@@ -264,12 +268,15 @@ sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introducti
 tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
 onset_ranges = []
-for this_tala in tree.rolling_search(path = liturgie_path, part_num = 0):
+for this_tala in tree.rolling_search(path = sept_haikai_path, part_num = 0):
     onset_ranges.append(list(this_tala))
 
 sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
 filtered = filter_out_single_anga_class_talas(sorted_onset_ranges)
-'''
+
+for x in dynamically_partition_onset_list(filtered):
+    print(x)
+    print()
 
 ####################################################################################################
 

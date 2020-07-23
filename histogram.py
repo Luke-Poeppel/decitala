@@ -9,7 +9,10 @@
 # Location: Kent, CT 2020
 ####################################################################################################
 """
-Notes:
+TODO:
+- Decitala demographics on Sept Haikai and Liturgie
+
+NOTE:
 - As is noted in Issues, the Counter function doesn't work with GeneralFragment objects. For now, use
 the Counter on the name. 
 """
@@ -19,12 +22,13 @@ import numpy as np
 
 from collections import Counter
 
+from decitala import Decitala, FragmentTree
+
 FONTNAME = 'Times'
 FONTSIZE_TITLE = 14
 FONTSIZE_LABEL = 12
 
 ####################################################################################################
-from decitala import Decitala, FragmentTree
         
 decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
 liturgie_path = '/Users/lukepoeppel/Dropbox/Luke_Myke/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl'

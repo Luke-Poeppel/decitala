@@ -411,10 +411,11 @@ def get_model3_path():
     
     return continuous_paths
 
-for x in get_model3_path():
-    print(x)
-    print(x.decitalas)
-    print()
+#good stuff...
+#for x in get_model3_path():
+#    print(x)
+#    print(x.decitalas)
+#    print()
     
 ####################################################################################################
 

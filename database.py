@@ -127,7 +127,6 @@ def create_database(score_path, part_num, db_name):
 
                 #nPVI_vals = []
                 pitch_content = []
-
                 for this_range in path:
                     pitch_content.append(_pitch_info_from_onset_range(this_range[-1], all_objects))
                     for row in rows:

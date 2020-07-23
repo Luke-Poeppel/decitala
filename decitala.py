@@ -420,6 +420,12 @@ class GeneralFragment(object):
 	
 	def __hash__(self):
 		return hash(self.name)
+
+	def __eq__(self, other):
+		if self.__hash__() == other.__hash__():
+			return True
+		else:
+			return False
 	
 	def ql_array(self, retrograde=False):
 		'''
