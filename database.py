@@ -9,6 +9,8 @@
 ####################################################################################################
 """
 Notes: 
+- IMPORTANT: there should be a kind of discrimination approach here. We should be able to create a 
+database that excludes all single-onset talas and create the paths from there. 
 - Should have the option to create a decitala database, greek foot database, combined 
 database, etc... For now, let's just assume it's a decitala databse. 
 - This function would work well in command line. decitala_v2 create_database <score_path> <part_num>

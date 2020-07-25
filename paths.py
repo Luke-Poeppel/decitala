@@ -388,7 +388,6 @@ def model3(x, weights):
     
     return round(sum(sums), 6)
 
-
 class FullPath(object):
     """
     Object for concatenating multiple path objects into a new path.
@@ -461,64 +460,6 @@ def sorted_paths(path_table, db):
 
     return sorted(paths, reverse = True, key = lambda x: x.score())
 
-
-'''
-p = Path('Paths_0', path_num = 12, db_path=haikai_database_path)
-print(p)
-print(p.decitalas)
-p.score(breakdown=True)
-print(p.average_nPVI())
-
-print()
-
-p2 = Path('Paths_0', path_num = 15, db_path=haikai_database_path)
-print(p2)
-print(p2.decitalas)
-p2.score(breakdown=True)
-print(p2.average_nPVI())
-'''
-
-
-
-'''
-p16 = Path('Paths_0', path_num=16, db_path=haikai_database_path)
-print(p16)
-print(p16.score())
-'''
-'''
-print(p16.gap_score())
-print(p16.recycling_score())
-print(p16.non_retrogradable_score())
-print(p16.num_onsets_score())
-'''
-
-'''
-print(p16.gap_score())
-print(p16.recycling_score())
-print(p16.non_retrogradable_score())
-print(p16.decitalas)
-'''
-#print(p16.num_onsets_score())
-
-'''
-print(p16.recycling_score())
-print()
-print(p16.average_nPVI())
-print(p16.num_onsets_score())
-print()
-print(p16.decitalas)
-'''
-
-'''
-paths0 = sorted_paths(path_table = 'Paths_0', db = haikai_database_path)
-#bug: returning 110..... 
-for x in paths0:
-    print(x, x.path_num)
-    print(x.decitalas)
-    print(x.score())
-    print()
-    print()
-'''
 
 if __name__ == '__main__':
     import doctest

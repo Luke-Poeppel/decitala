@@ -45,8 +45,8 @@ from datetime import datetime
 from itertools import chain, combinations
 from statistics import StatisticsError
 
-from povel_essens_clock import get_average_c_score
-from povel_essens_clock import transform_to_time_scale
+#from povel_essens_clock import get_average_c_score
+#from povel_essens_clock import transform_to_time_scale
 
 from music21 import converter
 from music21 import note
@@ -576,6 +576,7 @@ class GeneralFragment(object):
 	def std(self):
 		return round(np.std(self.ql_array()), 5)
 
+	'''
 	def c_score(self):
 		"""
 		Povel and Essens (1985) C-Score. Returns the average across all clocks. 
@@ -583,7 +584,7 @@ class GeneralFragment(object):
 		"""
 		as_time_scale = transform_to_time_scale(array = self.ql_array())
 		return get_average_c_score(array = as_time_scale)
-	
+	'''
 	def nPVI(self):
 		"""
 		Normalized pairwise variability index (Low, Grabe, & Nolan, 2000)
@@ -649,7 +650,8 @@ class Decitala(GeneralFragment):
 	'<0 1 0 2>'
 	>>> ragavardhana.std()
 	0.52571
-	>>> ragavardhana.c_score()
+	
+	ragavardhana.c_score()
 	12.47059
 	>>> ragavardhana.nPVI()
 	74.285714
@@ -740,6 +742,9 @@ class Decitala(GeneralFragment):
 	def num_anga_classes(self):
 		return len(set(self.ql_array()))
 
+#d = Decitala('Ragavardhana')
+#print(d)
+
 class GreekFoot(GeneralFragment):
 	"""
 	Class that stores greek foot data. Reads from a folder containing all greek feet XML files.
@@ -808,6 +813,8 @@ class GreekFoot(GeneralFragment):
 					greek_string_lst.append(this_diacritic_symbol)
 
 		return ' '.join(greek_string_lst)
+
+
 
 ################################# WINDOWS ###################################
 def partitionByWindows(lst, partitionLengths = [], repeat = True):

@@ -15,6 +15,7 @@ ranges that are fixed. To solve this problem, we use a function to partition the
 non-overlapping, manageable chunks of length between 10 and 20. 
 
 TODO:
+- separate the break point function so that it's easier to test.
 - doctests/unittests
 - visualization of the various possibilities for overlaps. 
 '''
@@ -258,7 +259,6 @@ def filter_out_single_anga_class_talas(onset_list):
     """
     return list(filter(lambda x: x[0][0].num_anga_classes != 1, onset_list))
 
-
 from decitala import Decitala, FragmentTree
         
 decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
@@ -268,15 +268,28 @@ sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introducti
 tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
 onset_ranges = []
-for this_tala in tree.rolling_search(path = sept_haikai_path, part_num = 0):
+for this_tala in tree.rolling_search(path = liturgie_path, part_num = 3):
     onset_ranges.append(list(this_tala))
 
 sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
 filtered = filter_out_single_anga_class_talas(sorted_onset_ranges)
 
-for x in dynamically_partition_onset_list(filtered):
+print(len(sorted_onset_ranges))
+print(len(filtered))
+#[4, 86, 95]
+filter_2 = []
+for x in filtered:
+    if x[0][0].id_num not in [4, 86, 95]:
+        filter_2.append(x)
+print(len(filter_2))
+asl = [x[0][0] for x in filter_2]
+bp = get_break_points(filter_2)
+for x in dynamically_partition_onset_list(filter_2):
     print(x)
     print()
+
+#What if I tried filtering out cyclic shifts
+#What if I tried filtering out talas that sit in others. 
 
 ####################################################################################################
 
