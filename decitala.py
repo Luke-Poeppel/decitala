@@ -10,7 +10,7 @@
 ####################################################################################################
 """
 Big TODO:
-- bird decisions
+- full id as string (only for those who have subtalas)
 - modify Povel and Essens algorithm to account for fragment length
 
 CODE SPRINT TODO: 
@@ -40,6 +40,7 @@ import re
 import statistics
 import tqdm
 import unittest
+import warnings
 
 from datetime import datetime
 from itertools import chain, combinations
@@ -153,73 +154,6 @@ def _difference(array, start_index):
 		return difference
 	except IndexError:
 		pass
-
-def dotProduct(vector1, vector2):
-	'''
-	Returns the dot product (i.e. component by component product) of two vectors. 
-
-	>>> v1 = [1.0, 2.0, 0.75]
-	>>> v2 = [0.5, 0.5, 0.75]
-	>>> dotProduct(v1, v2)
-	2.0625
-	'''
-	if len(vector1) != len(vector2):
-		raise Exception('Vector dimensions do not match.')
-	else:
-		dot_product = 0
-		for i in range(0, len(vector1)):
-			dot_product += vector1[i] * vector2[i]
-
-	return round(dot_product, 5)
-
-def cauchy_schwartz(vector1, vector2):
-	'''
-	Tests the cauchy-schwartz inequality between two vectors. Namely, if the absolute value of 
-	the dot product of the two vectors is less than the product of the norms, the vectors are 
-	linearly independant (and the function returns True); if they are equal, they are dependant 
-	(and the function returns False). 
-
-	Linear Independance:
-	>>> vectorI1 = [0.375, 1.0, 0.25]
-	>>> vectorI2 = [1.0, 0.0, 0.5]
-	>>> cauchy_schwartz(vectorI1, vectorI2)
-	True
-
-	Test:
-	>>> cauchy_schwartz([0.75, 0.5], [1.5, 1.0])
-	False
-
-	Linear Dependance (D1 = 2D2):
-	>>> vectorD1 = [1.0, 2.0, 4.0, 8.0]
-	>>> vectorD2 = [0.5, 1.0, 2.0, 4.0]
-	>>> cauchy_schwartz(vectorD1, vectorD2)
-	False
-
-	Direct Equality:
-	>>> vectorE1 = [0.25, 0.25, 0.25, 0.25]
-	>>> vectorE2 = [0.25, 0.25, 0.25, 0.25]
-	>>> cauchy_schwartz(vectorE1, vectorE2)
-	False
-	'''
-	def _euclidianNorm(vector):
-		'''
-		Returns the euclidian norm of a duration vector (rounded to 5 decimal places). Defined as the 
-		square root of the inner product of a vector with itself.
-
-		>>> euclidianNorm([1.0, 1.0, 1.0])
-		Decimal('1.73205')
-		>>> euclidianNorm([1, 2, 3, 4])
-		Decimal('5.47722')
-		'''
-		norm_squared = dotProduct(vector, vector)
-		norm = decimal.Decimal(str(math.sqrt(norm_squared)))
-
-		return norm.quantize(decimal.Decimal('0.00001'), decimal.ROUND_DOWN)
-
-	if abs(dotProduct(vector1, vector2)) <  (_euclidianNorm(vector1) * _euclidianNorm(vector2)):
-		return True
-	else:
-		return False
 
 def successive_ratio_list(lst):
 	"""
@@ -609,13 +543,6 @@ class GeneralFragment(object):
 		if self.stream:
 			return self.stream.show() 
 
-'''
-random_fragment_path = '/users/lukepoeppel/decitala_v.2.0/Decitalas/63_Nandi.xml'
-print(random_fragment_path.split('/'))
-g1 = GeneralFragment(path = random_fragment_path)
-l = np.array([0.5, 0.25, 0.25, 0.5, 0.5, 1.0, 1.0])
-print(l)
-'''
 ########################################################################
 '''
 Inheritance notes:
@@ -811,49 +738,20 @@ class GreekFoot(GeneralFragment):
 
 		return ' '.join(greek_string_lst)
 
-#c = converter.parse('/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml')
-#sept = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
-
-#new = t.get_indices_of_object_occurrence(sept, 0)
-
-'''
-d = Decitala('Jhampa')
-d2 = Decitala('Gajajhampa')
-d3 = Decitala('Jhampa')
-
-lst = [d, d2, d3]
-
-from collections import Counter
-
-print(lst)
-new = []
-for x in lst:
-	new.append(x.name)
-
-print(new)
-print(Counter(new))
-'''
-#print(Counter(lst))
-
-'''
-num_onsets = []
-for this_file in os.listdir(decitala_path):
-	d = Decitala(this_file)
-	num_onsets.append(d.num_onsets)
-
-print(sorted(num_onsets, reverse=True))
-'''
-#print(new)
-
-#print(t.get_by_ql_list([1.0, 1.0, 1.0, 0.5, 0.75, 0.5]))
-#print(Decitala.get_by_id(21).ql_array())
-#print(Decitala.get_by_id(21).successive_ratio_list())
-#print(_ratio(Decitala.get_by_id(21).ql_array(), 0))
-
 ###############################################################################
+# Helper function to ignore annoying warnings 
+# source: https://www.neuraldump.net/2017/06/how-to-suppress-python-unittest-warnings/
+
+def ignore_warnings(test_func):
+	def do_test(self, *args, **kwargs):
+		with warnings.catch_warnings():
+			warnings.simplefilter("ignore")
+			test_func(self, *args, **kwargs)
+	return do_test
+
 class Test(unittest.TestCase):
-	def runTest(self):
-		pass
+	def setUp(self):
+		warnings.simplefilter('ignore', category=ImportWarning)
 	
 	def testDecitalaName(self):
 		kumudaName = Decitala('Vanamali').name
@@ -867,7 +765,7 @@ class Test(unittest.TestCase):
 		expectedStrings = [['| S Sc'], ['o o | | | o o | S'], ['S S S | Sc']]
 		self.assertEqual(carnaticStrings, expectedStrings)
 	
-	def testidNum(self):
+	def testIDNum(self):
 		'''
 		This generates all decitalas with prime id num below 20.
 		'''
@@ -880,7 +778,7 @@ class Test(unittest.TestCase):
 		
 		self.assertEqual(talaList, expectedTalas)
 		
-	def testConversionA(self):
+	def testConversionToCarnaticNotation(self):
 		danseQlList = [0.25, 0.375, 0.5, 0.25, 0.5, 1.0, 0.5, 1.5, 0.375, 1.0]
 		
 		converted = ql_array_to_carnatic_string(ql_array=danseQlList)
@@ -888,17 +786,15 @@ class Test(unittest.TestCase):
 		
 		self.assertEqual(converted, expectedConversion)
 	
-	'''
-	def testConversionB(self):
+	def testConversionToWesternNotation(self):
 		abime = '| | o |c | oc o Sc'
 		
-		converted = carnatic_string_to_ql_array(abime)
+		converted = list(carnatic_string_to_ql_array(abime))
 		expected = [0.5, 0.5, 0.25, 0.75, 0.5, 0.375, 0.25, 1.5]
 		
 		self.assertEqual(converted, expected)
-	'''
 
 if __name__ == '__main__':
 	import doctest
 	doctest.testmod()
-	#unittest.main()
+	unittest.main()

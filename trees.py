@@ -8,20 +8,37 @@
 # Location: Kent, CT 2020
 ####################################################################################################
 """
+This module holds the Nary tree representation of Fragment trees (both ratio and difference based).
+
 NOTE:
 TODO:
+- The dot product and norm are built-in functions in numpy. Saves space and is cleaner. 
 """
-################################# WINDOWS ###################################
-def partitionByWindows(lst, partitionLengths = [], repeat = True):
-	'''
-	This function takes in a sequence and a list of partition lengths. It generates sub-lists,
-	each with a length corresponding to the values in partitionLengths. If repeat is set to True,
-	it will do so repeatedly. Given that there may be a remainder (modulus), the final subset 
-	returned may be of a different size. 
+import copy
+import decimal
+import itertools
+import math
+import numpy as np
+import os
 
-	>>> s = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
-	>>> for thisPartition in partitionByWindows(s, partitionLengths = [1, 2, 3]):
-	...     print(thisPartition)
+from music21 import converter
+from music21 import stream
+
+from decitala import Decitala
+
+decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
+greek_path = '/Users/lukepoeppel/decitala_v2/Greek_Metrics/XML'
+
+################################# WINDOWS ###################################
+def partition_by_windows(lst, partition_lengths = []):
+	'''
+	Takes in a list of data and a list of partition lengths and returns a list of lists that holds
+	the original data in windows of length (partition_lengths)_i. Given that there may be a remainder 
+	the final list in the output may be of a different size. 
+
+	>>> pi1 = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+	>>> for this_partition in partition_by_windows(pi1, partition_lengths = [1, 2, 3]):
+	...     print(this_partition)
 	[3]
 	[1, 4]
 	[1, 5, 9]
@@ -29,47 +46,43 @@ def partitionByWindows(lst, partitionLengths = [], repeat = True):
 	[6, 5]
 	[3, 5]
 
-	>>> s2 = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7]
-	>>> partitionByWindows(s2, partitionLengths = [7, 4])
+	>>> pi2 = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7]
+	>>> partition_by_windows(pi2, partition_lengths = [7, 4])
 	[[3, 1, 4, 1, 5, 9, 2], [6, 5, 3, 5], [8, 9, 7]]
 	'''
 	it = iter(lst)
-
-	numOfRepeats = (len(lst) // sum(partitionLengths)) + 1
-	newPartitions = numOfRepeats * partitionLengths
-	allSlices = [s for s in (list(itertools.islice(it, 0, i)) for i in newPartitions)]
+	num_of_repeats = (len(lst) // sum(partition_lengths)) + 1
+	new_partitions = num_of_repeats * partition_lengths
+	all_slices = [s for s in (list(itertools.islice(it, 0, i)) for i in new_partitions)]
 
 	remainder = list(it)
 	if remainder:
-		allSlices.append(remainder)
+		all_slices.append(remainder)
 
-	for thisSlice in allSlices:
-		if len(thisSlice) == 0:
-			allSlices.remove(thisSlice)
+	for this_slice in all_slices:
+		if len(this_slice) == 0:
+			all_slices.remove(this_slice)
 
-	return allSlices
+	return all_slices
 
-def roll_window(lst, window):
+def roll_window(lst, window_length):
 	'''
-	This function takes in a list and returns a list of all windows of a provided length, rolling
-	from the starting index to the point at which the window hits the final value of the list. 
+	Takes in a list and returns a list of lists that holds rolling windows of length window_length.
 
 	>>> l = ['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet']
-	>>> for this in roll_window(l, 3):
+	>>> for this in roll_window(lst=l, window_length=3):
 	...     print(this)
 	['Mozart', 'Monteverdi', 'Messiaen']
 	['Monteverdi', 'Messiaen', 'Mahler']
 	['Messiaen', 'Mahler', 'MacDowell']
 	['Mahler', 'MacDowell', 'Massenet']
 	'''
-	if type(window) != int:
-		raise Exception('The window must be an integer!')
+	assert type(window_length) == int
 
 	l = []
-
 	iterable = iter(lst)
 	win = []
-	for _ in range(0, window):
+	for _ in range(0, window_length):
 		win.append(next(iterable))
 	
 	l.append(win)
@@ -80,8 +93,131 @@ def roll_window(lst, window):
 
 	return l
 
-#l = [(1.0, 'a'), (2.0, 'b'), (3.0, 'c'), (4.0, 'd'), (5.0, 'e'), (6.0, 'f')]
-#print(roll_window(lst = l, window = 3))
+################################## REPRESENTATIONS ##################################
+def _ratio(array, start_index):
+	"""
+	Given an array and a starting index, returns the ratio of the element at the provided index 
+	to the element at the following one. A ZeroDivision error will only occur if it encounters a 
+	difference list.
+
+	>>> _ratio(np.array([1.0, 0.5]), 0)
+	0.5
+	>>> _ratio(np.array([0.25, 0.25, 0.75]), 1)
+	3.0
+	>>> _ratio(np.array([1.5, 1.0]), 0)
+	0.66667
+	"""
+	if not (0 <= start_index and start_index <= len(array) - 1):
+		raise IndexError('Input ``start_index`` not in appropriate range!')
+	try: 
+		ratio = array[start_index + 1] / array[start_index]
+		return round(ratio, 5)
+	except ZeroDivisionError:
+		raise Exception('Something is off...')
+
+def _difference(array, start_index):
+	"""
+	Returns the difference between two elements. 
+	"""
+	try:
+		difference = array[start_index + 1] - array[start_index]
+		return difference
+	except IndexError:
+		pass
+
+def successive_ratio_list(lst):
+	"""
+	Returns an array of the successive duration ratios. By convention, we set the first value to 1.0. 
+	"""
+	ratio_array = [1.0] #np.array([1.0])
+	i = 0
+	while i < len(lst) - 1:
+		ratio_array.append(_ratio(lst, i))
+		i += 1
+
+	return np.array(ratio_array)
+	
+def successive_difference_array(lst):
+	"""
+	Returns a list containing differences between successive durations. By convention, we set the 
+	first value to 0.0. 
+	"""
+	difference_lst = [0.0]
+	i = 0
+	while i < len(lst) - 1:
+		difference_lst.append(_difference(lst, i))
+		i += 1
+
+	return difference_lst
+
+################################## MATH HELPERS ##################################
+
+def dot_product(vector1, vector2):
+	'''
+	Returns the dot product (i.e. component by component product) of two vectors. 
+
+	>>> v1 = [1.0, 2.0, 0.75]
+	>>> v2 = [0.5, 0.5, 0.75]
+	>>> dot_product(v1, v2)
+	2.0625
+	'''
+	if len(vector1) != len(vector2):
+		raise Exception('Vector dimensions do not match.')
+	else:
+		dot_product = 0
+		for i in range(0, len(vector1)):
+			dot_product += vector1[i] * vector2[i]
+
+	return round(dot_product, 5)
+
+def cauchy_schwartz(vector1, vector2):
+	'''
+	Tests the cauchy-schwartz inequality between two vectors. Namely, if the absolute value of 
+	the dot product of the two vectors is less than the product of the norms, the vectors are 
+	linearly independant (and the function returns True); if they are equal, they are dependant 
+	(and the function returns False). 
+
+	Linear Independance:
+	>>> vectorI1 = [0.375, 1.0, 0.25]
+	>>> vectorI2 = [1.0, 0.0, 0.5]
+	>>> cauchy_schwartz(vectorI1, vectorI2)
+	True
+
+	Test:
+	>>> cauchy_schwartz([0.75, 0.5], [1.5, 1.0])
+	False
+
+	Linear Dependance (D1 = 2D2):
+	>>> vectorD1 = [1.0, 2.0, 4.0, 8.0]
+	>>> vectorD2 = [0.5, 1.0, 2.0, 4.0]
+	>>> cauchy_schwartz(vectorD1, vectorD2)
+	False
+
+	Direct Equality:
+	>>> vectorE1 = [0.25, 0.25, 0.25, 0.25]
+	>>> vectorE2 = [0.25, 0.25, 0.25, 0.25]
+	>>> cauchy_schwartz(vectorE1, vectorE2)
+	False
+	'''
+	def _euclidianNorm(vector):
+		'''
+		Returns the euclidian norm of a duration vector (rounded to 5 decimal places). Defined as the 
+		square root of the inner product of a vector with itself.
+
+		>>> euclidianNorm([1.0, 1.0, 1.0])
+		Decimal('1.73205')
+		>>> euclidianNorm([1, 2, 3, 4])
+		Decimal('5.47722')
+		'''
+		norm_squared = dot_product(vector, vector)
+		norm = decimal.Decimal(str(math.sqrt(norm_squared)))
+
+		return norm.quantize(decimal.Decimal('0.00001'), decimal.ROUND_DOWN)
+
+	if abs(dot_product(vector1, vector2)) <  (_euclidianNorm(vector1) * _euclidianNorm(vector2)):
+		return True
+	else:
+		return False
 
 ################################### TREES ###################################
 
@@ -95,7 +231,7 @@ class NaryTree(object):
 							0.5			1.0		    3.0A.   |		4.0					LEVEL 2
 						0.5		3.0B		 2.0C		    |		1.0					LEVEL 3
 						1.0D				 1.0 'Overwrite'|	0.5						LEVEL 4
-														    |		2.0 'Full Path'		LEVEL 5
+															|		2.0 'Full Path'		LEVEL 5
 
 	>>> root = NaryTree().Node(value = 1.0, name = None)			# LEVEL 1
 
@@ -436,13 +572,12 @@ class NaryTree(object):
 	################################################################################################
 	def search_for_path(self, path_from_root):
 		"""
-		Searches through the nary tree for a path consisting of the values in the path_from_root
-		list. Note: the first value of the path must either be 1 (ratio representation search) or 
-		0 (difference representation search). Call me old-fashioned, but I feel like there should be 
-		a difference in output between a path being present but unnamed and path not existing. 
+		Searches through the tree for a continuous path *to a named node* consisting of the values in the path_from_root list. 
+		NOTE: the first value of the path must either be 1 (ratio representation search) or 0 (difference 
+		representation search). 
+
+		TODO: create a method based on this one that searches for unnamed paths, as well. 
 		"""
-		#if pathFromRoot[0] != 1.0 or 0.0:
-			#raise Exception('Path provided is invalid.')
 		if len(path_from_root) <= 2:
 			raise Exception('Path provided must be at least 3 values long.')
 
@@ -470,11 +605,11 @@ class FragmentTree(NaryTree):
 	Nary tree for holding ratio and different representation of rhythmic fragments. 
 
 	TODO
-	- keep track of rests in all cases. The indices of occurrence can't be based
+	- Keep track of rests in all cases. The indices of occurrence can't be based
 	upon placement of notes, but have to be based on placement of *all* musical objects. 
-	- cauchy-schwartz inequality is completely unnecessary (I think) since we're using ratio representations.
+	- Cauchy-schwartz inequality is completely unnecessary (I think) since we're using ratio representations.
 	not sure how this applies for difference representations. 
-	- decide on double-onset fragment convention. I'm leaning towards keep them since some of them are odd. 
+	- Decide on double-onset fragment convention. I'm leaning towards keep them since some of them are odd. 
 	"""
 	def __init__(self, root_path, frag_type, rep_type, **kwargs):
 		if type(root_path) != str:
@@ -870,7 +1005,7 @@ class FragmentTree(NaryTree):
 		frames = []
 
 		for this_win in possible_windows:
-			for this_frame in roll_window(lst = object_list, window = this_win):
+			for this_frame in roll_window(lst = object_list, window_length = this_win):
 				frames.append(this_frame)
 
 		for this_frame in frames:
@@ -896,13 +1031,16 @@ class FragmentTree(NaryTree):
 '''
 t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
-decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
 sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
 
-for this_tala in t.rolling_search(sept_haikai_path, 1):
-	print(this_tala)
-
+found = []
+for this_tala in t.rolling_search(sept_haikai_path, 0):
+	found.append(this_tala)
+for x in set(found):
+	print(x)
 '''
 
-
+if __name__ == '__main__':
+	import doctest
+	doctest.testmod()
 
