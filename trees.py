@@ -1015,7 +1015,7 @@ class FragmentTree(NaryTree):
 					if this_obj.quarterLength == 0.25:
 						as_quarter_lengths.append(this_obj)
 					else:
-						pass		
+						pass
 				as_quarter_lengths.append(this_obj.quarterLength)
 
 			searched = self.get_by_ql_list(ql_list = as_quarter_lengths, try_all_methods=True)
