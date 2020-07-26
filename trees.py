@@ -1028,6 +1028,45 @@ class FragmentTree(NaryTree):
 
 		return fragments_found
 
+def get_by_ql_list2(fragment, root_path, frag_type):
+	"""
+	I don't think it makes sense to have stuff like rolling_search as part of the tree class...
+	It definitely makes sense to have *some* get_by_ql thing in the tree, but what? We need to be 
+	able to search the difference tree, so maybe I should have get_by_ql_array() be a method that searches
+	for exact instances of the ql array. Then rolling_search and get_by_ql_array_all_methods() 
+	are separate methods.
+	"""
+	ratio_tree = FragmentTree(root_path=root_path, frag_type=frag_type, rep_type = 'ratio')
+	difference_tree = FragmentTree(root_path=root_path, frag_type=frag_type, rep_type = 'difference')
+
+	retrograde = ql_list[::-1]
+	ratio_list = successive_ratio_list(ql_list)
+	difference_list = successive_difference_array(ql_list)
+	retrograde_ratio_list = successive_ratio_list(retrograde)
+	retrograde_difference_list = successive_difference_array(retrograde)
+
+	ratio_search = ratio_tree.search_for_path(ratio_list)
+	if ratio_search is None:
+		retrograde_ratio_search = ratio_tree.search_for_path(retrograde_ratio_list)
+		if retrograde_ratio_search is None:
+			difference_search = difference_tree.search_for_path(difference_list)
+			if difference_search is None:
+				retrograde_difference_search = difference_tree.search_for_path(retrograde_difference_list)
+				if retrograde_difference_search is None:
+					return None
+				else:
+					difference = _difference(retrograde_difference_search.ql_array(), 0)
+					return (retrograde_difference_search, ('difference', difference))
+			else:
+				difference = _difference(difference_search.ql_array(), 0)
+				return (difference_search, ('difference', difference))
+		else:
+			ratio = _ratio(retrograde_ratio_search.ql_array(), 0)
+			return (retrograde_ratio_search, ('retrograde', ratio))
+	else:
+		ratio = _ratio(ratio_search.ql_array(), 0)
+		return (ratio_search, ('ratio', ratio))
+
 '''
 t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
