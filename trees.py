@@ -1028,7 +1028,7 @@ class FragmentTree(NaryTree):
 
 		return fragments_found
 
-def get_by_ql_list2(fragment, root_path, frag_type):
+def get_by_ql_list2(ql_list, ratio_tree, difference_tree):
 	"""
 	I don't think it makes sense to have stuff like rolling_search as part of the tree class...
 	It definitely makes sense to have *some* get_by_ql thing in the tree, but what? We need to be 
@@ -1036,9 +1036,6 @@ def get_by_ql_list2(fragment, root_path, frag_type):
 	for exact instances of the ql array. Then rolling_search and get_by_ql_array_all_methods() 
 	are separate methods.
 	"""
-	ratio_tree = FragmentTree(root_path=root_path, frag_type=frag_type, rep_type = 'ratio')
-	difference_tree = FragmentTree(root_path=root_path, frag_type=frag_type, rep_type = 'difference')
-
 	retrograde = ql_list[::-1]
 	ratio_list = successive_ratio_list(ql_list)
 	difference_list = successive_difference_array(ql_list)
@@ -1067,10 +1064,63 @@ def get_by_ql_list2(fragment, root_path, frag_type):
 		ratio = _ratio(ratio_search.ql_array(), 0)
 		return (ratio_search, ('ratio', ratio))
 
+def rolling_search2(path, part_num, ratio_tree, difference_tree):
+	"""
+	Runs a windowed search on an input stream and path number. Returns the decitalas found and the 
+	indices of occurrence. 
+	"""
+	possible_windows = [3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
+	object_list = ratio_tree.get_indices_of_object_occurrence(file_path = path, part_num = part_num)
+	fragments_found = []
+	frames = []
+
+	for this_win in possible_windows:
+		for this_frame in roll_window(lst = object_list, window_length = this_win):
+			frames.append(this_frame)
+
+	for this_frame in frames:
+		as_quarter_lengths = []
+		for this_obj, thisRange in this_frame:
+			if this_obj.isRest:
+				if this_obj.quarterLength == 0.25:
+					as_quarter_lengths.append(this_obj)
+				else:
+					pass
+			as_quarter_lengths.append(this_obj.quarterLength)
+
+		#print(as_quarter_lengths)
+		searched = get_by_ql_list2(as_quarter_lengths, ratio_tree, difference_tree)
+		if searched is not None:
+			offset_1 = this_frame[0][0]
+			offset_2 = this_frame[-1][0]
+
+			fragments_found.append((searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
+			#fragments_found.append((searched, (thisFrame[0][0].offset, thisFrame[0][-1].offset))) #SUM OVER FOR RANGE!#
+
+	return fragments_found
+
 '''
-t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
+ratio_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'ratio')
+difference_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'difference')
+
+livre_dorgue_1 = np.array([1.0, 0.5, 1.5, 1.5, 1.5, 1.0, 1.5, 0.25, 0.25, 0.25])
+livre_dorgue_2 = np.array([0.125, 0.125, 0.125, 0.125, 0.25, 0.25, 0.375])
+livre_dorgue_3 = np.array([0.75, 1.25, 1.25, 1.75, 1.25, 1.25, 1.25, 0.75])
+#print(get_by_ql_list2(livre_dorgue_1, ratio_tree, difference_tree))
+#print(get_by_ql_list2(livre_dorgue_2, ratio_tree, difference_tree))
+#print(get_by_ql_list2(livre_dorgue_3, ratio_tree, difference_tree))
 
 sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
+livre_dorgue_path = "/Users/lukepoeppel/Desktop/Messiaen/Livre_d\'Orgue/V_Piece_En_Trio.xml"
+found = []
+for this_tala in rolling_search2(livre_dorgue_path, 0, ratio_tree, difference_tree):
+	found.append(this_tala)
+sorted_talas = sorted(found, key = lambda x: x[1][0])
+for x in sorted_talas:
+	print(x)
+'''
+'''
+t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
 found = []
 for this_tala in t.rolling_search(sept_haikai_path, 0):

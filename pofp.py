@@ -289,16 +289,20 @@ def filter_subtalas(onset_list):
    
 '''
 from decitala import Decitala
-from trees import FragmentTree
+from trees import FragmentTree, rolling_search2
         
 decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
 liturgie_path = '/Users/lukepoeppel/Dropbox/Luke_Myke/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl'
 sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml' 
+livre_dorgue_path = "/Users/lukepoeppel/Desktop/Messiaen/Livre_d\'Orgue/V_Piece_En_Trio.xml"
 
-tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
+ratio_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'ratio')
+difference_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'difference')
+
+#tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
 onset_ranges = []
-for this_tala in tree.rolling_search(path = sept_haikai_path, part_num = 0):
+for this_tala in rolling_search2(livre_dorgue_path, 1, ratio_tree, difference_tree):
     onset_ranges.append(list(this_tala))
 
 sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
@@ -314,6 +318,9 @@ print(len(filter_subtalas_list))
 jt = [x[0][0] for x in filter_subtalas_list]
 print(Counter(jt))
 
+print(get_break_points(filter_subtalas_list))
+'''
+'''
 partitioned = dynamically_partition_onset_list(filter_subtalas_list)
 p0 = partitioned[0]
 '''

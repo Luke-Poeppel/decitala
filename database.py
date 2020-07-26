@@ -30,7 +30,7 @@ from music21 import converter
 from music21 import stream
 
 from decitala import Decitala
-from trees import FragmentTree
+from trees import FragmentTree, rolling_search2
 from pofp import (
     dynamically_partition_onset_list, 
     get_pareto_optimal_longest_paths,
@@ -175,9 +175,11 @@ def create_filtered_database(score_path, part_num, db_name):
     Function for creating a decitala and paths database in the cwd. 
     NOTE: this function creates the filtered database. (No subtalas, no single anga-class talas)
     """
-    tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
+    ratio_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'ratio')
+    difference_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'difference')
+
     onset_ranges = []
-    for this_tala in tree.rolling_search(path = score_path, part_num = part_num):
+    for this_tala in rolling_search2(score_path, part_num, ratio_tree, difference_tree):
         onset_ranges.append(list(this_tala))
 
     sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
@@ -185,7 +187,7 @@ def create_filtered_database(score_path, part_num, db_name):
     filter_subtalas_list = filter_subtalas(filter_single_anga_classes_list)
 
     partitioned = dynamically_partition_onset_list(filter_subtalas_list)
-    all_objects = tree.get_indices_of_object_occurrence(score_path, part_num)
+    all_objects = ratio_tree.get_indices_of_object_occurrence(score_path, part_num)
 
     conn = lite.connect(db_name)
 
@@ -257,8 +259,10 @@ def create_filtered_database(score_path, part_num, db_name):
 if __name__ == "__main__":
     sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
     liturgie_path = '/Users/lukepoeppel/Dropbox/Luke_Myke/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl'
+    livre_dorgue_path = "/Users/lukepoeppel/Desktop/Messiaen/Livre_d\'Orgue/V_Piece_En_Trio.xml"
+
     #create_database(score_path=liturgie_path, part_num=3, db_name="/Users/lukepoeppel/decitala_v2/liturgie_piano3_test1.db")
-    #create_filtered_database(liturgie_path, 3, '/Users/lukepoeppel/decitala_v2/filtered_db_test.db')
+    create_filtered_database(livre_dorgue_path, 1, '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db')
     #import doctest
     #doctest.testmod()
 
