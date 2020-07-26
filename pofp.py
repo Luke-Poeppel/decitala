@@ -287,6 +287,7 @@ def filter_subtalas(onset_list):
     
     return [x for x in onset_list if x[0][0].id_num in filtered_ids]
    
+'''
 from decitala import Decitala
 from trees import FragmentTree
         
@@ -297,17 +298,25 @@ sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introducti
 tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
 onset_ranges = []
-for this_tala in tree.rolling_search(path = liturgie_path, part_num = 3):
+for this_tala in tree.rolling_search(path = sept_haikai_path, part_num = 0):
     onset_ranges.append(list(this_tala))
 
 sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
-filter_single_anga_classes = filter_single_anga_class_talas(sorted_onset_ranges)
-filter_subtalas = filter_subtalas(filter_single_anga_classes)
+filter_single_anga_classes_list = filter_single_anga_class_talas(sorted_onset_ranges)
+filter_subtalas_list = filter_subtalas(filter_single_anga_classes_list)
 
-partitioned = dynamically_partition_onset_list(filter_subtalas)
+from collections import Counter
+
+print(len(sorted_onset_ranges))
+print(len(filter_single_anga_classes_list))
+print(len(filter_subtalas_list))
+
+jt = [x[0][0] for x in filter_subtalas_list]
+print(Counter(jt))
+
+partitioned = dynamically_partition_onset_list(filter_subtalas_list)
 p0 = partitioned[0]
-
-#What if I tried filtering out cyclic shifts?
+'''
 
 ####################################################################################################
 
@@ -402,8 +411,8 @@ def show_paths(paths: list, title: str):
     """
     raise NotImplementedError
 
-for this in get_pareto_optimal_longest_paths(p0):
-    print(this)
+#for this in get_pareto_optimal_longest_paths(p0):
+    #print(this)
 
 ####################################################################################################
 

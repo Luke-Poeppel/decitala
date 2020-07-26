@@ -8,7 +8,7 @@
 # Location: Kent, CT 2020
 ####################################################################################################
 """
-Notes: 
+NOTE: 
 - IMPORTANT: there should be a kind of discrimination approach here. We should be able to create a 
 database that excludes all single-onset talas and create the paths from there. 
 - Should have the option to create a decitala database, greek foot database, combined 
@@ -16,6 +16,8 @@ database, etc... For now, let's just assume it's a decitala databse.
 - This function would work well in command line. decitala_v2 create_database <score_path> <part_num>
 
 TODO:
+- It doesn't make sense to rewrite all the code twice. Make "filter" a parameter for create_database.
+So the command line tool would be something like decitala create_database (un)filtered <path> <part_num>
 - get_indices_of_object_occurrence really shouldn't be a tree function; it should be separate. 
 - you should be able to build a database on exact matches only. this is more of a TODO for get_by_ql_list.
 """
@@ -27,8 +29,14 @@ import sys
 from music21 import converter
 from music21 import stream
 
-from decitala import Decitala, FragmentTree
-from pofp import dynamically_partition_onset_list, get_pareto_optimal_longest_paths
+from decitala import Decitala
+from trees import FragmentTree
+from pofp import (
+    dynamically_partition_onset_list, 
+    get_pareto_optimal_longest_paths,
+    filter_single_anga_class_talas,
+    filter_subtalas
+)
 
 decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
 
@@ -84,6 +92,7 @@ def _pitch_info_from_onset_range(onset_range, data):
 def create_database(score_path, part_num, db_name):
     """
     Function for creating a decitala and paths database in the cwd. 
+    NOTE: this function creates the raw database with no filtering
     """
     tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
     onset_ranges = []
@@ -161,11 +170,95 @@ def create_database(score_path, part_num, db_name):
                     new = "INSERT INTO Paths_{0} VALUES('{1}', {2}, '{3}')".format(str(i), mid, post_nulls, formatted_pitch_content)
                     cur.execute(new)
 
+def create_filtered_database(score_path, part_num, db_name):
+    """
+    Function for creating a decitala and paths database in the cwd. 
+    NOTE: this function creates the filtered database. (No subtalas, no single anga-class talas)
+    """
+    tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
+    onset_ranges = []
+    for this_tala in tree.rolling_search(path = score_path, part_num = part_num):
+        onset_ranges.append(list(this_tala))
+
+    sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
+    filter_single_anga_classes_list = filter_single_anga_class_talas(sorted_onset_ranges)
+    filter_subtalas_list = filter_subtalas(filter_single_anga_classes_list)
+
+    partitioned = dynamically_partition_onset_list(filter_subtalas_list)
+    all_objects = tree.get_indices_of_object_occurrence(score_path, part_num)
+
+    conn = lite.connect(db_name)
+
+    with conn:
+        cur = conn.cursor()
+        cur.execute("CREATE TABLE Fragment (Onset_Start REAL, Onset_Stop REAL, Tala BLOB, Mod TEXT, Factor INT)")
+
+        for this_partition in partitioned:
+            for x in this_partition:
+                cur.execute("INSERT INTO Fragment VALUES({0}, {1}, '{2}', '{3}', {4})".format(x[1][0], x[1][1], x[0][0], x[0][1][0], x[0][1][1]))
+
+        cur.execute("SELECT * FROM Fragment")
+        rows = cur.fetchall()
+        onset_data = []
+        for row in rows:
+            onset_data.append((row[0], row[1]))
+        
+        #paths
+        for i, this_partition in enumerate(partitioned):
+            pareto_optimal_paths = get_pareto_optimal_longest_paths(this_partition)
+            lengths = [len(path) for path in pareto_optimal_paths]
+            longest_path = max(lengths)
+
+            columns = ['Onset_Range_{}'.format(i) for i in range(1, longest_path + 1)]
+            columns_declaration = ', '.join('%s BLOB' % c for c in columns)
+            newer = columns_declaration + ', Pitch_Content BLOB'
+
+            cur.execute("CREATE TABLE Paths_{0} ({1})".format(str(i), newer))
+            for path in pareto_optimal_paths:
+                #Get nPVI information for the path.
+                cur.execute("SELECT * FROM Fragment")
+                rows = cur.fetchall()
+
+                #nPVI_vals = []
+                pitch_content = []
+                for this_range in path:
+                    pitch_content.append(_pitch_info_from_onset_range(this_range[-1], all_objects))
+                    for row in rows:
+                        if this_range[-1][0] == row[0] and this_range[-1][1] == row[1]:
+                            tala = _name_from_tala_string(row[2])
+                            #nPVI_vals.append(tala.nPVI())
+                
+                #avg_nPVI = np.mean(nPVI_vals)
+                flattened = [note for tala in pitch_content for note in tala]
+                formatted_pitch_content = str(tuple([tuple(sublist) for sublist in pitch_content]))
+
+                #format the pitch content as one continous string.
+                if len(path) == longest_path:
+                    data = []
+                    for this_range in path:
+                        data.append('{0}'.format(this_range[-1]))
+                    
+                    mid = "', '".join(data)
+                    post = "INSERT INTO Paths_{0} VALUES('".format(str(i)) + mid + "', '{0}')".format(formatted_pitch_content)
+                    cur.execute(post)
+                else:
+                    diff = longest_path - len(path)
+                    data = []
+                    for this_range in path:
+                        data.append('{0}'.format(this_range[-1]))
+                    
+                    mid = "', '".join(data)
+                    nulls = ["'NULL'"] * diff
+                    post_nulls = ", ".join(nulls)
+                    new = "INSERT INTO Paths_{0} VALUES('{1}', {2}, '{3}')".format(str(i), mid, post_nulls, formatted_pitch_content)
+                    cur.execute(new)
+
 ##################### TESTING #####################
 if __name__ == "__main__":
     sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
     liturgie_path = '/Users/lukepoeppel/Dropbox/Luke_Myke/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl'
     #create_database(score_path=liturgie_path, part_num=3, db_name="/Users/lukepoeppel/decitala_v2/liturgie_piano3_test1.db")
+    #create_filtered_database(liturgie_path, 3, '/Users/lukepoeppel/decitala_v2/filtered_db_test.db')
     #import doctest
     #doctest.testmod()
 
