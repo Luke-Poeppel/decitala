@@ -229,36 +229,9 @@ def dynamically_partition_onset_list(onset_list):
             raise NotImplementedError
             #return naive_partition(onset_list)
 
-        #new_break_points = [0] + [filtered_break_points[0]] + [x - 2 for x in filtered_break_points[1:]]
-        #print(new_break_points)
-        print()
-        for i, this in enumerate(onset_list):
-            if i in break_points:
-                print(this[1])
-                print()
-                #print('BREAK')
-            
-            else:
-                print(this[1])
-            '''
-            elif i in new_break_points:
-                print('OOOOOOO')
-                print(this[1])
-            elif i in new_break_points and i in filtered_break_points:
-                print('SPECIAL!!!')
-                print(this[1])
-            '''
-            
-
-        '''
         out = [onset_list[i:j] for i, j in zip([0]+filtered_break_points, filtered_break_points + [None])]
-        item = out[-2][-1]
-        del out[-2][-1]
 
-        out[-1].insert(0, item)
-
-        return []#out
-        '''
+        return out
     else:
         raise NotImplementedError
         #return naive_partition(onset_list)
@@ -312,7 +285,7 @@ difference_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', re
 #tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
 onset_ranges = []
-for this_tala in rolling_search2(sept_haikai_path, 0, ratio_tree, difference_tree):
+for this_tala in rolling_search2(sept_haikai_path, 1, ratio_tree, difference_tree):
     onset_ranges.append(list(this_tala))
 
 sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
@@ -321,6 +294,7 @@ filter_subtalas_list = filter_subtalas(filter_single_anga_classes_list)
 
 from collections import Counter
 
+'''
 bp = get_break_points(filter_subtalas_list)
 filtered_bp = get_filtered_break_points(bp)
 for i, x in enumerate(filter_subtalas_list):
@@ -329,7 +303,7 @@ for i, x in enumerate(filter_subtalas_list):
         print(x[1])
     else:
         print(x[1])
-
+'''
 
 '''
 print(len(sorted_onset_ranges))
@@ -342,12 +316,11 @@ bp = get_break_points(filter_subtalas_list)
 print(bp)
 print(get_filtered_break_points(bp))
 '''
-'''
 partitioned = dynamically_partition_onset_list(filter_subtalas_list)
 for i, x in enumerate(partitioned):
     print(x)#, len(x))
     print()
-'''
+
 '''
 p0 = partitioned[0]
 '''
