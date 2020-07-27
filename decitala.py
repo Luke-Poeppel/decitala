@@ -38,7 +38,6 @@ import numpy as np
 import os
 import re
 import statistics
-import tqdm
 import unittest
 import warnings
 
@@ -299,6 +298,9 @@ class GeneralFragment(object):
 	Class for representing a more general rhythmic fragment. This allows for the 
 	creation of FragmentTrees with more abstract data sets, beyond the two encoded. 
 
+	TODO: allow the input to be a numpy array/list, too. 
+	- how about a class method: GeneralFragment.make_by_array([...])
+
 	Input: path for now.
 	>>> random_fragment_path = '/users/lukepoeppel/decitala_v2/Decitalas/63_Nandi.xml'
 	>>> g1 = GeneralFragment(path = random_fragment_path, name = 'test')
@@ -307,6 +309,7 @@ class GeneralFragment(object):
 	>>> g1.filename
 	'63_Nandi.xml'
 
+	Allows for unique arguments.
 	>>> g1.coolness_level = 'pretty cool'
 	>>> g1.coolness_level
 	'pretty cool'
@@ -327,7 +330,7 @@ class GeneralFragment(object):
 	g1.morris_symmetry_class()
 	'VII. Stream'
 
-	>>> for this_cycle in g1.get_cyclic_permutations():
+	>>> for this_cycle in g1.cyclic_permutations():
 	...     print(this_cycle)
 	...
 	[0.5  0.25 0.25 0.5  0.5  1.   1.  ]
@@ -360,6 +363,13 @@ class GeneralFragment(object):
 			return True
 		else:
 			return False
+
+	@classmethod
+	def make_by_array(cls, array):
+		"""
+		Creates a GeneralFragment object 
+		"""
+		pass
 	
 	def ql_array(self, retrograde=False):
 		'''
@@ -467,19 +477,20 @@ class GeneralFragment(object):
 
 		return difference_lst
 
-	def get_cyclic_permutations(self):
+	def cyclic_permutations(self):
 		"""
 		Returns all cyclic permutations. 
 		"""
 		return np.array([np.roll(self.ql_array(), -i) for i in range(self.num_onsets)])
 
 	################ ANALYSIS ################
+	@property
 	def is_non_retrogradable(self):
-		return self.ql_array(retrograde = False) == self.ql_array(retrograde = True)
+		return (self.ql_array(retrograde = False) == self.ql_array(retrograde = True)).all()
 
 	def morris_symmetry_class(self):
 		"""
-		Robert Morris (year?) notes 7 kinds of interesting rhythmic symmetries. I provided the names.
+		Robert Morris (year?) describes 7 forms of rhythmic symmetry. (I provided the names.)
 
 		I.) Maximally Trivial:				of the form X (one onset, one anga class)
 		II.) Trivial Symmetry: 				of the form XXXXXX (multiple onsets, same anga class)
@@ -573,6 +584,8 @@ class Decitala(GeneralFragment):
 	>>> ragavardhana.carnatic_string
 	'o oc o Sc'
 
+	>>> ragavardhana.is_non_retrogradable
+	False
 	>>> ragavardhana.dseg(as_str = True)
 	'<0 1 0 2>'
 	>>> ragavardhana.std()
@@ -588,7 +601,7 @@ class Decitala(GeneralFragment):
 	>>> Decitala('Jaya').ql_array()
 	array([0.5 , 1.  , 0.5 , 0.5 , 0.25, 0.25, 1.5 ])
 
-	>>> for this_cycle in Decitala('Jaya').get_cyclic_permutations():
+	>>> for this_cycle in Decitala('Jaya').cyclic_permutations():
 	...     print(this_cycle)
 	...
 	[0.5  1.   0.5  0.5  0.25 0.25 1.5 ]
@@ -699,7 +712,7 @@ class GreekFoot(GeneralFragment):
 	bacchius.morris_symmetry_class()
 	'VII. Stream'
 
-	>>> for this_cycle in bacchius.get_cyclic_permutations():
+	>>> for this_cycle in bacchius.cyclic_permutations():
 	...     print(this_cycle)
 	...
 	[1. 2. 2.]

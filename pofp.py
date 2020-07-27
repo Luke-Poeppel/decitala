@@ -20,7 +20,6 @@ TODO:
 - visualization of the various possibilities for overlaps. 
 '''
 import copy
-import doctest
 import itertools
 import matplotlib.pyplot as plt
 import unittest
@@ -190,11 +189,24 @@ def get_break_points(lst):
     break_points = []
     while i < len(lst) - 1:
         if _check_all_prev(lst, i):
-            break_points.append(i+1)
+            break_points.append(i)
             
         i += 1
     
     return break_points
+
+def get_filtered_break_points(break_points):
+    filtered_break_points = copy.copy(break_points)
+    i = 0
+    partition_start = 0
+    while i < len(filtered_break_points):
+        if 9 <= filtered_break_points[i] - partition_start <= 19:
+            partition_start = filtered_break_points[i]
+            i += 1
+        else:
+            del filtered_break_points[i]
+
+    return filtered_break_points
 
 def dynamically_partition_onset_list(onset_list):
     """
@@ -208,49 +220,48 @@ def dynamically_partition_onset_list(onset_list):
     if data_length <= 18:
         return onset_list
 
-    copied = copy.copy(onset_list)
     break_points = get_break_points(onset_list)
-
     if break_points:
-        """
-        What about if there *are* break points but they're at inappropriate places? 
-        """ 
-        filtered_break_points = copy.copy(break_points)
-        i = 0
-        partition_start = 0
-        while i < len(filtered_break_points):
-            if 9 <= filtered_break_points[i] - partition_start <= 19:
-                partition_start = filtered_break_points[i]
-                i += 1
-            else:
-                del filtered_break_points[i]
-
+        filtered_break_points = get_filtered_break_points(break_points)
         if check_good(filtered_break_points):
             pass
         else:
-            return naive_partition(onset_list)
+            raise NotImplementedError
+            #return naive_partition(onset_list)
 
-        new_break_points = [0] + [filtered_break_points[0]] + [x - 2 for x in filtered_break_points[1:]]
-
-        partitions = []
-        for i in range(0, len(new_break_points) - 1):
-            if i == 0:
-                partitions.append(onset_list[new_break_points[i]:new_break_points[i + 1] + 1])
+        #new_break_points = [0] + [filtered_break_points[0]] + [x - 2 for x in filtered_break_points[1:]]
+        #print(new_break_points)
+        print()
+        for i, this in enumerate(onset_list):
+            if i in break_points:
+                print(this[1])
+                print()
+                #print('BREAK')
+            
             else:
-                partitions.append(onset_list[new_break_points[i] + 1:new_break_points[i + 1] + 1])
-        
-        count = 0
-        for x in partitions:
-            count += len(x)
-        diff = len(onset_list) - count
-        if diff == 0:
-            return partitions
-        else:
-            final_partition = onset_list[(-1) * diff:]
-            partitions.append(final_partition)
-            return partitions
+                print(this[1])
+            '''
+            elif i in new_break_points:
+                print('OOOOOOO')
+                print(this[1])
+            elif i in new_break_points and i in filtered_break_points:
+                print('SPECIAL!!!')
+                print(this[1])
+            '''
+            
+
+        '''
+        out = [onset_list[i:j] for i, j in zip([0]+filtered_break_points, filtered_break_points + [None])]
+        item = out[-2][-1]
+        del out[-2][-1]
+
+        out[-1].insert(0, item)
+
+        return []#out
+        '''
     else:
-        return naive_partition(onset_list)
+        raise NotImplementedError
+        #return naive_partition(onset_list)
 
 ################################################################
 
@@ -286,8 +297,7 @@ def filter_subtalas(onset_list):
     filtered_ids = [x.id_num for x in filtered]
     
     return [x for x in onset_list if x[0][0].id_num in filtered_ids]
-   
-'''
+
 from decitala import Decitala
 from trees import FragmentTree, rolling_search2
         
@@ -302,7 +312,7 @@ difference_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', re
 #tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
 onset_ranges = []
-for this_tala in rolling_search2(livre_dorgue_path, 1, ratio_tree, difference_tree):
+for this_tala in rolling_search2(sept_haikai_path, 0, ratio_tree, difference_tree):
     onset_ranges.append(list(this_tala))
 
 sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
@@ -311,17 +321,34 @@ filter_subtalas_list = filter_subtalas(filter_single_anga_classes_list)
 
 from collections import Counter
 
+bp = get_break_points(filter_subtalas_list)
+filtered_bp = get_filtered_break_points(bp)
+for i, x in enumerate(filter_subtalas_list):
+    if i in filtered_bp:
+        print('BREAk POINT HERE')
+        print(x[1])
+    else:
+        print(x[1])
+
+
+'''
 print(len(sorted_onset_ranges))
 print(len(filter_single_anga_classes_list))
 print(len(filter_subtalas_list))
 
 jt = [x[0][0] for x in filter_subtalas_list]
 print(Counter(jt))
-
-print(get_break_points(filter_subtalas_list))
+bp = get_break_points(filter_subtalas_list)
+print(bp)
+print(get_filtered_break_points(bp))
 '''
 '''
 partitioned = dynamically_partition_onset_list(filter_subtalas_list)
+for i, x in enumerate(partitioned):
+    print(x)#, len(x))
+    print()
+'''
+'''
 p0 = partitioned[0]
 '''
 
@@ -473,6 +500,7 @@ class Test(unittest.TestCase):
     #TODO: all paths for other piece? 
 
 if __name__ == '__main__':
+    import doctest
     doctest.testmod()
     #unittest.main()
 

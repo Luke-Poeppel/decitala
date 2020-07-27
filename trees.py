@@ -1103,6 +1103,10 @@ def rolling_search2(path, part_num, ratio_tree, difference_tree):
 ratio_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'ratio')
 difference_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'difference')
 
+fragment = np.array([0.375 + 1.0 + 0.125, 0.375 + 0.5 + 0.125, 0.375 + 0.5 + 0.5 + 0.125])
+#print(fragment)
+
+
 livre_dorgue_1 = np.array([1.0, 0.5, 1.5, 1.5, 1.5, 1.0, 1.5, 0.25, 0.25, 0.25])
 livre_dorgue_2 = np.array([0.125, 0.125, 0.125, 0.125, 0.25, 0.25, 0.375])
 livre_dorgue_3 = np.array([0.75, 1.25, 1.25, 1.75, 1.25, 1.25, 1.25, 0.75])
@@ -1113,7 +1117,7 @@ livre_dorgue_3 = np.array([0.75, 1.25, 1.25, 1.75, 1.25, 1.25, 1.25, 0.75])
 sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
 livre_dorgue_path = "/Users/lukepoeppel/Desktop/Messiaen/Livre_d\'Orgue/V_Piece_En_Trio.xml"
 found = []
-for this_tala in rolling_search2(livre_dorgue_path, 0, ratio_tree, difference_tree):
+for this_tala in rolling_search2(sept_haikai_path, 1, ratio_tree, difference_tree):
 	found.append(this_tala)
 sorted_talas = sorted(found, key = lambda x: x[1][0])
 for x in sorted_talas:

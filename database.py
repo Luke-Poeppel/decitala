@@ -262,7 +262,18 @@ if __name__ == "__main__":
     livre_dorgue_path = "/Users/lukepoeppel/Desktop/Messiaen/Livre_d\'Orgue/V_Piece_En_Trio.xml"
 
     #create_database(score_path=liturgie_path, part_num=3, db_name="/Users/lukepoeppel/decitala_v2/liturgie_piano3_test1.db")
+    
+    '''
+    create_filtered_database(sept_haikai_path, 0, '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db')
+    create_filtered_database(sept_haikai_path, 1, '/Users/lukepoeppel/decitala_v2/sept_haikai_1.db')
+
+    create_filtered_database(livre_dorgue_path, 0, '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db')
     create_filtered_database(livre_dorgue_path, 1, '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db')
+
+    create_filtered_database(liturgie_path, 3, '/Users/lukepoeppel/decitala_v2/liturgie_3.db')
+    create_filtered_database(liturgie_path, 4, '/Users/lukepoeppel/decitala_v2/liturgie_4.db')
+    '''
+
     #import doctest
     #doctest.testmod()
 

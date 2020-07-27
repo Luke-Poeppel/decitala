@@ -22,55 +22,95 @@ from music21 import stream
 
 from decitala import Decitala, get_added_values
 
-def name_from_tala_string(tala_string):
+def decitala_from_string(tala_string):
     """
-    '<decitala.Decitala 51_Vijaya>' -> Decitala
+    Sqlite3 databases store this info in string form. 
+
+    >>> decitala_from_string('<decitala.Decitala 51_Vijaya>')
+    <decitala.Decitala 51_Vijaya>
     """
     new_str = tala_string.split()[1][:-1]
     return Decitala(new_str)
 
-class Path(object):
+def number_of_tables(db_path):
     """
-    Object for storing information about pareto optimal paths in a database.
-    Get data by row number in the database, for now; I don't want to deal with the hassle of 
-    searching for onset ranges. 1-indexed, following the table. 
+    Returns the number of Path tables in a database. 
+    """
+    conn = lite.connect(db_path)
+    cur = conn.cursor()
 
-    TODO: (potentially) I feel like it makes more sense for the __init__ to be database, table_name, path_num. 
-    So it's down up rather than up down (which feels counterintuitive). 
+    x = cur.execute("SELECT * FROM sqlite_master where type='table'")
 
-    >>> haikai_database_path = '/Users/lukepoeppel/decitala_v.2.0/sept_haikai_test_0.db'
-    >>> p1 = Path(table='Paths_4', path_num=4, db_path=haikai_database_path)
+    count = 0
+    for y in x.fetchall():
+        count += 1
+    
+    return (count - 1)
+
+def number_of_paths_by_table(db_path, path_table_num):
+    """
+    Given a path_table_num, returns the number of paths in that particular table.
+    """
+    conn = lite.connect(db_path)
+    cur = conn.cursor()
+
+    path_string = "SELECT * FROM Paths_{}".format(str(path_table_num))
+    cur.execute(path_string)
+    rows = cur.fetchall()
+
+    count = 0
+    for row in rows:
+        count += 1
+    
+    return count
+
+class SubPath(object):
+    """
+    Object for storing information about the paths stored in Paths_i in a database. Keeps track
+    of the path onsets, decitalas within it, and calculates various relevant parameters. Input is 
+    a database path, a table name ("Paths_i"), and the path number in that table. Subpaths compose
+    a full Path object, under the right conditions. 
+    
+    NOTE: the individual paths in a table are 1-indexed. 
+
+    >>> haikai_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
+    >>> p1 = SubPath(db_path=haikai_database_path, table='Paths_2', path_num=6)
     >>> p1
-    <Path: [(56.875, 58.625), (58.625, 62.625), (62.625, 63.875)]>
+    <SubPath_6: [(38.125, 40.0), (40.0, 41.75), (41.75, 45.75), (45.75, 47.625), (47.625, 48.875), (49.375, 56.875)]>
     >>> p1.path
-    [(56.875, 58.625), (58.625, 62.625), (62.625, 63.875)]
+    [(38.125, 40.0), (40.0, 41.75), (41.75, 45.75), (45.75, 47.625), (47.625, 48.875), (49.375, 56.875)]
 
     >>> p1.is_end_overlapping
-    True
+    False
     >>> p1.total_duration
-    7.0
+    18.25
     >>> p1.gaps()
-    [0.0, 0.0]
-    >>> p1.total_gaps()
-    0.0
-
+    [0.0, 0.0, 0.0, 0.0, 0.5]
+    >>> p1.total_gaps
+    0.5
     >>> p1.decitalas
-    [<decitala.Decitala 53_Sama>, <decitala.Decitala 51_Vijaya>, <decitala.Decitala 76_Jhampa>]
+    [<decitala.Decitala 77_Gajajhampa>, <decitala.Decitala 53_Sama>, <decitala.Decitala 51_Vijaya>, <decitala.Decitala 77_Gajajhampa>, <decitala.Decitala 76_Jhampa>, <decitala.Decitala 8_Simhavikrama>]
+    
     >>> p1.nPVI()
-    [9.52381, 40.0, 14.285714]
+    [53.333333, 9.52381, 40.0, 53.333333, 14.285714, 41.111111]
     >>> p1.average_nPVI()
-    21.26984
+    35.26455
+
+    Gap score returns the proportion of the 
+    >>> p1.gap_score()
+    97.33333333333333
+
 
     Using the preference rules.
     p1.score()
     51.26984
     """
-    def __init__(self, table, path_num, db_path, **kwargs):
+    def __init__(self, db_path, table, path_num, **kwargs):
         assert path_num > 0
 
+        self.db_path = db_path
         self.table = table
         self.path_num = path_num
-        self.db_path = db_path
 
         conn = lite.connect(self.db_path)
         cur = conn.cursor()
@@ -148,17 +188,17 @@ class Path(object):
         for this_range in self.path:
             for this_row in rows:
                 #tala = this_row[2]
-                #as_real_tala = name_from_tala_string(tala)
+                #as_real_tala = decitala_from_string(tala)
 
                 # get list that holds the average num onset for each row. 
                 if this_range[0] == this_row[0] and this_range[1] == this_row[1]:
                     decitalas.append(this_row[2])
         
-        self.decitalas = [name_from_tala_string(string) for string in decitalas]
+        self.decitalas = [decitala_from_string(string) for string in decitalas]
         #self.all_average_num_onsets = all_average_num_onsets
 
     def __repr__(self):
-        return '<Path_{0}: {1}>'.format(str(self.path_num), str(self.path))
+        return '<SubPath_{0}: {1}>'.format(str(self.path_num), str(self.path))
 
     def gaps(self):
         gaps = []
@@ -171,6 +211,7 @@ class Path(object):
 
         return gaps
     
+    @property
     def total_gaps(self):
         return sum(self.gaps())
 
@@ -189,6 +230,7 @@ class Path(object):
         
         return total_duration
 
+    @property
     def num_onsets(self):
         count = 0
         for x in self.pitch_data:
@@ -203,7 +245,7 @@ class Path(object):
         return nPVI_vals
         
     def average_nPVI(self):
-        return round(np.mean(self.nPVI()), 5)
+        return round(np.mean(self.nPVI()), 6)
 
     def average_num_onsets(self):
         return np.mean([x.num_onsets for x in self.decitalas])
@@ -212,57 +254,12 @@ class Path(object):
         flattened = lambda l: [item for sublist in l for item in sublist]
         return flattened(self.pitch_data)
 
-    #################################################################################
-    def _getStrippedObjectList(self, f, p = 0):
-        '''
-        Returns the quarter length list of an input stream (with ties removed), but also includes 
-        spaces for rests! 
-
-        NOTE: this used to be .iter.notesAndRest, but I took it away, for now, to avoid complications.
-        '''
-        score = converter.parse(f)
-        partIn = score.parts[p]
-        objLst = []
-
-        stripped = partIn.stripTies(retainContainers = True)
-        for thisObj in stripped.recurse().iter.notes: 
-            objLst.append(thisObj)
-
-        return objLst
-
     def annotate_score(self, score_path, part):
-        '''
-        c = converter.parse(score_path)
-        part = c.parts[part]
-
-        onsets = [x[0] for x in self.path]
-        '''
-        indices = []
-        strippedObjects = self._getStrippedObjectList(f = score_path, p = part)
-        for thisObj in strippedObjects:
-            indices.append((thisObj, (thisObj.offset, thisObj.offset + thisObj.quarterLength)))
-
-        converted = converter.parse(score_path)
-        part = converted.parts[0]
-        onsets = [x[0] for x in self.path]
-        endsets = [x[1] for x in self.path]
-
-        #part.show()
-        for this_element, this_element2 in zip(onsets, endsets):
-            for x in part.flat.getElementsByOffset(this_element):
-                if this_element == x.offset:
-                    x.lyric = 'FOUND YOU!'
-                    x.style.color = 'green'
-
-                if this_element2 == x.offset:
-                    x.lyric = 'END!'
-                    x.style.color = 'red'
-    
-        part.show()
-                
-        #s = part.getElementsByOffset(onsets[0])
-        #for x in s:
-        #    print(x)
+        """
+        Annotates a given score (matching the score on which the database has been created)
+        with the Path data. 
+        """
+        pass
 
     ###################### Individual Scores ######################
     def gap_score(self):
@@ -270,7 +267,7 @@ class Path(object):
         end_val = self.path[-1][-1]
         total_range = end_val - initial_val
 
-        percentage_gap = (self.total_gaps() / total_range) * 100
+        percentage_gap = (self.total_gaps / total_range) * 100
         
         return (100 - percentage_gap)
 
@@ -288,6 +285,8 @@ class Path(object):
     def recycling_score(self):
         """
         Proportion of decitalas in a path that repeat.
+
+        TODO: Counter works now, fix!
         """
         names = []
         for this_tala in self.decitalas:
@@ -307,9 +306,9 @@ class Path(object):
         Want: average num onsets for all talas in the table. 
         """
         all_data = [len(tala.ql_array()) for tala in self.decitalas]
-        avg = np.mean(all_data)
+        avg = round(np.mean(all_data), 6) #added round -- seems to fix the problem...
 
-        return stats.percentileofscore(self.all_averages, avg)
+        return stats.percentileofscore(self.all_averages, avg)#, avg)
 
     def num_onsets_score(self):
         """
@@ -319,50 +318,11 @@ class Path(object):
         """
         return stats.percentileofscore(self.all_num_onset_data, self.num_onsets())
 
-    def score(self, weights = [0.6, 0.05, 0.05, 0.3], breakdown = False):#, 0.1]):
-        """
-        TODO: not at all sure why += score isn't working here; very strange.
-
-        End-Overlapping:    30%
-        Non-Retrogradable:  20%
-        Average nPVI:       20%
-        Recycling Rate:     20%
-        Average onsets:     10%
-
-        I think for num_onsets, we should basically (and unforunately) make a ranking of all the talas
-        in the list... 
-        """
-        individual_scores = [self.gap_score(), 
-                            self.recycling_score(),
-                            self.non_retrogradable_score(),
-                            #self.average_nPVI(),
-                            self.num_onsets_score(),]
-
-        l = []
-        for weight, score in zip(weights, individual_scores):
-            val = weight * score
-            l.append(val)
-        
-        if not(breakdown):
-            return round(sum(l), 6)
-        else:
-            print('*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*')
-            print('GAP SCORE       ({0}%): {1}'.format(weights[0] * 100, self.gap_score()))
-            print('RECYCLING SCORE ({0}%): {1}'.format(weights[1] * 100, self.recycling_score()))
-            print('N.R. SCORE      ({0}%): {1}'.format(weights[2] * 100, self.non_retrogradable_score()))
-            print('ONSET SCORE     ({0}%): {1}'.format(weights[3] * 100, self.num_onsets_score()))
-            print()
-            print('SCORE            (100%): {0}'.format(self.score()))
-            print('*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*')
-            return
-
     def show(self):
         """
         TODO: should definitely be able to display the file.
         """
         pass
-
-####################################################################################################
 
 def model2(x, weights):
     """
@@ -379,7 +339,7 @@ def model2(x, weights):
 
 def model3(x, weights):
     """
-    Two constrains: gap_size and average_onset + 0.0 bias
+    Two constrains: gap_size and average_onset
     """
     sums = []
     constraints = [x.gap_score(), x.average_num_onsets_per_tala_score()]
@@ -388,82 +348,78 @@ def model3(x, weights):
     
     return round(sum(sums), 6)
 
-class FullPath(object):
-    """
-    Object for concatenating multiple path objects into a new path.
-    """
-    pass
-
-haikai_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_1.db'
-
-def get_model3_path():
-    continuous_paths = []
-    for i in range(0, 5):
-        curr_path = []
-        for j in range(1, 31):
-            p = Path('Paths_{}'.format(str(i)), path_num = j, db_path=haikai_database_path)
-            curr_path.append(p)
-        
-        sorted_paths = sorted(curr_path, key = lambda x: model3(x, [0.7, 0.3]), reverse=True)
-
-        continuous_paths.append(sorted_paths[0])
-    
-    return continuous_paths
-
-#good stuff...
-#for x in get_model3_path():
-#    print(x)
-#    print(x.decitalas)
-#    print()
-    
 ####################################################################################################
+haikai0_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
+haikai1_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_1.db'
 
-# Path ranking
+liturgie3_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_3.db'
+liturgie4_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_4.db'
+
+livre_dorgue_0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
+livre_dorgue_1_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db'
+
 '''
-Weight work:
-End-Overlapping:    30%
-Non-Retrogradable:  20%
-Average nPVI:       20% // maybe don't include this! make recycling rate 30%
-Recycling Rate:     20%
-Average onsets:     10%
-
-Next set:
-End-Overlapping:    30%
-Recycling Rate:     30%
-Non-Retrogradable:  20%
-Onset-percentile:   20%
-
-Good next try: high weight for end-overlapping and recycling rate.
-
-Fix one and change around the other ones. 
-If you set it to 0 and the scores doesn't change much, that parameter doesn't matter much;
-alternatively, if you set it to 0 and it completelely changes, it matters a lot. 
-'''
-
-def sorted_paths(path_table, db):
-    """
-    Given a database, returns a list holding the paths sorted (reverse) by score.
-
-    TODO: nobody wants to manually go through and count the number of rows; do it manually!
-    """
-    conn = lite.connect(db)
+def sort_table_by_model3_score(db_path, path_table_num):
+    conn = lite.connect(db_path)
     cur = conn.cursor()
-    path_string = "SELECT * FROM {}".format(path_table)
+    path_string = "SELECT * FROM Paths_{}".format(str(path_table_num))
     cur.execute(path_string)
     rows = cur.fetchall()
 
-    count = len(rows)
-
     paths = []
-    for this_path_num in list(range(1, count + 1)):
-        paths.append(Path(table=path_table, path_num=this_path_num, db_path=db))
+    for i in range(1, number_of_paths_by_table(db_path, path_table_num) + 1):        
+        path = SubPath(table = 'Paths_{}'.format(str(path_table_num)), path_num = i, db_path = db_path)
+        paths.append(path)
+    
+    return sorted(paths, key = lambda x: model3(x, [0.7, 0.3]), reverse=True)
+'''
 
-    return sorted(paths, reverse = True, key = lambda x: x.score())
+def get_full_model3_path(db_path, weights):
+    continuous_paths = []
+    for i in range(0, number_of_tables(db_path)):
+        curr_path = []
+        for j in range(1, number_of_paths_by_table(db_path, i) + 1):
+            p = SubPath(db_path, 'Paths_{}'.format(str(i)), j)
+            curr_path.append(p)
+        
+        sorted_paths = sorted(curr_path, key = lambda x: model3(x, weights), reverse=True)
 
+        continuous_paths.append(sorted_paths[0])
+
+    return continuous_paths
+
+full = get_full_model3_path(haikai1_database_path, weights = [0.8, 0.2])
+for x in full:
+    print(x)
+    print(x.decitalas)
+    print()
+'''
+num onsets is not the problem
+print([len(tala.ql_array()) for tala in correct.decitalas]) is not the problem...
+'''
+
+'''
+correct = SubPath(haikai0_database_path, 'Paths_3', 4)
+print('CORRECT')
+print(correct.decitalas)
+#print(correct.decitalas)
+#print([len(tala.ql_array()) for tala in correct.decitalas])
+#print(correct.num_onsets)
+print(correct.gap_score())
+print(correct.average_num_onsets_per_tala_score())
+print('')
+
+print('NOT CORRECT')
+print(full[-1].decitalas)
+#print([len(tala.ql_array()) for tala in full[-1].decitalas])
+#print(full[-1].num_onsets)
+print(full[-1].gap_score())
+print(full[-1].average_num_onsets_per_tala_score())
+'''
 
 if __name__ == '__main__':
     import doctest
-    #doctest.testmod()
+    doctest.testmod()
 
 
 
