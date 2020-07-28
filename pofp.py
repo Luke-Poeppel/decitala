@@ -271,6 +271,7 @@ def filter_subtalas(onset_list):
     
     return [x for x in onset_list if x[0][0].id_num in filtered_ids]
 
+'''
 from decitala import Decitala
 from trees import FragmentTree, rolling_search2
         
@@ -285,7 +286,7 @@ difference_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', re
 #tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
 onset_ranges = []
-for this_tala in rolling_search2(sept_haikai_path, 1, ratio_tree, difference_tree):
+for this_tala in rolling_search2(livre_dorgue_path, 0, ratio_tree, difference_tree):
     onset_ranges.append(list(this_tala))
 
 sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
@@ -293,7 +294,7 @@ filter_single_anga_classes_list = filter_single_anga_class_talas(sorted_onset_ra
 filter_subtalas_list = filter_subtalas(filter_single_anga_classes_list)
 
 from collections import Counter
-
+'''
 '''
 bp = get_break_points(filter_subtalas_list)
 filtered_bp = get_filtered_break_points(bp)
@@ -316,15 +317,12 @@ bp = get_break_points(filter_subtalas_list)
 print(bp)
 print(get_filtered_break_points(bp))
 '''
+'''
 partitioned = dynamically_partition_onset_list(filter_subtalas_list)
 for i, x in enumerate(partitioned):
     print(x)#, len(x))
     print()
-
 '''
-p0 = partitioned[0]
-'''
-
 ####################################################################################################
 
 def get_pareto_optimal_longest_paths(tup_lst_in):

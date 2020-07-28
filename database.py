@@ -69,23 +69,22 @@ def _check_tuple_in_tuple_range(tup1, tup2):
     else:
         return False 
 
-def _pitch_info_from_onset_range(onset_range, data):
+def _pitch_info_from_onset_range(onset_range, all_objects_in_part):
     """
-    Function that takes in (0.0, 4.0) and returns, for instance, [62, 62, 62].
-    Note that n.pitch.ps or n.pitch.midi both work; ps accomadates floats which I don't need here.
-
-    Oooo, here we actually need something a tiny bit more complicated! What if the part is playing chords.
-    Assume monophonic for now. 
+    Function that takes in onset range and returns the pitch.midi information for that range.
+    The input ``data`` is that which is returned in rolling_search. 
     """
     note_data = []
-    for this_object in data:
+    for this_object in all_objects_in_part:
         if _check_tuple_in_tuple_range(this_object[1], onset_range):
             note_data.append(this_object)
     
     pitches = [n[0].pitches for n in note_data]
-    out = [x.midi for y in pitches for x in y]
-
-    return out#[n[0].pitch.midi for n in note_data]
+    midi = []
+    for pitch_info in pitches:
+        midi.append(tuple([x.midi for x in pitch_info]))
+    
+    return midi
 
 ####################################################################################################
 
@@ -217,20 +216,16 @@ def create_filtered_database(score_path, part_num, db_name):
 
             cur.execute("CREATE TABLE Paths_{0} ({1})".format(str(i), newer))
             for path in pareto_optimal_paths:
-                #Get nPVI information for the path.
                 cur.execute("SELECT * FROM Fragment")
                 rows = cur.fetchall()
 
-                #nPVI_vals = []
                 pitch_content = []
                 for this_range in path:
                     pitch_content.append(_pitch_info_from_onset_range(this_range[-1], all_objects))
                     for row in rows:
                         if this_range[-1][0] == row[0] and this_range[-1][1] == row[1]:
                             tala = _name_from_tala_string(row[2])
-                            #nPVI_vals.append(tala.nPVI())
                 
-                #avg_nPVI = np.mean(nPVI_vals)
                 flattened = [note for tala in pitch_content for note in tala]
                 formatted_pitch_content = str(tuple([tuple(sublist) for sublist in pitch_content]))
 
@@ -262,7 +257,6 @@ if __name__ == "__main__":
     livre_dorgue_path = "/Users/lukepoeppel/Desktop/Messiaen/Livre_d\'Orgue/V_Piece_En_Trio.xml"
 
     #create_database(score_path=liturgie_path, part_num=3, db_name="/Users/lukepoeppel/decitala_v2/liturgie_piano3_test1.db")
-    
     '''
     create_filtered_database(sept_haikai_path, 0, '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db')
     create_filtered_database(sept_haikai_path, 1, '/Users/lukepoeppel/decitala_v2/sept_haikai_1.db')
@@ -273,8 +267,5 @@ if __name__ == "__main__":
     create_filtered_database(liturgie_path, 3, '/Users/lukepoeppel/decitala_v2/liturgie_3.db')
     create_filtered_database(liturgie_path, 4, '/Users/lukepoeppel/decitala_v2/liturgie_4.db')
     '''
-
-    #import doctest
+    import doctest
     #doctest.testmod()
-
-
