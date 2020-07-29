@@ -196,7 +196,7 @@ def create_filtered_database(score_path, part_num, db_name):
 
         for this_partition in partitioned:
             for x in this_partition:
-                cur.execute("INSERT INTO Fragment VALUES({0}, {1}, '{2}', '{3}', {4})".format(x[1][0], x[1][1], x[0][0], x[0][1][0], x[0][1][1]))
+                cur.execute("INSERT INTO Fragment VALUES({0}, {1}, '{2}', '{3}', {4})".format(x[1][0], x[1][1], x[0][0].name, x[0][1][0], x[0][1][1]))
 
         cur.execute("SELECT * FROM Fragment")
         rows = cur.fetchall()
@@ -224,7 +224,11 @@ def create_filtered_database(score_path, part_num, db_name):
                     pitch_content.append(_pitch_info_from_onset_range(this_range[-1], all_objects))
                     for row in rows:
                         if this_range[-1][0] == row[0] and this_range[-1][1] == row[1]:
-                            tala = _name_from_tala_string(row[2])
+                            #tala = _name_from_tala_string(row[2])
+                            if '121' in row[2]:
+                                tala = Decitala.get_by_id(121)
+                            else:
+                                tala = Decitala(row[2])
                 
                 flattened = [note for tala in pitch_content for note in tala]
                 formatted_pitch_content = str(tuple([tuple(sublist) for sublist in pitch_content]))
@@ -268,4 +272,4 @@ if __name__ == "__main__":
     create_filtered_database(liturgie_path, 4, '/Users/lukepoeppel/decitala_v2/liturgie_4.db')
     '''
     import doctest
-    #doctest.testmod()
+    doctest.testmod()

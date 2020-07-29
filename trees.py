@@ -1053,13 +1053,13 @@ def get_by_ql_list2(ql_list, ratio_tree, difference_tree):
 					return None
 				else:
 					difference = _difference(retrograde_difference_search.ql_array(), 0)
-					return (retrograde_difference_search, ('difference', difference))
+					return (retrograde_difference_search, ('retrograde difference', difference))
 			else:
 				difference = _difference(difference_search.ql_array(), 0)
 				return (difference_search, ('difference', difference))
 		else:
 			ratio = _ratio(retrograde_ratio_search.ql_array(), 0)
-			return (retrograde_ratio_search, ('retrograde', ratio))
+			return (retrograde_ratio_search, ('retrograde ratio', ratio))
 	else:
 		ratio = _ratio(ratio_search.ql_array(), 0)
 		return (ratio_search, ('ratio', ratio))

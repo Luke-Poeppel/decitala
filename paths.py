@@ -19,20 +19,12 @@ from ast import literal_eval
 from collections import Counter
 from scipy import stats
 
+from music21 import chord
 from music21 import converter
+from music21 import note
 from music21 import stream
 
 from decitala import Decitala, get_added_values
-
-def decitala_from_string(tala_string):
-	"""
-	Sqlite3 databases store this info in string form. 
-
-	>>> decitala_from_string('<decitala.Decitala 51_Vijaya>')
-	<decitala.Decitala 51_Vijaya>
-	"""
-	new_str = tala_string.split()[1][:-1]
-	return Decitala(new_str)
 
 def get_all_paths_info(db_path):
 	"""
@@ -63,144 +55,159 @@ def get_all_paths_info(db_path):
 	return all_tables_info
 
 ####################################################################################################
+# SubPath(s) and Path(s)
 
 class SubPath(object):
 	"""
 	Object for storing information about a subpath in a given database. Keeps track of the path onsets, 
 	the decitalas within it, and calculates relevant information (e.g. gap_score). Under the right 
 	conditions, Subpaths compose a full Path object (defined below).
-	
-	TODO: ABILITY TO COMBINE SUBPATHS! 
 
 	NOTE: the individual paths in a sqlite table are 1-indexed. 
 
-	>>> haikai_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
-	>>> p1 = SubPath(db_path=haikai_database_path, table='Paths_2', path_num=6)
-	>>> p1
-	<SubPath_6: [(38.125, 40.0), (40.0, 41.75), (41.75, 45.75), (45.75, 47.625), (47.625, 48.875), (49.375, 56.875)]>
-	>>> p1.path
-	[(38.125, 40.0), (40.0, 41.75), (41.75, 45.75), (45.75, 47.625), (47.625, 48.875), (49.375, 56.875)]
+	TODO: __add__() method for subpaths (this is a bit more complicated...)
 
-	>>> p1.is_end_overlapping
-	False
-	>>> 
-	>>> p1.total_duration
-	18.25
-	>>> p1.gaps()
-	[0.0, 0.0, 0.0, 0.0, 0.5]
-	>>> p1.total_gaps
-	0.5
-	>>> p1.decitalas
-	[<decitala.Decitala 77_Gajajhampa>, <decitala.Decitala 53_Sama>, <decitala.Decitala 51_Vijaya>, <decitala.Decitala 77_Gajajhampa>, <decitala.Decitala 76_Jhampa>, <decitala.Decitala 8_Simhavikrama>]
+	>>> livre_dorgue0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
+	>>> sp = SubPath(db_path=livre_dorgue0_path, table_num=8, path_num=62)
+	>>> sp
+	<SubPath_62: [(181.0, 184.75), (184.875, 185.875), (186.375, 187.375), (187.375, 188.25), (188.75, 191.75), (191.75, 195.125)]>
+	>>> sp.path
+	[(181.0, 184.75), (184.875, 185.875), (186.375, 187.375), (187.375, 188.25), (188.75, 191.75), (191.75, 195.125)]
+	>>> for x in sp.pitch_data:
+	...     print(x)
+	((66,), (77,), (75,))
+	((60,), (68,), (71,), (82,), (75,))
+	((74,), (79,), (64,), (70,), (81,))
+	((75,), (61,), (72,))
+	((80,), (67,), (78,), (86,))
+	((69,), (77,), (66,))
+	>>> for tala in sp.decitalas:
+	...     print(tala.name, tala.ql_array())
+	21_Tribhinna [0.5 1.  1.5]
+	46_Jayacri [1.  0.5 1.  0.5 1. ]
+	46_Jayacri [1.  0.5 1.  0.5 1. ]
+	118_Rajamartanda [1.   0.5  0.25]
+	65_B_Kankala_Khanda [0.25 0.25 1.   1.  ]
+	21_Tribhinna [0.5 1.  1.5]
+
+	>>> sp.num_onsets
+	23
+	>>> sp.start_onset
+	181.0
+	>>> sp.end_onset
+	195.125
+
+	>>> sp.gaps()
+	[0.125, 0.5, 0.0, 0.5, 0.0]
+	>>> sp.total_gaps()
+	1.125
+
+	SubPath().played_total_duration() only returns the total duration of sounded tones, i.e., 
+	ignores silent periods. 
+	>>> sp.played_total_duration()
+	13.0
 	
-	>>> p1.nPVI()
-	[53.333333, 9.52381, 40.0, 53.333333, 14.285714, 41.111111]
-	>>> p1.average_nPVI()
-	35.26455
+	So, SubPath().total_range() is the played_total_duration() + total_gaps()
+	>>> sp.total_range()
+	14.125
+	>>> sp.is_end_overlapping()
+	False
 
-	Gap score returns the proportion of the 
-	>>> p1.gap_score()
-	97.33333333333333
+	SubPath().gap_score() returns the percentage of total_range() that is continous, that is, without
+	gaps. 
+	>>> sp.gap_score()
+	92.035398
+	>>> sp.non_retrogradable_score()
+	33.333333
+	>>> sp.recycling_score()
+	66.666667
 
-
-	Using the preference rules.
-	p1.score()
-	51.26984
+	SubPath().average_num_onsets_per_tala_score() tracks the average number of onsets in a path
+	and scores it's percentile in the context of the table.
+	>>> sp.average_num_onsets_per_tala_score()
+	8.196721
 	"""
-	def __init__(self, db_path, table, path_num, **kwargs):
+	def __init__(self, db_path, table_num, path_num, **kwargs):
 		assert path_num > 0
 
 		self.db_path = db_path
-		self.table = table
+		self.table_num = table_num
 		self.path_num = path_num
 
 		conn = lite.connect(self.db_path)
 		cur = conn.cursor()
 
-		path_string = "SELECT * FROM {}".format(table)
+		path_string = "SELECT * FROM Paths_{}".format(str(table_num))
 		cur.execute(path_string)
 		rows = cur.fetchall()
 
-		#really stupid, but this is the only thing working right now.
-		#not sure how to fetch by column name; really stupid. 
-		all_pitch_data = []
-		for this_row in rows:
-			for this_elem in this_row:
-				if this_elem[0:2] == '((':
-					all_pitch_data.append(literal_eval(this_elem))
-		
-		lengths = []
-		for x in all_pitch_data:
-			count = 0
-			for this_range in x:
-				count += len(this_range)
-			lengths.append(count)
-		
-		self.all_num_onset_data = sorted(lengths)
-
 		all_averages = []
-		for this_row in rows:
-			each_tala_num_onsets = []
-			for this_elem in this_row:
-				if this_elem[0:2] == '((':
-					pitch_content = literal_eval(this_elem)
-					for this in pitch_content:
-						each_tala_num_onsets.append(len(this))
-			all_averages.append(round(np.mean(each_tala_num_onsets), 6))
-
-		self.all_averages = sorted(all_averages)
-
 		path = []
 		pitch_data = []
-		all_pitch_data = []
 		for i, this_row in enumerate(rows):
-			############ get onset data
-			for this_elem in this_row:
-				if this_elem[0:2] == '((':
-					all_pitch_data.append(literal_eval(this_elem))
+			each_tala_num_onsets = []
+			for this_data in this_row:
+				if this_data[0:3] == '(((':
+					evaluated = literal_eval(this_data)
+					pitch_data.append(evaluated)
+					for this in evaluated:
+						each_tala_num_onsets.append(len(this))
 			if self.path_num == (i + 1):
-				######### GET DATA
 				stop_index = 0
-				for this_elem in this_row:
-					if this_elem == 'NULL':
-						stop_index = this_row.index(this_elem)
+				for this_data in this_row:
+					if this_data == 'NULL':
+						stop_index = this_row.index(this_data)
 						break
-					elif this_elem[0:2] == '((':
-						stop_index = this_row.index(this_elem)
+					elif this_data[0:3] == '(((':
+						stop_index = this_row.index(this_data)
 
-				for this_elem in this_row[0:stop_index]:
-					path.append(literal_eval(this_elem))
+				for this_data in this_row[0:stop_index]:
+					evaluated = literal_eval(this_data)
+					path.append(evaluated)
 
 				pitch_data = literal_eval(this_row[-1])
-				##########
 				break
 			else:
 				pass
-		
+			
+			#print(each_tala_num_onsets)
+			all_averages.append(round(np.mean(each_tala_num_onsets), 6))
+
+		self.all_averages = sorted(all_averages)
 		self.path = path
 		self.pitch_data = pitch_data
 
-		#get tala data
+		# Get tala information. (More efficient to do it separately.)
+		decitalas = []
 		fragment_path_string = "SELECT * FROM Fragment"
 		cur.execute(fragment_path_string)
 		rows = cur.fetchall()
 
-		#all_average_num_onsets = []
-		decitalas = []
 		for this_range in self.path:
 			for this_row in rows:
-				#tala = this_row[2]
-				#as_real_tala = decitala_from_string(tala)
-
-				# get list that holds the average num onset for each row. 
 				if this_range[0] == this_row[0] and this_range[1] == this_row[1]:
 					decitalas.append(this_row[2])
-		
-		self.decitalas = [decitala_from_string(string) for string in decitalas]
-		#self.all_average_num_onsets = all_average_num_onsets
+
+		self.decitalas = [Decitala(string) for string in decitalas]
 
 	def __repr__(self):
 		return '<SubPath_{0}: {1}>'.format(str(self.path_num), str(self.path))
+
+	@property
+	def start_onset(self):
+		return self.path[0][0]
+	
+	@property
+	def end_onset(self):
+		return self.path[-1][-1]
+
+	@property
+	def num_onsets(self):
+		count = 0
+		for tala_pitches in self.pitch_data:
+			for pitches in tala_pitches:
+				count += 1
+		return count
 
 	def gaps(self):
 		gaps = []
@@ -213,24 +220,10 @@ class SubPath(object):
 
 		return gaps
 
-	@property
-	def start_onset(self):
-		return self.path[0][0]
-	
-	@property
-	def end_onset(self):
-		return self.path[-1][-1]
-	
-	@property
 	def total_gaps(self):
 		return sum(self.gaps())
 
-	@property
-	def is_end_overlapping(self):
-		return sum(self.gaps()) == 0
-
-	@property
-	def total_duration(self):
+	def played_total_duration(self):
 		total_duration = 0
 		i = 0
 		while i < len(self.path):
@@ -240,128 +233,186 @@ class SubPath(object):
 		
 		return total_duration
 
-	@property
-	def num_onsets(self):
-		count = 0
-		for x in self.pitch_data:
-			count += len(x)
-		return count
+	def total_range(self):
+		return self.path[-1][-1] - self.path[0][0]
+	
+	def is_end_overlapping(self):
+		return sum(self.gaps()) == 0
 
-	def nPVI(self):
-		nPVI_vals = []
-		for this_tala in self.decitalas:
-			nPVI_vals.append(this_tala.nPVI())
-		
-		return nPVI_vals
-		
-	def average_nPVI(self):
-		return round(np.mean(self.nPVI()), 6)
-
-	def average_num_onsets(self):
-		return np.mean([x.num_onsets for x in self.decitalas])
-
-	def all_pitch_content(self):
-		flattened = lambda l: [item for sublist in l for item in sublist]
-		return flattened(self.pitch_data)
-
-	###################### Individual Scores ######################
+	#################### Individual Scores ####################
 	def gap_score(self):
-		initial_val = self.path[0][0]
-		end_val = self.path[-1][-1]
-		total_range = end_val - initial_val
-
-		percentage_gap = (self.total_gaps / total_range) * 100
-		
-		return (100 - percentage_gap)
+		percentage_gap = (self.total_gaps() / self.total_range()) * 100
+		return round((100 - percentage_gap), 6)
 
 	def non_retrogradable_score(self):
-		"""
-		TODO: figure out why tala.is_non_retrogradable() is behaving strangely here.
-		"""
 		num_non_retrogradable = 0
 		for this_tala in self.decitalas:
-			if np.array_equal(this_tala.ql_array(), this_tala.ql_array(retrograde = True)):
+			if this_tala.is_non_retrogradable:
 				num_non_retrogradable += 1
-		
-		return (num_non_retrogradable / len(self.path)) * 100
+			
+		return round((num_non_retrogradable / len(self.decitalas)) * 100, 6)
 
 	def recycling_score(self):
-		"""
-		Proportion of decitalas in a path that repeat.
-
-		TODO: Counter works now, fix!
-		"""
-		names = []
-		for this_tala in self.decitalas:
-			names.append(this_tala.name)
-
-		#print(Counter(names))
-		total = 0
-		for x in Counter(names):
-			if Counter(names)[x] > 1:
-				total += Counter(names)[x]
-
-		return (total / len(self.decitalas)) * 100
+		recycled = 0
+		counted = Counter(self.decitalas)
+		for x in counted.keys():
+			if counted[x] > 1:
+				recycled += counted[x]
+		
+		return round((recycled / len(self.decitalas)) * 100, 6)
 	
 	def average_num_onsets_per_tala_score(self):
-		"""
-		Gets the percentile of a path by the average num_onsets for the talas within it.
-		Want: average num onsets for all talas in the table. 
-		"""
-		all_data = [len(tala.ql_array()) for tala in self.decitalas]
-		avg = round(np.mean(all_data), 6) #added round -- seems to fix the problem...
+		num_onsets_data = [tala.num_onsets for tala in self.decitalas]
+		avg_num_onsets = round(np.mean(num_onsets_data), 6)
 
-		return stats.percentileofscore(self.all_averages, avg)#, avg)
+		return round(stats.percentileofscore(self.all_averages, avg_num_onsets), 6)
 
-	def num_onsets_score(self):
-		"""
-		This is actually pretty cool! :-) 
-		Method: get a list that is simply the sorted total number of onsets (from pitch content)
-		for each path. Use stats.percentileofscore(data, this_path.total_num_onsets)
-		"""
-		return stats.percentileofscore(self.all_num_onset_data, self.num_onsets())
-	
 	###################### Visualization ######################
 	def show(self):
 		"""
-		TODO
+		Shows the series of talas with the pitch information normalized to start at onset 0.0. 
 		"""
+		'''
+		first_onset = self.start_onset
+		normalized_path = []
+		for onset_range in self.path:
+			normalized_path.append([onset_range[0] - first_onset, onset_range[1] - first_onset])
+		
+		#hmmm... we need the tala onsets.
+		zipped = []
+		for onset_range, pitch_info in zip(normalized_path, self.pitch_data):
+			print(onset_range, pitch_info)
+		'''
 		raise NotImplementedError
 
 	def annotate_score(self, score_path, part):
 		"""
-		Annotates a given score (matching the score on which the database has been created)
-		with the Path data. 
+		Annotates a given score (matching the score on which the database has been created) 
+		with the SubPath data. 
 		"""
 		raise NotImplementedError
 
 ####################################################################################################
-# models
-def model2(x, weights):
-	"""
-	Two constrains: gap_size and onset_percentile.
-	(Input is Path object.)
-	Try different percentages.
-	"""
-	sums = []
-	constraints = [x.gap_score(), x.num_onsets_score()]
-	for w, constraint in zip(weights, constraints):
-		sums.append(w * constraint)
+# Model 
+def model3(subpath, weights):
+	components = []
+	parameters = [subpath.gap_score(), subpath.average_num_onsets_per_tala_score()]
+	for w, constraint in zip(weights, parameters):
+		components.append(w * constraint)
 	
-	return round(sum(sums), 6)
+	return round(sum(components), 6)
 
-def model3(x, weights):
+haikai0_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
+
+def subpath_gap_score(subpath1, subpath2):
 	"""
-	Two constrains: gap_size and average_onset
+	Takes two SubPath objects and returns the PathGapScore
 	"""
-	sums = []
-	constraints = [x.gap_score(), x.average_num_onsets_per_tala_score()]
-	for w, constraint in zip(weights, constraints):
-		sums.append(w * constraint)
+	path1_start_onset = subpath1.start_onset
+	path1_end_onset = subpath1.end_onset
+
+	path2_start_onset = subpath2.start_onset
+	path2_end_onset = subpath2.end_onset
+
+	if path2_start_onset < path1_end_onset:
+		raise Exception('Invalid Path Comparison.')
 	
-	return round(sum(sums), 6)
+	gap = path2_start_onset - path1_end_onset
+	total_range = path2_end_onset - path1_start_onset
 
-'''
+	percentage = (gap / total_range) * 100
+	return round(100 - percentage, 6)
+
+sb1 = SubPath(haikai0_database_path, 0, 8)
+sb2 = SubPath(haikai0_database_path, 1, 144)
+#print(subpath_gap_score(sb1, sb2))
+
+def get_full_model3_path(db_path, weights1 = [0.7, 0.3]):
+	all_info = get_all_paths_info(db_path)
+	conn = lite.connect(db_path)
+
+	i = 0
+	while i < len(all_info):
+		curr_info = all_info[i]
+		if i == 0:
+			model_3_scores = []
+			for j in range(1, curr_info[1] + 1):
+				path = SubPath(db_path = db_path, table_num = curr_info[0], path_num = j)
+				model_3_scores.append([path, model3(path, weights1)])
+			
+			model_3_scores.sort(key = lambda x: x[1], reverse = True)
+			best_path = model_3_scores[0][0]
+			print(best_path)
+			i += 1
+		elif i == 1:
+			# get the path gap score for each path in table Paths_1
+			gap_scores = []
+			for j in range(1, curr_info[1] + 1):
+				path = SubPath(db_path = db_path, table_num = curr_info[0], path_num = j)
+				gap_scores.append([path, subpath_gap_score(best_path, path)])
+
+			new_model_scores = []
+			for this_path in gap_scores:
+				model4 = model3(this_path[0], [0.6, 0.1])
+				model4 += 0.3 * this_path[1]
+				new_model_scores.append([this_path[0], model4])
+			
+			new_model_scores.sort(key = lambda x: x[1], reverse = True)
+			bestp1 = new_model_scores[0][0]
+			print(bestp1)
+			i += 1
+		elif i == 2:
+			# get the path gap score for each path in table Paths_1
+			gap_scores = []
+			for j in range(1, curr_info[1] + 1):
+				path = SubPath(db_path = db_path, table_num = curr_info[0], path_num = j)
+				gap_scores.append([path, subpath_gap_score(best_path, path)])
+
+			new_model_scores = []
+			for this_path in gap_scores:
+				model4 = model3(this_path[0], [0.6, 0.1])
+				model4 += 0.3 * this_path[1]
+				new_model_scores.append([this_path[0], model4])
+			
+			new_model_scores.sort(key = lambda x: x[1], reverse = True)
+			bestp2 = new_model_scores[0][0]
+			print(bestp2)
+			i += 1
+		elif i == 3:
+			# get the path gap score for each path in table Paths_1
+			gap_scores = []
+			for j in range(1, curr_info[1] + 1):
+				path = SubPath(db_path = db_path, table_num = curr_info[0], path_num = j)
+				gap_scores.append([path, subpath_gap_score(best_path, path)])
+
+			new_model_scores = []
+			for this_path in gap_scores:
+				model4 = model3(this_path[0], [0.6, 0.1])
+				model4 += 0.3 * this_path[1]
+				new_model_scores.append([this_path[0], model4])
+			
+			new_model_scores.sort(key = lambda x: x[1], reverse = True)
+			bestp3 = new_model_scores[0][0]
+			print(bestp3)
+			i += 1
+		else:
+			print('not there yet!')
+			i += 1
+
+		#return best_path	
+
+print(get_full_model3_path(haikai0_database_path))
+
+
+
+
+
+
+
+
+
+
+####################################################################################################
 def sort_table_by_model3_score(db_path, path_table_num, weights):
 	conn = lite.connect(db_path)
 	cur = conn.cursor()
@@ -379,22 +430,8 @@ def sort_table_by_model3_score(db_path, path_table_num, weights):
 def model3_highest_score(db_path, path_table_num, weights):
 	return sort_table_by_model3_score(db_path, path_table_num, weights)[0]
 
-def get_full_model3_path(db_path, weights):
-	continuous_paths = []
-	for i in range(0, number_of_tables(db_path)):
-		curr_path = []
-		for j in range(1, number_of_paths_by_table(db_path, i) + 1):
-			p = SubPath(db_path, 'Paths_{}'.format(str(i)), j)
-			curr_path.append(p)
-		
-		sorted_paths = sorted(curr_path, key = lambda x: model3(x, weights), reverse=True)
-
-		continuous_paths.append(sorted_paths[0])
-
-	return continuous_paths
-
 def path_gap_score(db_path, path_table_num, curr_path_num):
-	curr_path = SubPath(db_path, 'Paths_{}'.format(str(path_table_num)), curr_path_num)
+	curr_path = SubPath(db_path, path_table_num, curr_path_num)
 	if path_table_num == 0:
 		return model3(curr_path, [0.7, 0.3])
 	else:
@@ -405,28 +442,8 @@ def path_gap_score(db_path, path_table_num, curr_path_num):
 		path_gap_score = 100 - ((gap / total_range) * 100)
 		return path_gap_score
 
-def sort_by_path_gap_score(db_path, path_table_num):
-	all_paths = []
-	for i in range(0, number_of_paths_by_table('Paths_{}'.format(str(path_table_num)), path_table_num)):
-		all_paths.append(SubPath(db_path, 'Paths_{}'.format(str(path_table_num))))
-
-	return sorted(all_paths, key = lambda x: path_gap_score(db_path, path_table_num, x.path_num))
-
-class Path(object):
-	"""
-	A Path object is composed of several SubPath objects. 
-	"""
-	def __init__(self, paths=[]):
-		self.paths = paths
-
-	def tala_counter(self):
-		"""
-		Returns a Counter of all the talas found in the path.
-		"""
-		raise NotImplementedError
-'''
-
 ####################################################################################################
+# Testing
 haikai0_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
 haikai1_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_1.db'
 
@@ -436,56 +453,47 @@ liturgie4_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_4.db'
 livre_dorgue_0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
 livre_dorgue_1_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db'
 
-#print(path_gap_score(haikai0_database_path, 2, 1))
+sb1 = SubPath(db_path=haikai0_database_path, table_num=2, path_num=6)
 
-# it's slow because it's recalculating the highest score each time. 
-#for i in range(1, 16):
-	#print(path_gap_score(haikai0_database_path, 2, i))
+#print(path_gap_score(liturgie3_database_path, 3, 12))
+
+
 
 '''
-#print(path_gap_score(haikai0_database_path, 2, 5))
-for x in sort_by_path_gap_score(haikai0_database_path, 2):
+info = get_all_paths_info(livre_dorgue_0_path)
+
+model3_scores = []
+for i in range(1, info[4][1] + 1):
+	path = SubPath(db_path = livre_dorgue_0_path, table_num = 4, path_num = i)
+	model3_scores.append([path, model3(path, weights = [0.7, 0.3])])
+
+model3_scores.sort(key = lambda x: x[1])
+for x in model3_scores:
 	print(x)
 	print()
 '''
-'''
-for x in sort_table_by_model3_score(livre_dorgue_0_path, path_table_num=2):
-	print(x)
-	print(x.decitalas)
-	print(model3(x, [0.9, 0.1]))
-	print()
-'''
+#print(model3(sb1, [0.7, 0.3]))
+#print(sb1.average_num_onsets_per_tala_score())
+#print(sb1.all_averages)
 
-
-'''
-full = get_full_model3_path(livre_dorgue_0_path, weights = [0.7, 0.3])
-for x in full:
-	print(x)
-	print(x.decitalas)
-	print()
-'''
-'''
-num onsets is not the problem
-print([len(tala.ql_array()) for tala in correct.decitalas]) is not the problem...
-'''
+class Path(object):
+	"""
+	Concatenation of multiple SubPath objects (under the right conditions).
+	"""
+	def __init__(self, paths = []):
+		self.paths = paths
+		path_nums = [path.path_num for path in self.paths]
+	
+	#def __repr__(self):
+		#return '<Pa>'
 
 '''
-correct = SubPath(haikai0_database_path, 'Paths_3', 4)
-print('CORRECT')
-print(correct.decitalas)
-#print(correct.decitalas)
-#print([len(tala.ql_array()) for tala in correct.decitalas])
-#print(correct.num_onsets)
-print(correct.gap_score())
-print(correct.average_num_onsets_per_tala_score())
-print('')
+sb1 = SubPath(db_path=haikai0_database_path, table_num=2, path_num=6)
+sb2 = SubPath(db_path=haikai0_database_path, table_num=2, path_num=7)
+sb3 = SubPath(db_path=haikai0_database_path, table_num=2, path_num=8)
 
-print('NOT CORRECT')
-print(full[-1].decitalas)
-#print([len(tala.ql_array()) for tala in full[-1].decitalas])
-#print(full[-1].num_onsets)
-print(full[-1].gap_score())
-print(full[-1].average_num_onsets_per_tala_score())
+path = Path(paths = [sb1, sb2, sb3])
+print(path.paths)
 '''
 
 ###############################################################################
@@ -500,7 +508,7 @@ def ignore_warnings(test_func):
 	return do_test
 
 class Test(unittest.TestCase):
-	def setUp(self):
+	def set_up(self):
 		warnings.simplefilter('ignore', category=ImportWarning)
 
 	def test_all_num_paths_in_table(self):
@@ -511,10 +519,24 @@ class Test(unittest.TestCase):
 
 		self.assertEqual(all_num_paths, real)
 	
+	# Do an easier example so I can check by hand.
+	'''
+	def test_num_onsets_percetile(self):
+		test_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
+		all_found_info = get_all_paths_info(test_path)
+		percentiles = []
+		for i in range(1, all_found_info[1][1] + 1):
+			path = SubPath(test_path, 1, i)
+			percentiles.append(path.average_num_onsets_per_tala_score())
+
+		real = [0.0, 0.0, 0.0, 0.0, 0.0, 2.272727, 4.444444, 6.0, 7.692308, 12.5, 19.047619, 19.230769, 21.212121, 21.428571, 22.222222, 23.076923, 24.074074, 25.0, 26.666667, 33.333333, 35.416667, 36.363636, 40.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 51.219512, 51.25, 51.351351, 52.857143, 52.941176, 52.941176, 53.225806, 55.0, 55.172414, 62.5, 63.888889, 65.625, 67.105263, 75.0, 75.0, 77.777778, 100.0]
+		self.assertEqual(real, percentiles)
+	'''
+
 if __name__ == '__main__':
 	import doctest
 	doctest.testmod()
-	unittest.main()
+	#unittest.main()
 
 
 
