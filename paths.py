@@ -125,7 +125,7 @@ class SubPath(object):
 	SubPath().average_num_onsets_per_tala_score() tracks the average number of onsets in a path
 	and scores it's percentile in the context of the table.
 	>>> sp.average_num_onsets_per_tala_score()
-	8.196721
+	15.76086956521739
 	"""
 	def __init__(self, db_path, table_num, path_num, **kwargs):
 		assert path_num > 0
@@ -141,17 +141,28 @@ class SubPath(object):
 		cur.execute(path_string)
 		rows = cur.fetchall()
 
+		# separate loop, for now. 
 		all_averages = []
-		path = []
-		pitch_data = []
-		for i, this_row in enumerate(rows):
+		for this_row in rows:
 			each_tala_num_onsets = []
 			for this_data in this_row:
 				if this_data[0:3] == '(((':
 					evaluated = literal_eval(this_data)
-					pitch_data.append(evaluated)
 					for this in evaluated:
 						each_tala_num_onsets.append(len(this))
+
+			all_averages.append(round(np.mean(each_tala_num_onsets), 6))
+		
+		self.all_averages = all_averages
+
+		path = []
+		pitch_data = []
+		for i, this_row in enumerate(rows):
+			for this_data in this_row:
+				if this_data[0:3] == '(((':
+					evaluated = literal_eval(this_data)
+					pitch_data.append(evaluated)
+
 			if self.path_num == (i + 1):
 				stop_index = 0
 				for this_data in this_row:
@@ -170,10 +181,6 @@ class SubPath(object):
 			else:
 				pass
 			
-			#print(each_tala_num_onsets)
-			all_averages.append(round(np.mean(each_tala_num_onsets), 6))
-
-		self.all_averages = sorted(all_averages)
 		self.path = path
 		self.pitch_data = pitch_data
 
@@ -265,7 +272,7 @@ class SubPath(object):
 		num_onsets_data = [tala.num_onsets for tala in self.decitalas]
 		avg_num_onsets = round(np.mean(num_onsets_data), 6)
 
-		return round(stats.percentileofscore(self.all_averages, avg_num_onsets), 6)
+		return stats.percentileofscore(self.all_averages, avg_num_onsets)
 
 	###################### Visualization ######################
 	def show(self):
@@ -302,8 +309,6 @@ def model3(subpath, weights):
 	
 	return round(sum(components), 6)
 
-haikai0_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
-
 def subpath_gap_score(subpath1, subpath2):
 	"""
 	Takes two SubPath objects and returns the PathGapScore
@@ -323,14 +328,11 @@ def subpath_gap_score(subpath1, subpath2):
 	percentage = (gap / total_range) * 100
 	return round(100 - percentage, 6)
 
-sb1 = SubPath(haikai0_database_path, 0, 8)
-sb2 = SubPath(haikai0_database_path, 1, 144)
-#print(subpath_gap_score(sb1, sb2))
-
-def get_full_model3_path(db_path, weights1 = [0.7, 0.3]):
+def get_full_model3_path(db_path, first_path_weights = [0.7, 0.3], rest_weights = [0.7, 0.1], path_gap_weight = 0.2):
 	all_info = get_all_paths_info(db_path)
 	conn = lite.connect(db_path)
 
+	subpaths = []
 	i = 0
 	while i < len(all_info):
 		curr_info = all_info[i]
@@ -338,109 +340,30 @@ def get_full_model3_path(db_path, weights1 = [0.7, 0.3]):
 			model_3_scores = []
 			for j in range(1, curr_info[1] + 1):
 				path = SubPath(db_path = db_path, table_num = curr_info[0], path_num = j)
-				model_3_scores.append([path, model3(path, weights1)])
+				model_3_scores.append([path, model3(path, first_path_weights)])
 			
 			model_3_scores.sort(key = lambda x: x[1], reverse = True)
 			best_path = model_3_scores[0][0]
-			print(best_path)
+			subpaths.append(best_path)
 			i += 1
-		elif i == 1:
-			# get the path gap score for each path in table Paths_1
+		else:
 			gap_scores = []
 			for j in range(1, curr_info[1] + 1):
 				path = SubPath(db_path = db_path, table_num = curr_info[0], path_num = j)
-				gap_scores.append([path, subpath_gap_score(best_path, path)])
+				gap_scores.append([path, subpath_gap_score(subpaths[-1], path)])
 
 			new_model_scores = []
 			for this_path in gap_scores:
-				model4 = model3(this_path[0], [0.6, 0.1])
-				model4 += 0.3 * this_path[1]
+				model4 = model3(this_path[0], rest_weights)
+				model4 += path_gap_weight * this_path[1]
 				new_model_scores.append([this_path[0], model4])
 			
 			new_model_scores.sort(key = lambda x: x[1], reverse = True)
 			bestp1 = new_model_scores[0][0]
-			print(bestp1)
-			i += 1
-		elif i == 2:
-			# get the path gap score for each path in table Paths_1
-			gap_scores = []
-			for j in range(1, curr_info[1] + 1):
-				path = SubPath(db_path = db_path, table_num = curr_info[0], path_num = j)
-				gap_scores.append([path, subpath_gap_score(best_path, path)])
-
-			new_model_scores = []
-			for this_path in gap_scores:
-				model4 = model3(this_path[0], [0.6, 0.1])
-				model4 += 0.3 * this_path[1]
-				new_model_scores.append([this_path[0], model4])
-			
-			new_model_scores.sort(key = lambda x: x[1], reverse = True)
-			bestp2 = new_model_scores[0][0]
-			print(bestp2)
-			i += 1
-		elif i == 3:
-			# get the path gap score for each path in table Paths_1
-			gap_scores = []
-			for j in range(1, curr_info[1] + 1):
-				path = SubPath(db_path = db_path, table_num = curr_info[0], path_num = j)
-				gap_scores.append([path, subpath_gap_score(best_path, path)])
-
-			new_model_scores = []
-			for this_path in gap_scores:
-				model4 = model3(this_path[0], [0.6, 0.1])
-				model4 += 0.3 * this_path[1]
-				new_model_scores.append([this_path[0], model4])
-			
-			new_model_scores.sort(key = lambda x: x[1], reverse = True)
-			bestp3 = new_model_scores[0][0]
-			print(bestp3)
-			i += 1
-		else:
-			print('not there yet!')
+			subpaths.append(bestp1)
 			i += 1
 
-		#return best_path	
-
-print(get_full_model3_path(haikai0_database_path))
-
-
-
-
-
-
-
-
-
-
-####################################################################################################
-def sort_table_by_model3_score(db_path, path_table_num, weights):
-	conn = lite.connect(db_path)
-	cur = conn.cursor()
-	path_string = "SELECT * FROM Paths_{}".format(str(path_table_num))
-	cur.execute(path_string)
-	rows = cur.fetchall()
-
-	paths = []
-	for i in range(1, number_of_paths_by_table(db_path, path_table_num) + 1):        
-		path = SubPath(table = 'Paths_{}'.format(str(path_table_num)), path_num = i, db_path = db_path)
-		paths.append(path)
-	
-	return sorted(paths, key = lambda x: model3(x, weights), reverse=True)
-
-def model3_highest_score(db_path, path_table_num, weights):
-	return sort_table_by_model3_score(db_path, path_table_num, weights)[0]
-
-def path_gap_score(db_path, path_table_num, curr_path_num):
-	curr_path = SubPath(db_path, path_table_num, curr_path_num)
-	if path_table_num == 0:
-		return model3(curr_path, [0.7, 0.3])
-	else:
-		prev_path = model3_highest_score(db_path, path_table_num - 1, [0.7, 0.3])
-		gap = curr_path.start_onset - prev_path.end_onset
-		total_range = curr_path.end_onset - prev_path.start_onset
-
-		path_gap_score = 100 - ((gap / total_range) * 100)
-		return path_gap_score
+	return subpaths	
 
 ####################################################################################################
 # Testing
@@ -453,28 +376,8 @@ liturgie4_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_4.db'
 livre_dorgue_0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
 livre_dorgue_1_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db'
 
-sb1 = SubPath(db_path=haikai0_database_path, table_num=2, path_num=6)
-
-#print(path_gap_score(liturgie3_database_path, 3, 12))
-
-
-
-'''
-info = get_all_paths_info(livre_dorgue_0_path)
-
-model3_scores = []
-for i in range(1, info[4][1] + 1):
-	path = SubPath(db_path = livre_dorgue_0_path, table_num = 4, path_num = i)
-	model3_scores.append([path, model3(path, weights = [0.7, 0.3])])
-
-model3_scores.sort(key = lambda x: x[1])
-for x in model3_scores:
-	print(x)
-	print()
-'''
-#print(model3(sb1, [0.7, 0.3]))
-#print(sb1.average_num_onsets_per_tala_score())
-#print(sb1.all_averages)
+#print(get_full_model3_path(haikai0_database_path))
+#print(get_full_model3_path(haikai1_database_path))
 
 class Path(object):
 	"""
@@ -486,15 +389,6 @@ class Path(object):
 	
 	#def __repr__(self):
 		#return '<Pa>'
-
-'''
-sb1 = SubPath(db_path=haikai0_database_path, table_num=2, path_num=6)
-sb2 = SubPath(db_path=haikai0_database_path, table_num=2, path_num=7)
-sb3 = SubPath(db_path=haikai0_database_path, table_num=2, path_num=8)
-
-path = Path(paths = [sb1, sb2, sb3])
-print(path.paths)
-'''
 
 ###############################################################################
 # Helper function to ignore annoying warnings 
@@ -536,7 +430,7 @@ class Test(unittest.TestCase):
 if __name__ == '__main__':
 	import doctest
 	doctest.testmod()
-	#unittest.main()
+	unittest.main()
 
 
 
