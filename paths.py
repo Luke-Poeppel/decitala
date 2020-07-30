@@ -11,6 +11,7 @@
 Stores data for each pareto optimal path.
 """
 import numpy as np
+import re
 import sqlite3 as lite 
 import unittest
 import warnings
@@ -195,8 +196,17 @@ class SubPath(object):
 				if this_range[0] == this_row[0] and this_range[1] == this_row[1]:
 					decitalas_pre.append(this_row[2])
 		
-		decitalas_post = [x.split('_')[1] for x in decitalas_pre]
-		
+		def _remove_id(full_name):
+			x = re.search(r'\d+', full_name)
+			split = full_name.split('_')
+			if not(len(split[1]) == 1):
+				new_str = '_'.join(split[1:])
+				return new_str
+			else:
+				new_str = '_'.join(split[2:])
+				return new_str
+
+		decitalas_post = [_remove_id(x) for x in decitalas_pre]
 		self.decitalas = [Decitala(string) for string in decitalas_post]
 
 	def __repr__(self):
@@ -301,6 +311,8 @@ class SubPath(object):
 		"""
 		raise NotImplementedError
 
+haikai0_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
+
 ####################################################################################################
 # Model 
 def model3(subpath, weights):
@@ -377,9 +389,6 @@ liturgie4_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_4.db'
 
 livre_dorgue_0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
 livre_dorgue_1_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db'
-
-#print(get_full_model3_path(haikai0_database_path))
-#print(get_full_model3_path(haikai1_database_path))
 
 class Path(object):
 	"""
