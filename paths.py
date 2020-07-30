@@ -383,12 +383,24 @@ class Path(object):
 	"""
 	Concatenation of multiple SubPath objects (under the right conditions).
 	"""
-	def __init__(self, paths = []):
-		self.paths = paths
-		path_nums = [path.path_num for path in self.paths]
+	def __init__(self, subpaths = []):
+		self.subpaths = subpaths
+		self.subpath_nums = [subpath.path_num for subpath in self.subpaths]
+
+		flattened = lambda l: [item for sublist in l for item in sublist]
+		data = []
+		for subpath in self.subpaths:
+			for onset_range, tala, pitch_content in zip(subpath.path, subpath.decitalas, subpath.pitch_data):
+				data.append([onset_range, tala, pitch_content])
+			
+		self.data = data
+		self.decitalas = [data[1] for data in self.data]
 	
-	#def __repr__(self):
-		#return '<Pa>'
+	def __repr__(self):
+		return '<Paths_' + '/'.join(str(x) for x in self.subpath_nums) + '>'
+	
+	def tala_counter(self):
+		return Counter(self.decitalas)
 
 ###############################################################################
 # Helper function to ignore annoying warnings 
@@ -430,7 +442,7 @@ class Test(unittest.TestCase):
 if __name__ == '__main__':
 	import doctest
 	doctest.testmod()
-	unittest.main()
+	#unittest.main()
 
 
 

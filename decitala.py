@@ -622,18 +622,25 @@ class Decitala(GeneralFragment):
 		if name:
 			if name.endswith('.xml'):
 				searchName = name
-			elif name.endswith('.mxl'):
-				searchName = name
 			else:
 				searchName = name + '.xml'
-					
+			
+			search_name_split = searchName.split('_')
+			matches = []
 			for thisFile in os.listdir(decitala_path):
 				x = re.search(searchName, thisFile)
-				if bool(x) == True:
-					self.full_path = decitala_path + '/' + thisFile
-					self.name = os.path.splitext(thisFile)[0]
-					self.filename = thisFile
-					self.stream = converter.parse(decitala_path + '/' + thisFile)
+				if bool(x):
+					matches.append(thisFile)
+			
+			for match in matches:
+				split = match.split('_')
+				if len(search_name_split) == len(split) - 1:
+					self.full_path = decitala_path + '/' + match
+					self.name = match[:-4]
+					self.filename = match
+					self.stream = converter.parse(decitala_path + '/' + match)
+			else:
+				pass
 
 		super().__init__(path=self.full_path, name = self.name)
 	
@@ -670,12 +677,13 @@ class Decitala(GeneralFragment):
 			x = re.search(r'\d+', thisFile)
 			try:
 				if int(x.group(0)) == input_id:
-					return Decitala(name=thisFile)
+					span_end = x.span()[1] + 1
+					return Decitala(name=thisFile[span_end:])
 			except AttributeError:
 				pass
 	
 	@property
-	def numMatras(self):
+	def num_matras(self):
 		return (self.ql_duration / 0.5)
 	
 	@property
