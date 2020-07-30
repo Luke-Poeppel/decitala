@@ -185,7 +185,7 @@ class SubPath(object):
 		self.pitch_data = pitch_data
 
 		# Get tala information. (More efficient to do it separately.)
-		decitalas = []
+		decitalas_pre = []
 		fragment_path_string = "SELECT * FROM Fragment"
 		cur.execute(fragment_path_string)
 		rows = cur.fetchall()
@@ -193,9 +193,11 @@ class SubPath(object):
 		for this_range in self.path:
 			for this_row in rows:
 				if this_range[0] == this_row[0] and this_range[1] == this_row[1]:
-					decitalas.append(this_row[2])
-
-		self.decitalas = [Decitala(string) for string in decitalas]
+					decitalas_pre.append(this_row[2])
+		
+		decitalas_post = [x.split('_')[1] for x in decitalas_pre]
+		
+		self.decitalas = [Decitala(string) for string in decitalas_post]
 
 	def __repr__(self):
 		return '<SubPath_{0}: {1}>'.format(str(self.path_num), str(self.path))
@@ -441,7 +443,7 @@ class Test(unittest.TestCase):
 
 if __name__ == '__main__':
 	import doctest
-	doctest.testmod()
+	#doctest.testmod()
 	#unittest.main()
 
 

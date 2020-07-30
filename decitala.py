@@ -94,9 +94,8 @@ fraction_dict = {
 subdecitala_array = np.array([26, 38, 55, 65, 68])
 
 ############### EXCEPTIONS ###############
-class IDException(Exception):
+class DecitalaException(Exception):
 	pass
-	#return 'That fragment likely has multiple subfragments under the same ID number.'
 
 ############ HELPER FUNCTIONS ############
 #Notational Conversion Functions
@@ -631,10 +630,15 @@ class Decitala(GeneralFragment):
 				x = re.search(searchName, thisFile)
 				if bool(x):
 					matches.append(thisFile)
-			
+
 			for match in matches:
 				split = match.split('_')
 				if len(search_name_split) == len(split) - 1:
+					self.full_path = decitala_path + '/' + match
+					self.name = match[:-4]
+					self.filename = match
+					self.stream = converter.parse(decitala_path + '/' + match)
+				elif len(search_name_split) == len(split) - 2 and len(split[1]) == 1:
 					self.full_path = decitala_path + '/' + match
 					self.name = match[:-4]
 					self.filename = match
@@ -667,11 +671,10 @@ class Decitala(GeneralFragment):
 		'''
 		assert type(input_id) == int
 		if input_id > 121 or input_id < 1:
-			raise Exception('Input must be between 1 and 120!')
+			raise DecitalaException('Input must be between 1 and 120!')
 		
 		if input_id in subdecitala_array:
-			raise IDException('There are multiple talas with this ID. Please consult the Lavignac.')
-			#raise Exception('There are multiple talas with this ID. Please consult the Lavignac.')
+			raise DecitalaException('There are multiple talas with this ID. Please consult the Lavignac.')
 
 		for thisFile in os.listdir(decitala_path):
 			x = re.search(r'\d+', thisFile)

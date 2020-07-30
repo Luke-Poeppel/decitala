@@ -90,9 +90,8 @@ def tala_roll(subpath):
 ####################################################################################################
 # Testing
 
-
-#sb = SubPath(livre_dorgue_0_path, 10, 5)
-#tala_counter(sb, title="Livre d'Orgue Example Subpath")
+sb = SubPath(livre_dorgue_0_path, 10, 5)
+tala_counter(sb, title="Livre d'Orgue Example Subpath")
 
 #print(type('a'))
 #print(type(sb))
