@@ -46,9 +46,9 @@ livre_dorgue_1_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db'
 ####################################################################################################
 # Visualization
 
-def tala_counter(data, title, filename):
+def tala_counter(data, title, show = True, filename = None):
 	"""
-	Returns a histogram of the talas found in a path 
+	Returns a histogram of the talas found in a Path object. 
 	"""
 	mpl.style.use('seaborn')
 
@@ -61,14 +61,13 @@ def tala_counter(data, title, filename):
 	c = Counter(talas)
 	sorted_c = sorted(c.items(), key = lambda x: x[1], reverse=False)
 
-	#reduce to 12 characters
+	# Reduce names to 12 characters. 
 	names = [x[0].name if (len(x[0].name) <= 12) else ((x[0].name)[0:12] + '.') for x in sorted_c]
 	counts = [x[1] for x in sorted_c]
 
 	max_count = counts[-1]
 	
 	plt.figure(figsize=(11, 3))
-
 	plt.xticks(list(range(0, max_count + 1, 1)))
 
 	plt.subplots_adjust(bottom=0.17, top=0.81)
@@ -77,29 +76,54 @@ def tala_counter(data, title, filename):
 	plt.ylabel('Deçitâla Name', fontname=FONTNAME, fontsize=12)
 
 	plt.barh(names, counts, height=0.8)
-	plt.show()
-	#plt.savefig(filename, dpi=800)#, format='eps')
-	#plt.close()
 	
-def tala_roll(subpath):
+	if filename:
+		plt.savefig(filename, dpi=800)#, format='eps')
+		#plt.close()
+	if show:
+		plt.show()
+	
+def tala_roll(data, title, show = True, filename = None):
+	"""
+	To fix the color situation, maybe make a dictionary that assigns to 
+	each tala a random color and then in the loop, add a conditional. 
+	"""
 	mpl.style.use('seaborn')
-	plt.plot([1, 2, 3], [4, 5, 6])
+	#plt.plot([1, 2, 3], [4, 5, 6])
+	names = ['121_Varied.', '105_Candra.', '88_Laksm.']
+	counts = [12, 3, 4]
+
+	m = data.data
+	plt.figure(figsize=(11, 3))
+
+	#highest_onset = max(m, key = lambda x: x[0][1])
+	highest_onset = 0
+	for x in m:
+		if highest_onset > x[0][1]:
+			pass
+		else:
+			highest_onset = x[0][1]
+		
+	plt.xticks(list(range(0, int(highest_onset), 10)))
+	plt.xlim(-0.02, highest_onset + 2.0)
+
+	for i in range(len(data.data)):
+		m = data.data
+		plt.barh(m[i][1].name, m[i][0][1] - m[i][0][0], height = 0.8, left = m[i][0][0])
 
 	plt.show()
 
 ####################################################################################################
 # Testing
-
-sb = SubPath(livre_dorgue_0_path, 10, 5)
-tala_counter(sb, title="Livre d'Orgue Example Subpath")
-
 #print(type('a'))
 #print(type(sb))
 
-#subpaths = get_full_model3_path(livre_dorgue_1_path)
-#full_path = Path(subpaths)
+subpaths = get_full_model3_path(liturgie3_database_path)
+full_path = Path(subpaths)
 
-#tala_counter(haikai1_full_path, "$Sept \: Haïkaï \: Reduction$ \n (Part 0)")
-#tala_counter(full_path, "$Livre \: d'Orgue \: V$ \n (Part 1)", "livre_dorgue1_hist")
+tala_roll(full_path, 'Haikai Testing', show = True)
+
+#tala_counter(data=full_path, title="$Sept \: Haïkaï \: Reduction$ \n (Part 0)", show = True, filename='testwrite')
+#tala_counter(data=full_path, title="$Liturgie \: de \: Cristal$ \n (Part 4)", show = False, filename='liturgie4_hist')
 
 

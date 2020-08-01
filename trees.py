@@ -17,9 +17,11 @@ TODO:
 import copy
 import decimal
 import itertools
+import json
 import math
 import numpy as np
 import os
+import re
 
 from music21 import converter
 from music21 import stream
@@ -177,7 +179,7 @@ def cauchy_schwartz(vector1, vector2):
 	linearly independant (and the function returns True); if they are equal, they are dependant 
 	(and the function returns False). 
 
-	Linear Independance:
+	Linear Independence:
 	>>> vectorI1 = [0.375, 1.0, 0.25]
 	>>> vectorI2 = [1.0, 0.0, 0.5]
 	>>> cauchy_schwartz(vectorI1, vectorI2)
@@ -519,7 +521,7 @@ class NaryTree(object):
 
 		if path[-1].name is not None:
 			p = [node.value for node in path]
-			yield (path[-1].name, p)
+			yield path[-1].name#, p)
 		else:
 			pass
 
@@ -627,7 +629,13 @@ class FragmentTree(NaryTree):
 		if frag_type.lower() == 'decitala':
 			raw_data = []
 			for this_file in os.listdir(root_path):
-				raw_data.append(Decitala(this_file))
+				x = re.search(r'\d+', this_file)
+				try:
+					span_end = x.span()[1] + 1
+					raw_data.append(Decitala(name=this_file[span_end:]))
+				except AttributeError:
+					pass
+
 			self.raw_data = raw_data
 		elif frag_type.lower() == 'greek_foot':
 			raw_data = []
@@ -1088,16 +1096,16 @@ def rolling_search2(path, part_num, ratio_tree, difference_tree):
 					pass
 			as_quarter_lengths.append(this_obj.quarterLength)
 
-		#print(as_quarter_lengths)
 		searched = get_by_ql_list2(as_quarter_lengths, ratio_tree, difference_tree)
 		if searched is not None:
 			offset_1 = this_frame[0][0]
 			offset_2 = this_frame[-1][0]
 
 			fragments_found.append((searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
-			#fragments_found.append((searched, (thisFrame[0][0].offset, thisFrame[0][-1].offset))) #SUM OVER FOR RANGE!#
 
 	return fragments_found
+
+
 
 '''
 ratio_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'ratio')

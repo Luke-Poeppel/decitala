@@ -412,6 +412,15 @@ class Path(object):
 	
 	def tala_counter(self):
 		return Counter(self.decitalas)
+	
+	def filter_by_tala(self, decitala):
+		"""
+		Returns data filtered by tala. 
+		"""
+		return list(filter(lambda x: x[1] == decitala, self.data))
+
+	def filter_by_onset_range(self, lower_bound = None, upperBound = None):
+		raise NotImplementedError
 
 ###############################################################################
 # Helper function to ignore annoying warnings 

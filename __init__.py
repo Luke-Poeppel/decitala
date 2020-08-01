@@ -1,1 +1,1 @@
-__all__ = ['decitala']
+__all__ = ['decitala', 'trees']
