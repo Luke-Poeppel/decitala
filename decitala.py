@@ -682,7 +682,7 @@ class Decitala(GeneralFragment):
 	@property
 	def num_anga_classes(self):
 		return len(set(self.ql_array()))
-
+	
 class GreekFoot(GeneralFragment):
 	"""
 	Class that stores greek foot data. Reads from a folder containing all greek feet XML files.

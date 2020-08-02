@@ -503,8 +503,8 @@ class NaryTree(object):
 		representation search). 
 		TODO: write a method based on this one that searches for unnamed paths, as well. 
 		"""
-		if len(path_from_root) <= 2:
-			raise TreeException('Path provided must be at least 3 values long.')
+		if len(path_from_root) < 2:
+			raise TreeException('Path provided must be at least 2 values long.')
 
 		curr = self.root
 		i = 1
@@ -795,11 +795,11 @@ def rolling_search(path, part_num, ratio_tree, difference_tree):
 	2.) Figure out what the situtation is with rest onset retrieval. I think it's ok, but it's 
 	definitely worth checking. 
 	"""
-	possible_windows = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]	
 	object_list = ratio_tree.get_indices_of_object_occurrence(file_path = path, part_num = part_num)
 	fragments_found = []
-	frames = []
 
+	frames = []
+	possible_windows = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]	
 	for this_win in possible_windows:
 		for this_frame in roll_window(lst = object_list, window_length = this_win):
 			frames.append(this_frame)
@@ -814,12 +814,33 @@ def rolling_search(path, part_num, ratio_tree, difference_tree):
 					pass
 			as_quarter_lengths.append(this_obj.quarterLength)
 
-		searched = get_by_ql_list2(as_quarter_lengths, ratio_tree, difference_tree)
+		searched = get_by_ql_array(as_quarter_lengths, ratio_tree, difference_tree)
 		if searched is not None:
 			offset_1 = this_frame[0][0]
 			offset_2 = this_frame[-1][0]
 
 			fragments_found.append((searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
+
+	return fragments_found
+
+def rolling_search_on_array(array, ratio_tree, difference_tree):
+	"""
+	Does a rolling search for fragments in the two trees based on an array input. The windows correspond to 
+	the the possible number of onsets in the filtered decitala database. 
+
+	TODO: (see above)
+	"""
+	fragments_found = []
+	frames = []
+	possible_windows = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]	
+	for this_win in possible_windows:
+		for this_frame in roll_window(lst = array, window_length = this_win):
+			frames.append(this_frame)
+
+	for this_frame in frames:
+		searched = get_by_ql_array(this_frame, ratio_tree, difference_tree)
+		if searched is not None:
+			fragments_found.append(searched)
 
 	return fragments_found
 
@@ -830,6 +851,12 @@ difference_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', re
 livre_dorgue_1 = np.array([1.0, 0.5, 1.5, 1.5, 1.5, 1.0, 1.5, 0.25, 0.25, 0.25])
 livre_dorgue_2 = np.array([0.125, 0.125, 0.125, 0.125, 0.25, 0.25, 0.375])
 livre_dorgue_3 = np.array([0.75, 1.25, 1.25, 1.75, 1.25, 1.25, 1.25, 0.75])
+
+combined = np.concatenate([livre_dorgue_1, livre_dorgue_2, livre_dorgue_3])
+
+for data in rolling_search_on_array(combined, ratio_tree, difference_tree):
+	print(data)
+
 print(get_by_ql_array(livre_dorgue_1, ratio_tree, difference_tree))
 print(get_by_ql_array(livre_dorgue_2, ratio_tree, difference_tree))
 print(get_by_ql_array(livre_dorgue_3, ratio_tree, difference_tree))
