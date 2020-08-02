@@ -153,7 +153,7 @@ def _difference(array, start_index):
 	except IndexError:
 		pass
 
-def successive_ratio_list(lst):
+def successive_ratio_array(lst):
 	"""
 	Returns an array of the successive duration ratios. By convention, we set the first value to 1.0. 
 	"""
@@ -176,7 +176,7 @@ def successive_difference_array(lst):
 		difference_lst.append(_difference(lst, i))
 		i += 1
 
-	return difference_lst
+	return np.array(difference_lst)
 
 def powerList(lst):
 	"""
@@ -210,7 +210,7 @@ def powerList(lst):
 def get_added_values(ql_lst, print_type = True):
 	'''
 	Given a quarter length list, returns all indices and types of added values found, according to 
-	the examples dicussed in Technique de Mon Langage Musical (1944)). 
+	the examples dicussed in Technique de Mon Langage Musical (1944). 
 
 	>>> get_added_values([0.25, 0.5, 0.5, 0.75, 0.25])
 	[(0, 'du Note'), (4, 'du Note')]
@@ -317,7 +317,7 @@ class GeneralFragment(object):
 	7
 	>>> g1.ql_array()
 	array([0.5 , 0.25, 0.25, 0.5 , 0.5 , 1.  , 1.  ])
-	>>> g1.successive_ratio_list()
+	>>> g1.successive_ratio_array()
 	array([1. , 0.5, 1. , 2. , 1. , 2. , 1. ])
 	>>> g1.carnatic_string
 	'| o o | | S S'
@@ -447,17 +447,11 @@ class GeneralFragment(object):
 		else:
 			return '<' + ' '.join([str(int(val)) for val in as_array]) + '>'
 
-	def successive_ratio_list(self):
+	def successive_ratio_array(self):
 		"""
 		Returns an array of the successive duration ratios. By convention, we set the first value to 1.0. 
 		"""
-		ratio_array = [1.0] #np.array([1.0])
-		i = 0
-		while i < len(self.ql_array()) - 1:
-			ratio_array.append(_ratio(self.ql_array(), i))
-			i += 1
-
-		return np.array(ratio_array)
+		return successive_ratio_array(self.ql_array())
 	
 	def successive_difference_array(self):
 		'''
@@ -466,19 +460,13 @@ class GeneralFragment(object):
 		
 		>>> d = Decitala.get_by_id(119).successive_difference_array()
 		>>> d
-		[0.0, 0.5, 0.0, 0.5, -0.5, 0.0, 0.0, -0.5]
+		array([ 0. ,  0.5,  0. ,  0.5, -0.5,  0. ,  0. , -0.5])
 		'''
-		difference_lst = [0.0]
-		i = 0
-		while i < len(self.ql_array()) - 1:
-			difference_lst.append(_difference(self.ql_array(), i))
-			i += 1
-
-		return difference_lst
-
+		return successive_difference_array(self.ql_array())
+		
 	def cyclic_permutations(self):
 		"""
-		Returns all cyclic permutations. 
+		Returns all cyclic permutations of self.ql_array().
 		"""
 		return np.array([np.roll(self.ql_array(), -i) for i in range(self.num_onsets)])
 
@@ -578,8 +566,10 @@ class Decitala(GeneralFragment):
 
 	>>> ragavardhana.ql_array()
 	array([0.25 , 0.375, 0.25 , 1.5  ])
-	>>> ragavardhana.successive_ratio_list()
+	>>> ragavardhana.successive_ratio_array()
 	array([1.     , 1.5    , 0.66667, 6.     ])
+	>>> ragavardhana.successive_difference_array()
+	array([ 0.   ,  0.125, -0.125,  1.25 ])
 	>>> ragavardhana.carnatic_string
 	'o oc o Sc'
 
@@ -710,7 +700,7 @@ class GreekFoot(GeneralFragment):
 
 	>>> bacchius.ql_array()
 	array([1., 2., 2.])
-	>>> bacchius.successive_ratio_list()
+	>>> bacchius.successive_ratio_array()
 	array([1., 2., 1.])
 	>>> bacchius.greek_string
 	'⏑ –– ––'

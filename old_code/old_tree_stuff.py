@@ -439,3 +439,76 @@ def successive_difference_array(lst):
 		i += 1
 
 	return difference_lst
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		def _all_mamed_paths_of_length_n_helper(self, node, length_in, path = []):
+		'''
+		Helper function for self.all_named_paths_of_length_n
+		'''
+		path.append(node)
+
+		if path[-1].name is not None:
+			p = [node.value for node in path]
+			if len(p) == length_in:
+				yield path[-1].name
+		else:
+			pass
+
+		if len(node.children) == 0:
+			pass
+		else:
+			for child in node.children:
+				yield from self._all_mamed_paths_of_length_n_helper(child, length_in, path)
+
+		path.pop()
+
+	def all_named_paths_of_length_n(self, length):
+		"""
+		Returns all named paths from the root of provided length. 
+		"""
+		for this_named_path_of_length_n in self._all_mamed_paths_of_length_n_helper(node = self.root, length_in = length):
+			yield this_named_path_of_length_n
+
+
+
+
+
+
+	
+
+
+
+
+def dot_product(vector1, vector2):
+	'''
+	Returns the dot product (i.e. component by component product) of two vectors. 
+
+	>>> v1 = [1.0, 2.0, 0.75]
+	>>> v2 = [0.5, 0.5, 0.75]
+	>>> dot_product(v1, v2)
+	2.0625
+	'''
+	if len(vector1) != len(vector2):
+		raise Exception('Vector dimensions do not match.')
+	else:
+		dot_product = 0
+		for i in range(0, len(vector1)):
+			dot_product += vector1[i] * vector2[i]
+
+	return round(dot_product, 5)

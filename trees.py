@@ -30,7 +30,7 @@ from decitala import (
 	Decitala,
 	_ratio,
 	_difference,
-	successive_ratio_list,
+	successive_ratio_array,
 	successive_difference_array
 )
 
@@ -76,70 +76,50 @@ def roll_window(lst, window_length):
 	return l
 
 ################################## MATH HELPERS ##################################
-
-def dot_product(vector1, vector2):
+def _euclidian_norm(vector):
 	'''
-	Returns the dot product (i.e. component by component product) of two vectors. 
+	Returns the euclidian norm of a vector (the square root of the inner product of a vector 
+	with itself) rounded to 5 decimal places. 
 
-	>>> v1 = [1.0, 2.0, 0.75]
-	>>> v2 = [0.5, 0.5, 0.75]
-	>>> dot_product(v1, v2)
-	2.0625
+	>>> _euclidian_norm(np.array([1.0, 1.0, 1.0]))
+	Decimal('1.73205')
+	>>> _euclidian_norm(np.array([1, 2, 3, 4]))
+	Decimal('5.47722')
 	'''
-	if len(vector1) != len(vector2):
-		raise Exception('Vector dimensions do not match.')
-	else:
-		dot_product = 0
-		for i in range(0, len(vector1)):
-			dot_product += vector1[i] * vector2[i]
+	norm_squared = np.dot(vector, vector)
+	norm = decimal.Decimal(str(np.sqrt(norm_squared)))
 
-	return round(dot_product, 5)
+	return norm.quantize(decimal.Decimal('0.00001'), decimal.ROUND_DOWN)
 
 def cauchy_schwartz(vector1, vector2):
 	'''
-	Tests the cauchy-schwartz inequality between two vectors. Namely, if the absolute value of 
+	Tests the Cauchy-Schwartz inequality on two vectors. Namely, if the absolute value of 
 	the dot product of the two vectors is less than the product of the norms, the vectors are 
 	linearly independant (and the function returns True); if they are equal, they are dependant 
 	(and the function returns False). 
 
 	Linear Independence:
-	>>> vectorI1 = [0.375, 1.0, 0.25]
-	>>> vectorI2 = [1.0, 0.0, 0.5]
-	>>> cauchy_schwartz(vectorI1, vectorI2)
+	>>> li_vec1 = np.array([0.375, 1.0, 0.25])
+	>>> li_vec2 = np.array([1.0, 0.0, 0.5])
+	>>> cauchy_schwartz(li_vec1, li_vec2)
 	True
 
-	Test:
-	>>> cauchy_schwartz([0.75, 0.5], [1.5, 1.0])
+	>>> cauchy_schwartz(np.array([0.75, 0.5]), np.array([1.5, 1.0]))
 	False
 
-	Linear Dependance (D1 = 2D2):
-	>>> vectorD1 = [1.0, 2.0, 4.0, 8.0]
-	>>> vectorD2 = [0.5, 1.0, 2.0, 4.0]
-	>>> cauchy_schwartz(vectorD1, vectorD2)
+	Linear Dependance:
+	>>> ld_vec1 = np.array([1.0, 2.0, 4.0, 8.0])
+	>>> ld_vec2 = np.array([0.5, 1.0, 2.0, 4.0])
+	>>> cauchy_schwartz(ld_vec1, ld_vec2)
 	False
 
-	Direct Equality:
-	>>> vectorE1 = [0.25, 0.25, 0.25, 0.25]
-	>>> vectorE2 = [0.25, 0.25, 0.25, 0.25]
-	>>> cauchy_schwartz(vectorE1, vectorE2)
+	Equal:
+	>>> e_vec1 = np.array([0.25, 0.25, 0.25, 0.25])
+	>>> e_vec2 = np.array([0.25, 0.25, 0.25, 0.25])
+	>>> cauchy_schwartz(e_vec1, e_vec2)
 	False
 	'''
-	def _euclidianNorm(vector):
-		'''
-		Returns the euclidian norm of a duration vector (rounded to 5 decimal places). Defined as the 
-		square root of the inner product of a vector with itself.
-
-		>>> euclidianNorm([1.0, 1.0, 1.0])
-		Decimal('1.73205')
-		>>> euclidianNorm([1, 2, 3, 4])
-		Decimal('5.47722')
-		'''
-		norm_squared = dot_product(vector, vector)
-		norm = decimal.Decimal(str(math.sqrt(norm_squared)))
-
-		return norm.quantize(decimal.Decimal('0.00001'), decimal.ROUND_DOWN)
-
-	if abs(dot_product(vector1, vector2)) <  (_euclidianNorm(vector1) * _euclidianNorm(vector2)):
+	if abs(np.dot(vector1, vector2)) <  (_euclidian_norm(vector1) * _euclidian_norm(vector2)):
 		return True
 	else:
 		return False
@@ -277,7 +257,7 @@ class NaryTree(object):
 	Full Path
 
 	Get paths of a particular length:
-	>>> for this_path in TestTree.all_named_paths_of_length_n(length = 3):
+	>>> for this_path in TestTree.all_named_paths(cutoff = 3):
 	...     print(this_path)
 	B
 	C
@@ -492,7 +472,10 @@ class NaryTree(object):
 				if len(p) == cutoff:
 					yield path[-1].name
 			else:
-				yield path[-1].name
+				if path[-1].name == 'ROOT':
+					pass
+				else:
+					yield path[-1].name
 		else:
 			pass
 
@@ -515,11 +498,10 @@ class NaryTree(object):
 	################################################################################################
 	def search_for_path(self, path_from_root):
 		"""
-		Searches through the tree for a continuous path *to a named node* consisting of the values in the path_from_root list. 
+		Searches for path_from_root through the tree for a continuous path to a named node. 
 		NOTE: the first value of the path must either be 1 (ratio representation search) or 0 (difference 
 		representation search). 
-
-		TODO: create a method based on this one that searches for unnamed paths, as well. 
+		TODO: write a method based on this one that searches for unnamed paths, as well. 
 		"""
 		if len(path_from_root) <= 2:
 			raise TreeException('Path provided must be at least 3 values long.')
@@ -629,14 +611,7 @@ print(tree._node_list_to_json([root, n2, n3, n4]))
 ############################### FRAGMENT TREES ##################################
 class FragmentTree(NaryTree):
 	"""
-	Nary tree for holding ratio and different representation of rhythmic fragments. 
-
-	TODO
-	- Keep track of rests in all cases. The indices of occurrence can't be based
-	upon placement of notes, but have to be based on placement of *all* musical objects. 
-	- Cauchy-schwartz inequality is completely unnecessary (I think) since we're using ratio representations.
-	not sure how this applies for difference representations. 
-	- Decide on double-onset fragment convention. I'm leaning towards keep them since some of them are odd. 
+	Inherits from NaryTree. Ratio and Difference representations of a rhythmic dataset.
 	"""
 	def __init__(self, root_path, frag_type, rep_type, **kwargs):
 		if type(root_path) != str:
@@ -675,15 +650,12 @@ class FragmentTree(NaryTree):
 
 		def filter_data(raw_data):
 			"""
-			Given a list of decitala objects (i.e. converted to a matrix of duration vectors), 
-			filter_data() removes:
-			- Trivial fragments (single-onset fragments and double onset fragments, the latter 
-			by convention). 
-			- Duplicate fragments
-			- Multiplicative Augmentations/Diminutions (by using the cauchy-schwarz inequality); if 
-			two duration vectors are found to be linearly dependant, one is removed.
+			Given a list of Decitala objects, filter_data() removes:
+			- Single-onset fragments
+			- Exact duplicate fragments
+			- Multiplicative augmentation/diminution duplicates (using the Cauchy-Schwarz Inequality).
 
-			Consider the following set of rhythmic fragments.
+			For example, if we have the following set of fragments: 
 			[3.0, 1.5, 1.5, 0.75, 0.75]
 			[1.5, 1.0]
 			[0.75, 0.5, 0.75]
@@ -694,7 +666,8 @@ class FragmentTree(NaryTree):
 			[1.0, 1.0, 2.0],
 			[1.0, 0.5, 0.5, 0.25, 0.25],
 			[0.25, 0.5, 1.0, 2.0]
-			This function reduces this list to:
+			
+			The function reduces this list to:
 			[0.75, 0.5], 
 			[0.75, 0.5, 0.75], 
 			[0.25, 0.25, 0.5], 
@@ -709,8 +682,6 @@ class FragmentTree(NaryTree):
 				try:
 					if len(copied[i].ql_array()) == 1:
 						del copied[i]
-					#if len(copied[i].ql_array()) < 2:
-						#del copied[i]
 					else:
 						pass
 				except IndexError:
@@ -749,7 +720,7 @@ class FragmentTree(NaryTree):
 		if rep_type == 'ratio':
 			root_node = self.Node(value = 1.0, name = 'ROOT')
 	
-			possible_num_onsets = [3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
+			possible_num_onsets = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
 			i = 0
 			while i < len(possible_num_onsets):
 				curr_onset_list = []
@@ -757,7 +728,7 @@ class FragmentTree(NaryTree):
 					if len(thisTala.ql_array()) == possible_num_onsets[i]:
 						curr_onset_list.append(thisTala)
 				for thisTala in curr_onset_list:
-					root_node.add_path_of_children(path = list(thisTala.successive_ratio_list()), final_node_name = thisTala)
+					root_node.add_path_of_children(path = list(thisTala.successive_ratio_array()), final_node_name = thisTala)
 				i += 1
 
 			self.root = root_node
@@ -765,7 +736,7 @@ class FragmentTree(NaryTree):
 		if rep_type == 'difference':
 			root_node = NaryTree().Node(value = 0.0, name = 'ROOT')
 
-			possible_num_onsets = [3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
+			possible_num_onsets = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
 			i = 0
 			while i < len(possible_num_onsets):
 				curr_onset_list = []
@@ -780,16 +751,15 @@ class FragmentTree(NaryTree):
 
 def get_by_ql_array(ql_array, ratio_tree, difference_tree):
 	"""
-	I don't think it makes sense to have stuff like rolling_search as part of the tree class...
-	It definitely makes sense to have *some* get_by_ql thing in the tree, but what? We need to be 
-	able to search the difference tree, so maybe I should have get_by_ql_array() be a method that searches
-	for exact instances of the ql array. Then rolling_search and get_by_ql_array_all_methods() 
-	are separate methods.
+	Searches the input ratio and difference trees for the input ql_array. Follows an Occam's Razor
+	methodology. We first search for the ratio representation; next we search for the ratio representation
+	of the retrograde; then we search for the difference representation; then we search for the difference
+	representation of the retrograde. Soon, I'll make it possible to search with added values removed, as well. 
 	"""
 	retrograde = ql_array[::-1]
-	ratio_list = successive_ratio_list(ql_array)
+	ratio_list = successive_ratio_array(ql_array)
 	difference_list = successive_difference_array(ql_array)
-	retrograde_ratio_list = successive_ratio_list(retrograde)
+	retrograde_ratio_list = successive_ratio_array(retrograde)
 	retrograde_difference_list = successive_difference_array(retrograde)
 
 	ratio_search = ratio_tree.search_for_path(ratio_list)
@@ -816,13 +786,16 @@ def get_by_ql_array(ql_array, ratio_tree, difference_tree):
 
 def rolling_search(path, part_num, ratio_tree, difference_tree):
 	"""
-	TODO: I could consider doing a set check for each search for recyclability reasons... Not
-	very pressing, but is more efficient. 
+	Does a rolling search for fragments in the two trees based on a score path input and part num. 
+	The windows correspond to the the possible number of onsets in the filtered decitala database. 
 
-	Runs a windowed search on an input stream and path number. Returns the decitalas found and the 
-	indices of occurrence. 
+	TODO: 
+	1.) I could consider doing a set check for each search for recyclability reasons. Not
+	very pressing, but more efficient. 
+	2.) Figure out what the situtation is with rest onset retrieval. I think it's ok, but it's 
+	definitely worth checking. 
 	"""
-	possible_windows = [3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
+	possible_windows = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]	
 	object_list = ratio_tree.get_indices_of_object_occurrence(file_path = path, part_num = part_num)
 	fragments_found = []
 	frames = []
@@ -861,7 +834,6 @@ print(get_by_ql_array(livre_dorgue_1, ratio_tree, difference_tree))
 print(get_by_ql_array(livre_dorgue_2, ratio_tree, difference_tree))
 print(get_by_ql_array(livre_dorgue_3, ratio_tree, difference_tree))
 '''
-
 '''
 sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
 livre_dorgue_path = "/Users/lukepoeppel/Desktop/Messiaen/Livre_d\'Orgue/V_Piece_En_Trio.xml"
@@ -884,5 +856,5 @@ for x in set(found):
 
 if __name__ == '__main__':
 	import doctest
-	#doctest.testmod()
+	doctest.testmod()
 
