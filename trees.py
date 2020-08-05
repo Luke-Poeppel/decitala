@@ -495,6 +495,26 @@ class NaryTree(object):
 		for this_named_path in self._all_named_paths_helper(node = self.root, cutoff = cutoff):
 			yield this_named_path
 
+	def _subpaths_helper(self, node):
+		pass 
+
+	def subpaths(self, name):
+		"""
+		Given a name (hopefully attached to a node), returns a list of the subpaths "below" that
+		node. 
+		"""
+		raise NotImplementedError
+
+	def _superpaths_helper(self, node):
+		pass
+
+	def superpaths(self, name):
+		"""
+		Given a name (hopefully attached to a node), returns a list of the subpaths "above" that
+		node. 
+		"""
+		raise NotImplementedError
+
 	################################################################################################
 	def search_for_path(self, path_from_root):
 		"""
@@ -503,6 +523,29 @@ class NaryTree(object):
 		representation search). 
 		TODO: write a method based on this one that searches for unnamed paths, as well. 
 		"""
+		if len(path_from_root) < 2:
+			raise TreeException('Path provided must be at least 2 values long.')
+
+		curr = self.root
+		i = 1
+		
+		while i < len(path_from_root):
+			try:
+				curr = curr.get_child_by_value(value = path_from_root[i])
+				if curr is None:
+					return None
+			except AttributeError:
+				break
+
+			if (i == len(path_from_root) - 1) and len(curr.children) == 0:
+				return curr.name
+			elif (i == len(path_from_root) - 1) and curr.name is not None:
+				return curr.name
+			else:
+				i += 1
+		
+	########## Closest paths ##########
+	def get_closest_path(self, path_from_root):
 		if len(path_from_root) < 2:
 			raise TreeException('Path provided must be at least 2 values long.')
 
@@ -573,15 +616,12 @@ class NaryTree(object):
 		if root is None:
 			raise TreeException('Cannot write to JSON without a root.')
 
-
-'''
 root = NaryTree().Node(value = 1.0, name = None)
 
 c1 = NaryTree().Node(value = 0.5, name = None)	
 c2 = NaryTree().Node(value = 1.0, name = None)
 c3 = NaryTree().Node(value = 3.0, name = 'A')
-'''
-'''
+
 gc1 = NaryTree().Node(value = 0.5, name = None)
 gc2 = NaryTree().Node(value = 3.0, name = 'B')
 gc3 = NaryTree().Node(value = 2.0, name = 'C')
@@ -595,17 +635,17 @@ gc1.add_child(ggc)
 root.parent = None
 root.children = {c1, c2, c3}
 
+tree = NaryTree()
+tree.root = root
+
+print(tree.search_for_path([1.0, 0.5, 3.0]))
+
+'''
 root = NaryTree().Node(value = 1.0, name = 'Root')
 n2 = NaryTree().Node(value = 2.0, name = None)
 n3 = NaryTree().Node(value = 1.0, name = None)
 n4 = NaryTree().Node(value = 0.5, name = 'test')
-
-tree = NaryTree()
-tree.root = root
-
-print(tree._node_list_to_json([root, n2, n3, n4]))
 '''
-
 #print(tree.write_to_json())
 
 ############################### FRAGMENT TREES ##################################
@@ -613,14 +653,14 @@ class FragmentTree(NaryTree):
 	"""
 	Inherits from NaryTree. Ratio and Difference representations of a rhythmic dataset.
 	"""
-	def __init__(self, root_path, frag_type, rep_type, **kwargs):
-		if type(root_path) != str:
+	def __init__(self, data_path, frag_type, rep_type, **kwargs):
+		if type(data_path) != str:
 			raise FragmentTreeException('Path must be a string.')
 		
 		if rep_type.lower() not in ['ratio', 'difference']:
 			raise FragmentTreeException('The only possible types are "ratio" and "difference"')
 		
-		self.root_path = root_path
+		self.data_path = data_path
 		self.frag_type = frag_type
 		self.rep_type = rep_type
 
@@ -628,7 +668,7 @@ class FragmentTree(NaryTree):
 
 		if frag_type.lower() == 'decitala':
 			raw_data = []
-			for this_file in os.listdir(root_path):
+			for this_file in os.listdir(data_path):
 				x = re.search(r'\d+', this_file)
 				try:
 					span_end = x.span()[1] + 1
@@ -639,12 +679,12 @@ class FragmentTree(NaryTree):
 			self.raw_data = raw_data
 		elif frag_type.lower() == 'greek_foot':
 			raw_data = []
-			for this_file in os.listdir(root_path):
+			for this_file in os.listdir(data_path):
 				raw_data.append(GreekFoot(this_file))
 			self.raw_data = raw_data
 		else:
 			raw_data = []
-			for this_file in os.listdir(root_path):
+			for this_file in os.listdir(data_path):
 				raw_data.append(GeneralFragment(this_file))
 			self.raw_data = raw_data
 
@@ -795,7 +835,7 @@ def rolling_search(path, part_num, ratio_tree, difference_tree):
 	2.) Figure out what the situtation is with rest onset retrieval. I think it's ok, but it's 
 	definitely worth checking. 
 	"""
-	object_list = ratio_tree.get_indices_of_object_occurrence(file_path = path, part_num = part_num)
+	object_list = get_indices_of_object_occurrence(filepath = path, part_num = part_num)
 	fragments_found = []
 
 	frames = []
@@ -833,6 +873,10 @@ def rolling_search_on_array(array, ratio_tree, difference_tree):
 	fragments_found = []
 	frames = []
 	possible_windows = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]	
+	max_window_size = min(possible_windows, key = lambda x: abs(x - len(array)))
+	max_index = possible_windows.index(max_window_size)
+	possible_windows = possible_windows[0:max_index + 1]
+	print(possible_windows)
 	for this_win in possible_windows:
 		for this_frame in roll_window(lst = array, window_length = this_win):
 			frames.append(this_frame)
@@ -845,17 +889,22 @@ def rolling_search_on_array(array, ratio_tree, difference_tree):
 	return fragments_found
 
 '''
-ratio_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'ratio')
-difference_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'difference')
+ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type = 'ratio')
+difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type = 'difference')
 
+francois_92 = np.array([0.75 + 0.5, 0.75 + 0.5 + 0.5 + 0.5, 0.25, 1.5 + 0.5, 0.25, 1.5])
+print(francois_92)
+for data in rolling_search_on_array(francois_92, ratio_tree, difference_tree):
+	print(data)
+'''
+'''
 livre_dorgue_1 = np.array([1.0, 0.5, 1.5, 1.5, 1.5, 1.0, 1.5, 0.25, 0.25, 0.25])
 livre_dorgue_2 = np.array([0.125, 0.125, 0.125, 0.125, 0.25, 0.25, 0.375])
 livre_dorgue_3 = np.array([0.75, 1.25, 1.25, 1.75, 1.25, 1.25, 1.25, 0.75])
 
 combined = np.concatenate([livre_dorgue_1, livre_dorgue_2, livre_dorgue_3])
 
-for data in rolling_search_on_array(combined, ratio_tree, difference_tree):
-	print(data)
+
 
 print(get_by_ql_array(livre_dorgue_1, ratio_tree, difference_tree))
 print(get_by_ql_array(livre_dorgue_2, ratio_tree, difference_tree))
@@ -872,7 +921,7 @@ for x in sorted_talas:
 	print(x)
 '''
 '''
-t = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
+t = FragmentTree(data_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
 found = []
 for this_tala in t.rolling_search(sept_haikai_path, 0):

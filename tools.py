@@ -10,6 +10,17 @@
 
 from music21 import converter
 
+####################################################################################################
+# Rhythm helpers
+
+def augment_multiplicatively(array, factor):
+    pass
+
+def augment_additively(array, difference):
+    pass
+
+####################################################################################################
+# Score helpers
 def get_stripped_object_list(filepath, part_num):
     '''
     Returns the quarter length list of an input stream (with ties removed), but also includes 

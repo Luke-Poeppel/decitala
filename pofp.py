@@ -261,7 +261,7 @@ def filter_subtalas(onset_list):
             if this_tala == x:
                 pass
             else:
-                if _check_individual_containment(x.successive_ratio_list(), this_tala.successive_ratio_list()):
+                if _check_individual_containment(x.successive_ratio_array(), this_tala.successive_ratio_array()):
                     check = True
         return check
 
@@ -271,31 +271,56 @@ def filter_subtalas(onset_list):
     
     return [x for x in onset_list if x[0][0].id_num in filtered_ids]
 
-'''
+
 from decitala import Decitala
-from trees import FragmentTree, rolling_search2
-        
+from trees import FragmentTree, rolling_search
+    
 decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
+
 liturgie_path = '/Users/lukepoeppel/Dropbox/Luke_Myke/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl'
 sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml' 
 livre_dorgue_path = "/Users/lukepoeppel/Desktop/Messiaen/Livre_d\'Orgue/V_Piece_En_Trio.xml"
+francois_1 = '/Users/lukepoeppel/Desktop/Francois_1.xml'
+francois_2 = '/Users/lukepoeppel/Desktop/Francois_2.xml'
 
-ratio_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'ratio')
-difference_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'difference')
+transfiguration = '/Users/lukepoeppel/Desktop/VI_Candor_est_lucis_aeternae.xml'
+
+ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type = 'ratio')
+difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type = 'difference')
 
 #tree = FragmentTree(root_path = decitala_path, frag_type = 'decitala', rep_type = 'ratio')
 
 onset_ranges = []
-for this_tala in rolling_search2(livre_dorgue_path, 0, ratio_tree, difference_tree):
+for this_tala in rolling_search(transfiguration, 3, ratio_tree, difference_tree):
     onset_ranges.append(list(this_tala))
 
 sorted_onset_ranges = sorted(onset_ranges, key = lambda x: x[1][0])
 filter_single_anga_classes_list = filter_single_anga_class_talas(sorted_onset_ranges)
 filter_subtalas_list = filter_subtalas(filter_single_anga_classes_list)
 
+example = np.array([0.5, 0.5, 0.5, 0.75, 0.75, 0.75, 0.25, 0.75, 0.75, 0.75, 1.0, 1.0, 1.0, 0.25, 1.0, 1.0, 1.0, 1.25])
+
+'''
+talas = [x[0][0] for x in filter_subtalas_list]
 from collections import Counter
+print(Counter(talas))
+
+for x in filter_subtalas_list:
+    data = x[0][0]
+    print(x, data.ql_array())
+
+print()
+for this_tala in ratio_tree.all_named_paths():
+    ql = this_tala.ql_array()
+    if len(ql) <= 3:
+        pass
+    else:
+        if ql[0] == ql[1] == ql[2]:
+            print(this_tala, ql)
 '''
 '''
+from collections import Counter
+
 bp = get_break_points(filter_subtalas_list)
 filtered_bp = get_filtered_break_points(bp)
 for i, x in enumerate(filter_subtalas_list):

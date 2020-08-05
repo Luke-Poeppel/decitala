@@ -8,10 +8,7 @@ decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
 import numpy as np
 
 from decitala import Decitala
-from trees import FragmentTree, rolling_search2, get_by_ql_list2
-
-ratio_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'ratio')
-difference_tree = FragmentTree(root_path=decitala_path, frag_type='decitala', rep_type = 'difference')
+from trees import FragmentTree, rolling_search, rolling_search_on_array, get_by_ql_array
 
 uguiso_9_2 = np.array([0.375, 0.375, 0.25, 0.25]) ####### OMG!!!!!! TURANGALILA!!!!!!!!!!
 nobitaki_96 = np.array([0.25, 0.125, 0.125, 0.25, 0.125, 0.125])#, 0.125, 0.125, 0.25])
@@ -21,16 +18,22 @@ nobitaki_96_2 = np.array([0.125, 0.125, 0.125, 0.125, 0.25])
 
 #nobitaki_97 = np.array([0.625, 0.25, 0.125, 0.125, 0.25])
 
-
-
+'''
 print(get_by_ql_list2(np.array([1.0, 1.0, 1.0, 0.5, 0.75, 0.5]), ratio_tree, difference_tree))
 print(get_by_ql_list2(uguiso_9_2, ratio_tree, difference_tree))
 print(get_by_ql_list2(nobitaki_96, ratio_tree, difference_tree))
 print(get_by_ql_list2(nobitaki_96_2, ratio_tree, difference_tree))
 
 print('')
+'''
+#francois = np.array([1.25, 1.25, 1, 0.75, 1.0, 0.5, 0.25, 0.5, 1.0])
+#francois_11 = np.array([0.5, 1.0, 0.5, 0.25, 1.5])
 
-francois = np.array([1.25, 1.25, 1, 0.75, 1.0, 0.5, 0.25, 0.5, 1.0])
+#print(get_by_ql_array(np.array([0.5, 0.75, 0.5, 1.5]), ratio_tree, difference_tree))
+'''
+for data in rolling_search_on_array(francois, ratio_tree, difference_tree):
+    print(data[0], data[1], data[0].ql_array())
+'''
 
 #p30_flute = np.array([0.125, 0.25, 0.25, 0.5 + 0.375 + 0.25, 0.25 + 0.375, 0.25, 0.25])
 #print(get_by_ql_list2(p30_flute, ratio_tree, difference_tree))
@@ -41,18 +44,57 @@ francois = np.array([1.25, 1.25, 1, 0.75, 1.0, 0.5, 0.25, 0.5, 1.0])
     #ql = this_tala.ql_array()
     #print(this_tala, ql)
 
+###################################
 
-for i, this_tala in enumerate(ratio_tree.all_named_paths()):
-    if i == 0:
+# Saint François testing
+
+
+ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type = 'ratio')
+difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type = 'difference')
+
+francois_1 = '/Users/lukepoeppel/Desktop/Francois_1.xml'
+francois_2 = '/Users/lukepoeppel/Desktop/Francois_2.xml'
+
+candor = '/Users/lukepoeppel/Desktop/VI_Candor_est_lucis_aeternae.xml'
+transfiguration_1 = np.array([0.5, 0.5, 0.5, 0.75, 0.75, 0.75, 0.25])
+transfiguration_2 = np.array([0.75, 0.75, 0.75, 1.0, 1.0, 1.0, 0.25])
+transfiguration_3 = np.array([1.0, 1.0, 1.0, 1.25, 1.25, 1.25, 0.25])
+transfiguration_4 = np.array([1.25, 1.25, 1.25, 1.5, 1.5, 1.5, 0.25])
+
+from decitala import successive_ratio_array, successive_difference_array
+print(successive_difference_array(transfiguration_1))
+print(successive_difference_array(transfiguration_2))
+print(successive_difference_array(transfiguration_3))
+print(successive_difference_array(transfiguration_4))
+
+#print(get_by_ql_array(transfiguration_1, ratio_tree, difference_tree))
+#print(get_by_ql_array(transfiguration_2, ratio_tree, difference_tree))
+
+
+for this_tala in ratio_tree.all_named_paths():
+    if this_tala.num_onsets == 8:# and this_tala.is_non_retrogradable:
+        print(this_tala, this_tala.ql_array())
+
+
+
+'''
+for this_tala in rolling_search(candor, 6, ratio_tree, difference_tree):
+    tala = this_tala[0][0]
+    if tala.num_anga_classes == 1:
+        pass
+    elif tala.num_onsets == 2:
         pass
     else:
-        ql = this_tala.ql_array()
-        rat = this_tala.successive_ratio_list()
+        print(tala.name, tala.ql_array())
+'''
+'''
+for this_tala in rolling_search(francois_2, 0, ratio_tree, difference_tree):
+    tala = this_tala[0][0]
+    if tala.num_anga_classes == 1 or tala.num_onsets == 2:
+        pass
+    else:
+        print(tala, tala.ql_array())
 
-        if len(ql) < 4:
-            pass
-        else:
-            if ql[0] == ql[1] and ql[2] < ql[1] and ql[3] < ql[2]:
-                print(this_tala, ql)#this_tala.successive_ratio_list())
+'''
 
 
