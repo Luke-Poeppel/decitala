@@ -17,6 +17,7 @@ NOTE:
 	- paths.py gives us access to the path information, but we also need access to the fragment information...
 """
 import matplotlib as mpl
+import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 

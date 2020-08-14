@@ -11,16 +11,13 @@
 """
 Big TODO:
 - full id as string (only for those who have subtalas)
-- modify Povel and Essens algorithm to account for fragment length
 
 CODE SPRINT TODO: 
 - note to self: doctests are for short examples; doctests are for *actual* testing. 
-- should notation conversion functions be standalone? 
 - check out added value situation
 - change names of successive_X_array
 - fix and shorten helper functions below.
 - decide convention for kakpadam from Rowley.
-- standardize fully to np.array(). Also matplotlib will be easier. 
 - fix morris symmetry class
 - figure out what the problem is with the c-score. 
 """
@@ -32,8 +29,6 @@ import decimal
 import fractions
 import itertools
 import math
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 import numpy as np
 import os
 import re
@@ -177,6 +172,13 @@ def successive_difference_array(lst):
 		i += 1
 
 	return np.array(difference_lst)
+
+def successive_mixed_array(array):
+	pass
+
+orig = [0.5, 1.0, 0.25, 0.25]
+print([(x*) + 0.25 for x in orig])
+
 
 def powerList(lst):
 	"""

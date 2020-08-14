@@ -12,7 +12,6 @@ This module holds the Nary tree representation of Fragment trees (both ratio and
 
 NOTE:
 TODO:
-- The dot product and norm are built-in functions in numpy. Saves space and is cleaner. 
 """
 import copy
 import decimal
@@ -495,6 +494,7 @@ class NaryTree(object):
 		for this_named_path in self._all_named_paths_helper(node = self.root, cutoff = cutoff):
 			yield this_named_path
 
+	# should maybe also have sub/super paths by path. 
 	def _subpaths_helper(self, node):
 		pass 
 
@@ -544,14 +544,13 @@ class NaryTree(object):
 			else:
 				i += 1
 		
-	########## Closest paths ##########
-	def get_closest_path(self, path_from_root):
+	########## New stuff... ##########
+	def search(self, path_from_root, unnamed = False):
 		if len(path_from_root) < 2:
 			raise TreeException('Path provided must be at least 2 values long.')
-
+	
 		curr = self.root
 		i = 1
-		
 		while i < len(path_from_root):
 			try:
 				curr = curr.get_child_by_value(value = path_from_root[i])
@@ -560,10 +559,39 @@ class NaryTree(object):
 			except AttributeError:
 				break
 
-			if (i == len(path_from_root) - 1) and len(curr.children) == 0:
-				return curr.name
-			elif (i == len(path_from_root) - 1) and curr.name is not None:
-				return curr.name
+			if not(unnamed):
+				if (i == len(path_from_root) - 1) and curr.name is not None:
+					return curr.name
+				else:
+					i += 1
+			else:
+				if (i == len(path_from_root) - 1) and curr.name is not None:
+					return curr.name
+				elif (i == len(path_from_root) - 1) and curr.name is None:
+					return path_from_root[0:i + 1]
+				else:
+					i += 1
+
+	def final_node_from_path(self, path_from_root):
+		"""
+		Given a path, if the path is found (named or unnamed), returns the final Node
+		object. (Then we can get the named children.)
+		"""
+		if len(path_from_root) < 2:
+			raise TreeException('Path provided must be at least 2 values long.')
+	
+		curr = self.root
+		i = 1
+		while i < len(path_from_root):
+			try:
+				curr = curr.get_child_by_value(value = path_from_root[i])
+				if curr is None:
+					return None
+			except AttributeError:
+				break
+
+			if (i == len(path_from_root) - 1):
+				return curr
 			else:
 				i += 1
 
@@ -638,7 +666,10 @@ root.children = {c1, c2, c3}
 tree = NaryTree()
 tree.root = root
 
-print(tree.search_for_path([1.0, 0.5, 3.0]))
+#print(tree.search([1.0, 2.0, 0.5], unnamed = True))
+#end = tree.final_node_from_path([1.0, 2.0, 0.5])
+#print(end.children)
+
 
 '''
 root = NaryTree().Node(value = 1.0, name = 'Root')
@@ -810,18 +841,39 @@ def get_by_ql_array(ql_array, ratio_tree, difference_tree):
 			if difference_search is None:
 				retrograde_difference_search = difference_tree.search_for_path(retrograde_difference_list)
 				if retrograde_difference_search is None:
+					#######
+					# check difference tree near-miss.
+					# check if [:-1] is not None, get that node, choose child.
 					return None
+					'''
+					if len(ql_array) >= 6:
+						near_miss_search = difference_tree.search(difference_list[:-1], unnamed=True)
+						if near_miss_search is not None:
+							final_node = difference_tree.final_node_from_path(difference_list[:-1])
+							if len(final_node.children) != 0:
+								fragment_data = random.choice(final_node.children)
+								tala = fragment_data.name
+								difference = _difference(tala.ql_array(), 0)
+								return (tala, ('near-miss', difference))
+							else:
+								return None
+						else:
+							return None
+					else:
+						return None
+					'''
+					#######
 				else:
-					difference = _difference(retrograde_difference_search.ql_array(), 0)
+					difference = abs(ql_array[0] - retrograde_difference_search.ql_array()[0])
 					return (retrograde_difference_search, ('retrograde difference', difference))
 			else:
-				difference = _difference(difference_search.ql_array(), 0)
+				difference = abs(ql_array[0] - difference_search.ql_array()[0])
 				return (difference_search, ('difference', difference))
 		else:
-			ratio = _ratio(retrograde_ratio_search.ql_array(), 0)
+			ratio = ql_array[0] / retrograde_ratio_search.ql_array()[0]
 			return (retrograde_ratio_search, ('retrograde ratio', ratio))
 	else:
-		ratio = _ratio(ratio_search.ql_array(), 0)
+		ratio = ql_array[0] / ratio_search.ql_array()[0]
 		return (ratio_search, ('ratio', ratio))
 
 def rolling_search(path, part_num, ratio_tree, difference_tree):
@@ -888,10 +940,41 @@ def rolling_search_on_array(array, ratio_tree, difference_tree):
 
 	return fragments_found
 
-'''
-ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type = 'ratio')
-difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type = 'difference')
+ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
 
+candrakala = Decitala('Candrakala')
+
+#print(get_by_ql_array(np.array([0.5, 0.5, 0.5, 0.75, 0.75, 0.75, 0.25]), ratio_tree, difference_tree))
+
+# try searching for a tala in natural form, additive augmentation, and then 
+# multiplicative augmentation, then difference off of multiplicative augmentation.
+
+cr = Decitala('Crinandana')
+reg = cr.ql_array()
+augmented = np.array([2.0, 1.0, 1.0, 3.0])
+add = np.array([1.25, 0.75, 0.75, 1.75])
+aug_add = np.array([2.25, 1.25, 1.25, 3.25])
+print(get_by_ql_array(reg, ratio_tree, difference_tree))
+print(get_by_ql_array(augmented, ratio_tree, difference_tree))
+print(get_by_ql_array(add, ratio_tree, difference_tree))
+print(get_by_ql_array(aug_add, ratio_tree, difference_tree))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
 francois_92 = np.array([0.75 + 0.5, 0.75 + 0.5 + 0.5 + 0.5, 0.25, 1.5 + 0.5, 0.25, 1.5])
 print(francois_92)
 for data in rolling_search_on_array(francois_92, ratio_tree, difference_tree):
@@ -904,12 +987,36 @@ livre_dorgue_3 = np.array([0.75, 1.25, 1.25, 1.75, 1.25, 1.25, 1.25, 0.75])
 
 combined = np.concatenate([livre_dorgue_1, livre_dorgue_2, livre_dorgue_3])
 
-
-
 print(get_by_ql_array(livre_dorgue_1, ratio_tree, difference_tree))
 print(get_by_ql_array(livre_dorgue_2, ratio_tree, difference_tree))
 print(get_by_ql_array(livre_dorgue_3, ratio_tree, difference_tree))
 '''
+'''
+####
+print()
+l1 = np.array([0.5, 0.5, 0.5, 0.75, 0.75, 0.75, 0.25]) #ratio
+l2 = np.array([0.75, 0.75, 0.75, 1.0, 1.0, 1.0, 0.5])
+l3 = np.array([1.0, 1.0, 1.0, 1.25, 1.25, 1.25, 0.25])
+l4 = np.array([1.25, 1.25, 1.25, 1.5, 1.5, 1.5, 0.25])
+
+dl2 = successive_difference_array(l2)
+print(get_by_ql_array(l1, ratio_tree, difference_tree))
+print(Decitala('Candrakala').successive_difference_array())
+print(dl2)
+
+dl3 = successive_difference_array(l3)
+dl4 = successive_difference_array(l4)
+'''
+#print(get_by_ql_array(l1, ratio_tree, difference_tree))
+#print(get_by_ql_array(l2, ratio_tree, difference_tree))
+
+
+
+#print(get_by_ql_array(l2, ratio_tree, difference_tree))
+#print(get_by_ql_array(l3, ratio_tree, difference_tree))
+#print(get_by_ql_array(l4, ratio_tree, difference_tree))
+
+
 '''
 sept_haikai_path = '/Users/lukepoeppel/Desktop/Messiaen/Sept_Haikai/1_Introduction.xml'
 livre_dorgue_path = "/Users/lukepoeppel/Desktop/Messiaen/Livre_d\'Orgue/V_Piece_En_Trio.xml"
