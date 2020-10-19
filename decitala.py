@@ -173,13 +173,6 @@ def successive_difference_array(lst):
 
 	return np.array(difference_lst)
 
-def successive_mixed_array(array):
-	pass
-
-orig = [0.5, 1.0, 0.25, 0.25]
-print([(x*) + 0.25 for x in orig])
-
-
 def powerList(lst):
 	"""
 	Given a list, returns it's 'power set' (excluding, of course, the empty list). 
@@ -685,6 +678,100 @@ class Decitala(GeneralFragment):
 	def num_anga_classes(self):
 		return len(set(self.ql_array()))
 	
+######################################
+# Mixed representation
+
+def contiguous_multiplication(array):
+	"""
+	Takes the 0th value in the array and successively multiplies
+	by the i+1th value. As such, returns a new vector of dimension n + 1.
+
+	>>> ex = np.array([-1, 0.5, -3])
+	>>> contiguous_multiplication(ex)
+	array([-1. ,  1. ,  0.5, -1.5])
+	"""
+	out = [array[0]]
+	i = 0
+	while i < len(array) - 1:
+		if i == 0:
+			first_elem_squared = array[i]**2
+			out.append(first_elem_squared)
+			out.append(first_elem_squared * array[i + 1])
+		else:
+			out.append(array[i] * array[i + 1])
+		i += 1 
+	return np.array(out)
+
+def contiguous_addition(array):
+	"""
+	Takes the 0th value in the array and successively adds 
+	the i+1th value. As such, returns a new vector of dimension n + 1.
+
+	>>> ex = np.array([-1, 1, 0.5, -1.5])
+	
+	contiguous_addition(ex)
+	array([-1.  -2.  -1.  -0.5 -2. ])
+	"""
+	out = [array[0]]
+	i = 0
+	print(array[0])
+	while i < len(array) - 1:
+		#if i == 1:
+			#pass
+		#else:
+		print(array[i], array[i + 1])
+		i += 1
+
+	#return np.array(out)
+
+ex = np.array([-1, 1, 0.5, -1.5])
+print(contiguous_addition)
+
+def get_missing_elements(array):
+	start, end = array[0], array[-1]
+	return sorted(set(range(start, end + 1)).difference(array))
+
+def get_indices_of_missing_elements(array):
+	missing_elements = get_missing_elements(array)
+	return [array.index(x) for x in array]
+
+def successive_mixed_array(array):
+	diff = list(successive_difference_array(array)[1:])
+	if 0.0 not in diff:
+		ratios = successive_ratio_array(diff)
+		return ratios
+	else:
+		zeros = [i for i, val in enumerate(diff) if val == 0.0]
+		filtered = [x for x in diff if diff.index(x) not in zeros]
+		filtered_ratios = list(successive_ratio_array(filtered)[1:])
+
+		#process zero list to find clusters...
+		for zero_index in zeros:
+			filtered_ratios.insert(zero_index, 0.0)
+		return filtered_ratios
+
+'''
+sim = Decitala('Simhavikrama')
+print(sim.ql_array())
+print(successive_difference_array(sim.ql_array()))
+print(successive_mixed_array(sim.ql_array()))
+'''
+'''
+for i, this_file in enumerate(os.listdir(decitala_path)):
+	try:
+		tala = Decitala.get_by_id(i + 1)
+		print(tala)
+		if tala.num_onsets < 4:
+			pass
+		else:
+			print(tala.ql_array())
+			print(successive_mixed_array(tala.ql_array()))
+			print()
+	except DecitalaException:
+		pass
+'''
+
+######################################
 class GreekFoot(GeneralFragment):
 	"""
 	Class that stores greek foot data. Reads from a folder containing all greek feet XML files.
@@ -813,4 +900,4 @@ class Test(unittest.TestCase):
 if __name__ == '__main__':
 	import doctest
 	doctest.testmod()
-	unittest.main()
+	#unittest.main()
