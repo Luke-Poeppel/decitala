@@ -51,8 +51,4 @@ def create_tree(array):
 
 
 t = create_tree(array=1)
-#print(kdtree.visualize(t))
-print(t.is_balanced)
-t.rebalance()
-print(t.is_balanced)
 
