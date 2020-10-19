@@ -1,4 +1,5 @@
 graphs/*
 old_code/*
 old_db/*
+__pycache__/*
 lab_notebook_jul2020

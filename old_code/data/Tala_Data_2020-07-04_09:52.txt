@@ -1,7 +1,0 @@
-DECITALA DATA: QUATOUR POUR LA FIN DU TEMPS
-PART: Piano (3)
-SEARCH TYPE: Partition 
-Partition Lengths: [6, 7, 4]
---------------------------------------------------------- 
-[0.0-2.0]: Empty
-[2.0-6.25]: 
