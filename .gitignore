@@ -2,4 +2,5 @@ graphs/*
 old_code/*
 old_db/*
 __pycache__/*
+.DS_Store
 lab_notebook_jul2020
