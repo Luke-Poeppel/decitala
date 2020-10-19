@@ -16,7 +16,7 @@ setuptools.setup(
 	description="Automated ethnological analysis of Olivier Messiaen's music.",
 	long_description="Automated ethnological analysis of Olivier Messiaen's music.",
 	long_description_content_type="text/markdown",
-	url="https://github.com/Luke-Poeppel/MessiaenWork",
+	url="https://github.com/Luke-Poeppel/decitala",
 	packages=setuptools.find_packages(),
 	classifiers=[
 		"Programming Language :: Python :: 3",
