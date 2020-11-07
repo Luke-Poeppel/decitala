@@ -35,7 +35,7 @@ from decitala import (
 
 from tools import get_indices_of_object_occurrence
 
-decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
+decitala_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas'
 greek_path = '/Users/lukepoeppel/decitala_v2/Greek_Metrics/XML'
 
 ############### EXCEPTIONS ###############
@@ -940,16 +940,17 @@ def rolling_search_on_array(array, ratio_tree, difference_tree):
 
 	return fragments_found
 
-ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+#ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+#difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
 
-candrakala = Decitala('Candrakala')
+#candrakala = Decitala('Candrakala')
 
 #print(get_by_ql_array(np.array([0.5, 0.5, 0.5, 0.75, 0.75, 0.75, 0.25]), ratio_tree, difference_tree))
 
 # try searching for a tala in natural form, additive augmentation, and then 
 # multiplicative augmentation, then difference off of multiplicative augmentation.
 
+"""
 cr = Decitala('Crinandana')
 reg = cr.ql_array()
 augmented = np.array([2.0, 1.0, 1.0, 3.0])
@@ -959,7 +960,7 @@ print(get_by_ql_array(reg, ratio_tree, difference_tree))
 print(get_by_ql_array(augmented, ratio_tree, difference_tree))
 print(get_by_ql_array(add, ratio_tree, difference_tree))
 print(get_by_ql_array(aug_add, ratio_tree, difference_tree))
-
+"""
 
 
 

@@ -48,7 +48,7 @@ from music21 import note
 from music21 import pitch
 from music21 import stream
 
-decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
+decitala_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas'
 greek_path = '/Users/lukepoeppel/decitala_v2/Greek_Metrics/XML'
 
 #Doesn't make much sense for these to be np.arrays because of the mixed types... 
@@ -201,7 +201,6 @@ def powerList(lst):
 	return np.array(preList)
 
 ########################## LA VALEUR AJOUTEE #############################
-
 def get_added_values(ql_lst, print_type = True):
 	'''
 	Given a quarter length list, returns all indices and types of added values found, according to 
@@ -724,8 +723,8 @@ def contiguous_addition(array):
 
 	#return np.array(out)
 
-ex = np.array([-1, 1, 0.5, -1.5])
-print(contiguous_addition)
+#ex = np.array([-1, 1, 0.5, -1.5])
+#print(contiguous_addition)
 
 def get_missing_elements(array):
 	start, end = array[0], array[-1]
