@@ -15,6 +15,8 @@ Decitala Documentation
    :caption: Modules
    :glob:
 
+   fragment
+   pofp
    tools
 
 Indices and tables

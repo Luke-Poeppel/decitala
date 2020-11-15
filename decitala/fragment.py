@@ -11,28 +11,20 @@
 from __future__ import division, print_function, unicode_literals
 
 import copy
-import datetime
-import decimal
-import fractions
-import itertools
-import math
 import numpy as np
 import os
 import re
-import statistics
 import unittest
 import warnings
 
-from datetime import datetime
-from itertools import chain, combinations
-from statistics import StatisticsError
-
 from music21 import converter
 from music21 import note
-from music21 import pitch
 from music21 import stream
 
 from tools import (
+	carnatic_string_to_ql_array, 
+	ql_array_to_carnatic_string,
+	ql_array_to_greek_diacritics,
 	successive_ratio_array,
 	successive_difference_array,
 )
@@ -41,198 +33,30 @@ from tools import (
 # Fragments
 decitala_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas'
 greek_path = '/Users/lukepoeppel/decitala/Fragments/Greek_Metrics/XML'
-####################################################################################################
-
-carnatic_symbols = np.array([
-	['Druta', 'o', 0.25],
-	['Druta-Virama', 'oc', 0.375],
-	['Laghu', '|', 0.5],
-	['Laghu-Virama', '|c', 0.75],
-	['Guru', 'S', 1.0],
-	['Pluta', 'Sc', 1.5],           #Note: Normally a crescent moon superscript. Since it serves the same function as a virâma––we use the same notation. 
-	#['kakapadam', '8X', 2.0]       #Decide what the appropriate convention is...
-])
-
-greek_diacritics = [
-	['breve', '⏑', 1.0],
-	['macron', '––', 2.0]
-]
-
-multiplicative_augmentations = [
-	['Tiers', 4/3],
-	['Un quart', 1.25],
-	['Du Point', 1.5],
-	['Classique', 2], 
-	['Double', 3],
-	['Triple', 4],
-]
 
 # ID's of decitalas with "subtalas"
 subdecitala_array = np.array([26, 38, 55, 65, 68])
 
-############### EXCEPTIONS ###############
+####################################################################################################
 class DecitalaException(Exception):
 	pass
 
-############ HELPER FUNCTIONS ############
-#Notational Conversion Functions
-def carnatic_string_to_ql_array(string):
-	"""
-	Converts a string of carnatic rhythmic values to a quarter length numpy array. Note that the carnatic characters 
-	must have a spaces between them or the string will be converted incorrectly. 
-
-	>>> carnatic_string_to_ql_array(string = 'oc o | | Sc S o o o')
-	array([0.375, 0.25 , 0.5  , 0.5  , 1.5  , 1.   , 0.25 , 0.25 , 0.25 ])
-	"""
-	split_string = string.split()
-	return np.array([float(this_carnatic_val[2]) for this_token in split_string for this_carnatic_val in carnatic_symbols if (this_carnatic_val[1] == this_token)])
-
-def ql_array_to_carnatic_string(ql_array):
-	"""
-	Converts a list of quarter length values to a string of carnatic rhythmic values.
-	
-	>>> ql_array_to_carnatic_string([0.5, 0.25, 0.25, 0.375, 1.0, 1.5, 1.0, 0.5, 1.0])
-	'| o o oc S Sc S | S'
-	"""
-	return ' '.join(np.array([this_carnatic_val[1] for this_val in ql_array for this_carnatic_val in carnatic_symbols if (float(this_carnatic_val[2]) == this_val)]))
-
-def ql_array_to_greek_diacritics(ql_array):
-	pass
-
-def powerList(lst):
-	"""
-	Given a list, returns it's 'power set' (excluding, of course, the empty list). 
-
-	>>> l = [1, 2, 3]
-	>>> powerList(l)
-	array([(1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)], dtype=object)
-
-	>>> for x in powerList([(0.0, 2.0), (4.0, 5.5), (6.0, 7.25)]):
-	...     print(x)
-	((0.0, 2.0),)
-	((4.0, 5.5),)
-	((6.0, 7.25),)
-	((0.0, 2.0), (4.0, 5.5))
-	((0.0, 2.0), (6.0, 7.25))
-	((4.0, 5.5), (6.0, 7.25))
-	((0.0, 2.0), (4.0, 5.5), (6.0, 7.25))
-	"""
-	s = list(lst)
-	preList = list(chain.from_iterable(combinations(s, r) for r in range(len(s) + 1)))
-
-	for x in preList:
-		if len(x) == 0:
-			preList.remove(x)
-
-	return np.array(preList)
-
-########################## LA VALEUR AJOUTEE #############################
-def get_added_values(ql_lst, print_type = True):
-	'''
-	Given a quarter length list, returns all indices and types of added values found, according to 
-	the examples dicussed in Technique de Mon Langage Musical (1944). 
-
-	>>> get_added_values([0.25, 0.5, 0.5, 0.75, 0.25])
-	[(0, 'du Note'), (4, 'du Note')]
-	>>> get_added_values([0.5, 0.25, 0.5, 0.25, 1.0])
-	[(1, 'du Note'), (3, 'du Note')]
-	>>> get_added_values([0.75, 0.75, 0.75, 0.25, 0.5])
-	[(3, 'du Note')]
-	>>> get_added_values([0.75, 0.75, 0.75, 0.75, 0.25, 0.25])
-
-	>>> get_added_values([0.5, 0.25, 0.5, 0.75, 1.25, 1.5])
-	[(1, 'du Note'), (3, 'du Point'), (4, 'du Tie')]
-
-	>>> l = [1.0, 0.5, 0.25, 1.0, 0.5, 0.75, 0.5]
-	>>> get_added_values(l)
-	[(2, 'du Note'), (5, 'du Point')]
-
-	?????
-	>>> get_added_values([0.5, 0.5, 0.75, 1.25, 0.75])
-	[(2, 'du Point'), (3, 'du Tie')]
-
-	>>> get_added_values([1.0, 0.25, 0.5], print_type = False)
-	[1]
-
-	>>> get_added_values([0.25, 0.25, 0.75, 2.0])
-	[(2, 'du Point')]
-	>>> get_added_values([0.5, 0.25, 0.75, 0.25, 0.5])
-	[(1, 'du Note'), (2, 'du Point'), (3, 'du Note')]
-	'''
-	if len(ql_lst) < 3:
-		raise Exception('List must be of length 3 or greater.')
-
-	addedVals = []
-	if ql_lst[0] == 0.25 and ql_lst[1] != 0.25:
-		addedVals.append((0, 'du Note'))
-	if ql_lst[-1] == 0.25 and ql_lst[-2] != 0.25:
-		addedVals.append((len(ql_lst) - 1, 'du Note'))
-	if ql_lst[-1] == 0.75 and ql_lst[-2] % 0.5 == 0:
-		addedVals.append((len(ql_lst) - 1, 'du Point'))
-
-	for currIndex in range(1, len(ql_lst) - 1):
-		prevVal = ql_lst[currIndex - 1]
-		currVal = ql_lst[currIndex]
-		nextVal = ql_lst[currIndex + 1]
-
-		x = currVal - 0.25
-		if x >= 1.0 and x.is_integer():
-			addedVals.append((currIndex, 'du Tie'))
-
-		if currVal == 0.25:
-			if prevVal != currVal != nextVal:
-				if prevVal % 0.5 == 0 and nextVal % 0.5 == 0:
-					addedVals.append((currIndex, 'du Note'))
-				elif prevVal % 0.75 == 0:
-					addedVals.append((currIndex, 'du Note'))
-				elif nextVal % 0.75 == 0:
-					addedVals.append((currIndex, 'du Note'))
-		elif currVal == 0.75:
-			if prevVal % 0.5 == 0 and nextVal % 0.5 == 0:
-				addedVals.append((currIndex, 'du Point'))
-			elif prevVal < currVal and nextVal > currVal:
-				addedVals.append((currIndex, 'du Point'))
-			elif prevVal == 0.25:
-				addedVals.append((currIndex, 'du Point'))
-
-	if len(addedVals) == 0:
-		return None
-
-	if print_type == False:
-		return [a[0] for a in addedVals]
-	else:
-		return addedVals
-
-#NOTE: Double check this works.
-def removeAddedValuesFromList(lst):
-	added_val_indices = get_added_values(ql_lst=lst, print_type=False)
-	for i in added_val_indices:
-		del lst[i]
-
-	return lst
-
-########################################################################
 class GeneralFragment(object):
 	"""
-	Class for representing a more general rhythmic fragment. This allows for the 
-	creation of FragmentTrees with more abstract data sets, beyond the two encoded. 
+	Class representing a generic rhythmic fragment. 
 
-	TODO: allow the input to be a numpy array/list, too. 
-	- how about a class method: GeneralFragment.make_by_array([...])
-
-	Input: path for now.
+	:param str path: path to encoded fragment.
+	:param str name: optional name argument.
+	
 	>>> random_fragment_path = '/users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml'
 	>>> g1 = GeneralFragment(path = random_fragment_path, name = 'test')
 	>>> g1
 	<GeneralFragment_test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]>
 	>>> g1.filename
 	'63_Nandi.xml'
-
-	Allows for unique arguments.
 	>>> g1.coolness_level = 'pretty cool'
 	>>> g1.coolness_level
 	'pretty cool'
-
 	>>> g1.num_onsets
 	7
 	>>> g1.ql_array()
@@ -244,11 +68,7 @@ class GeneralFragment(object):
 	>>> g1.dseg(as_str = True)
 	'<1 0 0 1 1 2 2>'
 	>>> g1.std()
-	0.29014
-	
-	g1.morris_symmetry_class()
-	'VII. Stream'
-
+	0.2901442287369986
 	>>> for this_cycle in g1.cyclic_permutations():
 	...     print(this_cycle)
 	...
@@ -275,9 +95,15 @@ class GeneralFragment(object):
 			return '<GeneralFragment_{0}: {1}>'.format(self.name, self.ql_array())
 	
 	def __hash__(self):
+		"""
+		:return: hash of the tala by its name.
+		"""
 		return hash(self.name)
 
 	def __eq__(self, other):
+		"""
+		:return: whether or not one decitala is equal to another, as defined by its hash.
+		"""
 		if self.__hash__() == other.__hash__():
 			return True
 		else:
@@ -286,52 +112,65 @@ class GeneralFragment(object):
 	@classmethod
 	def make_by_array(cls, array):
 		"""
-		Creates a GeneralFragment object 
+		Creates a fragment.GeneralFragment object from an array. 
 		"""
-		pass
+		raise NotImplementedError
 	
 	def ql_array(self, retrograde=False):
-		'''
-		INPUTS
-		*-*-*-*-*-*-*-*-
-		retrograde : type = ``bool``
-		'''
+		"""
+		:param bool retrograde: whether or not to return the fragment in its original form or in retrograde.
+		:return: the quarter length array of the fragment. 
+		:rtype: numpy.array
+		"""
 		if not(retrograde):
 			return np.array([this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)])
 		else:
 			return np.flip(np.array([this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)]))
 
 	def ql_tuple(self, retrograde=False):
+		"""
+		:param bool retrograde: whether or not to return the fragment in its original form or in retrograde.
+		:return: the quarter length array of the fragment (as a tuple).
+		:rtype: tuple
+		"""
 		return tuple(self.ql_array(retrograde=retrograde))
 
 	def __len__(self):
+		"""
+		:return: the length of the fragment, i.e. the number of onsets.
+		:rtype: int
+		"""
 		return len(self.ql_array())
 
 	@property
 	def num_onsets(self):
-		count = 0
-		for _ in self.stream.flat.getElementsByClass(note.Note):
-			count += 1
-		return count
+		"""
+		:return: the number of onsets in the fragment.
+		:rtype: int
+		"""
+		return self.__len__()
 
 	@property
 	def carnatic_string(self):
+		"""
+		:return: the fragment in carnatic rhythmic notation.
+		:rtype: str
+		"""
 		return ql_array_to_carnatic_string(self.ql_array())
 
 	@property
 	def ql_duration(self):
+		"""
+		:return: the overall duration of the fragment (as expressed in quarter lengths).
+		:rtype: float
+		"""
 		return sum(self.ql_array())
 
 	def dseg(self, as_str=False):
 		"""
-		Marvin's d-seg as introducted in "The perception of rhythm in non-tonal music" (1991). Maps a fragment
-		into a sequence of relative durations. This allows cross comparison of rhythmic fragments beyond 
-		exact augmentation; we may, for instance, filter rhythms by similar the familiar dseg <1 0 0> which 
-		corresponds to long-short-short (e.g. dactyl). 
-
-		INPUTS
-		*-*-*-*-*-*-*-*-
-		as_str : type = ``bool``
+		:param bool as_str: whether or not to return the d-seg as a string.
+		:return: the d-seg of the fragment, as introducted in "The Perception of Rhythm in Non-Tonal Music" (Marvin, 1991). Maps a fragment into a sequence of relative durations. 
+		:rtype: numpy.array
 		"""
 		dseg_vals = copy.copy(self.ql_array())
 		valueDict = dict()
@@ -351,11 +190,9 @@ class GeneralFragment(object):
 
 	def reduced_dseg(self, as_str=False):
 		"""
-		Technique used in this paper. Takes a dseg and returns a new dseg where contiguous values are removed. 
-
-		INPUTS
-		*-*-*-*-*-*-*-*-
-		as_str : type = ``bool``
+		:param bool as_str: whether or not to return the reduced d-seg as a string.
+		:return: d-seg of the fragment with all contiguous equal values reduced to a single instance.
+		:rtype: numpy.array
 		"""
 		def _remove_adjacent_equal_elements(array):
 			as_lst = list(array)
@@ -371,36 +208,33 @@ class GeneralFragment(object):
 			return '<' + ' '.join([str(int(val)) for val in as_array]) + '>'
 
 	def successive_ratio_array(self):
-		"""
-		Returns an array of the successive duration ratios. By convention, we set the first value to 1.0. 
-		"""
+		"""See docstring of :obj:`decitala.tools.successive_ratio_array`."""
 		return successive_ratio_array(self.ql_array())
 	
 	def successive_difference_array(self):
-		'''
-		Returns a list containing differences between successive durations. By convention, we set the 
-		first value to 0.0. 
-		
-		>>> d = Decitala.get_by_id(119).successive_difference_array()
-		>>> d
-		array([ 0. ,  0.5,  0. ,  0.5, -0.5,  0. ,  0. , -0.5])
-		'''
+		"""See docstring of :obj:`decitala.tools.successive_difference_array`."""
 		return successive_difference_array(self.ql_array())
 		
 	def cyclic_permutations(self):
 		"""
-		Returns all cyclic permutations of self.ql_array().
+		:return: all cyclic permutations of self.ql_array(), as in Morris (year?).
+		:rtype: numpy.array
 		"""
 		return np.array([np.roll(self.ql_array(), -i) for i in range(self.num_onsets)])
 
 	################ ANALYSIS ################
 	@property
 	def is_non_retrogradable(self):
+		"""
+		:return: whether or not the given fragment is palindromic (i.e. non-retrogradable.)
+		:rtype: bool
+		"""
 		return (self.ql_array(retrograde = False) == self.ql_array(retrograde = True)).all()
 
 	def morris_symmetry_class(self):
 		"""
-		Robert Morris (year?) describes 7 forms of rhythmic symmetry. (I provided the names.)
+		:return: the fragment's form of rhythmic symmetry, as defined by Morris (?). 
+		:rtype: str
 
 		I.) Maximally Trivial:				of the form X (one onset, one anga class)
 		II.) Trivial Symmetry: 				of the form XXXXXX (multiple onsets, same anga class)
@@ -429,11 +263,16 @@ class GeneralFragment(object):
 			return 'VII. Stream'
 
 	def std(self):
-		return round(np.std(self.ql_array()), 5)
+		"""
+		:return: the standard deviation of the fragment's ql_array.
+		:rtype: float
+		"""
+		return np.std(self.ql_array())
 
 	def c_score(self):
 		"""
-		TODO: Povel and Essens (1985) C-Score. 
+		:return: the c-score of the fragment, as defined in Povel and Essens (1985).
+		:rtype: float
 		"""
 		raise NotImplementedError
 		#as_time_scale = transform_to_time_scale(array = self.ql_array())
@@ -441,7 +280,8 @@ class GeneralFragment(object):
 	
 	def nPVI(self):
 		"""
-		Normalized pairwise variability index (Low, Grabe, & Nolan, 2000)
+		:return: the nPVI of the fragment (Low, Grabe, & Nolan, 2000).
+		:rtype: float
 		"""
 		IOI = self.ql_array()
 		num_onsets = len(IOI)
@@ -457,22 +297,20 @@ class GeneralFragment(object):
 
 		final = summation * 100 / (num_onsets - 1)
 		
-		return round(final, 6)
+		return final
 	
 	def show(self):
 		if self.stream:
 			return self.stream.show() 
 
 ########################################################################
-'''
-Inheritance notes:
-- if you add the init function to the child class, the child class does not inherit 
-the parent classes init function. 
-'''
+# Decitala object
 class Decitala(GeneralFragment):
 	"""
-	Class that stores Decitala data. Reads from a folder containing all Decitala XML files.
-	Inherits from GeneralFragment. 
+	Class defining a Decitala object. The class currently reads from the Fragments/Decitala
+	folder which contains XML files for each fragment. 
+
+	Base class: `fragment.GeneralFragment`. 	
 
 	>>> ragavardhana = Decitala('Ragavardhana')
 	>>> ragavardhana
@@ -485,7 +323,6 @@ class Decitala(GeneralFragment):
 	93
 	>>> ragavardhana.num_onsets
 	4
-
 	>>> ragavardhana.ql_array()
 	array([0.25 , 0.375, 0.25 , 1.5  ])
 	>>> ragavardhana.successive_ratio_array()
@@ -494,24 +331,18 @@ class Decitala(GeneralFragment):
 	array([ 0.   ,  0.125, -0.125,  1.25 ])
 	>>> ragavardhana.carnatic_string
 	'o oc o Sc'
-
 	>>> ragavardhana.is_non_retrogradable
 	False
 	>>> ragavardhana.dseg(as_str = True)
 	'<0 1 0 2>'
 	>>> ragavardhana.std()
-	0.52571
-	
-	ragavardhana.c_score()
-	12.47059
+	0.5257063700393976
 	>>> ragavardhana.nPVI()
-	74.285714
+	74.28571428571429
 	>>> ragavardhana.morris_symmetry_class()
 	'VII. Stream'
-
 	>>> Decitala('Jaya').ql_array()
 	array([0.5 , 1.  , 0.5 , 0.5 , 0.25, 0.25, 1.5 ])
-
 	>>> for this_cycle in Decitala('Jaya').cyclic_permutations():
 	...     print(this_cycle)
 	...
@@ -523,8 +354,8 @@ class Decitala(GeneralFragment):
 	[0.25 1.5  0.5  1.   0.5  0.5  0.25]
 	[1.5  0.5  1.   0.5  0.5  0.25 0.25]
 	
-	Decitala.getByidNum(idNum) retrieves a Decitala based on an input identification number. These 
-	numbers are listed in the Lavignac Encyclopédie and Messiaen Traité.
+	Decitala.get_by_id retrieves a decitala based on an input identification number. These 
+	numbers are listed in the Lavignac Encyclopédie and Messiaen Traité. 
 	
 	>>> Decitala.get_by_id(89)
 	<decitala.Decitala 89_Lalitapriya>
@@ -565,22 +396,25 @@ class Decitala(GeneralFragment):
 	
 	@property
 	def id_num(self):
+		"""
+		:return: the ID of the fragment, as given by Lavignac.
+		:rtype: int
+		"""
 		if self.name:
 			idValue = re.search(r'\d+', self.name)
 			return int(idValue.group(0))
 	
 	@classmethod
 	def get_by_id(cls, input_id):
-		'''
-		INPUTS
-		*-*-*-*-*-*-*-*-
-		input_id : type = ``int`` in range 1-120
+		"""
+		A class method which retrieves a `fragment.Decitala` object based on a given ID
+		number. Some talas have (as I'm calling them) "sub-talas," meaning that their 
+		id num is not unique. Querying by those talas is currently not supported.
 
-		TODO: if I want to be more sophisticated, use subdecitala_array to (in one of those cases)
-		return the appropriate tala. 
-		TODO: what happens with 'Jaya' versus 'Jayacri,' for example? Simple conditional to add if 
-		problematic.
-		'''
+		:return: fragment.Decitala object.
+		:param int input_id: id number of the tala (in range 1-120).
+		:rtype: fragment.Decitala
+		"""
 		assert type(input_id) == int
 		if input_id > 121 or input_id < 1:
 			raise DecitalaException('Input must be between 1 and 120!')
@@ -599,84 +433,20 @@ class Decitala(GeneralFragment):
 	
 	@property
 	def num_matras(self):
+		"""		
+		:return: returns the number of matras in the tala (here, the number of eighth notes).
+		:rtype: int
+		"""
 		return (self.ql_duration / 0.5)
 	
 	@property
 	def num_anga_classes(self):
+		"""
+		:return: the number of anga classes in the tala (the number of unique rhythmic values).
+		:rtype: int.
+		"""
 		return len(set(self.ql_array()))
 	
-######################################
-# Mixed representation
-
-def contiguous_multiplication(array):
-	"""
-	Takes the 0th value in the array and successively multiplies
-	by the i+1th value. As such, returns a new vector of dimension n + 1.
-
-	>>> ex = np.array([-1, 0.5, -3])
-	>>> contiguous_multiplication(ex)
-	array([-1. ,  1. ,  0.5, -1.5])
-	"""
-	out = [array[0]]
-	i = 0
-	while i < len(array) - 1:
-		if i == 0:
-			first_elem_squared = array[i]**2
-			out.append(first_elem_squared)
-			out.append(first_elem_squared * array[i + 1])
-		else:
-			out.append(array[i] * array[i + 1])
-		i += 1 
-	return np.array(out)
-
-def contiguous_addition(array):
-	"""
-	Takes the 0th value in the array and successively adds 
-	the i+1th value. As such, returns a new vector of dimension n + 1.
-
-	>>> ex = np.array([-1, 1, 0.5, -1.5])
-	
-	contiguous_addition(ex)
-	array([-1.  -2.  -1.  -0.5 -2. ])
-	"""
-	out = [array[0]]
-	i = 0
-	print(array[0])
-	while i < len(array) - 1:
-		#if i == 1:
-			#pass
-		#else:
-		print(array[i], array[i + 1])
-		i += 1
-
-	#return np.array(out)
-
-#ex = np.array([-1, 1, 0.5, -1.5])
-#print(contiguous_addition)
-
-def get_missing_elements(array):
-	start, end = array[0], array[-1]
-	return sorted(set(range(start, end + 1)).difference(array))
-
-def get_indices_of_missing_elements(array):
-	missing_elements = get_missing_elements(array)
-	return [array.index(x) for x in array]
-
-def successive_mixed_array(array):
-	diff = list(successive_difference_array(array)[1:])
-	if 0.0 not in diff:
-		ratios = successive_ratio_array(diff)
-		return ratios
-	else:
-		zeros = [i for i, val in enumerate(diff) if val == 0.0]
-		filtered = [x for x in diff if diff.index(x) not in zeros]
-		filtered_ratios = list(successive_ratio_array(filtered)[1:])
-
-		#process zero list to find clusters...
-		for zero_index in zeros:
-			filtered_ratios.insert(zero_index, 0.0)
-		return filtered_ratios
-
 ######################################
 class GreekFoot(GeneralFragment):
 	"""
@@ -692,22 +462,16 @@ class GreekFoot(GeneralFragment):
 	'Bacchius'
 	>>> bacchius.num_onsets
 	3
-
 	>>> bacchius.ql_array()
 	array([1., 2., 2.])
 	>>> bacchius.successive_ratio_array()
 	array([1., 2., 1.])
 	>>> bacchius.greek_string
 	'⏑ –– ––'
-
 	>>> bacchius.dseg(as_str = True)
 	'<0 1 1>'
 	>>> bacchius.std()
-	0.4714
-
-	bacchius.morris_symmetry_class()
-	'VII. Stream'
-
+	0.4714045207910317
 	>>> for this_cycle in bacchius.cyclic_permutations():
 	...     print(this_cycle)
 	...
@@ -739,13 +503,8 @@ class GreekFoot(GeneralFragment):
 	
 	@property
 	def greek_string(self):
-		greek_string_lst = []
-		for this_val in self.ql_array():
-			for this_diacritic_name, this_diacritic_symbol, this_diacritic_val in greek_diacritics:
-				if this_val == this_diacritic_val:
-					greek_string_lst.append(this_diacritic_symbol)
-
-		return ' '.join(greek_string_lst)
+		"""See docstring of :obj:`decitala.tools.ql_array_to_greek_diacritics`."""
+		return ql_array_to_greek_diacritics(self.ql_array())
 
 ###############################################################################
 # Helper function to ignore annoying warnings 

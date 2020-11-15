@@ -10,7 +10,33 @@
 import decimal
 import numpy as np
 
+from itertools import chain, combinations
+
 from music21 import converter
+
+carnatic_symbols = np.array([
+	['Druta', 'o', 0.25],
+	['Druta-Virama', 'oc', 0.375],
+	['Laghu', '|', 0.5],
+	['Laghu-Virama', '|c', 0.75],
+	['Guru', 'S', 1.0],
+	['Pluta', 'Sc', 1.5],           #Note: Normally a crescent moon superscript. Since it serves the same function as a virâma––we use the same notation. 
+	#['kakapadam', '8X', 2.0]       #Decide what the appropriate convention is...
+])
+
+greek_diacritics = [
+	['breve', '⏑', 1.0],
+	['macron', '––', 2.0]
+]
+
+multiplicative_augmentations = [
+	['Tiers', 4/3],
+	['Un quart', 1.25],
+	['Du Point', 1.5],
+	['Classique', 2], 
+	['Double', 3],
+	['Triple', 4],
+]
 
 ####################################################################################################
 # Rhythm helpers
@@ -54,13 +80,13 @@ def successive_ratio_array(fragment):
 		except ZeroDivisionError:
 			raise Exception('Something is off...')
 
-	ratio_array = [1.0]
+	ratio_lst = [1.0]
 	i = 0
 	while i < len(fragment) - 1:
-		ratio_array.append(_ratio(fragment, i))
+		ratio_lst.append(_ratio(fragment, i))
 		i += 1
 
-	return np.array(ratio_array)
+	return np.array(ratio_lst)
 
 def successive_difference_array(fragment):
 	"""
@@ -88,6 +114,147 @@ def successive_difference_array(fragment):
 		i += 1
 
 	return np.array(difference_lst)
+
+def contiguous_multiplication(array):
+	"""
+	Takes the zeroth value in the array and successively multiplies by the next value. As 
+	such, the dimension of the output vector is :math:`n + 1` for :math:`n` the original dimension.
+
+	:param numpy.array fragment: arbitrary array.
+	:return: array consisting of the successive product of the elements in the array.
+	:rtype: numpy.array
+
+	>>> ex = np.array([-1, 0.5, -3])
+	>>> contiguous_multiplication(ex)
+	array([-1. ,  1. ,  0.5, -1.5])
+	"""
+	out = [array[0]]
+	i = 0
+	while i < len(array) - 1:
+		if i == 0:
+			first_elem_squared = array[i]**2
+			out.append(first_elem_squared)
+			out.append(first_elem_squared * array[i + 1])
+		else:
+			out.append(array[i] * array[i + 1])
+		i += 1 
+	return np.array(out)
+
+# Notational Conversion Functions
+def carnatic_string_to_ql_array(string):
+	"""
+	Converts a string of carnatic rhythmic values to a quarter length numpy array. The carnatic symbols 
+	must have a spaces between them or it will be converted incorrectly. 
+
+	>>> carnatic_string_to_ql_array(string = 'oc o | | Sc S o o o')
+	array([0.375, 0.25 , 0.5  , 0.5  , 1.5  , 1.   , 0.25 , 0.25 , 0.25 ])
+	"""
+	split_string = string.split()
+	return np.array([float(this_carnatic_val[2]) for this_token in split_string for this_carnatic_val in carnatic_symbols if (this_carnatic_val[1] == this_token)])
+
+def ql_array_to_carnatic_string(ql_array):
+	"""
+	Converts a list of quarter length values to a string of carnatic rhythmic values.
+	
+	>>> ql_array_to_carnatic_string([0.5, 0.25, 0.25, 0.375, 1.0, 1.5, 1.0, 0.5, 1.0])
+	'| o o oc S Sc S | S'
+	"""
+	return ' '.join(np.array([this_carnatic_val[1] for this_val in ql_array for this_carnatic_val in carnatic_symbols if (float(this_carnatic_val[2]) == this_val)]))
+
+def ql_array_to_greek_diacritics(ql_array):
+	greek_string_lst = []
+	for this_val in ql_array:
+		for this_diacritic_name, this_diacritic_symbol, this_diacritic_val in greek_diacritics:
+			if this_val == this_diacritic_val:
+				greek_string_lst.append(this_diacritic_symbol)
+
+	return ' '.join(greek_string_lst)
+
+####################################################################################################
+# La Valeur Ajoutee
+def get_added_values(ql_lst, print_type = True):
+	"""
+	Given a quarter length list, returns all indices and types of added values found, according to 
+	the examples dicussed in Technique de Mon Langage Musical (1944). 
+
+	>>> get_added_values([0.25, 0.5, 0.5, 0.75, 0.25])
+	[(0, 'du Note'), (4, 'du Note')]
+	>>> get_added_values([0.5, 0.25, 0.5, 0.25, 1.0])
+	[(1, 'du Note'), (3, 'du Note')]
+	>>> get_added_values([0.75, 0.75, 0.75, 0.25, 0.5])
+	[(3, 'du Note')]
+	>>> get_added_values([0.75, 0.75, 0.75, 0.75, 0.25, 0.25])
+
+	>>> get_added_values([0.5, 0.25, 0.5, 0.75, 1.25, 1.5])
+	[(1, 'du Note'), (3, 'du Point'), (4, 'du Tie')]
+
+	>>> l = [1.0, 0.5, 0.25, 1.0, 0.5, 0.75, 0.5]
+	>>> get_added_values(l)
+	[(2, 'du Note'), (5, 'du Point')]
+
+	?????
+	>>> get_added_values([0.5, 0.5, 0.75, 1.25, 0.75])
+	[(2, 'du Point'), (3, 'du Tie')]
+
+	>>> get_added_values([1.0, 0.25, 0.5], print_type = False)
+	[1]
+
+	>>> get_added_values([0.25, 0.25, 0.75, 2.0])
+	[(2, 'du Point')]
+	>>> get_added_values([0.5, 0.25, 0.75, 0.25, 0.5])
+	[(1, 'du Note'), (2, 'du Point'), (3, 'du Note')]
+	"""
+	if len(ql_lst) < 3:
+		raise Exception('List must be of length 3 or greater.')
+
+	addedVals = []
+	if ql_lst[0] == 0.25 and ql_lst[1] != 0.25:
+		addedVals.append((0, 'du Note'))
+	if ql_lst[-1] == 0.25 and ql_lst[-2] != 0.25:
+		addedVals.append((len(ql_lst) - 1, 'du Note'))
+	if ql_lst[-1] == 0.75 and ql_lst[-2] % 0.5 == 0:
+		addedVals.append((len(ql_lst) - 1, 'du Point'))
+
+	for currIndex in range(1, len(ql_lst) - 1):
+		prevVal = ql_lst[currIndex - 1]
+		currVal = ql_lst[currIndex]
+		nextVal = ql_lst[currIndex + 1]
+
+		x = currVal - 0.25
+		if x >= 1.0 and x.is_integer():
+			addedVals.append((currIndex, 'du Tie'))
+
+		if currVal == 0.25:
+			if prevVal != currVal != nextVal:
+				if prevVal % 0.5 == 0 and nextVal % 0.5 == 0:
+					addedVals.append((currIndex, 'du Note'))
+				elif prevVal % 0.75 == 0:
+					addedVals.append((currIndex, 'du Note'))
+				elif nextVal % 0.75 == 0:
+					addedVals.append((currIndex, 'du Note'))
+		elif currVal == 0.75:
+			if prevVal % 0.5 == 0 and nextVal % 0.5 == 0:
+				addedVals.append((currIndex, 'du Point'))
+			elif prevVal < currVal and nextVal > currVal:
+				addedVals.append((currIndex, 'du Point'))
+			elif prevVal == 0.25:
+				addedVals.append((currIndex, 'du Point'))
+
+	if len(addedVals) == 0:
+		return None
+
+	if print_type == False:
+		return [a[0] for a in addedVals]
+	else:
+		return addedVals
+
+#NOTE: Double check this works.
+def removeAddedValuesFromList(lst):
+	added_val_indices = get_added_values(ql_lst=lst, print_type=False)
+	for i in added_val_indices:
+		del lst[i]
+
+	return lst
 
 ####################################################################################################
 # Score helpers
@@ -134,6 +301,33 @@ def get_indices_of_object_occurrence(filepath, part_num):
 		data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
 
 	return data_out
+
+def powerList(lst):
+	"""
+	Given a list, returns it's 'power set' (excluding, of course, the empty list). 
+
+	>>> l = [1, 2, 3]
+	>>> powerList(l)
+	array([(1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)], dtype=object)
+
+	>>> for x in powerList([(0.0, 2.0), (4.0, 5.5), (6.0, 7.25)]):
+	...     print(x)
+	((0.0, 2.0),)
+	((4.0, 5.5),)
+	((6.0, 7.25),)
+	((0.0, 2.0), (4.0, 5.5))
+	((0.0, 2.0), (6.0, 7.25))
+	((4.0, 5.5), (6.0, 7.25))
+	((0.0, 2.0), (4.0, 5.5), (6.0, 7.25))
+	"""
+	s = list(lst)
+	preList = list(chain.from_iterable(combinations(s, r) for r in range(len(s) + 1)))
+
+	for x in preList:
+		if len(x) == 0:
+			preList.remove(x)
+
+	return np.array(preList)
 
 def _euclidian_norm(vector):
 	'''
