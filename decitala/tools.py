@@ -12,25 +12,82 @@ import numpy as np
 
 from music21 import converter
 
+####################################################################################################
+# Rhythm helpers
 def augment(fragment, factor=1.0, difference=0.0):
 	"""
-	Returns an augmentation in the style of Messiaen. If difference is set to 0, then the augmentation
-	is multiplicative. If factor is set to 1, then augmentation is additive. If factor & difference are
+	Returns an augmentation in the style of Messiaen. If difference is set to 0.0, then the augmentation
+	is multiplicative. If factor is set to 1.0, then augmentation is additive. If factor & difference are
 	non-zero, we have a mixed augmentation. 
 
 	:param numpy.array fragment: array defining the rhythmic fragment.
-	:param float factor: factor for multiplicative augmentation
-	:param float difference: factor for additive augmentation
+	:param float factor: factor for multiplicative augmentation.
+	:param float difference: factor for additive augmentation.
+
+	:return: an augmented fragment.
+	:rtype: numpy.array
 
 	>>> augment(fragment=[1.0, 1.0, 0.5, 0.25], factor=2.0, difference=0.25)
 	array([2.25, 2.25, 1.25, 0.75])
 	"""
 	assert factor >= 1.0
-	new = []
-	for this_val in fragment:
-		new.append((this_val * factor) + difference)
+	return np.array([(this_val * factor) + difference for this_val in fragment])
 
-	return np.array(new)
+def successive_ratio_array(fragment):
+	"""
+	Returns array defined by the ratio of successive elements. By convention, we set the first value to 1.0.
+
+	:param numpy.array fragment: array defining a rhythmic fragment.
+	:return: array consisting of successive ratios of the input elements. 
+	:rtype: numpy.array
+
+	>>> successive_ratio_array([1.0, 1.0, 2.0, 0.5, 0.5, 0.25, 1.0])
+	array([1.  , 1.  , 2.  , 0.25, 1.  , 0.5 , 4.  ])
+	"""
+	def _ratio(array, start_index):
+		"""Returns the ratio of an element in an array at index i to the value at index i + 1."""
+		if not (0 <= start_index and start_index <= len(array) - 1):
+			raise IndexError('Input ``start_index`` not in appropriate range!')
+		try: 
+			ratio = array[start_index + 1] / array[start_index]
+			return round(ratio, 5)
+		except ZeroDivisionError:
+			raise Exception('Something is off...')
+
+	ratio_array = [1.0]
+	i = 0
+	while i < len(fragment) - 1:
+		ratio_array.append(_ratio(fragment, i))
+		i += 1
+
+	return np.array(ratio_array)
+
+def successive_difference_array(fragment):
+	"""
+	Returns array defined by the difference of successive elements. By convention, we set the first value to 0.0.
+
+	:param numpy.array fragment: array defining a rhythmic fragment.
+	:return: array consisting of successive differences of the input elements. 
+	:rtype: numpy.array
+
+	>>> successive_difference_array([0.25, 0.25, 0.75, 0.75, 0.5, 1.0, 1.5])
+	array([ 0.  ,  0.  ,  0.5 ,  0.  , -0.25,  0.5 ,  0.5 ])
+	"""
+	def _difference(array, start_index):
+		"""Returns the difference between two elements."""
+		try:
+			difference = array[start_index + 1] - array[start_index]
+			return difference
+		except IndexError:
+			pass
+
+	difference_lst = [0.0]
+	i = 0
+	while i < len(fragment) - 1:
+		difference_lst.append(_difference(fragment, i))
+		i += 1
+
+	return np.array(difference_lst)
 
 ####################################################################################################
 # Score helpers

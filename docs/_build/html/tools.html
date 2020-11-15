@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tools &#8212; decitala  documentation</title>
+    <title>tools.py &#8212; decitala  documentation</title>
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     
@@ -17,7 +17,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Welcome to decitala’s documentation!" href="index.html" /> 
+    <link rel="prev" title="Decitala Documentation" href="index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -26,10 +26,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="index.html" title="Welcome to decitala’s documentation!"
+          <a href="index.html" title="Decitala Documentation"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">decitala  documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Tools</a></li> 
+        <li class="nav-item nav-item-this"><a href="">tools.py</a></li> 
       </ul>
     </div>  
 
@@ -38,25 +38,73 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="tools">
-<h1>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="tools-py">
+<h1>tools.py<a class="headerlink" href="#tools-py" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="decitala.tools.augment">
 <code class="sig-prename descclassname">decitala.tools.</code><code class="sig-name descname">augment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fragment</span></em>, <em class="sig-param"><span class="n">factor</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">difference</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.tools.augment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns an augmentation in the style of Messiaen. If difference is set to 0, then the augmentation
-is multiplicative. If factor is set to 1, then augmentation is additive. If factor &amp; difference are
+<dd><p>Returns an augmentation in the style of Messiaen. If difference is set to 0.0, then the augmentation
+is multiplicative. If factor is set to 1.0, then augmentation is additive. If factor &amp; difference are
 non-zero, we have a mixed augmentation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fragment</strong> (<em>numpy.array</em>) – array defining the rhythmic fragment.</p></li>
-<li><p><strong>factor</strong> (<em>float</em>) – factor for multiplicative augmentation</p></li>
-<li><p><strong>difference</strong> (<em>float</em>) – factor for additive augmentation</p></li>
+<li><p><strong>factor</strong> (<em>float</em>) – factor for multiplicative augmentation.</p></li>
+<li><p><strong>difference</strong> (<em>float</em>) – factor for additive augmentation.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>an augmented fragment.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">augment</span><span class="p">(</span><span class="n">fragment</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span> <span class="n">factor</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
 <span class="go">array([2.25, 2.25, 1.25, 0.75])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.tools.successive_ratio_array">
+<code class="sig-prename descclassname">decitala.tools.</code><code class="sig-name descname">successive_ratio_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fragment</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.tools.successive_ratio_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns array defined by the ratio of successive elements. By convention, we set the first value to 1.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fragment</strong> (<em>numpy.array</em>) – array defining a rhythmic fragment.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>array consisting of successive ratios of the input elements.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">successive_ratio_array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="go">array([1.  , 1.  , 2.  , 0.25, 1.  , 0.5 , 4.  ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.tools.successive_difference_array">
+<code class="sig-prename descclassname">decitala.tools.</code><code class="sig-name descname">successive_difference_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fragment</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.tools.successive_difference_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns array defined by the difference of successive elements. By convention, we set the first value to 0.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fragment</strong> (<em>numpy.array</em>) – array defining a rhythmic fragment.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>array consisting of successive differences of the input elements.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">successive_difference_array</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">])</span>
+<span class="go">array([ 0.  ,  0.  ,  0.5 ,  0.  , -0.25,  0.5 ,  0.5 ])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -72,7 +120,7 @@ non-zero, we have a mixed augmentation.</p>
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to decitala’s documentation!</a></p>
+                        title="previous chapter">Decitala Documentation</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -101,10 +149,10 @@ non-zero, we have a mixed augmentation.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="index.html" title="Welcome to decitala’s documentation!"
+          <a href="index.html" title="Decitala Documentation"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">decitala  documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Tools</a></li> 
+        <li class="nav-item nav-item-this"><a href="">tools.py</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

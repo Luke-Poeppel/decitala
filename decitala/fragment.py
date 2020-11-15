@@ -1,26 +1,13 @@
 # -*- coding: utf-8 -*-
 ####################################################################################################
-# File:     decitala.py
-# Purpose:  Version 2.0 of decitala.py. Dynamic functions for tala search (e.g. deçi-tâlas), primarily
-#			in the music and birdsong transcriptions of Olivier Messiaen. 
+# File:     fragment.py
+# Purpose:  Representation and tools for dealing with generic rhythmic fragments, as well as those
+#			used specifically by Messiaen. Includes Decitala and GreekFoot objects. 
 # 
 # Author:   Luke Poeppel
 #
 # Location: Kent, CT 2020
 ####################################################################################################
-"""
-Big TODO:
-- full id as string (only for those who have subtalas)
-
-CODE SPRINT TODO: 
-- note to self: doctests are for short examples; doctests are for *actual* testing. 
-- check out added value situation
-- change names of successive_X_array
-- fix and shorten helper functions below.
-- decide convention for kakpadam from Rowley.
-- fix morris symmetry class
-- figure out what the problem is with the c-score. 
-"""
 from __future__ import division, print_function, unicode_literals
 
 import copy
@@ -40,18 +27,22 @@ from datetime import datetime
 from itertools import chain, combinations
 from statistics import StatisticsError
 
-#from povel_essens_clock import get_average_c_score
-#from povel_essens_clock import transform_to_time_scale
-
 from music21 import converter
 from music21 import note
 from music21 import pitch
 from music21 import stream
 
-decitala_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas'
-greek_path = '/Users/lukepoeppel/decitala_v2/Greek_Metrics/XML'
+from tools import (
+	successive_ratio_array,
+	successive_difference_array,
+)
 
-#Doesn't make much sense for these to be np.arrays because of the mixed types... 
+####################################################################################################
+# Fragments
+decitala_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas'
+greek_path = '/Users/lukepoeppel/decitala/Fragments/Greek_Metrics/XML'
+####################################################################################################
+
 carnatic_symbols = np.array([
 	['Druta', 'o', 0.25],
 	['Druta-Virama', 'oc', 0.375],
@@ -67,25 +58,16 @@ greek_diacritics = [
 	['macron', '––', 2.0]
 ]
 
-multiplicative_augmentations = np.array([
+multiplicative_augmentations = [
 	['Tiers', 4/3],
 	['Un quart', 1.25],
 	['Du Point', 1.5],
 	['Classique', 2], 
 	['Double', 3],
 	['Triple', 4],
-])
+]
 
-#rounded to 6 decimal places; add more as needed
-fraction_dict = {
-	0.166667 : fractions.Fraction(1, 6),
-	0.333333 : fractions.Fraction(1, 3),
-	0.666667 : fractions.Fraction(2, 3), 
-	1.333333 : fractions.Fraction(4, 3),
-	1.666667 : fractions.Fraction(5, 3)
-}
-
-#id_number(s) of decitalas with "subtalas"
+# ID's of decitalas with "subtalas"
 subdecitala_array = np.array([26, 38, 55, 65, 68])
 
 ############### EXCEPTIONS ###############
@@ -116,62 +98,6 @@ def ql_array_to_carnatic_string(ql_array):
 
 def ql_array_to_greek_diacritics(ql_array):
 	pass
-
-def _ratio(array, start_index):
-	"""
-	Given an array and a starting index, returns the ratio of the element at the provided index 
-	to the element at the following one. A ZeroDivision error will only occur if it encounters a 
-	difference list.
-
-	>>> _ratio(np.array([1.0, 0.5]), 0)
-	0.5
-	>>> _ratio(np.array([0.25, 0.25, 0.75]), 1)
-	3.0
-	>>> _ratio(np.array([1.5, 1.0]), 0)
-	0.66667
-	"""
-	if not (0 <= start_index and start_index <= len(array) - 1):
-		raise IndexError('Input ``start_index`` not in appropriate range!')
-	try: 
-		ratio = array[start_index + 1] / array[start_index]
-		return round(ratio, 5)
-	except ZeroDivisionError:
-		raise Exception('Something is off...')
-
-def _difference(array, start_index):
-	"""
-	Returns the difference between two elements. 
-	"""
-	try:
-		difference = array[start_index + 1] - array[start_index]
-		return difference
-	except IndexError:
-		pass
-
-def successive_ratio_array(lst):
-	"""
-	Returns an array of the successive duration ratios. By convention, we set the first value to 1.0. 
-	"""
-	ratio_array = [1.0] #np.array([1.0])
-	i = 0
-	while i < len(lst) - 1:
-		ratio_array.append(_ratio(lst, i))
-		i += 1
-
-	return np.array(ratio_array)
-
-def successive_difference_array(lst):
-	"""
-	Returns a list containing differences between successive durations. By convention, we set the 
-	first value to 0.0. 
-	"""
-	difference_lst = [0.0]
-	i = 0
-	while i < len(lst) - 1:
-		difference_lst.append(_difference(lst, i))
-		i += 1
-
-	return np.array(difference_lst)
 
 def powerList(lst):
 	"""
@@ -295,7 +221,7 @@ class GeneralFragment(object):
 	- how about a class method: GeneralFragment.make_by_array([...])
 
 	Input: path for now.
-	>>> random_fragment_path = '/users/lukepoeppel/decitala_v2/Decitalas/63_Nandi.xml'
+	>>> random_fragment_path = '/users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml'
 	>>> g1 = GeneralFragment(path = random_fragment_path, name = 'test')
 	>>> g1
 	<GeneralFragment_test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]>
@@ -505,15 +431,14 @@ class GeneralFragment(object):
 	def std(self):
 		return round(np.std(self.ql_array()), 5)
 
-	'''
 	def c_score(self):
 		"""
-		Povel and Essens (1985) C-Score. Returns the average across all clocks. 
-		Doesn't seem to work...
+		TODO: Povel and Essens (1985) C-Score. 
 		"""
-		as_time_scale = transform_to_time_scale(array = self.ql_array())
-		return get_average_c_score(array = as_time_scale)
-	'''
+		raise NotImplementedError
+		#as_time_scale = transform_to_time_scale(array = self.ql_array())
+		#return get_average_c_score(array = as_time_scale)
+	
 	def nPVI(self):
 		"""
 		Normalized pairwise variability index (Low, Grabe, & Nolan, 2000)
@@ -752,27 +677,6 @@ def successive_mixed_array(array):
 			filtered_ratios.insert(zero_index, 0.0)
 		return filtered_ratios
 
-'''
-sim = Decitala('Simhavikrama')
-print(sim.ql_array())
-print(successive_difference_array(sim.ql_array()))
-print(successive_mixed_array(sim.ql_array()))
-'''
-'''
-for i, this_file in enumerate(os.listdir(decitala_path)):
-	try:
-		tala = Decitala.get_by_id(i + 1)
-		print(tala)
-		if tala.num_onsets < 4:
-			pass
-		else:
-			print(tala.ql_array())
-			print(successive_mixed_array(tala.ql_array()))
-			print()
-	except DecitalaException:
-		pass
-'''
-
 ######################################
 class GreekFoot(GeneralFragment):
 	"""
@@ -857,49 +761,8 @@ def ignore_warnings(test_func):
 class Test(unittest.TestCase):
 	def setUp(self):
 		warnings.simplefilter('ignore', category=ImportWarning)
-	
-	def testDecitalaName(self):
-		kumudaName = Decitala('Vanamali').name
-		self.assertEqual(kumudaName, '29_Vanamali')
-		
-	def testCarnaticStrings(self):
-		carnaticStrings = []
-		for i in range(21, 24):
-			carnaticStrings.append([Decitala.get_by_id(i).carnatic_string])
-			
-		expectedStrings = [['| S Sc'], ['o o | | | o o | S'], ['S S S | Sc']]
-		self.assertEqual(carnaticStrings, expectedStrings)
-	
-	def testIDNum(self):
-		'''
-		This generates all decitalas with prime id num below 20.
-		'''
-		talaList = []
-		for num in range(2,18):
-			if all(num%i!=0 for i in range(2,num)):
-				talaList.append(Decitala.get_by_id(num).name)
-		
-		expectedTalas = ['2_Dvitiya', '3_Tritiya', '5_Pancama', '7_Darpana', '11_Kandarpa', '13_Ranga', '17_Yatilagna']
-		
-		self.assertEqual(talaList, expectedTalas)
-		
-	def testConversionToCarnaticNotation(self):
-		danseQlList = [0.25, 0.375, 0.5, 0.25, 0.5, 1.0, 0.5, 1.5, 0.375, 1.0]
-		
-		converted = ql_array_to_carnatic_string(ql_array=danseQlList)
-		expectedConversion = 'o oc | o | S | Sc oc S'
-		
-		self.assertEqual(converted, expectedConversion)
-	
-	def testConversionToWesternNotation(self):
-		abime = '| | o |c | oc o Sc'
-		
-		converted = list(carnatic_string_to_ql_array(abime))
-		expected = [0.5, 0.5, 0.25, 0.75, 0.5, 0.375, 0.25, 1.5]
-		
-		self.assertEqual(converted, expected)
 
 if __name__ == '__main__':
 	import doctest
-	#doctest.testmod()
-	#unittest.main()
+	doctest.testmod()
+	unittest.main()
