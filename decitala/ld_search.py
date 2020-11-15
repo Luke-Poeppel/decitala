@@ -56,4 +56,12 @@ def search(fragment):
 
 	return ld_filter
 
-print(search(np.array([0.25, 0.25, 0.5])))
+#print(search(np.array([0.25, 0.25, 0.5])))
+
+max_onsets = 0
+for this_tala in ratio_tree.filtered_data:
+	if this_tala.num_onsets > max_onsets:
+		max_onsets = this_tala.num_onsets
+	
+print(max_onsets)
+

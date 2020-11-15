@@ -9,9 +9,6 @@
 ####################################################################################################
 """
 This module holds the Nary tree representation of Fragment trees (both ratio and difference based).
-
-NOTE:
-TODO:
 """
 import copy
 import decimal
