@@ -937,7 +937,13 @@ def rolling_search_on_array(array, ratio_tree, difference_tree):
 
 	return fragments_found
 
-#ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+"""
+ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+
+for this_tala in ratio_tree.filtered_data:
+	if this_tala.num_onsets == 4:
+		print(this_tala.name, this_tala.ql_array())
+"""
 #difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
 
 #candrakala = Decitala('Candrakala')

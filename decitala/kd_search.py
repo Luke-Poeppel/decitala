@@ -9,29 +9,16 @@
 ####################################################################################################
 """
 As an alternative to constructing ratio & difference n-ary trees for precise searches, here we will try 
-building a kd tree that stores all possible modifications of a given fragment. Searching therefore doesn't
-rely on any fancy math (like affine-invariant representations) but instead employs brute force search.
-
-TODO: need a way to store the means by which a fragment is modified.
-
-Modifications
-- Valeur Ajoutée (find rules in decitala.py)
-- Augmentations
-- Retrograde
-
-INFORMATION TO STORE:
-- SCORE
-- INSTRUMENT
-- ONSET START
-- ONSET STOP
+building a kd-tree (using nearest neighbour search) that stores all possible modifications of a given 
+fragment. Essentially, a brute force method.
 """
 import kdtree
-import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
 
-from tools import get_indices_of_object_occurrence
+from tools import augment
 
 mpl.style.use('seaborn')
 
@@ -39,28 +26,6 @@ MAX_DIMENSIONS = 3
 MAX_NUM_ADDED_VALUES = 3
 
 ####################################################################################################
-def augment(fragment, factor=1.0, difference=0.0):
-	"""
-	Returns an augmentation in the style of Messiaen. If difference is set to 0, then the augmentation
-	is multiplicative. If factor is set to 1, then augmentation is additive. If factor & difference are
-	non-zero, we have a mixed augmentation. 
-
-	:param fragment numpy.array: array defining the rhythmic fragment.
-	:param factor float: factor for multiplicative augmentation
-	:param difference float: factor for additive augmentation
-
-	NOTE: if factor is set to 0, an error is thrown. 
-
-	>>> augment(fragment=[1.0, 1.0, 0.5, 0.25], factor=2.0, difference=0.25)
-	array([2.25, 2.25, 1.25, 0.75])
-	"""
-	if factor == 0 or factor < 0:
-		raise Exception('Factor value of {} makes no sense.'.format(factor))
-	new = []
-	for this_val in fragment:
-		new.append((this_val * factor) + difference)
-
-	return np.array(new)
 
 def generate_all_augmentations(fragment):
 	"""
@@ -175,10 +140,11 @@ def visualize_3D_modifications(fragment):
 
 ####################################################################################################
 # KD-tree
+"""
+TODO: follow same structure as FragmentTree –- provide a data PATH!
+"""
 def create_kd_tree_from_dataset(dataset, max_dimensions):
-	"""
-	Returns a kd-tree from a dataset of rhythmic fragments.
-	"""
+	"""Returns a kd-tree from a dataset of rhythmic fragments."""
 	fragment_tree = kdtree.create(dimensions=max_dimensions)
 	for this_fragment in dataset:
 		all_modifications = generate_all_modifications(this_fragment, max_dimensions)
@@ -187,18 +153,10 @@ def create_kd_tree_from_dataset(dataset, max_dimensions):
 
 	return fragment_tree
 
-#t = create_kd_tree_from_dataset(dataset = [[0.25, 0.25, 0.5], [1.0, 1.25, 0.5, 1.0]], max_dimensions=4)
+#t = create_kd_tree_from_dataset(dataset = [[0.25, 0.25, 0.5], [1.0, 1.25, 0.5, 1.0]], max_dimensions=3)
 
-niverolle_1 = "/Users/lukepoeppel/Birds/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_1er_example.xml"
-x = get_indices_of_object_occurrence(filepath=niverolle_1, part_num=0)
-qls = []
-for this_object in x:
-	ql_range = this_object[1]
-	ql = ql_range[1] - ql_range[0]
-	if ql == 0:
-		pass
-	else:
-		qls.append(ql)
+#print(t.search_nn((1.25, 1.25, 2.25)))
+
 
 if __name__ == '__main__':
 	import doctest

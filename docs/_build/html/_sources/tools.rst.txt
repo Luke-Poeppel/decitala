@@ -1,0 +1,4 @@
+=====
+Tools
+=====
+.. autofunction:: decitala.tools.augment

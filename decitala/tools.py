@@ -1,28 +1,36 @@
 # -*- coding: utf-8 -*-
 ####################################################################################################
 # File:     tools.py
-# Purpose:  Random useful functions for Messiaen. 
+# Purpose:  Random useful functions. 
 # 
 # Author:   Luke Poeppel
 #
-# Location: Kent, CT 2020
+# Location: Kent, CT 2020 / Frankfurt, DE 2020
 ####################################################################################################
-"""
-TODO: use numpy/scipy norm function, obviously. 
-"""
 import decimal
 import numpy as np
 
 from music21 import converter
 
-####################################################################################################
-# Rhythm helpers
+def augment(fragment, factor=1.0, difference=0.0):
+	"""
+	Returns an augmentation in the style of Messiaen. If difference is set to 0, then the augmentation
+	is multiplicative. If factor is set to 1, then augmentation is additive. If factor & difference are
+	non-zero, we have a mixed augmentation. 
 
-def augment_multiplicatively(array, factor):
-	pass
+	:param numpy.array fragment: array defining the rhythmic fragment.
+	:param float factor: factor for multiplicative augmentation
+	:param float difference: factor for additive augmentation
 
-def augment_additively(array, difference):
-	pass
+	>>> augment(fragment=[1.0, 1.0, 0.5, 0.25], factor=2.0, difference=0.25)
+	array([2.25, 2.25, 1.25, 0.75])
+	"""
+	assert factor >= 1.0
+	new = []
+	for this_val in fragment:
+		new.append((this_val * factor) + difference)
+
+	return np.array(new)
 
 ####################################################################################################
 # Score helpers
