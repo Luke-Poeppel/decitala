@@ -34,7 +34,7 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="decitala  documentation" href="index.html"/>
-        <link rel="next" title="pofp.py" href="pofp.html"/>
+        <link rel="next" title="trees.py" href="trees.html"/>
         <link rel="prev" title="Decitala Documentation" href="index.html"/> 
 
   
@@ -84,6 +84,7 @@
                 <p class="caption"><span class="caption-text">Modules</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">fragment.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trees.html">trees.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">tools.py</a></li>
 </ul>
@@ -152,26 +153,37 @@
   <div class="section" id="fragment-py">
 <h1>fragment.py<a class="headerlink" href="#fragment-py" title="Permalink to this headline">¶</a></h1>
 <span class="target" id="module-decitala.fragment"></span><dl class="py exception">
+<dt id="decitala.fragment.FragmentException">
+<em class="property">exception </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">FragmentException</code><a class="headerlink" href="#decitala.fragment.FragmentException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py exception">
 <dt id="decitala.fragment.DecitalaException">
 <em class="property">exception </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">DecitalaException</code><a class="headerlink" href="#decitala.fragment.DecitalaException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="#decitala.fragment.FragmentException" title="decitala.fragment.FragmentException"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.FragmentException</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="decitala.fragment.GeneralFragment">
-<em class="property">class </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">GeneralFragment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">GeneralFragment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">array</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class representing a generic rhythmic fragment.</p>
+<p>Class representing a generic rhythmic fragment. The user must provide either a path to a readable
+XML file or an array of quarter length values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>str</em>) – path to encoded fragment.</p></li>
+<li><p><strong>filepath</strong> (<em>str</em>) – path to encoded fragment (initialized to None).</p></li>
+<li><p><strong>numpy.array</strong> – array of quarter length values (initialized to None).</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – optional name argument.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#decitala.fragment.FragmentException" title="decitala.fragment.FragmentException"><strong>decitala.fragment.FragmentException</strong></a> – when an array and file are provided or neither are provided.</p>
+</dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">random_fragment_path</span> <span class="o">=</span> <span class="s1">&#39;/users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">(</span><span class="n">path</span> <span class="o">=</span> <span class="n">random_fragment_path</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;test&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">random_fragment_path</span> <span class="o">=</span> <span class="s1">&#39;/Users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="n">random_fragment_path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span>
 <span class="go">&lt;GeneralFragment_test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">filename</span>
@@ -185,9 +197,7 @@
 <span class="go">array([0.5 , 0.25, 0.25, 0.5 , 0.5 , 1.  , 1.  ])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">successive_ratio_array</span><span class="p">()</span>
 <span class="go">array([1. , 0.5, 1. , 2. , 1. , 2. , 1. ])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">carnatic_string</span>
-<span class="go">&#39;| o o | | S S&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">dseg</span><span class="p">(</span><span class="n">as_str</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">dseg</span><span class="p">(</span><span class="n">as_str</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;&lt;1 0 0 1 1 2 2&gt;&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
 <span class="go">0.2901442287369986</span>
@@ -201,14 +211,12 @@
 <span class="go">[0.5  1.   1.   0.5  0.25 0.25 0.5 ]</span>
 <span class="go">[1.   1.   0.5  0.25 0.25 0.5  0.5 ]</span>
 <span class="go">[1.   0.5  0.25 0.25 0.5  0.5  1.  ]</span>
+<span class="gp">&gt;&gt;&gt; </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># We may also initialize with an array...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]))</span>
+<span class="go">&lt;GeneralFragment: [0.75 0.75 0.5  0.25]&gt;</span>
 </pre></div>
 </div>
-<dl class="py method">
-<dt id="decitala.fragment.GeneralFragment.make_by_array">
-<em class="property">classmethod </em><code class="sig-name descname">make_by_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.make_by_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a fragment.GeneralFragment object from an array.</p>
-</dd></dl>
-
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.ql_array">
 <code class="sig-name descname">ql_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">retrograde</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.ql_array" title="Permalink to this definition">¶</a></dt>
@@ -255,19 +263,6 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="decitala.fragment.GeneralFragment.carnatic_string">
-<em class="property">property </em><code class="sig-name descname">carnatic_string</code><a class="headerlink" href="#decitala.fragment.GeneralFragment.carnatic_string" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the fragment in carnatic rhythmic notation.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.ql_duration">
 <em class="property">property </em><code class="sig-name descname">ql_duration</code><a class="headerlink" href="#decitala.fragment.GeneralFragment.ql_duration" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -294,6 +289,11 @@
 <dd class="field-odd"><p>numpy.array</p>
 </dd>
 </dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g3</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;marvin-p70&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g3</span><span class="o">.</span><span class="n">dseg</span><span class="p">()</span>
+<span class="go">array([0, 1, 3, 2])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -310,6 +310,13 @@
 <dd class="field-odd"><p>numpy.array</p>
 </dd>
 </dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g4</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="p">[</span><span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;marvin-p74-x&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g4</span><span class="o">.</span><span class="n">dseg</span><span class="p">(</span><span class="n">as_str</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;&lt;0 0 2 1&gt;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g4</span><span class="o">.</span><span class="n">reduced_dseg</span><span class="p">(</span><span class="n">as_str</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;&lt;0 2 1&gt;&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -329,7 +336,7 @@
 <code class="sig-name descname">cyclic_permutations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.cyclic_permutations" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>all cyclic permutations of self.ql_array(), as in Morris (year?).</p>
+<dd class="field-odd"><p>all cyclic permutations of :<cite>decitala.fragment.Decitala.ql_array()</cite>, as in Morris (year?).</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>numpy.array</p>
@@ -361,13 +368,36 @@
 <dd class="field-even"><p>str</p>
 </dd>
 </dl>
-<p>I.) Maximally Trivial:                          of the form X (one onset, one anga class)
-II.) Trivial Symmetry:                          of the form XXXXXX (multiple onsets, same anga class)
-III.) Trivial Dual Symmetry:            of the form XY (two onsets, two anga classes)
-IV.) Maximally Trivial Palindrome:      of the form XXX…XYX…XXX (multiple onsets, two anga classes)
-V.) Trivial Dual Palindromic:           of the form XXX…XYYYX…XXX (multiple onsets, two anga classes)
-VI.) Palindromic:                                       of the form XY…Z…YX (multiple onsets, n/2 anga classes)
-VII.) Stream:                                           of the form XYZ…abc… (n onsets, n anga classes)</p>
+<ul class="simple">
+<li><ol class="upperroman simple">
+<li><p>Maximally Trivial:                         of the form <span class="math notranslate nohighlight">\(X\)</span> (one onset, one anga class)</p></li>
+</ol>
+</li>
+<li><ol class="upperroman simple" start="2">
+<li><p>Trivial Symmetry:                         of the form <span class="math notranslate nohighlight">\(XXXXXX\)</span> (multiple onsets, same anga class)</p></li>
+</ol>
+</li>
+<li><ol class="upperroman simple" start="3">
+<li><p>Trivial Dual Symmetry:           of the form <span class="math notranslate nohighlight">\(XY\)</span> (two onsets, two anga classes)</p></li>
+</ol>
+</li>
+<li><ol class="upperroman simple" start="4">
+<li><p>Maximally Trivial Palindrome: of the form <span class="math notranslate nohighlight">\(XXX...XYX...XXX\)</span> (multiple onsets, two anga classes)</p></li>
+</ol>
+</li>
+<li><ol class="upperalpha simple" start="22">
+<li><p>Trivial Dual Palindromic:          of the form <span class="math notranslate nohighlight">\(XXX...XYYYX...XXX\)</span> (multiple onsets, two anga classes)</p></li>
+</ol>
+</li>
+<li><ol class="upperroman simple" start="6">
+<li><p>Palindromic:                                      of the form <span class="math notranslate nohighlight">\(XY...Z...YX\)</span> (multiple onsets, <span class="math notranslate nohighlight">\(n/2\)</span> anga classes)</p></li>
+</ol>
+</li>
+<li><ol class="upperroman simple" start="7">
+<li><p>Stream:                                          of the form <span class="math notranslate nohighlight">\(XYZ...abc...\)</span> (<span class="math notranslate nohighlight">\(n\)</span> onsets, <span class="math notranslate nohighlight">\(n\)</span> anga classes)</p></li>
+</ol>
+</li>
+</ul>
 </dd></dl>
 
 <dl class="py method">
@@ -417,7 +447,14 @@ VII.) Stream:                                           of the form XYZ…abc…
 <dd><p>Bases: <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.GeneralFragment</span></code></a></p>
 <p>Class defining a Decitala object. The class currently reads from the Fragments/Decitala
 folder which contains XML files for each fragment.</p>
-<p>Base class: <cite>fragment.GeneralFragment</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name of the decitala, as is transliterated in the  (1921).</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#decitala.fragment.DecitalaException" title="decitala.fragment.DecitalaException"><strong>decitala.fragment.DecitalaException</strong></a> – when there is an issue with the name.</p>
+</dd>
+</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ragavardhana</span> <span class="o">=</span> <span class="n">Decitala</span><span class="p">(</span><span class="s1">&#39;Ragavardhana&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ragavardhana</span>
 <span class="go">&lt;decitala.Decitala 93_Ragavardhana&gt;</span>
@@ -461,18 +498,12 @@ folder which contains XML files for each fragment.</p>
 <span class="go">[1.5  0.5  1.   0.5  0.5  0.25 0.25]</span>
 </pre></div>
 </div>
-<p>Decitala.get_by_id retrieves a decitala based on an input identification number. These 
-numbers are listed in the Lavignac Encyclopédie and Messiaen Traité.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Decitala</span><span class="o">.</span><span class="n">get_by_id</span><span class="p">(</span><span class="mi">89</span><span class="p">)</span>
-<span class="go">&lt;decitala.Decitala 89_Lalitapriya&gt;</span>
-</pre></div>
-</div>
 <dl class="py method">
 <dt id="decitala.fragment.Decitala.id_num">
 <em class="property">property </em><code class="sig-name descname">id_num</code><a class="headerlink" href="#decitala.fragment.Decitala.id_num" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the ID of the fragment, as given by Lavignac.</p>
+<dd class="field-odd"><p>the ID of the fragment, as given by Lavignac (1921).</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>int</p>
@@ -483,20 +514,33 @@ numbers are listed in the Lavignac Encyclopédie and Messiaen Traité.</p>
 <dl class="py method">
 <dt id="decitala.fragment.Decitala.get_by_id">
 <em class="property">classmethod </em><code class="sig-name descname">get_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.Decitala.get_by_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class method which retrieves a <cite>fragment.Decitala</cite> object based on a given ID
-number. Some talas have (as I’m calling them) “sub-talas,” meaning that their 
-id num is not unique. Querying by those talas is currently not supported.</p>
+<dd><p>A class method which retrieves a <cite>decitala.fragment.Decitala</cite> object based on a given ID number. These 
+numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. Some talas have (as I’m calling them) 
+“sub-talas,” meaning that their id is not unique. Querying by those talas is currently not supported.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>fragment.Decitala object.</p>
+<dd class="field-odd"><p>a Decitala object</p>
 </dd>
 <dt class="field-even">Parameters</dt>
 <dd class="field-even"><p><strong>input_id</strong> (<em>int</em>) – id number of the tala (in range 1-120).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#decitala.fragment.Decitala" title="decitala.fragment.Decitala">fragment.Decitala</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#decitala.fragment.Decitala" title="decitala.fragment.Decitala">decitala.fragment.Decitala</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#decitala.fragment.DecitalaException" title="decitala.fragment.DecitalaException"><strong>decitala.fragment.DecitalaException</strong></a> – when there is an issue with the <cite>input_it</cite>.</p>
 </dd>
 </dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Decitala</span><span class="o">.</span><span class="n">get_by_id</span><span class="p">(</span><span class="mi">89</span><span class="p">)</span>
+<span class="go">&lt;decitala.Decitala 89_Lalitapriya&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.fragment.Decitala.carnatic_string">
+<em class="property">property </em><code class="sig-name descname">carnatic_string</code><a class="headerlink" href="#decitala.fragment.Decitala.carnatic_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>See docstring of :<cite>decitala.tools.successive_ratio_array</cite>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -523,6 +567,12 @@ id num is not unique. Querying by those talas is currently not supported.</p>
 <dd class="field-even"><p>int.</p>
 </dd>
 </dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Decitala</span><span class="p">(</span><span class="s1">&#39;Karanayati&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">num_anga_classes</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Decitala</span><span class="p">(</span><span class="s1">&#39;Rajatala&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">num_anga_classes</span>
+<span class="go">4</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -563,7 +613,7 @@ Inherits from GeneralFragment.</p>
 <dl class="py method">
 <dt id="decitala.fragment.GreekFoot.greek_string">
 <em class="property">property </em><code class="sig-name descname">greek_string</code><a class="headerlink" href="#decitala.fragment.GreekFoot.greek_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>See docstring of <code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.tools.ql_array_to_greek_diacritics</span></code>.</p>
+<dd><p>See docstring of <a class="reference internal" href="tools.html#decitala.tools.ql_array_to_greek_diacritics" title="decitala.tools.ql_array_to_greek_diacritics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.tools.ql_array_to_greek_diacritics</span></code></a>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -589,7 +639,7 @@ Inherits from GeneralFragment.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pofp.html" class="btn btn-neutral float-right" title="pofp.py" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="trees.html" class="btn btn-neutral float-right" title="trees.py" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral" title="Decitala Documentation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

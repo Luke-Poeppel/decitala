@@ -6,6 +6,8 @@
 Decitala Documentation
 ====================================
 
+Tools for automating ethnological rhythmic analysis of Olivier Messiaen's music.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
@@ -16,6 +18,7 @@ Decitala Documentation
    :glob:
 
    fragment
+   trees
    pofp
    tools
 

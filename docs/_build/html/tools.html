@@ -83,6 +83,7 @@
                 <p class="caption"><span class="caption-text">Modules</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trees.html">trees.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp.py</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">tools.py</a></li>
 </ul>
@@ -238,6 +239,69 @@ such, the dimension of the output vector is <span class="math notranslate nohigh
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">contiguous_multiplication</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span>
 <span class="go">array([-1. ,  1. ,  0.5, -1.5])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.tools.carnatic_string_to_ql_array">
+<code class="sig-prename descclassname">decitala.tools.</code><code class="sig-name descname">carnatic_string_to_ql_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.tools.carnatic_string_to_ql_array" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a string of carnatic values converted to a standard ql array.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>numpy.array.</p>
+</dd>
+</dl>
+<p>NOTE: The carnatic symbols must have spaces between them or there will be conversion issues.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">carnatic_string_to_ql_array</span><span class="p">(</span><span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;oc o | | Sc S o o o&#39;</span><span class="p">)</span>
+<span class="go">array([0.375, 0.25 , 0.5  , 0.5  , 1.5  , 1.   , 0.25 , 0.25 , 0.25 ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.tools.ql_array_to_carnatic_string">
+<code class="sig-prename descclassname">decitala.tools.</code><code class="sig-name descname">ql_array_to_carnatic_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ql_array</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.tools.ql_array_to_carnatic_string" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a list of quarter length values converted to carnatic rhythmic notation.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ql_array_to_carnatic_string</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="go">&#39;| o o oc S Sc S | S&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.tools.ql_array_to_greek_diacritics">
+<code class="sig-prename descclassname">decitala.tools.</code><code class="sig-name descname">ql_array_to_greek_diacritics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ql_array</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.tools.ql_array_to_greek_diacritics" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a list of quarter length values converted to greek prosodic notation.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.tools.roll_window">
+<code class="sig-prename descclassname">decitala.tools.</code><code class="sig-name descname">roll_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lst</span></em>, <em class="sig-param"><span class="n">window_length</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.tools.roll_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes in a list and returns a list of lists that holds rolling windows of length window_length.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Mozart&#39;</span><span class="p">,</span> <span class="s1">&#39;Monteverdi&#39;</span><span class="p">,</span> <span class="s1">&#39;Messiaen&#39;</span><span class="p">,</span> <span class="s1">&#39;Mahler&#39;</span><span class="p">,</span> <span class="s1">&#39;MacDowell&#39;</span><span class="p">,</span> <span class="s1">&#39;Massenet&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this</span> <span class="ow">in</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">lst</span><span class="o">=</span><span class="n">l</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">this</span><span class="p">)</span>
+<span class="go">[&#39;Mozart&#39;, &#39;Monteverdi&#39;, &#39;Messiaen&#39;]</span>
+<span class="go">[&#39;Monteverdi&#39;, &#39;Messiaen&#39;, &#39;Mahler&#39;]</span>
+<span class="go">[&#39;Messiaen&#39;, &#39;Mahler&#39;, &#39;MacDowell&#39;]</span>
+<span class="go">[&#39;Mahler&#39;, &#39;MacDowell&#39;, &#39;Massenet&#39;]</span>
 </pre></div>
 </div>
 </dd></dl>

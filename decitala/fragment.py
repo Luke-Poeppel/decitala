@@ -29,7 +29,6 @@ from tools import (
 	successive_difference_array,
 )
 
-####################################################################################################
 # Fragments
 decitala_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas'
 greek_path = '/Users/lukepoeppel/decitala/Fragments/Greek_Metrics/XML'
@@ -37,19 +36,25 @@ greek_path = '/Users/lukepoeppel/decitala/Fragments/Greek_Metrics/XML'
 # ID's of decitalas with "subtalas"
 subdecitala_array = np.array([26, 38, 55, 65, 68])
 
-####################################################################################################
-class DecitalaException(Exception):
+############### EXCEPTIONS ###############
+class FragmentException(Exception):
 	pass
 
+class DecitalaException(FragmentException):
+	pass
+############### EXCEPTIONS ###############
 class GeneralFragment(object):
 	"""
-	Class representing a generic rhythmic fragment. 
+	Class representing a generic rhythmic fragment. The user must provide either a path to a readable
+	XML file or an array of quarter length values. 
 
-	:param str path: path to encoded fragment.
+	:param str filepath: path to encoded fragment (initialized to None).
+	:param numpy.array: array of quarter length values (initialized to None).
 	:param str name: optional name argument.
+	:raises `decitala.fragment.FragmentException`: when an array and file are provided or neither are provided.
 	
-	>>> random_fragment_path = '/users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml'
-	>>> g1 = GeneralFragment(path = random_fragment_path, name = 'test')
+	>>> random_fragment_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml'
+	>>> g1 = GeneralFragment(filepath=random_fragment_path, name='test')
 	>>> g1
 	<GeneralFragment_test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]>
 	>>> g1.filename
@@ -63,9 +68,7 @@ class GeneralFragment(object):
 	array([0.5 , 0.25, 0.25, 0.5 , 0.5 , 1.  , 1.  ])
 	>>> g1.successive_ratio_array()
 	array([1. , 0.5, 1. , 2. , 1. , 2. , 1. ])
-	>>> g1.carnatic_string
-	'| o o | | S S'
-	>>> g1.dseg(as_str = True)
+	>>> g1.dseg(as_str=True)
 	'<1 0 0 1 1 2 2>'
 	>>> g1.std()
 	0.2901442287369986
@@ -79,14 +82,31 @@ class GeneralFragment(object):
 	[0.5  1.   1.   0.5  0.25 0.25 0.5 ]
 	[1.   1.   0.5  0.25 0.25 0.5  0.5 ]
 	[1.   0.5  0.25 0.25 0.5  0.5  1.  ]
+	>>> 
+	>>> # We may also initialize with an array...
+	>>> GeneralFragment(array=np.array([0.75, 0.75, 0.5, 0.25]))
+	<GeneralFragment: [0.75 0.75 0.5  0.25]>
 	"""
-	def __init__(self, path, name = None, **kwargs):
-		self.path = path
-		self.filename = self.path.split('/')[-1]
-		self.name = name
+	def __init__(self, filepath=None, array=None, name=None, **kwargs):
+		try:
+			if (filepath == None == array) or (filepath != None != array):
+				raise FragmentException('Invalid instantiation...')
+		except ValueError:
+			pass
 
-		stream = converter.parse(path)
-		self.stream = stream
+		self.name = name
+		if filepath is not None:
+			assert type(filepath) == str
+			self.creation_type = 'filepath'
+			self.filepath = filepath
+			self.filename = self.filepath.split('/')[-1]
+
+			stream = converter.parse(filepath)
+			self.stream = stream
+		else:
+			assert len(array) >= 1
+			self.creation_type = 'array'
+			self.temp_ql_array = np.array(array)
 
 	def __repr__(self):
 		if self.name is None:
@@ -102,19 +122,12 @@ class GeneralFragment(object):
 
 	def __eq__(self, other):
 		"""
-		:return: whether or not one decitala is equal to another, as defined by its hash.
+		:return: whether or not one fragment is equal to another, as defined by its hash.
 		"""
 		if self.__hash__() == other.__hash__():
 			return True
 		else:
 			return False
-
-	@classmethod
-	def make_by_array(cls, array):
-		"""
-		Creates a fragment.GeneralFragment object from an array. 
-		"""
-		raise NotImplementedError
 	
 	def ql_array(self, retrograde=False):
 		"""
@@ -122,10 +135,16 @@ class GeneralFragment(object):
 		:return: the quarter length array of the fragment. 
 		:rtype: numpy.array
 		"""
-		if not(retrograde):
-			return np.array([this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)])
+		if self.creation_type == 'filepath':
+			if not(retrograde):
+				return np.array([this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)])
+			else:
+				return np.flip(np.array([this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)]))
 		else:
-			return np.flip(np.array([this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)]))
+			if not(retrograde):
+				return self.temp_ql_array
+			else:
+				return np.flip(self.temp_ql_array)
 
 	def ql_tuple(self, retrograde=False):
 		"""
@@ -151,14 +170,6 @@ class GeneralFragment(object):
 		return self.__len__()
 
 	@property
-	def carnatic_string(self):
-		"""
-		:return: the fragment in carnatic rhythmic notation.
-		:rtype: str
-		"""
-		return ql_array_to_carnatic_string(self.ql_array())
-
-	@property
 	def ql_duration(self):
 		"""
 		:return: the overall duration of the fragment (as expressed in quarter lengths).
@@ -171,6 +182,10 @@ class GeneralFragment(object):
 		:param bool as_str: whether or not to return the d-seg as a string.
 		:return: the d-seg of the fragment, as introducted in "The Perception of Rhythm in Non-Tonal Music" (Marvin, 1991). Maps a fragment into a sequence of relative durations. 
 		:rtype: numpy.array
+
+		>>> g3 = GeneralFragment(array=np.array([0.25, 0.75, 2.0, 1.0]), name='marvin-p70')
+		>>> g3.dseg()
+		array([0, 1, 3, 2])
 		"""
 		dseg_vals = copy.copy(self.ql_array())
 		valueDict = dict()
@@ -193,6 +208,12 @@ class GeneralFragment(object):
 		:param bool as_str: whether or not to return the reduced d-seg as a string.
 		:return: d-seg of the fragment with all contiguous equal values reduced to a single instance.
 		:rtype: numpy.array
+
+		>>> g4 = GeneralFragment(array=[0.125, 0.125, 1.75, 0.5], name='marvin-p74-x')
+		>>> g4.dseg(as_str=True)
+		'<0 0 2 1>'
+		>>> g4.reduced_dseg(as_str=True)
+		'<0 2 1>'
 		"""
 		def _remove_adjacent_equal_elements(array):
 			as_lst = list(array)
@@ -217,12 +238,11 @@ class GeneralFragment(object):
 		
 	def cyclic_permutations(self):
 		"""
-		:return: all cyclic permutations of self.ql_array(), as in Morris (year?).
+		:return: all cyclic permutations of :`decitala.fragment.Decitala.ql_array()`, as in Morris (year?).
 		:rtype: numpy.array
 		"""
 		return np.array([np.roll(self.ql_array(), -i) for i in range(self.num_onsets)])
 
-	################ ANALYSIS ################
 	@property
 	def is_non_retrogradable(self):
 		"""
@@ -236,13 +256,13 @@ class GeneralFragment(object):
 		:return: the fragment's form of rhythmic symmetry, as defined by Morris (?). 
 		:rtype: str
 
-		I.) Maximally Trivial:				of the form X (one onset, one anga class)
-		II.) Trivial Symmetry: 				of the form XXXXXX (multiple onsets, same anga class)
-		III.) Trivial Dual Symmetry:  		of the form XY (two onsets, two anga classes)
-		IV.) Maximally Trivial Palindrome: 	of the form XXX...XYX...XXX (multiple onsets, two anga classes)
-		V.) Trivial Dual Palindromic:		of the form XXX...XYYYX...XXX (multiple onsets, two anga classes)
-		VI.) Palindromic: 					of the form XY...Z...YX (multiple onsets, n/2 anga classes)
-		VII.) Stream:						of the form XYZ...abc... (n onsets, n anga classes)
+		- I. Maximally Trivial:				of the form :math:`X` (one onset, one anga class)
+		- II. Trivial Symmetry: 			of the form :math:`XXXXXX` (multiple onsets, same anga class)
+		- III. Trivial Dual Symmetry:  		of the form :math:`XY` (two onsets, two anga classes)
+		- IV. Maximally Trivial Palindrome: of the form :math:`XXX...XYX...XXX` (multiple onsets, two anga classes)
+		- V. Trivial Dual Palindromic:		of the form :math:`XXX...XYYYX...XXX` (multiple onsets, two anga classes)
+		- VI. Palindromic: 					of the form :math:`XY...Z...YX` (multiple onsets, :math:`n/2` anga classes)
+		- VII. Stream:						of the form :math:`XYZ...abc...` (:math:`n` onsets, :math:`n` anga classes)
 		"""
 		dseg = self.dseg(as_str = False)
 		reduced_dseg = self.reduced_dseg(as_str = False)
@@ -303,15 +323,15 @@ class GeneralFragment(object):
 		if self.stream:
 			return self.stream.show() 
 
-########################################################################
-# Decitala object
+####################################################################################################
 class Decitala(GeneralFragment):
 	"""
 	Class defining a Decitala object. The class currently reads from the Fragments/Decitala
 	folder which contains XML files for each fragment. 
 
-	Base class: `fragment.GeneralFragment`. 	
-
+	:param str name: Name of the decitala, as is transliterated in the  (1921). 
+	:raises `decitala.fragment.DecitalaException`: when there is an issue with the name.
+		
 	>>> ragavardhana = Decitala('Ragavardhana')
 	>>> ragavardhana
 	<decitala.Decitala 93_Ragavardhana>
@@ -353,12 +373,6 @@ class Decitala(GeneralFragment):
 	[0.25 0.25 1.5  0.5  1.   0.5  0.5 ]
 	[0.25 1.5  0.5  1.   0.5  0.5  0.25]
 	[1.5  0.5  1.   0.5  0.5  0.25 0.25]
-	
-	Decitala.get_by_id retrieves a decitala based on an input identification number. These 
-	numbers are listed in the Lavignac Encyclopédie and Messiaen Traité. 
-	
-	>>> Decitala.get_by_id(89)
-	<decitala.Decitala 89_Lalitapriya>
 	"""
 	def __init__(self, name, **kwargs):
 		if name:
@@ -389,7 +403,7 @@ class Decitala(GeneralFragment):
 			else:
 				pass
 
-		super().__init__(path=self.full_path, name = self.name)
+		super().__init__(filepath=self.full_path, name=self.name)
 	
 	def __repr__(self):
 		return '<decitala.Decitala {}>'.format(self.name)
@@ -397,7 +411,7 @@ class Decitala(GeneralFragment):
 	@property
 	def id_num(self):
 		"""
-		:return: the ID of the fragment, as given by Lavignac.
+		:return: the ID of the fragment, as given by Lavignac (1921).
 		:rtype: int
 		"""
 		if self.name:
@@ -407,20 +421,24 @@ class Decitala(GeneralFragment):
 	@classmethod
 	def get_by_id(cls, input_id):
 		"""
-		A class method which retrieves a `fragment.Decitala` object based on a given ID
-		number. Some talas have (as I'm calling them) "sub-talas," meaning that their 
-		id num is not unique. Querying by those talas is currently not supported.
+		A class method which retrieves a `decitala.fragment.Decitala` object based on a given ID number. These 
+		numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. Some talas have (as I'm calling them) 
+		"sub-talas," meaning that their id is not unique. Querying by those talas is currently not supported.
 
-		:return: fragment.Decitala object.
+		:return: a Decitala object
 		:param int input_id: id number of the tala (in range 1-120).
-		:rtype: fragment.Decitala
+		:rtype: decitala.fragment.Decitala
+		:raises `decitala.fragment.DecitalaException`: when there is an issue with the `input_it`.
+
+		>>> Decitala.get_by_id(89)
+		<decitala.Decitala 89_Lalitapriya>
 		"""
 		assert type(input_id) == int
 		if input_id > 121 or input_id < 1:
 			raise DecitalaException('Input must be between 1 and 120!')
 		
 		if input_id in subdecitala_array:
-			raise DecitalaException('There are multiple talas with this ID. Please consult the Lavignac.')
+			raise DecitalaException('There are multiple talas with this ID. Please consult the Lavignac (1921).')
 
 		for thisFile in os.listdir(decitala_path):
 			x = re.search(r'\d+', thisFile)
@@ -430,6 +448,11 @@ class Decitala(GeneralFragment):
 					return Decitala(name=thisFile[span_end:])
 			except AttributeError:
 				pass
+	
+	@property
+	def carnatic_string(self):
+		"""See docstring of :`decitala.tools.successive_ratio_array`."""
+		return ql_array_to_carnatic_string(self.ql_array())
 	
 	@property
 	def num_matras(self):
@@ -444,10 +467,15 @@ class Decitala(GeneralFragment):
 		"""
 		:return: the number of anga classes in the tala (the number of unique rhythmic values).
 		:rtype: int.
+
+		>>> Decitala('Karanayati').num_anga_classes
+		1
+		>>> Decitala('Rajatala').num_anga_classes
+		4
 		"""
 		return len(set(self.ql_array()))
 	
-######################################
+####################################################################################################
 class GreekFoot(GeneralFragment):
 	"""
 	Class that stores greek foot data. Reads from a folder containing all greek feet XML files.
@@ -496,7 +524,7 @@ class GreekFoot(GeneralFragment):
 					self.filename = thisFile
 					self.stream = converter.parse(greek_path + '/' + thisFile)
 
-		super().__init__(path=self.full_path, name = self.name)
+		super().__init__(filepath=self.full_path, name=self.name)
 	
 	def __repr__(self):
 		return '<decitala.GreekFoot {}>'.format(self.name)

@@ -140,11 +140,14 @@ def contiguous_multiplication(array):
 		i += 1 
 	return np.array(out)
 
+####################################################################################################
 # Notational Conversion Functions
 def carnatic_string_to_ql_array(string):
 	"""
-	Converts a string of carnatic rhythmic values to a quarter length numpy array. The carnatic symbols 
-	must have a spaces between them or it will be converted incorrectly. 
+	:return: a string of carnatic values converted to a standard ql array. 
+	:rtype: numpy.array. 
+	
+	NOTE: The carnatic symbols must have spaces between them or there will be conversion issues. 
 
 	>>> carnatic_string_to_ql_array(string = 'oc o | | Sc S o o o')
 	array([0.375, 0.25 , 0.5  , 0.5  , 1.5  , 1.   , 0.25 , 0.25 , 0.25 ])
@@ -154,7 +157,8 @@ def carnatic_string_to_ql_array(string):
 
 def ql_array_to_carnatic_string(ql_array):
 	"""
-	Converts a list of quarter length values to a string of carnatic rhythmic values.
+	:return: a list of quarter length values converted to carnatic rhythmic notation.
+	:rtype: str
 	
 	>>> ql_array_to_carnatic_string([0.5, 0.25, 0.25, 0.375, 1.0, 1.5, 1.0, 0.5, 1.0])
 	'| o o oc S Sc S | S'
@@ -162,6 +166,10 @@ def ql_array_to_carnatic_string(ql_array):
 	return ' '.join(np.array([this_carnatic_val[1] for this_val in ql_array for this_carnatic_val in carnatic_symbols if (float(this_carnatic_val[2]) == this_val)]))
 
 def ql_array_to_greek_diacritics(ql_array):
+	"""
+	:return: a list of quarter length values converted to greek prosodic notation.
+	:rtype: str
+	"""
 	greek_string_lst = []
 	for this_val in ql_array:
 		for this_diacritic_name, this_diacritic_symbol, this_diacritic_val in greek_diacritics:
@@ -169,6 +177,36 @@ def ql_array_to_greek_diacritics(ql_array):
 				greek_string_lst.append(this_diacritic_symbol)
 
 	return ' '.join(greek_string_lst)
+
+####################################################################################################
+# Windowing
+def roll_window(lst, window_length):
+	'''
+	Takes in a list and returns a list of lists that holds rolling windows of length window_length.
+
+	>>> l = ['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet']
+	>>> for this in roll_window(lst=l, window_length=3):
+	...     print(this)
+	['Mozart', 'Monteverdi', 'Messiaen']
+	['Monteverdi', 'Messiaen', 'Mahler']
+	['Messiaen', 'Mahler', 'MacDowell']
+	['Mahler', 'MacDowell', 'Massenet']
+	'''
+	assert type(window_length) == int
+
+	l = []
+	iterable = iter(lst)
+	win = []
+	for _ in range(0, window_length):
+		win.append(next(iterable))
+	
+	l.append(win)
+
+	for thisElem in iterable:
+		win = win[1:] + [thisElem]
+		l.append(win)
+
+	return l
 
 ####################################################################################################
 # La Valeur Ajoutee
