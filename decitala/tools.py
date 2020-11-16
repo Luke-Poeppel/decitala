@@ -167,9 +167,25 @@ def ql_array_to_carnatic_string(ql_array):
 
 def ql_array_to_greek_diacritics(ql_array):
 	"""
+	Returns the input ``ql_array`` in greek prosodic notation. This notation only allows
+	for two types of rhythmic values (long & short). 
+
+	:param numpy.array 
 	:return: a list of quarter length values converted to greek prosodic notation.
 	:rtype: str
+
+	>>> ql_array_to_greek_diacritics(ql_array=[1.0, 0.5, 0.5, 1.0, 1.0, 0.5])
+	'–– ⏑ ⏑ –– –– ⏑'
 	"""
+	ql_array = np.array(ql_array) # Ensures native numpy type.
+	assert len(np.unique(ql_array)) == 2
+
+	long_val = max(ql_array)
+	short_val = min(ql_array)
+	long_factor = 2.0 / long_val
+	short_factor = 1.0 / short_val
+
+	ql_array = np.array([(x * long_factor) if x == long_val else (x * short_factor) for x in ql_array])
 	greek_string_lst = []
 	for this_val in ql_array:
 		for this_diacritic_name, this_diacritic_symbol, this_diacritic_val in greek_diacritics:
@@ -177,7 +193,7 @@ def ql_array_to_greek_diacritics(ql_array):
 				greek_string_lst.append(this_diacritic_symbol)
 
 	return ' '.join(greek_string_lst)
-
+	
 ####################################################################################################
 # Windowing
 def roll_window(lst, window_length):

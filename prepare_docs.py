@@ -7,11 +7,6 @@
 #
 # Location: Frankfurt, DE 2020 
 ####################################################################################################
-"""
-1. Run `python3 setup.py install` in the decitala directory.
-2. cd into the docs directory.
-3. `make html`
-"""
 import os
 def prepare():
 	os.chdir("/Users/lukepoeppel/decitala/")
