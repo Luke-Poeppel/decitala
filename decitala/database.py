@@ -5,15 +5,10 @@
 # 
 # Author:   Luke Poeppel
 #
-# Location: Kent, CT 2020
+# Location: Kent, CT 2020 / Frankfurt, DE 2020
 ####################################################################################################
 """
-NOTE: 
-- IMPORTANT: there should be a kind of discrimination approach here. We should be able to create a 
-database that excludes all single-onset talas and create the paths from there. 
-- Should have the option to create a decitala database, greek foot database, combined 
-database, etc... For now, let's just assume it's a decitala databse. 
-- This function would work well in command line. decitala_v2 create_database <score_path> <part_num>
+Tools for creating a sqlite3 databases of extracted rhythmic data. 
 
 TODO:
 - It doesn't make sense to rewrite all the code twice. Make "filter" a parameter for create_database.
@@ -31,16 +26,40 @@ from music21 import stream
 
 from fragment import Decitala
 from trees import FragmentTree#, rolling_search2
+"""
 from pofp import (
 	dynamically_partition_onset_list, 
 	get_pareto_optimal_longest_paths,
 	filter_single_anga_class_talas,
 	filter_subtalas
 )
+"""
 
-decitala_path = '/Users/lukepoeppel/decitala_v2/Decitalas'
+decitala_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas'
 
 ####################################################################################################
+
+@click.command()
+@click.option('--verbose', is_flag=True, help="Will print verbose messages.")
+@click.option('--name', default='', help="Who are you?")
+def cli(verbose, name):
+	if verbose:
+		click.echo("You are in verbose mode.")
+	click.secho("Hello, World!", fg="blue", bold=True)
+	click.secho("This is a command line tool test.")
+	click.echo("Bye, {}".format(name))
+
+
+
+
+
+
+
+
+
+
+####################################################################################################
+
 # Helper functions
 def _name_from_tala_string(tala_string):
 	"""

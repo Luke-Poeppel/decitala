@@ -152,9 +152,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="tools-py">
-<h1>tools.py<a class="headerlink" href="#tools-py" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-decitala.tools"></span><dl class="py function">
+  <div class="section" id="module-decitala.tools">
+<span id="tools-py"></span><h1>tools.py<a class="headerlink" href="#module-decitala.tools" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
 <dt id="decitala.tools.augment">
 <code class="sig-prename descclassname">decitala.tools.</code><code class="sig-name descname">augment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fragment</span></em>, <em class="sig-param"><span class="n">factor</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">difference</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.tools.augment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an augmentation in the style of Messiaen. If difference is set to 0.0, then the augmentation
@@ -302,10 +302,15 @@ for two types of rhythmic values (long &amp; short).</p>
 
 <dl class="py function">
 <dt id="decitala.tools.roll_window">
-<code class="sig-prename descclassname">decitala.tools.</code><code class="sig-name descname">roll_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lst</span></em>, <em class="sig-param"><span class="n">window_length</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.tools.roll_window" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">decitala.tools.</code><code class="sig-name descname">roll_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array</span></em>, <em class="sig-param"><span class="n">window_length</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.tools.roll_window" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes in a list and returns a list of lists that holds rolling windows of length window_length.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Mozart&#39;</span><span class="p">,</span> <span class="s1">&#39;Monteverdi&#39;</span><span class="p">,</span> <span class="s1">&#39;Messiaen&#39;</span><span class="p">,</span> <span class="s1">&#39;Mahler&#39;</span><span class="p">,</span> <span class="s1">&#39;MacDowell&#39;</span><span class="p">,</span> <span class="s1">&#39;Massenet&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this</span> <span class="ow">in</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">lst</span><span class="o">=</span><span class="n">l</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>array</strong> (<em>np.array</em>) – arbitrary array.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">composers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;Mozart&#39;</span><span class="p">,</span> <span class="s1">&#39;Monteverdi&#39;</span><span class="p">,</span> <span class="s1">&#39;Messiaen&#39;</span><span class="p">,</span> <span class="s1">&#39;Mahler&#39;</span><span class="p">,</span> <span class="s1">&#39;MacDowell&#39;</span><span class="p">,</span> <span class="s1">&#39;Massenet&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this</span> <span class="ow">in</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">lst</span><span class="o">=</span><span class="n">composers</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">this</span><span class="p">)</span>
 <span class="go">[&#39;Mozart&#39;, &#39;Monteverdi&#39;, &#39;Messiaen&#39;]</span>
 <span class="go">[&#39;Monteverdi&#39;, &#39;Messiaen&#39;, &#39;Mahler&#39;]</span>
