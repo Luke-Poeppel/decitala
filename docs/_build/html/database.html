@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Python Module Index &mdash; decitala  documentation</title>
+  <title>database.py &mdash; decitala  documentation</title>
   
 
   
@@ -34,9 +34,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="decitala  documentation" href="index.html"/>
- 
-
-
+        <link rel="next" title="paths.py" href="paths.html"/>
+        <link rel="prev" title="pofp.py" href="pofp.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -83,11 +82,11 @@
             
             
                 <p class="caption"><span class="caption-text">Modules</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trees.html">trees.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">database.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paths.html">paths.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contour.html">contour.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">tools.py</a></li>
@@ -135,12 +134,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Python Module Index</li>
+      <li>database.py</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
+            <a href="_sources/database.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -152,64 +153,48 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
+  <div class="section" id="database-py">
+<h1>database.py<a class="headerlink" href="#database-py" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-decitala.database"></span><p>NOTE: 
+- IMPORTANT: there should be a kind of discrimination approach here. We should be able to create a 
+database that excludes all single-onset talas and create the paths from there. 
+- Should have the option to create a decitala database, greek foot database, combined 
+database, etc… For now, let’s just assume it’s a decitala databse. 
+- This function would work well in command line. decitala_v2 create_database &lt;score_path&gt; &lt;part_num&gt;</p>
+<p>TODO:
+- It doesn’t make sense to rewrite all the code twice. Make “filter” a parameter for create_database.
+So the command line tool would be something like decitala create_database (un)filtered &lt;path&gt; &lt;part_num&gt;
+- get_indices_of_object_occurrence really shouldn’t be a tree function; it should be separate. 
+- you should be able to build a database on exact matches only. this is more of a TODO for get_by_ql_list.</p>
+<dl class="py function">
+<dt id="decitala.database.create_database">
+<code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">create_database</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_path</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">db_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.database.create_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for creating a decitala and paths database in the cwd. 
+NOTE: this function creates the raw database with no filtering</p>
+</dd></dl>
 
-   <h1>Python Module Index</h1>
+<dl class="py function">
+<dt id="decitala.database.create_filtered_database">
+<code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">create_filtered_database</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_path</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">db_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.database.create_filtered_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for creating a decitala and paths database in the cwd. 
+NOTE: this function creates the filtered database. (No subtalas, no single anga-class talas)</p>
+</dd></dl>
 
-   <div class="modindex-jumpbox">
-   <a href="#cap-d"><strong>d</strong></a>
-   </div>
-
-   <table class="indextable modindextable">
-     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
-     <tr class="cap" id="cap-d"><td></td><td>
-       <strong>d</strong></td><td></td></tr>
-     <tr>
-       <td><img src="_static/minus.png" class="toggler"
-              id="toggle-1" style="display: none" alt="-" /></td>
-       <td>
-       <code class="xref">decitala</code></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="contour.html#module-decitala.contour"><code class="xref">decitala.contour</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="database.html#module-decitala.database"><code class="xref">decitala.database</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="fragment.html#module-decitala.fragment"><code class="xref">decitala.fragment</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="paths.html#module-decitala.paths"><code class="xref">decitala.paths</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="pofp.html#module-decitala.pofp"><code class="xref">decitala.pofp</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="tools.html#module-decitala.tools"><code class="xref">decitala.tools</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="trees.html#module-decitala.trees"><code class="xref">decitala.trees</code></a></td><td>
-       <em></em></td></tr>
-   </table>
+</div>
 
 
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="paths.html" class="btn btn-neutral float-right" title="paths.py" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pofp.html" class="btn btn-neutral" title="pofp.py" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

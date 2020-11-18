@@ -639,7 +639,8 @@ def rolling_search(
 	):
 	"""
 	Rolling search on a music21-readable file on a given part. For search types, see 
-	documentation for :func:`decitala.trees.get_by_ql_array`. 
+	documentation for :func:`decitala.trees.get_by_ql_array`. The given window lengths 
+	are the lengths of all the talas in the dataset. 
 
 	:param str filepath: path to file to be searched.
 	:param int part_num: part in the file to be searched (0-indexed).

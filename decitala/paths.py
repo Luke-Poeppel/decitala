@@ -25,7 +25,7 @@ from music21 import converter
 from music21 import note
 from music21 import stream
 
-from decitala import Decitala, get_added_values
+from fragment import Decitala
 
 def get_all_paths_info(db_path):
 	"""

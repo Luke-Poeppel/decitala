@@ -20,6 +20,9 @@ Tools for automating ethnological rhythmic analysis of Olivier Messiaen's music.
    fragment
    trees
    pofp
+   database
+   paths
+   contour
    tools
 
 Indices and tables

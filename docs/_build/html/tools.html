@@ -34,7 +34,7 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="decitala  documentation" href="index.html"/>
-        <link rel="prev" title="pofp.py" href="pofp.html"/> 
+        <link rel="prev" title="contour.py" href="contour.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -85,6 +85,9 @@
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trees.html">trees.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paths.html">paths.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contour.html">contour.py</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">tools.py</a></li>
 </ul>
 
@@ -254,7 +257,7 @@ such, the dimension of the output vector is <span class="math notranslate nohigh
 <dd class="field-even"><p>numpy.array.</p>
 </dd>
 </dl>
-<p>NOTE: The carnatic symbols must have spaces between them or there will be conversion issues.</p>
+<p><strong>NOTE</strong>: The carnatic symbols must have spaces between them or there will be conversion issues.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">carnatic_string_to_ql_array</span><span class="p">(</span><span class="n">string</span> <span class="o">=</span> <span class="s1">&#39;oc o | | Sc S o o o&#39;</span><span class="p">)</span>
 <span class="go">array([0.375, 0.25 , 0.5  , 0.5  , 1.5  , 1.   , 0.25 , 0.25 , 0.25 ])</span>
 </pre></div>
@@ -283,9 +286,14 @@ such, the dimension of the output vector is <span class="math notranslate nohigh
 <code class="sig-prename descclassname">decitala.tools.</code><code class="sig-name descname">ql_array_to_greek_diacritics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ql_array</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.tools.ql_array_to_greek_diacritics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the input <code class="docutils literal notranslate"><span class="pre">ql_array</span></code> in greek prosodic notation. This notation only allows
 for two types of rhythmic values (long &amp; short).</p>
-<p>:param numpy.array 
-:return: a list of quarter length values converted to greek prosodic notation.
-:rtype: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a list of quarter length values converted to greek prosodic notation.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ql_array_to_greek_diacritics</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
 <span class="go">&#39;–– ⏑ ⏑ –– –– ⏑&#39;</span>
 </pre></div>
@@ -317,7 +325,7 @@ for two types of rhythmic values (long &amp; short).</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="pofp.html" class="btn btn-neutral" title="pofp.py" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="contour.html" class="btn btn-neutral" title="contour.py" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

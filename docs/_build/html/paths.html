@@ -1,0 +1,346 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>paths.py &mdash; decitala  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="decitala  documentation" href="index.html"/>
+        <link rel="next" title="contour.py" href="contour.html"/>
+        <link rel="prev" title="database.py" href="database.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trees.html">trees.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">paths.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contour.html">contour.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">tools.py</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">decitala</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>paths.py</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/paths.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="paths-py">
+<h1>paths.py<a class="headerlink" href="#paths-py" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-decitala.paths"></span><p>Stores data for each pareto optimal path.</p>
+<dl class="py function">
+<dt id="decitala.paths.get_all_paths_info">
+<code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">get_all_paths_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.paths.get_all_paths_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the path info</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="decitala.paths.SubPath">
+<em class="property">class </em><code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">SubPath</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_path</span></em>, <em class="sig-param"><span class="n">table_num</span></em>, <em class="sig-param"><span class="n">path_num</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.paths.SubPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Object for storing information about a subpath in a given database. Keeps track of the path onsets, 
+the decitalas within it, and calculates relevant information (e.g. gap_score). Under the right 
+conditions, Subpaths compose a full Path object (defined below).</p>
+<p>NOTE: the individual paths in a sqlite table are 1-indexed.</p>
+<p>TODO: __add__() method for subpaths (this is a bit more complicated…)</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">livre_dorgue0_path</span> <span class="o">=</span> <span class="s1">&#39;/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span> <span class="o">=</span> <span class="n">SubPath</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">livre_dorgue0_path</span><span class="p">,</span> <span class="n">table_num</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">path_num</span><span class="o">=</span><span class="mi">62</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span>
+<span class="go">&lt;SubPath_62: [(181.0, 184.75), (184.875, 185.875), (186.375, 187.375), (187.375, 188.25), (188.75, 191.75), (191.75, 195.125)]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span><span class="o">.</span><span class="n">path</span>
+<span class="go">[(181.0, 184.75), (184.875, 185.875), (186.375, 187.375), (187.375, 188.25), (188.75, 191.75), (191.75, 195.125)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sp</span><span class="o">.</span><span class="n">pitch_data</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">((66,), (77,), (75,))</span>
+<span class="go">((60,), (68,), (71,), (82,), (75,))</span>
+<span class="go">((74,), (79,), (64,), (70,), (81,))</span>
+<span class="go">((75,), (61,), (72,))</span>
+<span class="go">((80,), (67,), (78,), (86,))</span>
+<span class="go">((69,), (77,), (66,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tala</span> <span class="ow">in</span> <span class="n">sp</span><span class="o">.</span><span class="n">decitalas</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">tala</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">tala</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
+<span class="go">21_Tribhinna [0.5 1.  1.5]</span>
+<span class="go">46_Jayacri [1.  0.5 1.  0.5 1. ]</span>
+<span class="go">46_Jayacri [1.  0.5 1.  0.5 1. ]</span>
+<span class="go">118_Rajamartanda [1.   0.5  0.25]</span>
+<span class="go">65_B_Kankala_Khanda [0.25 0.25 1.   1.  ]</span>
+<span class="go">21_Tribhinna [0.5 1.  1.5]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span><span class="o">.</span><span class="n">num_onsets</span>
+<span class="go">23</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span><span class="o">.</span><span class="n">start_onset</span>
+<span class="go">181.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span><span class="o">.</span><span class="n">end_onset</span>
+<span class="go">195.125</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span><span class="o">.</span><span class="n">gaps</span><span class="p">()</span>
+<span class="go">[0.125, 0.5, 0.0, 0.5, 0.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span><span class="o">.</span><span class="n">total_gaps</span><span class="p">()</span>
+<span class="go">1.125</span>
+</pre></div>
+</div>
+<p>SubPath().played_total_duration() only returns the total duration of sounded tones, i.e., 
+ignores silent periods. 
+&gt;&gt;&gt; sp.played_total_duration()
+13.0</p>
+<p>So, SubPath().total_range() is the played_total_duration() + total_gaps()
+&gt;&gt;&gt; sp.total_range()
+14.125
+&gt;&gt;&gt; sp.is_end_overlapping()
+False</p>
+<p>SubPath().gap_score() returns the percentage of total_range() that is continous, that is, without
+gaps. 
+&gt;&gt;&gt; sp.gap_score()
+92.035398
+&gt;&gt;&gt; sp.non_retrogradable_score()
+33.333333
+&gt;&gt;&gt; sp.recycling_score()
+66.666667</p>
+<p>SubPath().average_num_onsets_per_tala_score() tracks the average number of onsets in a path
+and scores it’s percentile in the context of the table.
+&gt;&gt;&gt; sp.average_num_onsets_per_tala_score()
+15.76086956521739</p>
+<dl class="py method">
+<dt id="decitala.paths.SubPath.show">
+<code class="sig-name descname">show</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decitala.paths.SubPath.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows the series of talas with the pitch information normalized to start at onset 0.0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.paths.SubPath.annotate_score">
+<code class="sig-name descname">annotate_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_path</span></em>, <em class="sig-param"><span class="n">part</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.paths.SubPath.annotate_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Annotates a given score (matching the score on which the database has been created) 
+with the SubPath data.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.paths.subpath_gap_score">
+<code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">subpath_gap_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">subpath1</span></em>, <em class="sig-param"><span class="n">subpath2</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.paths.subpath_gap_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes two SubPath objects and returns the PathGapScore</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="decitala.paths.Path">
+<em class="property">class </em><code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">Path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">subpaths</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.paths.Path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Concatenation of multiple SubPath objects (under the right conditions).</p>
+<dl class="py method">
+<dt id="decitala.paths.Path.filter_by_tala">
+<code class="sig-name descname">filter_by_tala</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">decitala</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.paths.Path.filter_by_tala" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns data filtered by tala.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="decitala.paths.Test">
+<em class="property">class </em><code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">Test</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.paths.Test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="contour.html" class="btn btn-neutral float-right" title="contour.py" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="database.html" class="btn btn-neutral" title="database.py" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Luke Poeppel.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

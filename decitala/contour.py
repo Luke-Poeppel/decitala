@@ -21,7 +21,7 @@ from music21 import chord
 from music21 import pitch
 from music21 import stream
 
-from decitala import Decitala
+from fragment import Decitala
 from paths import (
 	SubPath, 
 	Path,
@@ -164,6 +164,7 @@ def plot_normalized_pitches(data, use_highest_line = False):
 
 ####################################################################################################
 # Testing
+"""
 haikai0_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
 haikai1_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_1.db'
 
@@ -172,7 +173,7 @@ liturgie4_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_4.db'
 
 livre_dorgue_0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
 livre_dorgue_1_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db'
-
+"""
 
 #subpaths = get_full_model3_path(livre_dorgue_0_path)
 #path = Path(subpaths)
@@ -180,6 +181,7 @@ livre_dorgue_1_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db'
 #x = path.filter_by_tala(Decitala('Rangapradipaka'))
 #print(x)
 
+"""
 rangapradipaka_livre = [
 	[(24.5, 30.75), Decitala('Rangapradipaka'), ((69,), (65,), (58,), (79,), (60,))], 
 	[(35.5, 41.125), Decitala('Rangapradipaka'), ((60,), (76,), (86,), (83,), (74,))], 
@@ -197,9 +199,10 @@ rangapradipaka_livre = [
 	[(210.625, 215.625), Decitala('Rangapradipaka'), ((71,), (68,), (63,), (77,), (73,))],
 	[(224.625, 229.0), Decitala('Rangapradipaka'), ((55,), (58,), (42,), (65,), (63,))]
 ]
+"""
 
 #for x in rangapradipaka_livre:
-print(Decitala('Rangapradipaka').ql_array())	
+#print(Decitala('Rangapradipaka').ql_array())	
 
 
 '''

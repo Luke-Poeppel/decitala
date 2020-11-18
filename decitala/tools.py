@@ -147,7 +147,7 @@ def carnatic_string_to_ql_array(string):
 	:return: a string of carnatic values converted to a standard ql array. 
 	:rtype: numpy.array. 
 	
-	NOTE: The carnatic symbols must have spaces between them or there will be conversion issues. 
+	**NOTE**: The carnatic symbols must have spaces between them or there will be conversion issues. 
 
 	>>> carnatic_string_to_ql_array(string = 'oc o | | Sc S o o o')
 	array([0.375, 0.25 , 0.5  , 0.5  , 1.5  , 1.   , 0.25 , 0.25 , 0.25 ])
@@ -170,7 +170,6 @@ def ql_array_to_greek_diacritics(ql_array):
 	Returns the input ``ql_array`` in greek prosodic notation. This notation only allows
 	for two types of rhythmic values (long & short). 
 
-	:param numpy.array 
 	:return: a list of quarter length values converted to greek prosodic notation.
 	:rtype: str
 
@@ -193,25 +192,27 @@ def ql_array_to_greek_diacritics(ql_array):
 				greek_string_lst.append(this_diacritic_symbol)
 
 	return ' '.join(greek_string_lst)
-	
+
 ####################################################################################################
 # Windowing
-def roll_window(lst, window_length):
-	'''
+def roll_window(array, window_length):
+	"""
 	Takes in a list and returns a list of lists that holds rolling windows of length window_length.
 
-	>>> l = ['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet']
-	>>> for this in roll_window(lst=l, window_length=3):
+	:param np.array array: arbitrary array. 
+
+	>>> composers = np.array(['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet'])
+	>>> for this in roll_window(lst=composers, window_length=3):
 	...     print(this)
 	['Mozart', 'Monteverdi', 'Messiaen']
 	['Monteverdi', 'Messiaen', 'Mahler']
 	['Messiaen', 'Mahler', 'MacDowell']
 	['Mahler', 'MacDowell', 'Massenet']
-	'''
+	"""
 	assert type(window_length) == int
 
 	l = []
-	iterable = iter(lst)
+	iterable = iter(array)
 	win = []
 	for _ in range(0, window_length):
 		win.append(next(iterable))

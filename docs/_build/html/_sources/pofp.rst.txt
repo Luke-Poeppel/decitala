@@ -1,4 +1,7 @@
 =====
 pofp.py
 =====
-.. autofunction:: decitala.pofp.add_numbers
+.. automodule:: decitala.pofp
+   :members:
+   :member-order: bysource
+   :show-inheritance:

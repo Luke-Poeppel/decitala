@@ -34,7 +34,7 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="decitala  documentation" href="index.html"/>
-        <link rel="next" title="tools.py" href="tools.html"/>
+        <link rel="next" title="database.py" href="database.html"/>
         <link rel="prev" title="trees.py" href="trees.html"/> 
 
   
@@ -86,6 +86,9 @@
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trees.html">trees.py</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">pofp.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paths.html">paths.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contour.html">contour.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">tools.py</a></li>
 </ul>
 
@@ -152,28 +155,102 @@
             
   <div class="section" id="pofp-py">
 <h1>pofp.py<a class="headerlink" href="#pofp-py" title="Permalink to this headline">¶</a></h1>
+<span class="target" id="module-decitala.pofp"></span><p><strong>NOTE</strong>: M. Raynard helpfully provided a technique for solving the given problem (an iterative approach
+to the end-overlapping indices problem) in a StackOverflow post from Summer, 2020. The link to the 
+original post is: <a class="reference external" href="https://stackoverflow.com/questions/62734114/iterative-solution-to-end-overlapping-indices">https://stackoverflow.com/questions/62734114/iterative-solution-to-end-overlapping-indices</a>.</p>
+<p>Once we have retrieved <span class="math notranslate nohighlight">\(n\)</span> talas in an instrument, we want to check whether or not they align. 
+If a tala <span class="math notranslate nohighlight">\(T_1\)</span> ranges from onsets <span class="math notranslate nohighlight">\(X_i\)</span> to <span class="math notranslate nohighlight">\(Y_i\)</span> and a tala <span class="math notranslate nohighlight">\(T_2\)</span> ranges from 
+onsets <span class="math notranslate nohighlight">\(X_j\)</span> to <span class="math notranslate nohighlight">\(Y_j\)</span>, if <span class="math notranslate nohighlight">\(X_j &lt; Y_i\)</span>, we can’t satisfactorily align <span class="math notranslate nohighlight">\(T_1\)</span> and
+<span class="math notranslate nohighlight">\(T_2\)</span>; this means that one or both of those talas was not intentionally included, and simply 
+exists as a sub-tala/cyclic rotation. Multiple possible alignments exist, so we calculate them all
+using an iterative solution to the end-overlapping indices problem using a Pareto frontier of paths.</p>
 <dl class="py function">
-<dt id="decitala.pofp.add_numbers">
-<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">add_numbers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.pofp.add_numbers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the sum of two numbers.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>a</strong> (<em>int</em>) – first number</p></li>
-<li><p><strong>b</strong> (<em>int</em>) – second number</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>sum of the two numbers</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>int</p>
-</dd>
-</dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">add_numbers</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="go">4</span>
+<dt id="decitala.pofp.naive_partition">
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">naive_partition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">onset_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.pofp.naive_partition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Partitions the onset list without regard for nice breakpoints into chunks of length 18. 
+The remainder is the last partitions.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.pofp.check_good">
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">check_good</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lst</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.pofp.check_good" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if for every increment of 20, there exists a value.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.pofp.dynamically_partition_onset_list">
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">dynamically_partition_onset_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">onset_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.pofp.dynamically_partition_onset_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>1.) Go through and check if we can find breakpoints for end-overlapping paths. To do this, we need to use
+the check_all_prev function.
+2.) If breakpoints can be found, check if there are enough (and are of appropriate size) to form partitions. 
+3.) If no breakpoints can be found (or they are of inappropriate lengths, i.e., &gt; 20), partition the data 
+randomly into chunks of 18 and append the remaining.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.pofp.filter_single_anga_class_talas">
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">filter_single_anga_class_talas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">onset_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.pofp.filter_single_anga_class_talas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the output tala data from the rolling window search, returns a new list 
+with all single anga class talas removed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.pofp.filter_subtalas">
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">filter_subtalas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">onset_list</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.pofp.filter_subtalas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the output tala data from the filter above, returns a new list with 
+all subtalas (that is, talas that “sit inside” other talas) removed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.pofp.get_pareto_optimal_longest_paths">
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">get_pareto_optimal_longest_paths</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tup_lst_in</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.pofp.get_pareto_optimal_longest_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p><a href="#id1"><span class="problematic" id="id2">**</span></a><a href="#id3"><span class="problematic" id="id4">*</span></a>THIS IS THE FUNCTION USED IN DATABASE
+The last few lines of this are really stupid; I just couldn’t figure out the solution today. 
+Something is different about hashing the list of tuples such that it works for the code above
+but not the code when all the data is included. If you make the switch, sources and sinks 
+are fine; the problem begins with min_successor, so it’s probably just a coding error.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tup_lst</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">((</span><span class="s2">&quot;info1&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)),</span> <span class="p">((</span><span class="s2">&quot;info2&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s2">&quot;info3&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)),</span> <span class="p">((</span><span class="s2">&quot;info4&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">((</span><span class="s2">&quot;info5&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s2">&quot;info6&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">)),</span> <span class="p">((</span><span class="s2">&quot;info7&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">))]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">onset_range</span> <span class="ow">in</span> <span class="n">tup_lst</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">onset_range</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">((&#39;info1&#39;,), (0.0, 2.0))</span>
+<span class="go">((&#39;info2&#39;,), (0.0, 4.0))</span>
+<span class="go">((&#39;info3&#39;,), (2.5, 4.5))</span>
+<span class="go">((&#39;info4&#39;,), (2.0, 5.75))</span>
+<span class="go">((&#39;info5&#39;,), (2.0, 4.0))</span>
+<span class="go">((&#39;info6&#39;,), (6.0, 7.25))</span>
+<span class="go">((&#39;info7&#39;,), (4.0, 5.5))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_path</span> <span class="ow">in</span> <span class="n">get_pareto_optimal_longest_paths</span><span class="p">(</span><span class="n">tup_lst</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">just_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_path</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">just_paths</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">[(0.0, 2.0), (2.0, 4.0), (4.0, 5.5), (6.0, 7.25)]</span>
+<span class="go">[(0.0, 2.0), (2.0, 5.75), (6.0, 7.25)]</span>
+<span class="go">[(0.0, 2.0), (2.5, 4.5), (6.0, 7.25)]</span>
+<span class="go">[(0.0, 4.0), (4.0, 5.5), (6.0, 7.25)]</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.pofp.show_paths">
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">show_paths</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">paths</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">title</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.pofp.show_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>A nice visualization for paths. For now, limited to 2.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="decitala.pofp.Test">
+<em class="property">class </em><code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">Test</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.pofp.Test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<p>Unittest(s)</p>
+<dl class="py method">
+<dt id="decitala.pofp.Test.setUp">
+<code class="sig-name descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decitala.pofp.Test.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hook method for setting up the test fixture before exercising it.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -185,7 +262,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="tools.html" class="btn btn-neutral float-right" title="tools.py" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="database.html" class="btn btn-neutral float-right" title="database.py" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="trees.html" class="btn btn-neutral" title="trees.py" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

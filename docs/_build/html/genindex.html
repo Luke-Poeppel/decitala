@@ -84,6 +84,9 @@
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trees.html">trees.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paths.html">paths.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contour.html">contour.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">tools.py</a></li>
 </ul>
 
@@ -160,10 +163,12 @@
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
  | <a href="#Q"><strong>Q</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
  | <a href="#W"><strong>W</strong></a>
  
 </div>
@@ -174,15 +179,15 @@
 </li>
       <li><a href="trees.html#decitala.trees.NaryTree.Node.add_children">add_children() (decitala.trees.NaryTree.Node method)</a>
 </li>
-      <li><a href="pofp.html#decitala.pofp.add_numbers">add_numbers() (in module decitala.pofp)</a>
+      <li><a href="trees.html#decitala.trees.NaryTree.Node.add_path_of_children">add_path_of_children() (decitala.trees.NaryTree.Node method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="trees.html#decitala.trees.NaryTree.Node.add_path_of_children">add_path_of_children() (decitala.trees.NaryTree.Node method)</a>
-</li>
       <li><a href="trees.html#decitala.trees.NaryTree.all_named_paths">all_named_paths() (decitala.trees.NaryTree method)</a>
 </li>
       <li><a href="trees.html#decitala.trees.NaryTree.all_possible_paths">all_possible_paths() (decitala.trees.NaryTree method)</a>
+</li>
+      <li><a href="paths.html#decitala.paths.SubPath.annotate_score">annotate_score() (decitala.paths.SubPath method)</a>
 </li>
       <li><a href="tools.html#decitala.tools.augment">augment() (in module decitala.tools)</a>
 </li>
@@ -196,11 +201,17 @@
 </li>
       <li><a href="fragment.html#decitala.fragment.Decitala.carnatic_string">carnatic_string() (decitala.fragment.Decitala property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tools.html#decitala.tools.carnatic_string_to_ql_array">carnatic_string_to_ql_array() (in module decitala.tools)</a>
 </li>
+      <li><a href="pofp.html#decitala.pofp.check_good">check_good() (in module decitala.pofp)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tools.html#decitala.tools.contiguous_multiplication">contiguous_multiplication() (in module decitala.tools)</a>
+</li>
+      <li><a href="database.html#decitala.database.create_database">create_database() (in module decitala.database)</a>
+</li>
+      <li><a href="database.html#decitala.database.create_filtered_database">create_filtered_database() (in module decitala.database)</a>
 </li>
       <li><a href="fragment.html#decitala.fragment.GeneralFragment.cyclic_permutations">cyclic_permutations() (decitala.fragment.GeneralFragment method)</a>
 </li>
@@ -213,10 +224,40 @@
       <li><a href="fragment.html#decitala.fragment.Decitala">Decitala (class in decitala.fragment)</a>
 </li>
       <li>
+    decitala.contour
+
+      <ul>
+        <li><a href="contour.html#module-decitala.contour">module</a>
+</li>
+      </ul></li>
+      <li>
+    decitala.database
+
+      <ul>
+        <li><a href="database.html#module-decitala.database">module</a>
+</li>
+      </ul></li>
+      <li>
     decitala.fragment
 
       <ul>
         <li><a href="fragment.html#module-decitala.fragment">module</a>
+</li>
+      </ul></li>
+      <li>
+    decitala.paths
+
+      <ul>
+        <li><a href="paths.html#module-decitala.paths">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    decitala.pofp
+
+      <ul>
+        <li><a href="pofp.html#module-decitala.pofp">module</a>
 </li>
       </ul></li>
       <li>
@@ -226,8 +267,6 @@
         <li><a href="tools.html#module-decitala.tools">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     decitala.trees
 
@@ -239,16 +278,26 @@
 </li>
       <li><a href="fragment.html#decitala.fragment.GeneralFragment.dseg">dseg() (decitala.fragment.GeneralFragment method)</a>
 </li>
+      <li><a href="pofp.html#decitala.pofp.dynamically_partition_onset_list">dynamically_partition_onset_list() (in module decitala.pofp)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="fragment.html#decitala.fragment.FragmentException">FragmentException</a>
+      <li><a href="paths.html#decitala.paths.Path.filter_by_tala">filter_by_tala() (decitala.paths.Path method)</a>
+</li>
+      <li><a href="pofp.html#decitala.pofp.filter_single_anga_class_talas">filter_single_anga_class_talas() (in module decitala.pofp)</a>
+</li>
+      <li><a href="pofp.html#decitala.pofp.filter_subtalas">filter_subtalas() (in module decitala.pofp)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="contour.html#decitala.contour.format_pitch_data">format_pitch_data() (in module decitala.contour)</a>
+</li>
+      <li><a href="fragment.html#decitala.fragment.FragmentException">FragmentException</a>
+</li>
       <li><a href="trees.html#decitala.trees.FragmentTree">FragmentTree (class in decitala.trees)</a>
 </li>
       <li><a href="trees.html#decitala.trees.FragmentTreeException">FragmentTreeException</a>
@@ -261,6 +310,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="fragment.html#decitala.fragment.GeneralFragment">GeneralFragment (class in decitala.fragment)</a>
 </li>
+      <li><a href="paths.html#decitala.paths.get_all_paths_info">get_all_paths_info() (in module decitala.paths)</a>
+</li>
       <li><a href="fragment.html#decitala.fragment.Decitala.get_by_id">get_by_id() (decitala.fragment.Decitala class method)</a>
 </li>
       <li><a href="trees.html#decitala.trees.get_by_ql_array">get_by_ql_array() (in module decitala.trees)</a>
@@ -270,6 +321,8 @@
       <li><a href="trees.html#decitala.trees.NaryTree.Node.get_child">get_child() (decitala.trees.NaryTree.Node method)</a>
 </li>
       <li><a href="trees.html#decitala.trees.NaryTree.Node.get_child_by_value">get_child_by_value() (decitala.trees.NaryTree.Node method)</a>
+</li>
+      <li><a href="pofp.html#decitala.pofp.get_pareto_optimal_longest_paths">get_pareto_optimal_longest_paths() (in module decitala.pofp)</a>
 </li>
       <li><a href="fragment.html#decitala.fragment.GreekFoot.greek_string">greek_string() (decitala.fragment.GreekFoot property)</a>
 </li>
@@ -305,7 +358,15 @@
     module
 
       <ul>
+        <li><a href="contour.html#module-decitala.contour">decitala.contour</a>
+</li>
+        <li><a href="database.html#module-decitala.database">decitala.database</a>
+</li>
         <li><a href="fragment.html#module-decitala.fragment">decitala.fragment</a>
+</li>
+        <li><a href="paths.html#module-decitala.paths">decitala.paths</a>
+</li>
+        <li><a href="pofp.html#module-decitala.pofp">decitala.pofp</a>
 </li>
         <li><a href="tools.html#module-decitala.tools">decitala.tools</a>
 </li>
@@ -322,14 +383,18 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pofp.html#decitala.pofp.naive_partition">naive_partition() (in module decitala.pofp)</a>
+</li>
       <li><a href="trees.html#decitala.trees.NaryTree">NaryTree (class in decitala.trees)</a>
 </li>
       <li><a href="trees.html#decitala.trees.NaryTree.Node">NaryTree.Node (class in decitala.trees)</a>
 </li>
-      <li><a href="fragment.html#decitala.fragment.GeneralFragment.nPVI">nPVI() (decitala.fragment.GeneralFragment method)</a>
+      <li><a href="contour.html#decitala.contour.normalize_pitch_content">normalize_pitch_content() (in module decitala.contour)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="fragment.html#decitala.fragment.GeneralFragment.nPVI">nPVI() (decitala.fragment.GeneralFragment method)</a>
+</li>
       <li><a href="fragment.html#decitala.fragment.Decitala.num_anga_classes">num_anga_classes() (decitala.fragment.Decitala property)</a>
 </li>
       <li><a href="trees.html#decitala.trees.NaryTree.Node.num_children">num_children() (decitala.trees.NaryTree.Node property)</a>
@@ -345,6 +410,18 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="trees.html#decitala.trees.NaryTree.Node.ordered_children">ordered_children() (decitala.trees.NaryTree.Node method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="paths.html#decitala.paths.Path">Path (class in decitala.paths)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="contour.html#decitala.contour.pitch_space_contour_from_midi">pitch_space_contour_from_midi() (in module decitala.contour)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -393,15 +470,29 @@
       <li><a href="trees.html#decitala.trees.NaryTree.search_for_path">search_for_path() (decitala.trees.NaryTree method)</a>
 </li>
       <li><a href="fragment.html#decitala.fragment.Test.setUp">setUp() (decitala.fragment.Test method)</a>
+
+      <ul>
+        <li><a href="pofp.html#decitala.pofp.Test.setUp">(decitala.pofp.Test method)</a>
+</li>
+      </ul></li>
+      <li><a href="paths.html#decitala.paths.SubPath.show">show() (decitala.paths.SubPath method)</a>
+</li>
+      <li><a href="pofp.html#decitala.pofp.show_paths">show_paths() (in module decitala.pofp)</a>
+</li>
+      <li><a href="contour.html#decitala.contour.single_tuples_to_array">single_tuples_to_array() (in module decitala.contour)</a>
 </li>
       <li><a href="trees.html#decitala.trees.NaryTree.size">size() (decitala.trees.NaryTree method)</a>
 </li>
       <li><a href="fragment.html#decitala.fragment.GeneralFragment.std">std() (decitala.fragment.GeneralFragment method)</a>
 </li>
-      <li><a href="trees.html#decitala.trees.NaryTree.subpaths">subpaths() (decitala.trees.NaryTree method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="paths.html#decitala.paths.SubPath">SubPath (class in decitala.paths)</a>
+</li>
+      <li><a href="paths.html#decitala.paths.subpath_gap_score">subpath_gap_score() (in module decitala.paths)</a>
+</li>
+      <li><a href="trees.html#decitala.trees.NaryTree.subpaths">subpaths() (decitala.trees.NaryTree method)</a>
+</li>
       <li><a href="fragment.html#decitala.fragment.GeneralFragment.successive_difference_array">successive_difference_array() (decitala.fragment.GeneralFragment method)</a>
 
       <ul>
@@ -423,10 +514,24 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="fragment.html#decitala.fragment.Test">Test (class in decitala.fragment)</a>
+
+      <ul>
+        <li><a href="paths.html#decitala.paths.Test">(class in decitala.paths)</a>
 </li>
+        <li><a href="pofp.html#decitala.pofp.Test">(class in decitala.pofp)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="trees.html#decitala.trees.TreeException">TreeException</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="contour.html#decitala.contour.uds_contour">uds_contour() (in module decitala.contour)</a>
 </li>
   </ul></td>
 </tr></table>

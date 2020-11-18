@@ -86,6 +86,9 @@
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">trees.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paths.html">paths.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contour.html">contour.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html">tools.py</a></li>
 </ul>
 
@@ -152,7 +155,14 @@
             
   <div class="section" id="trees-py">
 <h1>trees.py<a class="headerlink" href="#trees-py" title="Permalink to this headline">¶</a></h1>
-<p>Test this expanation…</p>
+<p>Messiaen often altered rhythmic fragments from the decitala database before including
+them in his composition. But he still establishes a kind of equivalence relation such that
+a fragment <span class="math notranslate nohighlight">\(F\)</span> and a transformed fragment <span class="math notranslate nohighlight">\(T(F)\)</span> are equivalent if there
+exists a special kind (and highly specified) transformation between them. These possible
+transformations include multiplicative augmentation, additive augmentation, mixed augmentation,
+flips into retrograde, and subdivision. Using a n-ary tree-based algorithm, we can
+efficiently search for such modification.</p>
+<p>We define the following representations of a rhythm (see X for the implementation):</p>
 <span class="target" id="module-decitala.trees"></span><dl class="py exception">
 <dt id="decitala.trees.TreeException">
 <em class="property">exception </em><code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">TreeException</code><a class="headerlink" href="#decitala.trees.TreeException" title="Permalink to this definition">¶</a></dt>
@@ -409,7 +419,8 @@ representation of the retrograde.</p>
 <dt id="decitala.trees.rolling_search">
 <code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">rolling_search</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">ratio_tree</span></em>, <em class="sig-param"><span class="n">difference_tree</span></em>, <em class="sig-param"><span class="n">windows</span><span class="o">=</span><span class="default_value">[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.rolling_search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rolling search on a music21-readable file on a given part. For search types, see 
-documentation for <a class="reference internal" href="#decitala.trees.get_by_ql_array" title="decitala.trees.get_by_ql_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">decitala.trees.get_by_ql_array()</span></code></a>.</p>
+documentation for <a class="reference internal" href="#decitala.trees.get_by_ql_array" title="decitala.trees.get_by_ql_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">decitala.trees.get_by_ql_array()</span></code></a>. The given window lengths 
+are the lengths of all the talas in the dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
