@@ -89,7 +89,7 @@
 <li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paths.html">paths.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contour.html">contour.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools.html">tools.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils.py</a></li>
 </ul>
 
             
@@ -222,7 +222,7 @@ hashed by their value and are stored in a set. For demonstration, we will create
 <span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span>
-<span class="go">&lt;NaryTree: nodes=13&gt;</span>
+<span class="go">&lt;trees.NaryTree: nodes=13&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span>
 <span class="go">False</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Calling the size returns the number of nodes in the tree. </span>
@@ -336,7 +336,8 @@ may have any arbitrary number of children, but each child has only 1 parent.</p>
 <dl class="py method">
 <dt id="decitala.trees.NaryTree.all_possible_paths">
 <code class="sig-name descname">all_possible_paths</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.NaryTree.all_possible_paths" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all possible paths from the root node, not all of which are necesarrily named.</p>
+<dd><p>Returns all possible paths from the root node, not all of which are necesarrily named.
+Currently returns a numpy error.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -347,36 +348,59 @@ length <span class="math notranslate nohighlight">\(n\)</span>.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="decitala.trees.NaryTree.subpaths">
-<code class="sig-name descname">subpaths</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.NaryTree.subpaths" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a name (hopefully attached to a node), returns a list of the subpaths “below” that node.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.superpaths">
-<code class="sig-name descname">superpaths</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.NaryTree.superpaths" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a name (hopefully attached to a node), returns a list of the subpaths “above” that node.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="decitala.trees.NaryTree.search_for_path">
 <code class="sig-name descname">search_for_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path_from_root</span></em>, <em class="sig-param"><span class="n">allow_unnamed</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.NaryTree.search_for_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Searches for <code class="docutils literal notranslate"><span class="pre">path_from_root</span></code> through the tree for a continuous path to a node. 
-:param numpy.array path_from_root: path to search in tree.
-:param bool allow_unnamed: whether or not to allow for unnamed paths to be found. 
-:return: either the name of the final node or, if <code class="docutils literal notranslate"><span class="pre">allow_unnamed=True</span></code>, possibly <code class="docutils literal notranslate"><span class="pre">path_from_root</span></code>.
-:raises <cite>decitala.trees.TreeException</cite>: when an invalid path or representation type is provided.</p>
+<dd><p>Searches for <code class="docutils literal notranslate"><span class="pre">path_from_root</span></code> through the tree for a continuous path to a node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path_from_root</strong> (<em>numpy.array</em>) – path to search in tree.</p></li>
+<li><p><strong>allow_unnamed</strong> (<em>bool</em>) – whether or not to allow for unnamed paths to be found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>either the name of the final node or, if <code class="docutils literal notranslate"><span class="pre">allow_unnamed=True</span></code>, possibly <code class="docutils literal notranslate"><span class="pre">path_from_root</span></code>.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#decitala.trees.TreeException" title="decitala.trees.TreeException"><strong>TreeException</strong></a> – when an invalid path or representation type is provided.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="decitala.trees.NaryTree.ld_search">
 <code class="sig-name descname">ld_search</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path_from_root</span></em>, <em class="sig-param"><span class="n">allow_unnamed</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.NaryTree.ld_search" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is a special use case in <a class="reference internal" href="#decitala.trees.get_by_ql_array" title="decitala.trees.get_by_ql_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.trees.get_by_ql_array</span></code></a> based on the observation 
+<dd><p>This is a special use-case in <a class="reference internal" href="#decitala.trees.get_by_ql_array" title="decitala.trees.get_by_ql_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_by_ql_array</span></code></a> based on the observation 
 that the difference representation of mixed augmentations are linearly dependent. In this search
 tool, rather than checking if a path exists in a tree, we check on a level-order basis 
 for a node for which the input is linearly dependent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – </p>
+</dd>
+</dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.trees.filter_data">
+<code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">filter_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">raw_data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.filter_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used in the instantiation of the <cite>~decitala.trees.FragmentTree</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>raw_data</strong> (<em>list</em>) – a list of <cite>~decitala.fragment.Decitala</cite>, <cite>~decitala.fragment.GreekFoot</cite>, or 
+<cite>~decitala.fragment.GeneralFragment</cite> objects.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a filtered list that removes single-onset fragments and fragments with equivalent 
+successive difference representations (see <cite>~decitala.utils.successive_ratio_array</cite>) 
+using the Cauchy-Schwartz inequality.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -389,31 +413,23 @@ for a node for which the input is linearly dependent.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_path</strong> (<em>str</em>) – path to folder of music21-readable files.</p></li>
 <li><p><strong>frag_type</strong> (<em>str</em>) – determines the class defining the set of fragments. 
-If the frag_type is <cite>decitala</cite>, creates <a class="reference internal" href="fragment.html#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.Decitala</span></code></a> objects.
-If the frag_type is <cite>greek_foot</cite>, creates <a class="reference internal" href="fragment.html#decitala.fragment.GreekFoot" title="decitala.fragment.GreekFoot"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.GreekFoot</span></code></a>.
-Otherwise creates <a class="reference internal" href="fragment.html#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.GeneralFragment</span></code></a> objects.</p></li>
+If the frag_type is <cite>decitala</cite>, creates <a class="reference internal" href="fragment.html#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decitala</span></code></a> objects.
+If <code class="docutils literal notranslate"><span class="pre">frag_type</span> <span class="pre">==</span> <span class="pre">greek_foot</span></code>, creates <a class="reference internal" href="fragment.html#decitala.fragment.GreekFoot" title="decitala.fragment.GreekFoot"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreekFoot</span></code></a>.
+Otherwise creates <a class="reference internal" href="fragment.html#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralFragment</span></code></a> objects.</p></li>
 <li><p><strong>rep_type</strong> (<em>str</em>) – determines the representation of the fragment. Options are <code class="docutils literal notranslate"><span class="pre">ratio</span></code> and <code class="docutils literal notranslate"><span class="pre">difference</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="#decitala.trees.FragmentTreeException" title="decitala.trees.FragmentTreeException"><strong>decitala.trees.FragmentTreeException</strong></a> – when an invalid path or representation type is provided.</p>
+<dd class="field-even"><p><a class="reference internal" href="#decitala.trees.FragmentTreeException" title="decitala.trees.FragmentTreeException"><strong>FragmentTreeException</strong></a> – when an invalid path or representation type is provided.</p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
-<span class="go">&lt;decitala.Decitala 84_Karanayati&gt;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">greek_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span>
+<span class="go">&lt;trees.NaryTree: nodes=31&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="go">&lt;fragment.GreekFoot Peon_II&gt;</span>
 </pre></div>
 </div>
-</dd></dl>
-
-<dl class="py class">
-<dt id="decitala.trees.SearchConfig">
-<em class="property">class </em><code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">SearchConfig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ql_array</span></em>, <em class="sig-param"><span class="n">ratio_tree</span></em>, <em class="sig-param"><span class="n">difference_tree</span></em>, <em class="sig-param"><span class="n">modifications</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.SearchConfig" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Messiaen alters rhythms in a complex and systemized way. We are often interested in restricting 
-the realm of search to specific modifications. As such, we supply the main search 
-function, <a class="reference internal" href="#decitala.trees.get_by_ql_array" title="decitala.trees.get_by_ql_array"><code class="xref py py-meth docutils literal notranslate"><span class="pre">decitala.trees.get_by_ql_array()</span></code></a>, with a config that dictates how to conduct
-the search.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -444,7 +460,7 @@ Current possibilities are <code class="docutils literal notranslate"><span class
 
 <dl class="py function">
 <dt id="decitala.trees.rolling_search">
-<code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">rolling_search</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">ratio_tree</span></em>, <em class="sig-param"><span class="n">difference_tree</span></em>, <em class="sig-param"><span class="n">windows</span><span class="o">=</span><span class="default_value">[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.rolling_search" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">rolling_search</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">ratio_tree</span></em>, <em class="sig-param"><span class="n">difference_tree</span></em>, <em class="sig-param"><span class="n">allow_unnamed</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">windows</span><span class="o">=</span><span class="default_value">[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.rolling_search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rolling search on a music21-readable file on a given part. For search types, see 
 documentation for <a class="reference internal" href="#decitala.trees.get_by_ql_array" title="decitala.trees.get_by_ql_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">decitala.trees.get_by_ql_array()</span></code></a>. The given window lengths 
 are the lengths of all the talas in the dataset.</p>
@@ -455,6 +471,7 @@ are the lengths of all the talas in the dataset.</p>
 <li><p><strong>part_num</strong> (<em>int</em>) – part in the file to be searched (0-indexed).</p></li>
 <li><p><strong>ratio_tree</strong> (<em>fragment.FragmentTree</em>) – tree storing ratio representations.</p></li>
 <li><p><strong>difference_tree</strong> (<em>fragment.FragmentTree</em>) – tree storing difference representations.</p></li>
+<li><p><strong>allow_unnamed</strong> (<em>bool</em>) – whether or not to allow unnamed fragments found to be returned.</p></li>
 <li><p><strong>windows</strong> (<em>list</em>) – possible length of the search frame.</p></li>
 </ul>
 </dd>

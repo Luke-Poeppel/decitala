@@ -7,7 +7,7 @@
  <identification>
   <rights>Copyright © </rights>
   <encoding>
-   <encoding-date>2019-05-26</encoding-date>
+   <encoding-date>2020-11-22</encoding-date>
    <encoder>Luke Poeppel</encoder>
    <software>Sibelius 8.6.1</software>
    <software>Direct export, not from Dolet</software>
@@ -92,7 +92,7 @@
  </part-list>
  <part id="P1">
   <!--============== Part: P1, Measure: 1 ==============-->
-  <measure number="1" width="254">
+  <measure number="1" width="1040">
    <print new-page="yes">
     <system-layout>
      <system-margins>
@@ -119,56 +119,52 @@
     </clef>
     <staff-details number="1" print-object="yes" />
    </attributes>
-   <note default-x="61">
-    <rest />
-    <duration>1280</duration>
+   <note color="#000000" default-x="76">
+    <pitch>
+     <step>F</step>
+     <octave>4</octave>
+    </pitch>
+    <duration>256</duration>
     <instrument id="P1-I1" />
     <voice>1</voice>
-    <type>whole</type>
+    <type>quarter</type>
+    <stem>up</stem>
     <staff>1</staff>
    </note>
-  </measure>
-  <!--============== Part: P1, Measure: 2 ==============-->
-  <measure number="2" width="192">
-   <note>
-    <rest />
-    <duration>1280</duration>
+   <note color="#000000" default-x="278">
+    <pitch>
+     <step>F</step>
+     <octave>4</octave>
+    </pitch>
+    <duration>256</duration>
     <instrument id="P1-I1" />
     <voice>1</voice>
-    <type>whole</type>
+    <type>quarter</type>
+    <stem>up</stem>
     <staff>1</staff>
    </note>
-  </measure>
-  <!--============== Part: P1, Measure: 3 ==============-->
-  <measure number="3" width="192">
-   <note>
-    <rest />
-    <duration>1280</duration>
+   <note color="#000000" default-x="480">
+    <pitch>
+     <step>F</step>
+     <octave>4</octave>
+    </pitch>
+    <duration>256</duration>
     <instrument id="P1-I1" />
     <voice>1</voice>
-    <type>whole</type>
+    <type>quarter</type>
+    <stem>up</stem>
     <staff>1</staff>
    </note>
-  </measure>
-  <!--============== Part: P1, Measure: 4 ==============-->
-  <measure number="4" width="192">
-   <note>
-    <rest />
-    <duration>1280</duration>
+   <note color="#000000" default-x="682">
+    <pitch>
+     <step>F</step>
+     <octave>4</octave>
+    </pitch>
+    <duration>512</duration>
     <instrument id="P1-I1" />
     <voice>1</voice>
-    <type>whole</type>
-    <staff>1</staff>
-   </note>
-  </measure>
-  <!--============== Part: P1, Measure: 5 ==============-->
-  <measure number="5" width="208">
-   <note>
-    <rest />
-    <duration>1280</duration>
-    <instrument id="P1-I1" />
-    <voice>1</voice>
-    <type>whole</type>
+    <type>half</type>
+    <stem>up</stem>
     <staff>1</staff>
    </note>
    <barline>

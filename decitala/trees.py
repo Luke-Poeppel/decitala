@@ -8,20 +8,18 @@
 # Location: Kent, CT 2020
 ####################################################################################################
 import copy
-import decimal
-import itertools
 import json
-import math
 import numpy as np
 import os
 import re
+import pytest
 
-from music21 import converter
-from music21 import stream
+from fragment import (
+	Decitala,
+	GreekFoot
+)
 
-from fragment import Decitala
-
-from tools import (
+from utils import (
 	_euclidian_norm,
 	cauchy_schwartz,
 	roll_window,
@@ -31,7 +29,7 @@ from tools import (
 )
 
 decitala_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas'
-greek_path = '/Users/lukepoeppel/decitala_v2/Greek_Metrics/XML'
+greek_path = '/Users/lukepoeppel/decitala/Fragments/Greek_Metrics/XML'
 
 ############### EXCEPTIONS ###############
 class TreeException(Exception):
@@ -41,6 +39,7 @@ class FragmentTreeException(TreeException):
 	pass
 
 ############### EXCEPTIONS ###############
+
 class NaryTree(object):
 	"""
 	A single-rooted nary tree for ratio and difference representations of rhythmic fragments. Nodes are 
@@ -87,7 +86,7 @@ class NaryTree(object):
 	>>> TestTree = NaryTree()
 	>>> TestTree.root = root
 	>>> TestTree
-	<NaryTree: nodes=13>
+	<trees.NaryTree: nodes=13>
 	>>> TestTree.is_empty()
 	False
 	>>> # Calling the size returns the number of nodes in the tree. 
@@ -249,7 +248,7 @@ class NaryTree(object):
 		self.root = None
 
 	def __repr__(self):
-		return '<NaryTree: nodes={}>'.format(self.size())
+		return '<trees.NaryTree: nodes={}>'.format(self.size())
 
 	def __iter__(self):
 		"""
@@ -287,7 +286,8 @@ class NaryTree(object):
 		path.pop()
 
 	def all_possible_paths(self):
-		"""Returns all possible paths from the root node, not all of which are necesarrily named."""
+		"""Returns all possible paths from the root node, not all of which are necesarrily named.
+		Currently returns a numpy error."""
 		return self._all_possible_paths_helper(self.root)
 
 	def _all_named_paths_helper(self, node, cutoff, path = []):
@@ -328,14 +328,14 @@ class NaryTree(object):
 	def _subpaths_helper(self, node):
 		raise NotImplementedError 
 
-	def subpaths(self, name):
+	def _subpaths(self, name):
 		"""Given a name (hopefully attached to a node), returns a list of the subpaths "below" that node."""
 		raise NotImplementedError
 
 	def _superpaths_helper(self, node):
 		raise NotImplementedError
 
-	def superpaths(self, name):
+	def _superpaths(self, name):
 		"""Given a name (hopefully attached to a node), returns a list of the subpaths "above" that node."""
 		raise NotImplementedError
 
@@ -343,10 +343,11 @@ class NaryTree(object):
 	def search_for_path(self, path_from_root, allow_unnamed=False):
 		"""
 		Searches for ``path_from_root`` through the tree for a continuous path to a node. 
+		
 		:param numpy.array path_from_root: path to search in tree.
 		:param bool allow_unnamed: whether or not to allow for unnamed paths to be found. 
 		:return: either the name of the final node or, if ``allow_unnamed=True``, possibly ``path_from_root``.
-		:raises `decitala.trees.TreeException`: when an invalid path or representation type is provided.
+		:raises `~decitala.trees.TreeException`: when an invalid path or representation type is provided.
 		"""
 		assert path_from_root[0] == 0.0 or path_from_root[0] == 1.0
 		if len(path_from_root) < 2:
@@ -377,35 +378,90 @@ class NaryTree(object):
 
 	def ld_search(self, path_from_root, allow_unnamed=False):
 		"""
-		This is a special use case in :obj:`decitala.trees.get_by_ql_array` based on the observation 
+		This is a special use-case in :obj:`~decitala.trees.get_by_ql_array` based on the observation 
 		that the difference representation of mixed augmentations are linearly dependent. In this search
 		tool, rather than checking if a path exists in a tree, we check on a level-order basis 
 		for a node for which the input is linearly dependent. 
+
+		:raises `NotImplementedError`:
 		"""
 		raise NotImplementedError
 
 ####################################################################################################
+def filter_data(raw_data):
+	"""
+	This function is used in the instantiation of the `~decitala.trees.FragmentTree`.
+
+	:param list raw_data: a list of `~decitala.fragment.Decitala`, `~decitala.fragment.GreekFoot`, or 
+						`~decitala.fragment.GeneralFragment` objects. 
+	:return: a filtered list that removes single-onset fragments and fragments with equivalent 
+			successive difference representations (see `~decitala.utils.successive_ratio_array`) 
+			using the Cauchy-Schwartz inequality.
+	:rtype: list
+	"""
+	copied = copy.copy(raw_data)
+	size = len(copied)
+
+	i = 0
+	while i < size:
+		try:
+			if len(copied[i].ql_array()) == 1:
+				del copied[i]
+			else:
+				pass
+		except IndexError:
+			pass
+
+		for j, _ in enumerate(copied):
+			try: 
+				if i == j:
+					pass
+				elif len(copied[i].ql_array()) != len(copied[j].ql_array()):
+					pass
+				elif cauchy_schwartz(copied[i].ql_array(), copied[j].ql_array()) == True:
+					pass
+				elif cauchy_schwartz(copied[i].ql_array(), copied[j].ql_array()) == False:
+					firsti = copied[i].ql_array()[0]
+					firstj = copied[j].ql_array()[0]
+
+					#Equality removes the second one by convention
+					if firsti == firstj:
+						del copied[j]
+					elif firsti > firstj:
+						del copied[i]
+					else:
+						del copied[j]
+				else:
+					pass
+			except IndexError:
+				pass
+		i += 1
+
+	return copied
+
 class FragmentTree(NaryTree):
 	"""
 	NaryTree that holds multiplicative and additive representations of a rhythmic dataset. 
 
 	:param str data_path: path to folder of music21-readable files.
 	:param str frag_type: determines the class defining the set of fragments. 
-					If the frag_type is `decitala`, creates :class:`decitala.fragment.Decitala` objects.
-					If the frag_type is `greek_foot`, creates :class:`decitala.fragment.GreekFoot`.
-					Otherwise creates :class:`decitala.fragment.GeneralFragment` objects.
+					If the frag_type is `decitala`, creates :class:`~decitala.fragment.Decitala` objects.
+					If ``frag_type == greek_foot``, creates :class:`~decitala.fragment.GreekFoot`.
+					Otherwise creates :class:`~decitala.fragment.GeneralFragment` objects.
 	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` and ``difference``.
-	:raises `decitala.trees.FragmentTreeException`: when an invalid path or representation type is provided.
+	:raises `~decitala.trees.FragmentTreeException`: when an invalid path or representation type is provided.
 
-	>>> ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-	>>> ratio_tree.search_for_path([1.0, 1.0, 1.0, 1.0])
-	<decitala.Decitala 84_Karanayati>
+	>>> ratio_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='ratio')
+	>>> ratio_tree
+	<trees.NaryTree: nodes=31>
+	>>> ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0])
+	<fragment.GreekFoot Peon_II>
 	"""
 	def __init__(self, data_path, frag_type, rep_type, **kwargs):
 		if type(data_path) != str:
 			raise FragmentTreeException("Path must be a string.")
 		
-		if rep_type.lower() not in ['ratio', 'difference']:
+		if rep_type.lower() not in ["ratio", "difference"]:
 			raise FragmentTreeException("The only possible types are `ratio` and `difference`")
 		
 		self.data_path = data_path
@@ -413,6 +469,8 @@ class FragmentTree(NaryTree):
 		self.rep_type = rep_type
 
 		super().__init__()
+
+		# This is a TODO in Aleph_One.
 
 		if frag_type.lower() == 'decitala':
 			raw_data = []
@@ -428,80 +486,13 @@ class FragmentTree(NaryTree):
 		elif frag_type.lower() == 'greek_foot':
 			raw_data = []
 			for this_file in os.listdir(data_path):
-				raw_data.append(GreekFoot(this_file))
+				raw_data.append(GreekFoot(this_file[:-4]))
 			self.raw_data = raw_data
 		else:
 			raw_data = []
 			for this_file in os.listdir(data_path):
 				raw_data.append(GeneralFragment(this_file))
 			self.raw_data = raw_data
-
-		def filter_data(raw_data):
-			"""
-			Given a list of Decitala objects, filter_data() removes:
-			- Single-onset fragments
-			- Exact duplicate fragments
-			- Multiplicative augmentation/diminution duplicates (using the Cauchy-Schwarz Inequality).
-
-			For example, if we have the following set of fragments: 
-			[3.0, 1.5, 1.5, 0.75, 0.75]
-			[1.5, 1.0]
-			[0.75, 0.5, 0.75]
-			[0.25, 0.25, 0.5]
-			[0.75, 0.5]
-			[0.5, 1.0, 2.0, 4.0],
-			[1.5, 1.0, 1.5],
-			[1.0, 1.0, 2.0],
-			[1.0, 0.5, 0.5, 0.25, 0.25],
-			[0.25, 0.5, 1.0, 2.0]
-			
-			The function reduces this list to:
-			[0.75, 0.5], 
-			[0.75, 0.5, 0.75], 
-			[0.25, 0.25, 0.5], 
-			[0.25, 0.5, 1.0, 2.0], 
-			[1.0, 0.5, 0.5, 0.25, 0.25]
-			"""
-			copied = copy.copy(raw_data)
-			size = len(copied)
-
-			i = 0
-			while i < size:
-				try:
-					if len(copied[i].ql_array()) == 1:
-						del copied[i]
-					else:
-						pass
-				except IndexError:
-					pass
-
-				for j, _ in enumerate(copied):
-					try: 
-						if i == j:
-							pass
-						elif len(copied[i].ql_array()) != len(copied[j].ql_array()):
-							pass
-						elif cauchy_schwartz(copied[i].ql_array(), copied[j].ql_array()) == True:
-							pass
-						elif cauchy_schwartz(copied[i].ql_array(), copied[j].ql_array()) == False:
-							firsti = copied[i].ql_array()[0]
-							firstj = copied[j].ql_array()[0]
-
-							#Equality removes the second one by convention
-							if firsti == firstj:
-								del copied[j]
-							elif firsti > firstj:
-								del copied[i]
-							else:
-								del copied[j]
-						else:
-							pass
-					except IndexError:
-						pass
-
-				i += 1
-
-			return copied
 
 		self.filtered_data = filter_data(self.raw_data)
 
@@ -512,11 +503,11 @@ class FragmentTree(NaryTree):
 			i = 0
 			while i < len(possible_num_onsets):
 				curr_onset_list = []
-				for thisTala in self.filtered_data:
-					if len(thisTala.ql_array()) == possible_num_onsets[i]:
-						curr_onset_list.append(thisTala)
-				for thisTala in curr_onset_list:
-					root_node.add_path_of_children(path = list(thisTala.successive_ratio_array()), final_node_name = thisTala)
+				for this_tala in self.filtered_data:
+					if len(this_tala.ql_array()) == possible_num_onsets[i]:
+						curr_onset_list.append(this_tala)
+				for this_tala in curr_onset_list:
+					root_node.add_path_of_children(path = list(this_tala.successive_ratio_array()), final_node_name = this_tala)
 				i += 1
 
 			self.root = root_node
@@ -528,22 +519,19 @@ class FragmentTree(NaryTree):
 			i = 0
 			while i < len(possible_num_onsets):
 				curr_onset_list = []
-				for thisTala in self.filtered_data:
-					if len(thisTala.ql_array()) == possible_num_onsets[i]:
-						curr_onset_list.append(thisTala)
-				for thisTala in curr_onset_list:
-					root_node.add_path_of_children(path = thisTala.successive_difference_array(), final_node_name = thisTala)
+				for this_tala in self.filtered_data:
+					if len(this_tala.ql_array()) == possible_num_onsets[i]:
+						curr_onset_list.append(this_tala)
+				for this_tala in curr_onset_list:
+					root_node.add_path_of_children(path = this_tala.successive_difference_array(), final_node_name = this_tala)
 				i += 1
 
 			self.root = root_node
 
 ####################################################################################################
-class SearchConfig():
+class _SearchConfig():
 	"""
-	Messiaen alters rhythms in a complex and systemized way. We are often interested in restricting 
-	the realm of search to specific modifications. As such, we supply the main search 
-	function, :meth:`decitala.trees.get_by_ql_array`, with a config that dictates how to conduct
-	the search. 
+	Helper class for managing relationship between search ql_arrays and search trees. 
 	"""
 	def __init__(self, ql_array, ratio_tree, difference_tree, modifications):
 		self.ql_array = ql_array
@@ -573,6 +561,10 @@ class SearchConfig():
 			return None
 			
 def _get_ratio_or_difference(input_fragment, found_fragment, modification):
+	"""
+	Helper function for retrieving the modifying factor/difference between the input fragment 
+	and found fragment in the tree. 
+	"""
 	split_mod = modification.split("-")
 	if "ratio" in split_mod:
 		ratio = abs(input_fragment[0] / found_fragment.ql_array()[0])
@@ -605,7 +597,7 @@ def get_by_ql_array(
 	(<decitala.Decitala 32_Kudukka>, ('ratio', 2.0))
 	"""
 	tala = None
-	config = SearchConfig(ql_array=ql_array, ratio_tree=ratio_tree, difference_tree=difference_tree, modifications=allowed_modifications)
+	config = _SearchConfig(ql_array=ql_array, ratio_tree=ratio_tree, difference_tree=difference_tree, modifications=allowed_modifications)
 	i = 0
 	while i < len(allowed_modifications):
 		curr_modification = allowed_modifications[i]
@@ -635,7 +627,8 @@ def rolling_search(
 		part_num, 
 		ratio_tree, 
 		difference_tree,
-		windows=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
+		allow_unnamed=False,
+		windows=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19],
 	):
 	"""
 	Rolling search on a music21-readable file on a given part. For search types, see 
@@ -646,6 +639,7 @@ def rolling_search(
 	:param int part_num: part in the file to be searched (0-indexed).
 	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.
 	:param fragment.FragmentTree difference_tree: tree storing difference representations.
+	:param bool allow_unnamed: whether or not to allow unnamed fragments found to be returned.
 	:param list windows: possible length of the search frame. 
 	:return: list holding fragments in the array present in the trees.
 	:rtype: list
@@ -739,6 +733,61 @@ def rolling_search_on_array(
 	return fragments_found
 
 ####################################################################################################
+####################################################################################################
+"""
+	For example, if we have the following set of fragments: 
+	[3.0, 1.5, 1.5, 0.75, 0.75]
+	[1.5, 1.0]
+	[0.75, 0.5, 0.75]
+	[0.25, 0.25, 0.5]
+	[0.75, 0.5]
+	[0.5, 1.0, 2.0, 4.0],
+	[1.5, 1.0, 1.5],
+	[1.0, 1.0, 2.0],
+	[1.0, 0.5, 0.5, 0.25, 0.25],
+	[0.25, 0.5, 1.0, 2.0]
+	
+	The function reduces this list to:
+	[0.75, 0.5], 
+	[0.75, 0.5, 0.75], 
+	[0.25, 0.25, 0.5], 
+	[0.25, 0.5, 1.0, 2.0], 
+	[1.0, 0.5, 0.5, 0.25, 0.25]
+
+# Testing
+@pytest.fixture
+def data():
+	sh_data = [
+		(('info_0',), (0.0, 4.0)), (('info_1',), (2.5, 4.75)), (('info_2',), (4.0, 5.25)), (('info_3',), (4.0, 5.75)), (('info_4',), (5.75, 9.75)), (('info_5',), (5.75, 13.25)), 
+		(('info_6',), (8.25, 11.25)), (('info_7',), (8.25, 13.25)), (('info_8',), (9.75, 12.25)), (('info_9',), (10.25, 13.25)), (('info_10',), (13.25, 14.5)), (('info_11',), (13.25, 15.0)), 
+		(('info_12',), (15.0, 19.0)), (('info_13',), (19.0, 19.875)), (('info_14',), (19.0, 20.875)), (('info_15',), (19.375, 20.875)), (('info_16',), (20.875, 22.125)), (('info_17',), (20.875, 22.625)), 
+		(('info_18',), (21.625, 23.125)), (('info_19',), (22.625, 30.625)), (('info_20',), (23.125, 27.625)), (('info_21',), (24.625, 29.625)), (('info_22',), (26.125, 29.625)), (('info_23',), (26.125, 30.625)), 
+		(('info_24',), (27.625, 30.625)), (('info_25',), (30.625, 31.5)), (('info_26',), (30.625, 32.5)), (('info_27',), (31.0, 32.5)), (('info_28',), (31.0, 33.5)), (('info_29',), (31.5, 34.0)), 
+		(('info_30',), (32.5, 34.625)), (('info_31',), (34.0, 35.0)), (('info_32',), (34.625, 35.875)), (('info_33',), (34.625, 36.375)), (('info_34',), (35.375, 37.125)), (('info_35',), (35.875, 37.125)), 
+		(('info_36',), (36.375, 37.625)), (('info_37',), (36.375, 38.125)), (('info_38',), (38.125, 39.0)), (('info_39',), (38.125, 40.0)), (('info_40',), (38.5, 40.0)), (('info_41',), (40.0, 41.25)), 
+		(('info_42',), (40.0, 41.75)), (('info_43',), (41.75, 45.75)), (('info_44',), (45.75, 46.625)), (('info_45',), (45.75, 47.625)), (('info_46',), (46.125, 47.625)), (('info_47',), (47.625, 48.875)), 
+		(('info_48',), (47.625, 49.375)), (('info_49',), (49.375, 53.375)), (('info_50',), (49.375, 56.875)), (('info_51',), (51.875, 54.875)), (('info_52',), (51.875, 56.875)), (('info_53',), (53.375, 55.875)), 
+		(('info_54',), (53.875, 56.875)), (('info_55',), (56.875, 58.125)), (('info_56',), (56.875, 58.625)), (('info_57',), (58.625, 62.625)), (('info_58',), (61.125, 63.375)), (('info_59',), (62.625, 63.875)), (('info_60',), (62.625, 64.375))
+	]
+	return sh_data
+"""
+"""
+class TestSeptHaikaiData:
+	def test_check_break_points(self, data):
+		assert check_break_point(data, 10) == True # checks info_10
+	
+	def test_get_break_points(self, data):
+		break_points = [4, 10, 12, 13, 16, 25, 38, 41, 43, 44, 47, 49, 55, 57]
+		assert break_points == get_break_points(data)
+	
+	def test_pareto_optimal_paths(self, data):
+		random_start = 23
+		random_stop = 29
+		data_excerpt = data[random_start:random_stop + 1]
+		paths = get_pareto_optimal_longest_paths(data_excerpt)
+
+		assert paths[0] == [[('info_23',), (26.125, 30.625)], [('info_25',), (30.625, 31.5)], [('info_29',), (31.5, 34.0)]]
+	"""
 
 if __name__ == '__main__':
 	import doctest

@@ -483,7 +483,7 @@ class GreekFoot(GeneralFragment):
 
 	>>> bacchius = GreekFoot('Bacchius')
 	>>> bacchius
-	<decitala.GreekFoot Bacchius>
+	<fragment.GreekFoot Bacchius>
 	>>> bacchius.filename
 	'Bacchius.xml'
 	>>> bacchius.name
@@ -508,48 +508,40 @@ class GreekFoot(GeneralFragment):
 	[2. 1. 2.]
 	"""
 	def __init__(self, name, **kwargs):
-		if name:
+		if name: # all files either of the form X, X_Y
 			if name.endswith('.xml'):
-				searchName = name
-			elif name.endswith('.mxl'):
 				searchName = name
 			else:
 				searchName = name + '.xml'
-					
+			
+			search_name_split = searchName.split('_')
+			matches = []
 			for thisFile in os.listdir(greek_path):
 				x = re.search(searchName, thisFile)
-				if bool(x) == True:
-					self.full_path = greek_path + '/' + thisFile
-					self.name = os.path.splitext(thisFile)[0]
-					self.filename = thisFile
-					self.stream = converter.parse(greek_path + '/' + thisFile)
+				if bool(x):
+					matches.append(thisFile)
+
+			for match in matches:
+				split = match.split('_')
+				if len(search_name_split) == len(split):
+					self.full_path = greek_path + '/' + match
+					self.name = match[:-4]
+					self.filename = match
+					self.stream = converter.parse(self.full_path)
 
 		super().__init__(filepath=self.full_path, name=self.name)
 	
 	def __repr__(self):
-		return '<decitala.GreekFoot {}>'.format(self.name)
+		return '<fragment.GreekFoot {}>'.format(self.name)
 	
 	@property
 	def greek_string(self):
 		"""See docstring of :obj:`decitala.tools.ql_array_to_greek_diacritics`."""
 		return ql_array_to_greek_diacritics(self.ql_array())
 
-###############################################################################
-# Helper function to ignore annoying warnings 
-# source: https://www.neuraldump.net/2017/06/how-to-suppress-python-unittest-warnings/
-
-def ignore_warnings(test_func):
-	def do_test(self, *args, **kwargs):
-		with warnings.catch_warnings():
-			warnings.simplefilter("ignore")
-			test_func(self, *args, **kwargs)
-	return do_test
-
-class Test(unittest.TestCase):
-	def setUp(self):
-		warnings.simplefilter('ignore', category=ImportWarning)
+####################################################################################################
+# Testing
 
 if __name__ == '__main__':
 	import doctest
-	doctest.testmod()
-	unittest.main()
+	#doctest.testmod()
