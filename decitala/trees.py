@@ -594,7 +594,7 @@ def get_by_ql_array(
 	>>> difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
 	>>> allowed_modifications = ["ratio", "retrograde-ratio"]
 	>>> get_by_ql_array(fragment, ratio_tree, difference_tree, allowed_modifications)
-	(<decitala.Decitala 32_Kudukka>, ('ratio', 2.0))
+	(<fragment.Decitala 32_Kudukka>, ('ratio', 2.0))
 	"""
 	tala = None
 	config = _SearchConfig(ql_array=ql_array, ratio_tree=ratio_tree, difference_tree=difference_tree, modifications=allowed_modifications)
@@ -614,13 +614,6 @@ def get_by_ql_array(
 		return (tala, change)
 	else:
 		return None
-
-"""
-ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
-
-frag = [0.125, 0.25, 0.125]
-print(get_by_ql_array(frag, ratio_tree, difference_tree))"""
 
 def rolling_search(
 		filepath, 
@@ -649,11 +642,11 @@ def rolling_search(
 	>>> ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
 	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
 	... 	print(tala_data)
-	((<decitala.Decitala 5_Pancama>, ('ratio', 1.0)), (0.0, 0.5))
-	((<decitala.Decitala 17_Yatilagna>, ('retrograde-ratio', 1.0)), (0.25, 0.625))
-	((<decitala.Decitala 5_Pancama>, ('ratio', 0.5)), (0.5, 0.75))
-	((<decitala.Decitala 17_Yatilagna>, ('ratio', 0.5)), (0.625, 1.0))
-	((<decitala.Decitala 5_Pancama>, ('ratio', 1.0)), (0.75, 1.25))
+	((<fragment.Decitala 5_Pancama>, ('ratio', 1.0)), (0.0, 0.5))
+	((<fragment.Decitala 17_Yatilagna>, ('retrograde-ratio', 1.0)), (0.25, 0.625))
+	((<fragment.Decitala 5_Pancama>, ('ratio', 0.5)), (0.5, 0.75))
+	((<fragment.Decitala 17_Yatilagna>, ('ratio', 0.5)), (0.625, 1.0))
+	((<fragment.Decitala 5_Pancama>, ('ratio', 1.0)), (0.75, 1.25))
 	"""
 	assert ratio_tree.rep_type == 'ratio'
 	assert difference_tree.rep_type == 'difference'
@@ -710,10 +703,10 @@ def rolling_search_on_array(
 	>>> fragments_found = rolling_search_on_array(ql_array=example_fragment, ratio_tree=ratio_tree, difference_tree=difference_tree)
 	>>> for x in fragments_found:
 	...     print(x, x[0].ql_array())
-	(<decitala.Decitala 17_Yatilagna>, ('ratio', 1.0)) [0.25 0.5 ]
-	(<decitala.Decitala 17_Yatilagna>, ('retrograde-ratio', 2.0)) [0.25 0.5 ]
-	(<decitala.Decitala 17_Yatilagna>, ('ratio', 1.0)) [0.25 0.5 ]
-	(<decitala.Decitala 58_Dhenki>, ('ratio', 0.5)) [1.  0.5 1. ]
+	(<fragment.Decitala 17_Yatilagna>, ('ratio', 1.0)) [0.25 0.5 ]
+	(<fragment.Decitala 17_Yatilagna>, ('retrograde-ratio', 2.0)) [0.25 0.5 ]
+	(<fragment.Decitala 17_Yatilagna>, ('ratio', 1.0)) [0.25 0.5 ]
+	(<fragment.Decitala 58_Dhenki>, ('ratio', 0.5)) [1.  0.5 1. ]
 	"""
 	assert ratio_tree.rep_type == 'ratio'
 	assert difference_tree.rep_type == 'difference'

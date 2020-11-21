@@ -334,7 +334,7 @@ class Decitala(GeneralFragment):
 		
 	>>> ragavardhana = Decitala('Ragavardhana')
 	>>> ragavardhana
-	<decitala.Decitala 93_Ragavardhana>
+	<fragment.Decitala 93_Ragavardhana>
 	>>> ragavardhana.filename
 	'93_Ragavardhana.xml'
 	>>> ragavardhana.name
@@ -406,7 +406,7 @@ class Decitala(GeneralFragment):
 		super().__init__(filepath=self.full_path, name=self.name)
 	
 	def __repr__(self):
-		return '<decitala.Decitala {}>'.format(self.name)
+		return '<fragment.Decitala {}>'.format(self.name)
 	
 	@property
 	def id_num(self):
@@ -431,7 +431,7 @@ class Decitala(GeneralFragment):
 		:raises `decitala.fragment.DecitalaException`: when there is an issue with the `input_it`.
 
 		>>> Decitala.get_by_id(89)
-		<decitala.Decitala 89_Lalitapriya>
+		<fragment.Decitala 89_Lalitapriya>
 		"""
 		assert type(input_id) == int
 		if input_id > 121 or input_id < 1:
@@ -544,4 +544,4 @@ class GreekFoot(GeneralFragment):
 
 if __name__ == '__main__':
 	import doctest
-	#doctest.testmod()
+	doctest.testmod()
