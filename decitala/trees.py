@@ -39,6 +39,7 @@ class TreeException(Exception):
 
 class FragmentTreeException(TreeException):
 	pass
+
 ############### EXCEPTIONS ###############
 class NaryTree(object):
 	"""
@@ -119,6 +120,7 @@ class NaryTree(object):
 	>>> TestTree.search_for_path([1.0, 2.0, 4.0])
 	>>> TestTree.search_for_path([1.0, 1.0, 2.0])
 	'C'
+	>>> # Allow for unnamed paths to be found.
 	>>> TestTree.search_for_path([1.0, 0.5, 0.5], allow_unnamed=True)
 	[1.0, 0.5, 0.5]
 	"""
@@ -373,6 +375,15 @@ class NaryTree(object):
 				else:
 					i += 1
 
+	def ld_search(self, path_from_root, allow_unnamed=False):
+		"""
+		This is a special use case in :obj:`decitala.trees.get_by_ql_array` based on the observation 
+		that the difference representation of mixed augmentations are linearly dependent. In this search
+		tool, rather than checking if a path exists in a tree, we check on a level-order basis 
+		for a node for which the input is linearly dependent. 
+		"""
+		raise NotImplementedError
+
 ####################################################################################################
 class FragmentTree(NaryTree):
 	"""
@@ -380,14 +391,14 @@ class FragmentTree(NaryTree):
 
 	:param str data_path: path to folder of music21-readable files.
 	:param str frag_type: determines the class defining the set of fragments. 
-					If the frag_type is `decitala`, creates :obj:`decitala.fragment.Decitala` objects.
-					If the frag_type is `greek_foot`, creates :obj:`decitala.fragment.GreekFoot`.
-					Otherwise creates :obj:`decitala.fragment.GeneralFragment` objects.
+					If the frag_type is `decitala`, creates :class:`decitala.fragment.Decitala` objects.
+					If the frag_type is `greek_foot`, creates :class:`decitala.fragment.GreekFoot`.
+					Otherwise creates :class:`decitala.fragment.GeneralFragment` objects.
 	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` and ``difference``.
 	:raises `decitala.trees.FragmentTreeException`: when an invalid path or representation type is provided.
 
-	ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-	ratio_tree.search_for_path([1.0, 1.0, 1.0, 1.0])
+	>>> ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+	>>> ratio_tree.search_for_path([1.0, 1.0, 1.0, 1.0])
 	<decitala.Decitala 84_Karanayati>
 	"""
 	def __init__(self, data_path, frag_type, rep_type, **kwargs):
@@ -527,98 +538,97 @@ class FragmentTree(NaryTree):
 			self.root = root_node
 
 ####################################################################################################
-def get_by_ql_array2(
+class SearchConfig():
+	"""
+	Messiaen alters rhythms in a complex and systemized way. We are often interested in restricting 
+	the realm of search to specific modifications. As such, we supply the main search 
+	function, :meth:`decitala.trees.get_by_ql_array`, with a config that dictates how to conduct
+	the search. 
+	"""
+	def __init__(self, ql_array, ratio_tree, difference_tree, modifications):
+		self.ql_array = ql_array
+		self.ratio_tree = ratio_tree
+		self.difference_tree = difference_tree
+		self.modifications = modifications
+		
+	def __getitem__(self, modification):
+		if modification not in self.modifications:
+			raise Exceptions("'{0}' is not in '{1}'".format(modification, self.modifications))
+	
+		retrograde = self.ql_array[::-1]
+		ratio_array = successive_ratio_array(self.ql_array)
+		difference_array = successive_difference_array(self.ql_array)
+		retrograde_ratio_array = successive_ratio_array(retrograde)
+		retrograde_difference_array = successive_difference_array(retrograde)
+		
+		if modification == "ratio":
+			return (self.ratio_tree, ratio_array)
+		elif modification == "retrograde-ratio":
+			return (self.ratio_tree, retrograde_ratio_array)
+		elif modification == "difference":
+			return (self.difference_tree, difference_array)
+		elif modification == "retrograde-difference":
+			return (self.difference_tree, retrograde_difference_array)
+		else:
+			return None
+			
+def _get_ratio_or_difference(input_fragment, found_fragment, modification):
+	split_mod = modification.split("-")
+	if "ratio" in split_mod:
+		ratio = abs(input_fragment[0] / found_fragment.ql_array()[0])
+		return (modification, ratio)
+	else:
+		difference = abs(input_fragment[0] - found_fragment.ql_array()[0])
+		return (modification, difference)
+
+def get_by_ql_array(
 		ql_array,
 		ratio_tree,
 		difference_tree,
-		allowed_modifications={'retrograde', 'ratio', 'difference'}#, 'mixed', 'subdivision', 'unnamed', 'va'}
+		allowed_modifications=["ratio", "retrograde-ratio", "difference", "retrograde-difference"],
+		allow_unnamed=False
 	):
 	"""
 	:param numpy.array ql_array: fragment to be searched.
 	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.
 	:param fragment.FragmentTree difference_tree: tree storing difference representations.
 	:param list allowed_modifications: possible ways for a fragment to be modified. 
-	"""
-	pass
-
-livre_dorgue_1 = np.array([1.0, 0.5, 1.5, 1.5, 1.5, 1.0, 1.5, 0.25, 0.25, 0.25])
-livre_dorgue_2 = np.array([0.125, 0.125, 0.125, 0.125, 0.25, 0.25, 0.375])
-livre_dorgue_3 = np.array([0.75, 1.25, 1.25, 1.75, 1.25, 1.25, 1.25, 0.75])
-#ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-#difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
-
-combined = np.concatenate([livre_dorgue_1, livre_dorgue_2, livre_dorgue_3])
-
-
-#print(get_by_ql_array(livre_dorgue_1, ratio_tree, difference_tree))
-#print(get_by_ql_array(livre_dorgue_2, ratio_tree, difference_tree))
-#print(get_by_ql_array(livre_dorgue_3, ratio_tree, difference_tree))
-
-def get_by_ql_array(ql_array, ratio_tree, difference_tree):
-	"""
-	Searches the ``ratio_tree`` and ``difference_tree`` for the input, ``ql_array``. Follows an Occam's Razor
-	methodology. We first search for the ratio representation; next we search for the ratio representation
-	of the retrograde; then we search for the difference representation; finally, we search for the difference
-	representation of the retrograde. 
-
-	:param numpy.array ql_array: fragment to be searched.
-	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.
-	:param fragment.FragmentTree difference_tree: tree storing difference representations.
-	:return: a fragment in the ratio or difference tree. 
-
-	ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-	difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
-	get_by_ql_array(ql_array=np.array([0.5, 0.5, 1.0, 1.0]), ratio_tree=ratio_tree, difference_tree=difference_tree)
+									Current possibilities are ``ratio``, ``retrograde-ratio``, ``difference``, and ``retrograde-difference``.
+									*NOTE*: the order of ``allowed_modifications`` is the order of the search. 
+	:param bool allow_unnamed: whether or not to allow the retrieval of unnamed paths. Default is ``False``.
+	
+	>>> fragment = np.array([0.5, 0.5, 1.0, 1.0])
+	>>> ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+	>>> difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+	>>> allowed_modifications = ["ratio", "retrograde-ratio"]
+	>>> get_by_ql_array(fragment, ratio_tree, difference_tree, allowed_modifications)
 	(<decitala.Decitala 32_Kudukka>, ('ratio', 2.0))
 	"""
-	retrograde = ql_array[::-1]
-	ratio_list = successive_ratio_array(ql_array)
-	difference_list = successive_difference_array(ql_array)
-	retrograde_ratio_list = successive_ratio_array(retrograde)
-	retrograde_difference_list = successive_difference_array(retrograde)
-
-	ratio_search = ratio_tree.search_for_path(ratio_list)
-	if ratio_search is None:
-		retrograde_ratio_search = ratio_tree.search_for_path(retrograde_ratio_list)
-		if retrograde_ratio_search is None:
-			difference_search = difference_tree.search_for_path(difference_list)
-			if difference_search is None:
-				retrograde_difference_search = difference_tree.search_for_path(retrograde_difference_list)
-				if retrograde_difference_search is None:
-					#######
-					# check difference tree near-miss.
-					# check if [:-1] is not None, get that node, choose child.
-					return None
-					'''
-					if len(ql_array) >= 6:
-						near_miss_search = difference_tree.search(difference_list[:-1], unnamed=True)
-						if near_miss_search is not None:
-							final_node = difference_tree.final_node_from_path(difference_list[:-1])
-							if len(final_node.children) != 0:
-								fragment_data = random.choice(final_node.children)
-								tala = fragment_data.name
-								difference = _difference(tala.ql_array(), 0)
-								return (tala, ('near-miss', difference))
-							else:
-								return None
-						else:
-							return None
-					else:
-						return None
-					'''
-					#######
-				else:
-					difference = abs(ql_array[0] - retrograde_difference_search.ql_array()[0])
-					return (retrograde_difference_search, ('retrograde difference', difference))
-			else:
-				difference = abs(ql_array[0] - difference_search.ql_array()[0])
-				return (difference_search, ('difference', difference))
+	tala = None
+	config = SearchConfig(ql_array=ql_array, ratio_tree=ratio_tree, difference_tree=difference_tree, modifications=allowed_modifications)
+	i = 0
+	while i < len(allowed_modifications):
+		curr_modification = allowed_modifications[i]
+		search_tree, search_ql_array = config[curr_modification]
+		search = search_tree.search_for_path(search_ql_array, allow_unnamed)
+		if search is not None:
+			tala = search
+			change = _get_ratio_or_difference(ql_array, tala, curr_modification)
+			break
 		else:
-			ratio = ql_array[0] / retrograde_ratio_search.ql_array()[0]
-			return (retrograde_ratio_search, ('retrograde ratio', ratio))
+			i += 1
+
+	if tala:
+		return (tala, change)
 	else:
-		ratio = ql_array[0] / ratio_search.ql_array()[0]
-		return (ratio_search, ('ratio', ratio))
+		return None
+
+"""
+ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+
+frag = [0.125, 0.25, 0.125]
+print(get_by_ql_array(frag, ratio_tree, difference_tree))"""
 
 def rolling_search(
 		filepath, 
@@ -640,13 +650,13 @@ def rolling_search(
 	:return: list holding fragments in the array present in the trees.
 	:rtype: list
 
-	ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-	difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
-	ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
-	for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
+	>>> ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+	>>> difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+	>>> ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
+	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
 	... 	print(tala_data)
 	((<decitala.Decitala 5_Pancama>, ('ratio', 1.0)), (0.0, 0.5))
-	((<decitala.Decitala 17_Yatilagna>, ('retrograde ratio', 1.0)), (0.25, 0.625))
+	((<decitala.Decitala 17_Yatilagna>, ('retrograde-ratio', 1.0)), (0.25, 0.625))
 	((<decitala.Decitala 5_Pancama>, ('ratio', 0.5)), (0.5, 0.75))
 	((<decitala.Decitala 17_Yatilagna>, ('ratio', 0.5)), (0.625, 1.0))
 	((<decitala.Decitala 5_Pancama>, ('ratio', 1.0)), (0.75, 1.25))
@@ -661,7 +671,7 @@ def rolling_search(
 			as_quarter_lengths = []
 			for this_obj, thisRange in this_frame:
 				if this_obj.isRest:
-					if this_obj.quarterLength == 0.25:
+					if this_obj.quarterLength == 0.25: # zis iz a prroblem. 
 						as_quarter_lengths.append(this_obj)
 					else:
 						pass
@@ -675,6 +685,13 @@ def rolling_search(
 				fragments_found.append((searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
 		
 	return fragments_found
+
+"""ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+
+ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
+for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
+	print(tala_data)"""
 
 def rolling_search_on_array(
 		ql_array, 
@@ -693,14 +710,14 @@ def rolling_search_on_array(
 	:return: list holding fragments in the array present in the trees.
 	:rtype: list
 
-	ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-	difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
-	example_fragment = np.array([0.25, 0.5, 0.25, 0.5])
-	fragments_found = rolling_search_on_array(ql_array=example_fragment, ratio_tree=ratio_tree, difference_tree=difference_tree)
-	for x in fragments_found:
+	>>> ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+	>>> difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+	>>> example_fragment = np.array([0.25, 0.5, 0.25, 0.5])
+	>>> fragments_found = rolling_search_on_array(ql_array=example_fragment, ratio_tree=ratio_tree, difference_tree=difference_tree)
+	>>> for x in fragments_found:
 	...     print(x, x[0].ql_array())
 	(<decitala.Decitala 17_Yatilagna>, ('ratio', 1.0)) [0.25 0.5 ]
-	(<decitala.Decitala 17_Yatilagna>, ('retrograde ratio', 2.0)) [0.25 0.5 ]
+	(<decitala.Decitala 17_Yatilagna>, ('retrograde-ratio', 2.0)) [0.25 0.5 ]
 	(<decitala.Decitala 17_Yatilagna>, ('ratio', 1.0)) [0.25 0.5 ]
 	(<decitala.Decitala 58_Dhenki>, ('ratio', 0.5)) [1.  0.5 1. ]
 	"""
