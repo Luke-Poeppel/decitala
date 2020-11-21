@@ -155,12 +155,7 @@
             
   <div class="section" id="module-decitala.database">
 <span id="database-py"></span><h1>database.py<a class="headerlink" href="#module-decitala.database" title="Permalink to this headline">¶</a></h1>
-<p>NOTE: 
-- IMPORTANT: there should be a kind of discrimination approach here. We should be able to create a 
-database that excludes all single-onset talas and create the paths from there. 
-- Should have the option to create a decitala database, greek foot database, combined 
-database, etc… For now, let’s just assume it’s a decitala databse. 
-- This function would work well in command line. decitala_v2 create_database &lt;score_path&gt; &lt;part_num&gt;</p>
+<p>Tools for creating a sqlite3 databases of extracted rhythmic data.</p>
 <p>TODO:
 - It doesn’t make sense to rewrite all the code twice. Make “filter” a parameter for create_database.
 So the command line tool would be something like decitala create_database (un)filtered &lt;path&gt; &lt;part_num&gt;

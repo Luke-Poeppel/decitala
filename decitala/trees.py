@@ -119,6 +119,8 @@ class NaryTree(object):
 	>>> TestTree.search_for_path([1.0, 2.0, 4.0])
 	>>> TestTree.search_for_path([1.0, 1.0, 2.0])
 	'C'
+	>>> TestTree.search_for_path([1.0, 0.5, 0.5], allow_unnamed=True)
+	[1.0, 0.5, 0.5]
 	"""
 	class Node(object):
 		"""
@@ -336,9 +338,12 @@ class NaryTree(object):
 		raise NotImplementedError
 
 	################################################################################################
-	def search_for_path(self, path_from_root):
+	def search_for_path(self, path_from_root, allow_unnamed=False):
 		"""
-		Searches for ``path_from_root`` through the tree for a continuous path to a named node.
+		Searches for ``path_from_root`` through the tree for a continuous path to a node. 
+		:param numpy.array path_from_root: path to search in tree.
+		:param bool allow_unnamed: whether or not to allow for unnamed paths to be found. 
+		:return: either the name of the final node or, if ``allow_unnamed=True``, possibly ``path_from_root``.
 		:raises `decitala.trees.TreeException`: when an invalid path or representation type is provided.
 		"""
 		assert path_from_root[0] == 0.0 or path_from_root[0] == 1.0
@@ -347,7 +352,6 @@ class NaryTree(object):
 
 		curr = self.root
 		i = 1
-		
 		while i < len(path_from_root):
 			try:
 				curr = curr.get_child_by_value(value = path_from_root[i])
@@ -355,61 +359,19 @@ class NaryTree(object):
 					return None
 			except AttributeError:
 				break
-
-			if (i == len(path_from_root) - 1) and len(curr.children) == 0:
-				return curr.name
-			elif (i == len(path_from_root) - 1) and curr.name is not None:
-				return curr.name
-			else:
-				i += 1
-		
-	########## New stuff... ##########
-	def _search(self, path_from_root, unnamed = False):
-		if len(path_from_root) < 2:
-			raise TreeException("Path provided must be at least 2 values long.")
-	
-		curr = self.root
-		i = 1
-		while i < len(path_from_root):
-			try:
-				curr = curr.get_child_by_value(value = path_from_root[i])
-				if curr is None:
-					return None
-			except AttributeError:
-				break
-
-			if not(unnamed):
-				if (i == len(path_from_root) - 1) and curr.name is not None:
+			
+			if allow_unnamed == False:
+				if (i == len(path_from_root) - 1) and len(curr.children) == 0:
+					return curr.name
+				elif (i == len(path_from_root) - 1) and curr.name is not None:
 					return curr.name
 				else:
 					i += 1
 			else:
-				if (i == len(path_from_root) - 1) and curr.name is not None:
-					return curr.name
-				elif (i == len(path_from_root) - 1) and curr.name is None:
-					return path_from_root[0:i + 1]
+				if (i == len(path_from_root) - 1):
+					return path_from_root
 				else:
 					i += 1
-
-	def _final_node_from_path(self, path_from_root):
-		"""Given a path, if the path is found (named or unnamed), returns the final Node object."""
-		if len(path_from_root) < 2:
-			raise TreeException('Path provided must be at least 2 values long.')
-	
-		curr = self.root
-		i = 1
-		while i < len(path_from_root):
-			try:
-				curr = curr.get_child_by_value(value = path_from_root[i])
-				if curr is None:
-					return None
-			except AttributeError:
-				break
-
-			if (i == len(path_from_root) - 1):
-				return curr
-			else:
-				i += 1
 
 ####################################################################################################
 class FragmentTree(NaryTree):
@@ -424,8 +386,8 @@ class FragmentTree(NaryTree):
 	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` and ``difference``.
 	:raises `decitala.trees.FragmentTreeException`: when an invalid path or representation type is provided.
 
-	>>> ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-	>>> ratio_tree.search_for_path([1.0, 1.0, 1.0, 1.0])
+	ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+	ratio_tree.search_for_path([1.0, 1.0, 1.0, 1.0])
 	<decitala.Decitala 84_Karanayati>
 	"""
 	def __init__(self, data_path, frag_type, rep_type, **kwargs):
@@ -565,6 +527,33 @@ class FragmentTree(NaryTree):
 			self.root = root_node
 
 ####################################################################################################
+def get_by_ql_array2(
+		ql_array,
+		ratio_tree,
+		difference_tree,
+		allowed_modifications={'retrograde', 'ratio', 'difference'}#, 'mixed', 'subdivision', 'unnamed', 'va'}
+	):
+	"""
+	:param numpy.array ql_array: fragment to be searched.
+	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.
+	:param fragment.FragmentTree difference_tree: tree storing difference representations.
+	:param list allowed_modifications: possible ways for a fragment to be modified. 
+	"""
+	pass
+
+livre_dorgue_1 = np.array([1.0, 0.5, 1.5, 1.5, 1.5, 1.0, 1.5, 0.25, 0.25, 0.25])
+livre_dorgue_2 = np.array([0.125, 0.125, 0.125, 0.125, 0.25, 0.25, 0.375])
+livre_dorgue_3 = np.array([0.75, 1.25, 1.25, 1.75, 1.25, 1.25, 1.25, 0.75])
+#ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+#difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+
+combined = np.concatenate([livre_dorgue_1, livre_dorgue_2, livre_dorgue_3])
+
+
+#print(get_by_ql_array(livre_dorgue_1, ratio_tree, difference_tree))
+#print(get_by_ql_array(livre_dorgue_2, ratio_tree, difference_tree))
+#print(get_by_ql_array(livre_dorgue_3, ratio_tree, difference_tree))
+
 def get_by_ql_array(ql_array, ratio_tree, difference_tree):
 	"""
 	Searches the ``ratio_tree`` and ``difference_tree`` for the input, ``ql_array``. Follows an Occam's Razor
@@ -575,10 +564,11 @@ def get_by_ql_array(ql_array, ratio_tree, difference_tree):
 	:param numpy.array ql_array: fragment to be searched.
 	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.
 	:param fragment.FragmentTree difference_tree: tree storing difference representations.
+	:return: a fragment in the ratio or difference tree. 
 
-	>>> ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-	>>> difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
-	>>> get_by_ql_array(ql_array=np.array([0.5, 0.5, 1.0, 1.0]), ratio_tree=ratio_tree, difference_tree=difference_tree)
+	ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+	difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+	get_by_ql_array(ql_array=np.array([0.5, 0.5, 1.0, 1.0]), ratio_tree=ratio_tree, difference_tree=difference_tree)
 	(<decitala.Decitala 32_Kudukka>, ('ratio', 2.0))
 	"""
 	retrograde = ql_array[::-1]
@@ -650,10 +640,10 @@ def rolling_search(
 	:return: list holding fragments in the array present in the trees.
 	:rtype: list
 
-	>>> ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-	>>> difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
-	>>> ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
-	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
+	ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+	difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+	ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
+	for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
 	... 	print(tala_data)
 	((<decitala.Decitala 5_Pancama>, ('ratio', 1.0)), (0.0, 0.5))
 	((<decitala.Decitala 17_Yatilagna>, ('retrograde ratio', 1.0)), (0.25, 0.625))
@@ -667,7 +657,7 @@ def rolling_search(
 	object_list = get_indices_of_object_occurrence(filepath = filepath, part_num = part_num)
 	fragments_found = []
 	for this_win in windows:
-		for this_frame in roll_window(lst = object_list, window_length = this_win):
+		for this_frame in roll_window(array = object_list, window_length = this_win):
 			as_quarter_lengths = []
 			for this_obj, thisRange in this_frame:
 				if this_obj.isRest:
@@ -703,11 +693,11 @@ def rolling_search_on_array(
 	:return: list holding fragments in the array present in the trees.
 	:rtype: list
 
-	>>> ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-	>>> difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
-	>>> example_fragment = np.array([0.25, 0.5, 0.25, 0.5])
-	>>> fragments_found = rolling_search_on_array(ql_array=example_fragment, ratio_tree=ratio_tree, difference_tree=difference_tree)
-	>>> for x in fragments_found:
+	ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+	difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+	example_fragment = np.array([0.25, 0.5, 0.25, 0.5])
+	fragments_found = rolling_search_on_array(ql_array=example_fragment, ratio_tree=ratio_tree, difference_tree=difference_tree)
+	for x in fragments_found:
 	...     print(x, x[0].ql_array())
 	(<decitala.Decitala 17_Yatilagna>, ('ratio', 1.0)) [0.25 0.5 ]
 	(<decitala.Decitala 17_Yatilagna>, ('retrograde ratio', 2.0)) [0.25 0.5 ]
@@ -724,12 +714,14 @@ def rolling_search_on_array(
 	max_index = windows.index(max_window_size)
 	windows = windows[0:max_index + 1]
 	for this_win in windows:
-		for this_frame in roll_window(lst = ql_array, window_length = this_win):
+		for this_frame in roll_window(array = ql_array, window_length = this_win):
 			searched = get_by_ql_array(this_frame, ratio_tree, difference_tree)
 			if searched is not None:
 				fragments_found.append(searched)
 
 	return fragments_found
+
+####################################################################################################
 
 if __name__ == '__main__':
 	import doctest

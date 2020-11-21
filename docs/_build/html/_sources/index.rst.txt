@@ -6,7 +6,8 @@
 Decitala Documentation
 ====================================
 
-Tools for automating ethnological rhythmic analysis of Olivier Messiaen's music.
+Tools for automating ethnological rhythmic analysis of Olivier Messiaen's music. The basic
+pipeline used in this package is Search → Path Finding (Database Creation) → Path Ranking → Analysis.
 
 .. toctree::
    :maxdepth: 2

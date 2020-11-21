@@ -25,7 +25,7 @@ from music21 import converter
 from music21 import stream
 
 from fragment import Decitala
-from trees import FragmentTree#, rolling_search2
+from trees import FragmentTree #, rolling_search2
 """
 from pofp import (
 	dynamically_partition_onset_list, 
@@ -37,28 +37,6 @@ from pofp import (
 
 decitala_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas'
 
-####################################################################################################
-
-@click.command()
-@click.option('--verbose', is_flag=True, help="Will print verbose messages.")
-@click.option('--name', default='', help="Who are you?")
-def cli(verbose, name):
-	if verbose:
-		click.echo("You are in verbose mode.")
-	click.secho("Hello, World!", fg="blue", bold=True)
-	click.secho("This is a command line tool test.")
-	click.echo("Bye, {}".format(name))
-
-
-
-
-
-
-
-
-
-
-####################################################################################################
 
 # Helper functions
 def _name_from_tala_string(tala_string):
@@ -272,6 +250,27 @@ def create_filtered_database(score_path, part_num, db_name):
 					post_nulls = ", ".join(nulls)
 					new = "INSERT INTO Paths_{0} VALUES('{1}', {2}, '{3}')".format(str(i), mid, post_nulls, formatted_pitch_content)
 					cur.execute(new)
+
+####################################################################################################
+@click.command()
+def cli():
+	"""Example script."""
+	click.echo('Hello World!')
+
+"""
+# Command line tool
+@click.command()
+@click.option('--verbose', is_flag=True, help="Will print verbose messages.")
+@click.option('--name', default='', help="Who are you?")
+def cli(verbose, name):
+	if verbose:
+		click.echo("You are in verbose mode.")
+	click.secho("Hello, World!", fg="blue", bold=True)
+	click.secho("This is a command line tool test.")
+	click.echo("Bye, {}".format(name))
+"""
+####################################################################################################
+
 
 ##################### TESTING #####################
 if __name__ == "__main__":

@@ -255,6 +255,8 @@ hashed by their value and are stored in a set. For demonstration, we will create
 <span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
 <span class="go">&#39;C&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">allow_unnamed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">[1.0, 0.5, 0.5]</span>
 </pre></div>
 </div>
 <dl class="py class">
@@ -357,8 +359,11 @@ length <span class="math notranslate nohighlight">\(n\)</span>.</p>
 
 <dl class="py method">
 <dt id="decitala.trees.NaryTree.search_for_path">
-<code class="sig-name descname">search_for_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path_from_root</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.NaryTree.search_for_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Searches for <code class="docutils literal notranslate"><span class="pre">path_from_root</span></code> through the tree for a continuous path to a named node.
+<code class="sig-name descname">search_for_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path_from_root</span></em>, <em class="sig-param"><span class="n">allow_unnamed</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.NaryTree.search_for_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for <code class="docutils literal notranslate"><span class="pre">path_from_root</span></code> through the tree for a continuous path to a node. 
+:param numpy.array path_from_root: path to search in tree.
+:param bool allow_unnamed: whether or not to allow for unnamed paths to be found. 
+:return: either the name of the final node or, if <code class="docutils literal notranslate"><span class="pre">allow_unnamed=True</span></code>, possibly <code class="docutils literal notranslate"><span class="pre">path_from_root</span></code>.
 :raises <cite>decitala.trees.TreeException</cite>: when an invalid path or representation type is provided.</p>
 </dd></dl>
 
@@ -384,11 +389,24 @@ Otherwise creates <a class="reference internal" href="fragment.html#decitala.fra
 <dd class="field-even"><p><a class="reference internal" href="#decitala.trees.FragmentTreeException" title="decitala.trees.FragmentTreeException"><strong>decitala.trees.FragmentTreeException</strong></a> – when an invalid path or representation type is provided.</p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
-<span class="go">&lt;decitala.Decitala 84_Karanayati&gt;</span>
-</pre></div>
-</div>
+<p>ratio_tree = FragmentTree(data_path=decitala_path, frag_type=’decitala’, rep_type=’ratio’)
+ratio_tree.search_for_path([1.0, 1.0, 1.0, 1.0])
+&lt;decitala.Decitala 84_Karanayati&gt;</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.trees.get_by_ql_array2">
+<code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">get_by_ql_array2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ql_array</span></em>, <em class="sig-param"><span class="n">ratio_tree</span></em>, <em class="sig-param"><span class="n">difference_tree</span></em>, <em class="sig-param"><span class="n">allowed_modifications</span><span class="o">=</span><span class="default_value">{'difference', 'ratio', 'retrograde'}</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.get_by_ql_array2" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ql_array</strong> (<em>numpy.array</em>) – fragment to be searched.</p></li>
+<li><p><strong>ratio_tree</strong> (<em>fragment.FragmentTree</em>) – tree storing ratio representations.</p></li>
+<li><p><strong>difference_tree</strong> (<em>fragment.FragmentTree</em>) – tree storing difference representations.</p></li>
+<li><p><strong>allowed_modifications</strong> (<em>list</em>) – possible ways for a fragment to be modified.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -406,13 +424,14 @@ representation of the retrograde.</p>
 <li><p><strong>difference_tree</strong> (<em>fragment.FragmentTree</em>) – tree storing difference representations.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a fragment in the ratio or difference tree.</p>
+</dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">get_by_ql_array</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span> <span class="n">ratio_tree</span><span class="o">=</span><span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="o">=</span><span class="n">difference_tree</span><span class="p">)</span>
-<span class="go">(&lt;decitala.Decitala 32_Kudukka&gt;, (&#39;ratio&#39;, 2.0))</span>
-</pre></div>
-</div>
+<p>ratio_tree = FragmentTree(data_path=decitala_path, frag_type=’decitala’, rep_type=’ratio’)
+difference_tree = FragmentTree(data_path=decitala_path, frag_type=’decitala’, rep_type=’difference’)
+get_by_ql_array(ql_array=np.array([0.5, 0.5, 1.0, 1.0]), ratio_tree=ratio_tree, difference_tree=difference_tree)
+(&lt;decitala.Decitala 32_Kudukka&gt;, (‘ratio’, 2.0))</p>
 </dd></dl>
 
 <dl class="py function">
@@ -438,18 +457,16 @@ are the lengths of all the talas in the dataset.</p>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ex</span> <span class="o">=</span> <span class="s1">&#39;/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tala_data</span> <span class="ow">in</span> <span class="n">rolling_search</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">tala_data</span><span class="p">)</span>
-<span class="go">((&lt;decitala.Decitala 5_Pancama&gt;, (&#39;ratio&#39;, 1.0)), (0.0, 0.5))</span>
-<span class="go">((&lt;decitala.Decitala 17_Yatilagna&gt;, (&#39;retrograde ratio&#39;, 1.0)), (0.25, 0.625))</span>
-<span class="go">((&lt;decitala.Decitala 5_Pancama&gt;, (&#39;ratio&#39;, 0.5)), (0.5, 0.75))</span>
-<span class="go">((&lt;decitala.Decitala 17_Yatilagna&gt;, (&#39;ratio&#39;, 0.5)), (0.625, 1.0))</span>
-<span class="go">((&lt;decitala.Decitala 5_Pancama&gt;, (&#39;ratio&#39;, 1.0)), (0.75, 1.25))</span>
-</pre></div>
-</div>
+<p>ratio_tree = FragmentTree(data_path=decitala_path, frag_type=’decitala’, rep_type=’ratio’)
+difference_tree = FragmentTree(data_path=decitala_path, frag_type=’decitala’, rep_type=’difference’)
+ex = ‘/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml’
+for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
+…     print(tala_data)
+((&lt;decitala.Decitala 5_Pancama&gt;, (‘ratio’, 1.0)), (0.0, 0.5))
+((&lt;decitala.Decitala 17_Yatilagna&gt;, (‘retrograde ratio’, 1.0)), (0.25, 0.625))
+((&lt;decitala.Decitala 5_Pancama&gt;, (‘ratio’, 0.5)), (0.5, 0.75))
+((&lt;decitala.Decitala 17_Yatilagna&gt;, (‘ratio’, 0.5)), (0.625, 1.0))
+((&lt;decitala.Decitala 5_Pancama&gt;, (‘ratio’, 1.0)), (0.75, 1.25))</p>
 </dd></dl>
 
 <dl class="py function">
@@ -473,18 +490,16 @@ see documentation for <a class="reference internal" href="#decitala.trees.get_by
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">example_fragment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fragments_found</span> <span class="o">=</span> <span class="n">rolling_search_on_array</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="n">example_fragment</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="o">=</span><span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="o">=</span><span class="n">difference_tree</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragments_found</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
-<span class="go">(&lt;decitala.Decitala 17_Yatilagna&gt;, (&#39;ratio&#39;, 1.0)) [0.25 0.5 ]</span>
-<span class="go">(&lt;decitala.Decitala 17_Yatilagna&gt;, (&#39;retrograde ratio&#39;, 2.0)) [0.25 0.5 ]</span>
-<span class="go">(&lt;decitala.Decitala 17_Yatilagna&gt;, (&#39;ratio&#39;, 1.0)) [0.25 0.5 ]</span>
-<span class="go">(&lt;decitala.Decitala 58_Dhenki&gt;, (&#39;ratio&#39;, 0.5)) [1.  0.5 1. ]</span>
-</pre></div>
-</div>
+<p>ratio_tree = FragmentTree(data_path=decitala_path, frag_type=’decitala’, rep_type=’ratio’)
+difference_tree = FragmentTree(data_path=decitala_path, frag_type=’decitala’, rep_type=’difference’)
+example_fragment = np.array([0.25, 0.5, 0.25, 0.5])
+fragments_found = rolling_search_on_array(ql_array=example_fragment, ratio_tree=ratio_tree, difference_tree=difference_tree)
+for x in fragments_found:
+…     print(x, x[0].ql_array())
+(&lt;decitala.Decitala 17_Yatilagna&gt;, (‘ratio’, 1.0)) [0.25 0.5 ]
+(&lt;decitala.Decitala 17_Yatilagna&gt;, (‘retrograde ratio’, 2.0)) [0.25 0.5 ]
+(&lt;decitala.Decitala 17_Yatilagna&gt;, (‘ratio’, 1.0)) [0.25 0.5 ]
+(&lt;decitala.Decitala 58_Dhenki&gt;, (‘ratio’, 0.5)) [1.  0.5 1. ]</p>
 </dd></dl>
 
 </div>

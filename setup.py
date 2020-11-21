@@ -1,8 +1,18 @@
+"""
+# https://stackoverflow.com/questions/27784271/how-can-i-use-setuptools-to-generate-a-console-scripts-entry-point-which-calls
+
+entry_points = {
+	"console_scripts": [
+		"decitala = decitala.database:cli",
+	]
+}
+"""
 import setuptools
 
 __VERSION__ = "0.1.0"
 
-__MODULES__ = ["decitala.decitala", "decitala.trees"]
+# Can eventually replace this with a loop through os.listdir.
+__MODULES__ = ["decitala.fragment", "decitala.trees", "decitala.pofp", "decitala.database"]
 
 setuptools.setup(
 	name="decitala",
@@ -24,6 +34,6 @@ setuptools.setup(
 	include_package_data=True,
 	install_requires=[
 		"kdtree",
-		"numpy"
-	]
+		"numpy",
+	],
 )
