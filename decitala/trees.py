@@ -588,15 +588,13 @@ def get_by_ql_array(
 									Current possibilities are ``ratio``, ``retrograde-ratio``, ``difference``, and ``retrograde-difference``.
 									*NOTE*: the order of ``allowed_modifications`` is the order of the search. 
 	:param bool allow_unnamed: whether or not to allow the retrieval of unnamed paths. Default is ``False``.
-	
-	choriamb = 1, 0.5, 1, 2 (ratios)
 
-	>>> fragment = np.array([0.5, 0.5, 1.0, 1.0])
-	>>> ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-	>>> difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+	>>> fragment = np.array([3.0, 1.5, 1.5, 3.0])
+	>>> ratio_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='ratio')
+	>>> difference_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='difference')
 	>>> allowed_modifications = ["ratio", "retrograde-ratio"]
 	>>> get_by_ql_array(fragment, ratio_tree, difference_tree, allowed_modifications)
-	(<fragment.Decitala 32_Kudukka>, ('ratio', 2.0))
+	(<fragment.GreekFoot Choriamb>, ('ratio', 1.5))
 	"""
 	tala = None
 	config = _SearchConfig(ql_array=ql_array, ratio_tree=ratio_tree, difference_tree=difference_tree, modifications=allowed_modifications)
@@ -636,19 +634,19 @@ def rolling_search(
 	:param fragment.FragmentTree difference_tree: tree storing difference representations.
 	:param bool allow_unnamed: whether or not to allow unnamed fragments found to be returned.
 	:param list windows: possible length of the search frame. 
-	:return: list holding fragments in the array present in the trees.
+	:return: list holding fragments in the array, along with the modification and the offset region in which it occurs. 
 	:rtype: list
 
-	>>> ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-	>>> difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+	>>> ratio_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='ratio')
+	>>> difference_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='difference')
 	>>> ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
 	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
 	... 	print(tala_data)
-	((<fragment.Decitala 5_Pancama>, ('ratio', 1.0)), (0.0, 0.5))
-	((<fragment.Decitala 17_Yatilagna>, ('retrograde-ratio', 1.0)), (0.25, 0.625))
-	((<fragment.Decitala 5_Pancama>, ('ratio', 0.5)), (0.5, 0.75))
-	((<fragment.Decitala 17_Yatilagna>, ('ratio', 0.5)), (0.625, 1.0))
-	((<fragment.Decitala 5_Pancama>, ('ratio', 1.0)), (0.75, 1.25))
+	((<fragment.GreekFoot Spondee>, ('ratio', 0.125)), (0.0, 0.5))
+	((<fragment.GreekFoot Trochee>, ('ratio', 0.125)), (0.25, 0.625))
+	((<fragment.GreekFoot Spondee>, ('ratio', 0.0625)), (0.5, 0.75))
+	((<fragment.GreekFoot Iamb>, ('ratio', 0.125)), (0.625, 1.0))
+	((<fragment.GreekFoot Spondee>, ('ratio', 0.125)), (0.75, 1.25))
 	"""
 	assert ratio_tree.rep_type == 'ratio'
 	assert difference_tree.rep_type == 'difference'
@@ -675,13 +673,6 @@ def rolling_search(
 		
 	return fragments_found
 
-"""ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
-
-ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
-for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
-	print(tala_data)"""
-
 def rolling_search_on_array(
 		ql_array, 
 		ratio_tree, 
@@ -699,16 +690,16 @@ def rolling_search_on_array(
 	:return: list holding fragments in the array present in the trees.
 	:rtype: list
 
-	>>> ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-	>>> difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+	>>> greek_ratio_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='ratio')
+	>>> greek_difference_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='difference')
 	>>> example_fragment = np.array([0.25, 0.5, 0.25, 0.5])
-	>>> fragments_found = rolling_search_on_array(ql_array=example_fragment, ratio_tree=ratio_tree, difference_tree=difference_tree)
-	>>> for x in fragments_found:
+	>>> for x in rolling_search_on_array(ql_array=example_fragment, ratio_tree=greek_ratio_tree, difference_tree=greek_difference_tree):
 	...     print(x, x[0].ql_array())
-	(<fragment.Decitala 17_Yatilagna>, ('ratio', 1.0)) [0.25 0.5 ]
-	(<fragment.Decitala 17_Yatilagna>, ('retrograde-ratio', 2.0)) [0.25 0.5 ]
-	(<fragment.Decitala 17_Yatilagna>, ('ratio', 1.0)) [0.25 0.5 ]
-	(<fragment.Decitala 58_Dhenki>, ('ratio', 0.5)) [1.  0.5 1. ]
+	(<fragment.GreekFoot Iamb>, ('ratio', 0.25)) [1. 2.]
+	(<fragment.GreekFoot Trochee>, ('ratio', 0.25)) [2. 1.]
+	(<fragment.GreekFoot Iamb>, ('ratio', 0.25)) [1. 2.]
+	(<fragment.GreekFoot Amphibrach>, ('ratio', 0.25)) [1. 2. 1.]
+	(<fragment.GreekFoot Amphimacer>, ('ratio', 0.25)) [2. 1. 2.]
 	"""
 	assert ratio_tree.rep_type == 'ratio'
 	assert difference_tree.rep_type == 'difference'
@@ -727,7 +718,6 @@ def rolling_search_on_array(
 
 	return fragments_found
 
-####################################################################################################
 ####################################################################################################
 """
 	For example, if we have the following set of fragments: 
@@ -748,6 +738,17 @@ def rolling_search_on_array(
 	[0.25, 0.25, 0.5], 
 	[0.25, 0.5, 1.0, 2.0], 
 	[1.0, 0.5, 0.5, 0.25, 0.25]
+
+	ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+	difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+	ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
+	for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
+	... 	print(tala_data)
+	((<fragment.Decitala 5_Pancama>, ('ratio', 1.0)), (0.0, 0.5))
+	((<fragment.Decitala 17_Yatilagna>, ('retrograde-ratio', 1.0)), (0.25, 0.625))
+	((<fragment.Decitala 5_Pancama>, ('ratio', 0.5)), (0.5, 0.75))
+	((<fragment.Decitala 17_Yatilagna>, ('ratio', 0.5)), (0.625, 1.0))
+	((<fragment.Decitala 5_Pancama>, ('ratio', 1.0)), (0.75, 1.25))
 
 # Testing
 @pytest.fixture

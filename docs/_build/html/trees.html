@@ -448,12 +448,12 @@ Current possibilities are <code class="docutils literal notranslate"><span class
 </ul>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">greek_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">greek_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">allowed_modifications</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;retrograde-ratio&quot;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">get_by_ql_array</span><span class="p">(</span><span class="n">fragment</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">,</span> <span class="n">allowed_modifications</span><span class="p">)</span>
-<span class="go">(&lt;fragment.Decitala 32_Kudukka&gt;, (&#39;ratio&#39;, 2.0))</span>
+<span class="go">(&lt;fragment.GreekFoot Choriamb&gt;, (&#39;ratio&#39;, 1.5))</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -476,22 +476,22 @@ are the lengths of all the talas in the dataset.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list holding fragments in the array present in the trees.</p>
+<dd class="field-even"><p>list holding fragments in the array, along with the modification and the offset region in which it occurs.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">greek_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">greek_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ex</span> <span class="o">=</span> <span class="s1">&#39;/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tala_data</span> <span class="ow">in</span> <span class="n">rolling_search</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">tala_data</span><span class="p">)</span>
-<span class="go">((&lt;fragment.Decitala 5_Pancama&gt;, (&#39;ratio&#39;, 1.0)), (0.0, 0.5))</span>
-<span class="go">((&lt;fragment.Decitala 17_Yatilagna&gt;, (&#39;retrograde-ratio&#39;, 1.0)), (0.25, 0.625))</span>
-<span class="go">((&lt;fragment.Decitala 5_Pancama&gt;, (&#39;ratio&#39;, 0.5)), (0.5, 0.75))</span>
-<span class="go">((&lt;fragment.Decitala 17_Yatilagna&gt;, (&#39;ratio&#39;, 0.5)), (0.625, 1.0))</span>
-<span class="go">((&lt;fragment.Decitala 5_Pancama&gt;, (&#39;ratio&#39;, 1.0)), (0.75, 1.25))</span>
+<span class="go">((&lt;fragment.GreekFoot Spondee&gt;, (&#39;ratio&#39;, 0.125)), (0.0, 0.5))</span>
+<span class="go">((&lt;fragment.GreekFoot Trochee&gt;, (&#39;ratio&#39;, 0.125)), (0.25, 0.625))</span>
+<span class="go">((&lt;fragment.GreekFoot Spondee&gt;, (&#39;ratio&#39;, 0.0625)), (0.5, 0.75))</span>
+<span class="go">((&lt;fragment.GreekFoot Iamb&gt;, (&#39;ratio&#39;, 0.125)), (0.625, 1.0))</span>
+<span class="go">((&lt;fragment.GreekFoot Spondee&gt;, (&#39;ratio&#39;, 0.125)), (0.75, 1.25))</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -517,16 +517,16 @@ see documentation for <a class="reference internal" href="#decitala.trees.get_by
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">greek_ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">greek_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">greek_difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">greek_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">example_fragment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fragments_found</span> <span class="o">=</span> <span class="n">rolling_search_on_array</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="n">example_fragment</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="o">=</span><span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="o">=</span><span class="n">difference_tree</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragments_found</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rolling_search_on_array</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="n">example_fragment</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="o">=</span><span class="n">greek_ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="o">=</span><span class="n">greek_difference_tree</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
-<span class="go">(&lt;fragment.Decitala 17_Yatilagna&gt;, (&#39;ratio&#39;, 1.0)) [0.25 0.5 ]</span>
-<span class="go">(&lt;fragment.Decitala 17_Yatilagna&gt;, (&#39;retrograde-ratio&#39;, 2.0)) [0.25 0.5 ]</span>
-<span class="go">(&lt;fragment.Decitala 17_Yatilagna&gt;, (&#39;ratio&#39;, 1.0)) [0.25 0.5 ]</span>
-<span class="go">(&lt;fragment.Decitala 58_Dhenki&gt;, (&#39;ratio&#39;, 0.5)) [1.  0.5 1. ]</span>
+<span class="go">(&lt;fragment.GreekFoot Iamb&gt;, (&#39;ratio&#39;, 0.25)) [1. 2.]</span>
+<span class="go">(&lt;fragment.GreekFoot Trochee&gt;, (&#39;ratio&#39;, 0.25)) [2. 1.]</span>
+<span class="go">(&lt;fragment.GreekFoot Iamb&gt;, (&#39;ratio&#39;, 0.25)) [1. 2.]</span>
+<span class="go">(&lt;fragment.GreekFoot Amphibrach&gt;, (&#39;ratio&#39;, 0.25)) [1. 2. 1.]</span>
+<span class="go">(&lt;fragment.GreekFoot Amphimacer&gt;, (&#39;ratio&#39;, 0.25)) [2. 1. 2.]</span>
 </pre></div>
 </div>
 </dd></dl>
