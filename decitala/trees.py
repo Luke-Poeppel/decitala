@@ -390,12 +390,12 @@ class NaryTree(object):
 ####################################################################################################
 def filter_data(raw_data):
 	"""
-	This function is used in the instantiation of the `~decitala.trees.FragmentTree`.
+	This function is used in the instantiation of the :class:`~decitala.trees.FragmentTree`.
 
-	:param list raw_data: a list of `~decitala.fragment.Decitala`, `~decitala.fragment.GreekFoot`, or 
-						`~decitala.fragment.GeneralFragment` objects. 
+	:param list raw_data: a list of :class:`~decitala.fragment.Decitala`, :class:`~decitala.fragment.GreekFoot`, or 
+						:class:`~decitala.fragment.GeneralFragment` objects. 
 	:return: a filtered list that removes single-onset fragments and fragments with equivalent 
-			successive difference representations (see `~decitala.utils.successive_ratio_array`) 
+			successive difference representations (see :meth:`~decitala.utils.successive_ratio_array`) 
 			using the Cauchy-Schwartz inequality.
 	:rtype: list
 	"""
@@ -441,12 +441,12 @@ def filter_data(raw_data):
 
 class FragmentTree(NaryTree):
 	"""
-	NaryTree that holds multiplicative and additive representations of a rhythmic dataset. 
+	NaryTree that holds multiplicative or additive representations of a rhythmic dataset. 
 
 	:param str data_path: path to folder of music21-readable files.
 	:param str frag_type: determines the class defining the set of fragments. 
-					If the frag_type is `decitala`, creates :class:`~decitala.fragment.Decitala` objects.
-					If ``frag_type == greek_foot``, creates :class:`~decitala.fragment.GreekFoot`.
+					If the ``frag_type=='decitala'``, creates :class:`~decitala.fragment.Decitala` objects;
+					if ``frag_type=='greek_foot'``, creates :class:`~decitala.fragment.GreekFoot`.
 					Otherwise creates :class:`~decitala.fragment.GeneralFragment` objects.
 	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` and ``difference``.
 	:raises `~decitala.trees.FragmentTreeException`: when an invalid path or representation type is provided.
@@ -589,6 +589,8 @@ def get_by_ql_array(
 									*NOTE*: the order of ``allowed_modifications`` is the order of the search. 
 	:param bool allow_unnamed: whether or not to allow the retrieval of unnamed paths. Default is ``False``.
 	
+	choriamb = 1, 0.5, 1, 2 (ratios)
+
 	>>> fragment = np.array([0.5, 0.5, 1.0, 1.0])
 	>>> ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
 	>>> difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')

@@ -386,15 +386,15 @@ for a node for which the input is linearly dependent.</p>
 <dl class="py function">
 <dt id="decitala.trees.filter_data">
 <code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">filter_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">raw_data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.filter_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is used in the instantiation of the <cite>~decitala.trees.FragmentTree</cite>.</p>
+<dd><p>This function is used in the instantiation of the <a class="reference internal" href="#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><code class="xref py py-class docutils literal notranslate"><span class="pre">FragmentTree</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>raw_data</strong> (<em>list</em>) – a list of <cite>~decitala.fragment.Decitala</cite>, <cite>~decitala.fragment.GreekFoot</cite>, or 
-<cite>~decitala.fragment.GeneralFragment</cite> objects.</p>
+<dd class="field-odd"><p><strong>raw_data</strong> (<em>list</em>) – a list of <a class="reference internal" href="fragment.html#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decitala</span></code></a>, <a class="reference internal" href="fragment.html#decitala.fragment.GreekFoot" title="decitala.fragment.GreekFoot"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreekFoot</span></code></a>, or 
+<a class="reference internal" href="fragment.html#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralFragment</span></code></a> objects.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>a filtered list that removes single-onset fragments and fragments with equivalent 
-successive difference representations (see <cite>~decitala.utils.successive_ratio_array</cite>) 
+successive difference representations (see <a class="reference internal" href="utils.html#decitala.utils.successive_ratio_array" title="decitala.utils.successive_ratio_array"><code class="xref py py-meth docutils literal notranslate"><span class="pre">successive_ratio_array()</span></code></a>) 
 using the Cauchy-Schwartz inequality.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
@@ -407,14 +407,14 @@ using the Cauchy-Schwartz inequality.</p>
 <dt id="decitala.trees.FragmentTree">
 <em class="property">class </em><code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">FragmentTree</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_path</span></em>, <em class="sig-param"><span class="n">frag_type</span></em>, <em class="sig-param"><span class="n">rep_type</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.FragmentTree" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#decitala.trees.NaryTree" title="decitala.trees.NaryTree"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.trees.NaryTree</span></code></a></p>
-<p>NaryTree that holds multiplicative and additive representations of a rhythmic dataset.</p>
+<p>NaryTree that holds multiplicative or additive representations of a rhythmic dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_path</strong> (<em>str</em>) – path to folder of music21-readable files.</p></li>
 <li><p><strong>frag_type</strong> (<em>str</em>) – determines the class defining the set of fragments. 
-If the frag_type is <cite>decitala</cite>, creates <a class="reference internal" href="fragment.html#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decitala</span></code></a> objects.
-If <code class="docutils literal notranslate"><span class="pre">frag_type</span> <span class="pre">==</span> <span class="pre">greek_foot</span></code>, creates <a class="reference internal" href="fragment.html#decitala.fragment.GreekFoot" title="decitala.fragment.GreekFoot"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreekFoot</span></code></a>.
+If the <code class="docutils literal notranslate"><span class="pre">frag_type=='decitala'</span></code>, creates <a class="reference internal" href="fragment.html#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decitala</span></code></a> objects;
+if <code class="docutils literal notranslate"><span class="pre">frag_type=='greek_foot'</span></code>, creates <a class="reference internal" href="fragment.html#decitala.fragment.GreekFoot" title="decitala.fragment.GreekFoot"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreekFoot</span></code></a>.
 Otherwise creates <a class="reference internal" href="fragment.html#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralFragment</span></code></a> objects.</p></li>
 <li><p><strong>rep_type</strong> (<em>str</em>) – determines the representation of the fragment. Options are <code class="docutils literal notranslate"><span class="pre">ratio</span></code> and <code class="docutils literal notranslate"><span class="pre">difference</span></code>.</p></li>
 </ul>
@@ -453,7 +453,7 @@ Current possibilities are <code class="docutils literal notranslate"><span class
 <span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data_path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;decitala&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">allowed_modifications</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;retrograde-ratio&quot;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">get_by_ql_array</span><span class="p">(</span><span class="n">fragment</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">,</span> <span class="n">allowed_modifications</span><span class="p">)</span>
-<span class="go">(&lt;decitala.Decitala 32_Kudukka&gt;, (&#39;ratio&#39;, 2.0))</span>
+<span class="go">(&lt;fragment.Decitala 32_Kudukka&gt;, (&#39;ratio&#39;, 2.0))</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -487,11 +487,11 @@ are the lengths of all the talas in the dataset.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ex</span> <span class="o">=</span> <span class="s1">&#39;/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tala_data</span> <span class="ow">in</span> <span class="n">rolling_search</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">tala_data</span><span class="p">)</span>
-<span class="go">((&lt;decitala.Decitala 5_Pancama&gt;, (&#39;ratio&#39;, 1.0)), (0.0, 0.5))</span>
-<span class="go">((&lt;decitala.Decitala 17_Yatilagna&gt;, (&#39;retrograde-ratio&#39;, 1.0)), (0.25, 0.625))</span>
-<span class="go">((&lt;decitala.Decitala 5_Pancama&gt;, (&#39;ratio&#39;, 0.5)), (0.5, 0.75))</span>
-<span class="go">((&lt;decitala.Decitala 17_Yatilagna&gt;, (&#39;ratio&#39;, 0.5)), (0.625, 1.0))</span>
-<span class="go">((&lt;decitala.Decitala 5_Pancama&gt;, (&#39;ratio&#39;, 1.0)), (0.75, 1.25))</span>
+<span class="go">((&lt;fragment.Decitala 5_Pancama&gt;, (&#39;ratio&#39;, 1.0)), (0.0, 0.5))</span>
+<span class="go">((&lt;fragment.Decitala 17_Yatilagna&gt;, (&#39;retrograde-ratio&#39;, 1.0)), (0.25, 0.625))</span>
+<span class="go">((&lt;fragment.Decitala 5_Pancama&gt;, (&#39;ratio&#39;, 0.5)), (0.5, 0.75))</span>
+<span class="go">((&lt;fragment.Decitala 17_Yatilagna&gt;, (&#39;ratio&#39;, 0.5)), (0.625, 1.0))</span>
+<span class="go">((&lt;fragment.Decitala 5_Pancama&gt;, (&#39;ratio&#39;, 1.0)), (0.75, 1.25))</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -523,10 +523,10 @@ see documentation for <a class="reference internal" href="#decitala.trees.get_by
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fragments_found</span> <span class="o">=</span> <span class="n">rolling_search_on_array</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="n">example_fragment</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="o">=</span><span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="o">=</span><span class="n">difference_tree</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragments_found</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
-<span class="go">(&lt;decitala.Decitala 17_Yatilagna&gt;, (&#39;ratio&#39;, 1.0)) [0.25 0.5 ]</span>
-<span class="go">(&lt;decitala.Decitala 17_Yatilagna&gt;, (&#39;retrograde-ratio&#39;, 2.0)) [0.25 0.5 ]</span>
-<span class="go">(&lt;decitala.Decitala 17_Yatilagna&gt;, (&#39;ratio&#39;, 1.0)) [0.25 0.5 ]</span>
-<span class="go">(&lt;decitala.Decitala 58_Dhenki&gt;, (&#39;ratio&#39;, 0.5)) [1.  0.5 1. ]</span>
+<span class="go">(&lt;fragment.Decitala 17_Yatilagna&gt;, (&#39;ratio&#39;, 1.0)) [0.25 0.5 ]</span>
+<span class="go">(&lt;fragment.Decitala 17_Yatilagna&gt;, (&#39;retrograde-ratio&#39;, 2.0)) [0.25 0.5 ]</span>
+<span class="go">(&lt;fragment.Decitala 17_Yatilagna&gt;, (&#39;ratio&#39;, 1.0)) [0.25 0.5 ]</span>
+<span class="go">(&lt;fragment.Decitala 58_Dhenki&gt;, (&#39;ratio&#39;, 0.5)) [1.  0.5 1. ]</span>
 </pre></div>
 </div>
 </dd></dl>
