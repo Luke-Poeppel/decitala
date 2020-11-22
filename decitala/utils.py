@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 ####################################################################################################
-# File:     tools.py
+# File:     utils.py
 # Purpose:  Random useful functions. 
 # 
 # Author:   Luke Poeppel
@@ -202,7 +201,7 @@ def roll_window(array, window_length):
 	:param np.array array: arbitrary array. 
 
 	>>> composers = np.array(['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet'])
-	>>> for this in roll_window(lst=composers, window_length=3):
+	>>> for this in roll_window(array=composers, window_length=3):
 	...     print(this)
 	['Mozart', 'Monteverdi', 'Messiaen']
 	['Monteverdi', 'Messiaen', 'Mahler']

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ####################################################################################################
 # File:     fragment.py
 # Purpose:  Representation and tools for dealing with generic rhythmic fragments, as well as those
@@ -21,7 +20,7 @@ from music21 import converter
 from music21 import note
 from music21 import stream
 
-from tools import (
+from .utils import (
 	carnatic_string_to_ql_array, 
 	ql_array_to_carnatic_string,
 	ql_array_to_greek_diacritics,
@@ -42,6 +41,7 @@ class FragmentException(Exception):
 
 class DecitalaException(FragmentException):
 	pass
+
 ############### EXCEPTIONS ###############
 class GeneralFragment(object):
 	"""
