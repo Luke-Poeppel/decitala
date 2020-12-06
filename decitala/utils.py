@@ -6,10 +6,13 @@
 #
 # Location: Kent, CT 2020 / Frankfurt, DE 2020
 ####################################################################################################
+import copy
 import decimal
+import logging
 import numpy as np
 
 from itertools import chain, combinations
+from scipy.linalg import norm
 
 from music21 import converter
 
@@ -225,6 +228,72 @@ def roll_window(array, window_length):
 	return l
 
 ####################################################################################################
+# Subdivision 
+"""
+Find clusters
+Get all combinations of clusters
+Within each cluster, get every combination
+"""
+
+def find_clusters(array):
+	copied = copy.copy(list(array))
+	clusters = []
+	i = 0
+		
+	while i < len(copied) - 1:
+		import pdb; pdb.set_trace()
+		curr_cluster = [i]
+		if copied[i] == copied[i+1]:
+			curr_cluster.append(i+1)
+			i += 1
+		else:
+			i += 1
+		
+		clusters.append(curr_cluster)
+
+	return clusters
+
+#ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
+#print(find_clusters(ragavardhana))
+
+def find_areas_of_possible_subdivision(array):
+	"""
+	# >>> ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
+	# >>> find_areas_of_possible_subdivision(ragavardhana)
+	# [(0, 2), (1, 3), (0, 3)]
+	"""
+	windows = list(range(2, len(array)))
+	for this_window_size in windows:
+		for this_frame in roll_window(array, this_window_size):
+			print(this_frame)
+
+# ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
+# print(find_areas_of_possible_subdivision(ragavardhana))
+
+
+def find_all_subdivisions(array):
+	"""
+	Find index *ranges* with identical elements (as tuples). 
+	Take the power set of those possible ranges.
+	Combine by indices.
+
+	e.g.
+	np.array([1, 1, 1, 0.5, 0.75, 0.5])
+	index range: [(0, 3)]
+
+	# >>> ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
+	# >>> for x in find_all_subdivisions(ragavardhana):
+	# ...     print(x)
+	# array([1.  , 1.  , 1.  , 0.5 , 0.75, 0.5 ])
+	# array([2.  , 1.  , 0.5 , 0.75, 0.5 ])
+	# array([1.  , 2.  , 0.5 , 0.75, 0.5 ])
+	# array([3.  , 0.5 , 0.75, 0.5 ])
+	"""
+	all_subdivisions = []
+	return all_subdivisions
+
+
+####################################################################################################
 # La Valeur Ajoutee
 def get_added_values(ql_lst, print_type = True):
 	"""
@@ -311,51 +380,6 @@ def removeAddedValuesFromList(lst):
 	return lst
 
 ####################################################################################################
-# Score helpers
-def get_stripped_object_list(filepath, part_num):
-	'''
-	Returns the quarter length list of an input stream (with ties removed), but also includes 
-	spaces for rests.
-
-	NOTE: this used to be .iter.notesAndRest, but I took it away, for now, to avoid complications.
-	'''
-	score = converter.parse(filepath)
-	part = score.parts[part_num]
-	object_list = []
-
-	stripped = part.stripTies(retainContainers = True)
-	for this_obj in stripped.recurse().iter.notes: 
-		object_list.append(this_obj)
-
-	return object_list
-	
-def get_indices_of_object_occurrence(filepath, part_num):
-	'''
-	Given a file path and part number, returns a list containing tuples of the form [(OBJ, (start, end))].
-
-	>>> bach_path = '/Users/lukepoeppel/Documents/GitHub/music21/music21/corpus/bach/bwv66.6.mxl'
-	>>> for data in get_indices_of_object_occurrence(bach_path, 0)[0:12]:
-	...     print(data)
-	(<music21.note.Note C#>, (0.0, 0.5))
-	(<music21.note.Note B>, (0.5, 1.0))
-	(<music21.note.Note A>, (1.0, 2.0))
-	(<music21.note.Note B>, (2.0, 3.0))
-	(<music21.note.Note C#>, (3.0, 4.0))
-	(<music21.note.Note E>, (4.0, 5.0))
-	(<music21.note.Note C#>, (5.0, 6.0))
-	(<music21.note.Note B>, (6.0, 7.0))
-	(<music21.note.Note A>, (7.0, 8.0))
-	(<music21.note.Note C#>, (8.0, 9.0))
-	(<music21.note.Note A>, (9.0, 9.5))
-	(<music21.note.Note B>, (9.5, 10.0))
-	'''
-	data_out = []
-	stripped_object_list = get_stripped_object_list(filepath, part_num)
-	for this_obj in stripped_object_list:
-		data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
-
-	return data_out
-
 def powerList(lst):
 	"""
 	Given a list, returns it's 'power set' (excluding, of course, the empty list). 
@@ -427,13 +451,54 @@ def cauchy_schwartz(vector1, vector2):
 	False
 	'''
 	assert len(vector1) == len(vector2)
-	if abs(np.dot(vector1, vector2)) <  (_euclidian_norm(vector1) * _euclidian_norm(vector2)):
-		return True
-	else:
-		return False
+	return abs(np.dot(vector1, vector2)) <  (norm(vector1) * norm(vector2))
+
+####################################################################################################
+# Score helpers
+def get_object_indices(filepath, part_num):
+	"""
+	NOW SUPPORTS RESTS & GRACE NOTES
+	Given a file path and part number, returns a list containing tuples of the form [(OBJ, (start, end))].
+
+	>>> bach_path = '/Users/lukepoeppel/Documents/GitHub/music21/music21/corpus/bach/bwv66.6.mxl'
+	>>> for data in get_indices_of_object_occurrence(bach_path, 0)[0:12]:
+	...     print(data)
+	(<music21.note.Note C#>, (0.0, 0.5))
+	(<music21.note.Note B>, (0.5, 1.0))
+	(<music21.note.Note A>, (1.0, 2.0))
+	(<music21.note.Note B>, (2.0, 3.0))
+	(<music21.note.Note C#>, (3.0, 4.0))
+	(<music21.note.Note E>, (4.0, 5.0))
+	(<music21.note.Note C#>, (5.0, 6.0))
+	(<music21.note.Note B>, (6.0, 7.0))
+	(<music21.note.Note A>, (7.0, 8.0))
+	(<music21.note.Note C#>, (8.0, 9.0))
+	(<music21.note.Note A>, (9.0, 9.5))
+	(<music21.note.Note B>, (9.5, 10.0))
+	"""
+	def get_stripped_object_list(filepath, part_num):
+		score = converter.parse(filepath)
+		part = score.parts[part_num]
+		object_list = []
+		stripped = part.stripTies(retainContainers = True)
+		for this_obj in stripped.recurse().iter.notesAndRests: 
+			object_list.append(this_obj)
+
+		return object_list
+	
+	data_out = []
+	stripped_object_list = get_stripped_object_list(filepath, part_num)
+	for this_obj in stripped_object_list:
+		data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
+
+	return data_out
+
+niverolle = "/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_2e_example.xml"
+x = get_object_indices(niverolle, 0)
+print(x)
+#x = get_stripped_object_list(niverolle, 0)
+#print(x)
 
 if __name__ == '__main__':
 	import doctest
 	doctest.testmod()
-
-

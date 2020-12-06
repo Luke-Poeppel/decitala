@@ -51,7 +51,7 @@ class GeneralFragment(object):
 	:param str filepath: path to encoded fragment (initialized to None).
 	:param numpy.array: array of quarter length values (initialized to None).
 	:param str name: optional name argument.
-	:raises `decitala.fragment.FragmentException`: when an array and file are provided or neither are provided.
+	:raises `~decitala.fragment.FragmentException`: when an array and file are provided or neither are provided.
 	
 	>>> random_fragment_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml'
 	>>> g1 = GeneralFragment(filepath=random_fragment_path, name='test')
@@ -229,16 +229,16 @@ class GeneralFragment(object):
 			return '<' + ' '.join([str(int(val)) for val in as_array]) + '>'
 
 	def successive_ratio_array(self):
-		"""See docstring of :obj:`decitala.tools.successive_ratio_array`."""
+		"""See docstring of :obj:`decitala.utils.successive_ratio_array`."""
 		return successive_ratio_array(self.ql_array())
 	
 	def successive_difference_array(self):
-		"""See docstring of :obj:`decitala.tools.successive_difference_array`."""
+		"""See docstring of :obj:`decitala.utils.successive_difference_array`."""
 		return successive_difference_array(self.ql_array())
 		
 	def cyclic_permutations(self):
 		"""
-		:return: all cyclic permutations of :`decitala.fragment.Decitala.ql_array()`, as in Morris (year?).
+		:return: all cyclic permutations of :meth:`~decitala.fragment.Decitala.ql_array` as in Morris (year?).
 		:rtype: numpy.array
 		"""
 		return np.array([np.roll(self.ql_array(), -i) for i in range(self.num_onsets)])
@@ -253,7 +253,8 @@ class GeneralFragment(object):
 
 	def morris_symmetry_class(self):
 		"""
-		:return: the fragment's form of rhythmic symmetry, as defined by Morris (?). 
+		:return: the fragment's form of rhythmic symmetry, as defined by Morris ("Sets, Scales and Rhythmic Cycles 
+		A Classification of Talas in Indian Music"). 
 		:rtype: str
 
 		- I. Maximally Trivial:				of the form :math:`X` (one onset, one anga class)
@@ -326,10 +327,10 @@ class GeneralFragment(object):
 ####################################################################################################
 class Decitala(GeneralFragment):
 	"""
-	Class defining a Decitala object. The class currently reads from the Fragments/Decitala
+	Class defining a Decitala object. The class currently reads from the `Fragments/Decitala`
 	folder which contains XML files for each fragment. 
 
-	:param str name: Name of the decitala, as is transliterated in the  (1921). 
+	:param str name: Name of the decitala, as is transliterated in the Lavignac, 1921. 
 	:raises `decitala.fragment.DecitalaException`: when there is an issue with the name.
 		
 	>>> ragavardhana = Decitala('Ragavardhana')

@@ -155,63 +155,6 @@
             
   <div class="section" id="contour-py">
 <h1>contour.py<a class="headerlink" href="#contour-py" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-decitala.contour"></span><p>NOTE:
-TODO:
-- function that normalizes a sequence of midi tones to the same starting value.</p>
-<dl class="py function">
-<dt id="decitala.contour.pitch_space_contour_from_midi">
-<code class="sig-prename descclassname">decitala.contour.</code><code class="sig-name descname">pitch_space_contour_from_midi</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">midi_array</span></em>, <em class="sig-param"><span class="n">as_str</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.contour.pitch_space_contour_from_midi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given an array of midi values, returns the pitch space contour.
-See The Perception of Rhythm in Non-Tonal Music: Rhythmic Contours in the Music of
-Edgard Varèse (Marvin, 1991)</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">frag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">60</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span> <span class="mi">72</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_space_contour_from_midi</span><span class="p">(</span><span class="n">midi_array</span><span class="o">=</span><span class="n">frag</span><span class="p">)</span>
-<span class="go">array([0, 1, 2, 3])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_space_contour_from_midi</span><span class="p">(</span><span class="n">midi_array</span><span class="o">=</span><span class="n">frag</span><span class="p">,</span> <span class="n">as_str</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;&lt;0 1 2 3&gt;&#39;</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="decitala.contour.normalize_pitch_content">
-<code class="sig-prename descclassname">decitala.contour.</code><code class="sig-name descname">normalize_pitch_content</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">midi_start</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.contour.normalize_pitch_content" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given an array of midi content, returns the same material transposed according to the midi_start
-value (i.e. intervals are maintained)</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">frag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">61</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">68</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">51</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">normalize_pitch_content</span><span class="p">(</span><span class="n">frag</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
-<span class="go">array([42, 46, 49, 41, 32])</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="decitala.contour.uds_contour">
-<code class="sig-prename descclassname">decitala.contour.</code><code class="sig-name descname">uds_contour</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.contour.uds_contour" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stands for “up-down-stay” as a measure of pitch contour. Normalized to start at 0.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">frag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">47</span><span class="p">,</span> <span class="mi">42</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">61</span><span class="p">,</span> <span class="mi">58</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">uds_contour</span><span class="p">(</span><span class="n">frag</span><span class="p">)</span>
-<span class="go">array([ 0, -1,  1,  1,  0,  1, -1])</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="decitala.contour.single_tuples_to_array">
-<code class="sig-prename descclassname">decitala.contour.</code><code class="sig-name descname">single_tuples_to_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.contour.single_tuples_to_array" title="Permalink to this definition">¶</a></dt>
-<dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">frag</span> <span class="o">=</span> <span class="p">((</span><span class="mi">62</span><span class="p">,),</span> <span class="p">(</span><span class="mi">25</span><span class="p">,),</span> <span class="p">(</span><span class="mi">52</span><span class="p">,),</span> <span class="p">(</span><span class="mi">31</span><span class="p">,))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">single_tuples_to_array</span><span class="p">(</span><span class="n">frag</span><span class="p">)</span>
-<span class="go">array([62, 25, 52, 31])</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="decitala.contour.format_pitch_data">
-<code class="sig-prename descclassname">decitala.contour.</code><code class="sig-name descname">format_pitch_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.contour.format_pitch_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>The data format for pitch content in Paths is somewhat messy. This makes it easier to use.</p>
-</dd></dl>
-
 </div>
 
 

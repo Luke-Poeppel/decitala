@@ -10,6 +10,7 @@
 import os
 def prepare():
 	os.chdir("/Users/lukepoeppel/decitala/")
+	os.system("python3 setup.py clean")
 	os.system("python3 setup.py install")
 	os.chdir("/Users/lukepoeppel/decitala/docs")
 	os.system("make html")

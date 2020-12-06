@@ -153,28 +153,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-decitala.database">
-<span id="database-py"></span><h1>database.py<a class="headerlink" href="#module-decitala.database" title="Permalink to this headline">¶</a></h1>
-<p>Tools for creating a sqlite3 databases of extracted rhythmic data.</p>
-<p>TODO:
-- It doesn’t make sense to rewrite all the code twice. Make “filter” a parameter for create_database.
-So the command line tool would be something like decitala create_database (un)filtered &lt;path&gt; &lt;part_num&gt;
-- get_indices_of_object_occurrence really shouldn’t be a tree function; it should be separate. 
-- you should be able to build a database on exact matches only. this is more of a TODO for get_by_ql_list.</p>
-<dl class="py function">
-<dt id="decitala.database.create_database">
-<code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">create_database</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_path</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">db_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.database.create_database" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for creating a decitala and paths database in the cwd. 
-NOTE: this function creates the raw database with no filtering</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="decitala.database.create_filtered_database">
-<code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">create_filtered_database</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_path</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">db_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.database.create_filtered_database" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for creating a decitala and paths database in the cwd. 
-NOTE: this function creates the filtered database. (No subtalas, no single anga-class talas)</p>
-</dd></dl>
-
+  <div class="section" id="database-py">
+<h1>database.py<a class="headerlink" href="#database-py" title="Permalink to this headline">¶</a></h1>
 </div>
 
 

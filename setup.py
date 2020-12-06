@@ -4,20 +4,22 @@
 # 
 # Author:   Luke Poeppel
 #
-# Location: Frankfurt, DE 2020
+# Location: Frankfurt, DE 2020 / NYC, 2020 / Kent, CT 2020
 ####################################################################################################
 import os
 
 from setuptools import setup, find_packages, Command
 
-####################################################################################################
-"""
-Unfortunately, setuptools doesn't clean itself up after big changes. This function clears all of the 
-build information/logs. 
-"""
-# Super useful helper function. https://stackoverflow.com/questions/3779915/why-does-python-setup-py-sdist-create-unwanted-project-egg-info-in-project-r
+# I use semantic versioning
+version_file = "/Users/lukepoeppel/decitala/decitala/VERSION"
+with open(version_file) as version:
+	__version__ = version.readline()
+
 class CleanCommand(Command):
-	"""Custom clean command to tidy up the project root."""
+	"""
+	setuptools doesn't always clean itself up after big changes. This useful function clears all of the 
+	build information/logs. https://stackoverflow.com/questions/3779915/why-does-python-setup-py-sdist-create-unwanted-project-egg-info-in-project-r
+	"""
 	user_options = []
 	def initialize_options(self):
 		self.cwd = None
@@ -26,16 +28,12 @@ class CleanCommand(Command):
 	def run(self):
 		assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
 		os.system('rm -vrf ./build ./dist ./*.pyc ./*.tgz ./*.egg-info')
-####################################################################################################
 
-__VERSION__ = "0.1.0"
-
-# Can eventually replace this with a loop through os.listdir.
-__MODULES__ = ["decitala.fragment", "decitala.utils"] #"decitala.trees", #"decitala.pofp", "decitala.database", "decitala.utils"]
+__MODULES__ = ["decitala.fragment", "decitala.utils", "decitala.trees", "decitala.cli"]# "decitala.pofp", "decitala.database", "decitala.utils"]
 
 setup(
 	name="decitala",
-	version=__VERSION__, 
+	version=__version__, 
 	py_modules=__MODULES__,
 	author="Luke Poeppel",
 	author_email="luke.poeppel@gmail.com",
@@ -57,5 +55,10 @@ setup(
 	],
 	cmdclass={
 		'clean': CleanCommand,
+	},
+	entry_points={
+		"console_scripts": [
+			"decitala = decitala.cli:decitala",
+		]
 	}
 )

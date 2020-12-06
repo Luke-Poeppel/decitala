@@ -4,7 +4,7 @@
 # 
 # Author:   Luke Poeppel
 #
-# Location: Kent, CT 2020
+# Location: Kent, 2020 / Frankfurt, 2020
 ####################################################################################################
 import copy
 import json
@@ -13,14 +13,13 @@ import os
 import re
 import pytest
 
-from fragment import (
+from .fragment import (
 	Decitala,
 	GreekFoot,
 	GeneralFragment
 )
 
-from utils import (
-	_euclidian_norm,
+from .utils import (
 	cauchy_schwartz,
 	roll_window,
 	get_indices_of_object_occurrence,
@@ -28,8 +27,8 @@ from utils import (
 	successive_difference_array
 )
 
-decitala_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas'
-greek_path = '/Users/lukepoeppel/decitala/Fragments/Greek_Metrics/XML'
+decitala_path = "/Users/lukepoeppel/decitala/Fragments/Decitalas"
+greek_path = "/Users/lukepoeppel/decitala/Fragments/Greek_Metrics/XML"
 
 ############### EXCEPTIONS ###############
 class TreeException(Exception):
@@ -461,8 +460,11 @@ class FragmentTree(NaryTree):
 		if type(data_path) != str:
 			raise FragmentTreeException("Path must be a string.")
 		
+		if frag_type.lower() not in ["decitala", "greek_foot"]:
+			raise FragmentTreeException("The only possible frag_types are `decitala` and `greek_foot`")
+
 		if rep_type.lower() not in ["ratio", "difference"]:
-			raise FragmentTreeException("The only possible types are `ratio` and `difference`")
+			raise FragmentTreeException("The only possible rep_types are `ratio` and `difference`")
 		
 		self.data_path = data_path
 		self.frag_type = frag_type
@@ -615,6 +617,7 @@ def get_by_ql_array(
 	else:
 		return None
 
+# TODO: maybe check for grace notes? 
 def rolling_search(
 		filepath, 
 		part_num, 
@@ -754,11 +757,16 @@ def test_filter(fake_fragment_dataset):
 		fake_fragment_dataset[9], # [0.25, 0.5, 1.0, 2.0]
 		fake_fragment_dataset[8], # [1.0, 0.5, 0.5, 0.25, 0.25]
 	]
-	assert set(filtered) == set(expected) # I don't care about order, just items. 
+	assert set(filtered) == set(expected)
 
-class TestSeptHaikai:
-	def test_all_talas(tala_ratio_tree, tala_difference_tree):
-		assert 1 + 1 == 2
+"""
+TODO: work in utils.py (clustering)
+
+Messiaen explains in the Traité the origin of his varied_ragavardhana. 
+array([0.25 , 0.375, 0.25 , 1.5  ]) -> array([1.5  , 0.25 , 0.375, 0.25 ]) by retrograde
+array([1.5  , 0.25 , 0.375, 0.25 ]) -> array([3.  , 0.5 , 0.75, 0.5 ]) by *2
+array([3.  , 0.5 , 0.75, 0.5 ]) -> array([1. , 1. , 1. , 0.5 , 0.75, 0.5 ]) by subdivision
+"""
 
 """
 	ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
@@ -773,9 +781,10 @@ class TestSeptHaikai:
 	((<fragment.Decitala 5_Pancama>, ('ratio', 1.0)), (0.75, 1.25))
 
 # Testing
-
+"""
 """
 if __name__ == '__main__':
 	import doctest
-	doctest.testmod()
+	print("Hello, World!")
+	doctest.testmod()"""
 

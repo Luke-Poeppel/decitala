@@ -8,24 +8,22 @@
 # Location: Kent, CT 2020 / Frankfurt, DE 2020
 ####################################################################################################
 """
-Tools for creating a sqlite3 databases of extracted rhythmic data. 
-
-TODO:
-- It doesn't make sense to rewrite all the code twice. Make "filter" a parameter for create_database.
-So the command line tool would be something like decitala create_database (un)filtered <path> <part_num>
-- get_indices_of_object_occurrence really shouldn't be a tree function; it should be separate. 
-- you should be able to build a database on exact matches only. this is more of a TODO for get_by_ql_list.
+Tools for creating sqlite3 databases of extracted rhythmic data from Messiaen's music.  
 """
 import click
 import numpy as np
 import sqlite3 as lite
-import sys
 
 from music21 import converter
 from music21 import stream
 
-from fragment import Decitala
-from trees import FragmentTree #, rolling_search2
+#from fragment import Decitala
+#from trees import FragmentTree
+
+import logging
+logging.basicConfig(level=logging.INFO)
+#logger = logging.getLogger(__file__)
+
 """
 from pofp import (
 	dynamically_partition_onset_list, 
@@ -35,8 +33,7 @@ from pofp import (
 )
 """
 
-decitala_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas'
-
+decitala_path = "/Users/lukepoeppel/decitala/decitala/Fragments/Decitalas"
 
 # Helper functions
 def _name_from_tala_string(tala_string):
@@ -84,8 +81,36 @@ def _pitch_info_from_onset_range(onset_range, all_objects_in_part):
 	return midi
 
 ####################################################################################################
+def create_database(
+		score_path,
+		part_num,
+		frag_types,
+		allowed_modifications,
+		db_name,
+		filter_single_anga_class_talas=True,
+		filter_subtalas=True,
+		keep_graces=True
+	):
+	filename = score_path.split('/')[-1]
+	logging.info("File: {}".format(filename))
+	logging.info("Part: {}".format(part_num))
+	logging.info("Fragment types: {}".format(frag_types))
+	logging.info("Modifications: {}".format(allowed_modifications))
+	logging.info("Filter single anga class talas: {}".format(filter_single_anga_class_talas))
+	logging.info("Filter subtalas: {}".format(filter_subtalas))
+	logging.info("Keep grace notes: {}".format(keep_graces))
 
-def create_database(score_path, part_num, db_name):
+	return 2
+
+#print(create_database("/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml", 1, ['ret'], 'sf', True, False))
+
+
+
+
+
+
+####################################################################################################
+def create_database2(score_path, part_num, db_name):
 	"""
 	Function for creating a decitala and paths database in the cwd. 
 	NOTE: this function creates the raw database with no filtering
@@ -250,27 +275,6 @@ def create_filtered_database(score_path, part_num, db_name):
 					post_nulls = ", ".join(nulls)
 					new = "INSERT INTO Paths_{0} VALUES('{1}', {2}, '{3}')".format(str(i), mid, post_nulls, formatted_pitch_content)
 					cur.execute(new)
-
-####################################################################################################
-@click.command()
-def cli():
-	"""Example script."""
-	click.echo('Hello World!')
-
-"""
-# Command line tool
-@click.command()
-@click.option('--verbose', is_flag=True, help="Will print verbose messages.")
-@click.option('--name', default='', help="Who are you?")
-def cli(verbose, name):
-	if verbose:
-		click.echo("You are in verbose mode.")
-	click.secho("Hello, World!", fg="blue", bold=True)
-	click.secho("This is a command line tool test.")
-	click.echo("Bye, {}".format(name))
-"""
-####################################################################################################
-
 
 ##################### TESTING #####################
 if __name__ == "__main__":
