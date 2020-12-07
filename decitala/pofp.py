@@ -193,7 +193,7 @@ def get_pareto_optimal_longest_paths(data):
 	flattened.sort()
 	pareto_optimal_paths = list(flattened for flattened, _ in itertools.groupby(flattened))
 
-	#temporary solution
+	#temporary (stupid) solution
 	stupid_out = []
 	for this_path in pareto_optimal_paths:
 		new_path = []

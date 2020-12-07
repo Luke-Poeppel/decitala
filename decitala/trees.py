@@ -13,6 +13,8 @@ import os
 import re
 import pytest
 
+from collections import deque
+
 from .fragment import (
 	Decitala,
 	GreekFoot,
@@ -22,7 +24,8 @@ from .fragment import (
 from .utils import (
 	cauchy_schwartz,
 	roll_window,
-	get_indices_of_object_occurrence,
+	#get_indices_of_object_occurrence,
+	get_object_indices,
 	successive_ratio_array,
 	successive_difference_array
 )
@@ -121,6 +124,9 @@ class NaryTree(object):
 	>>> # Allow for unnamed paths to be found.
 	>>> TestTree.search_for_path([1.0, 0.5, 0.5], allow_unnamed=True)
 	[1.0, 0.5, 0.5]
+	>>> # Level order traversal
+	>>> TestTree.level_order_traversal()
+	[[1.0], [0.5, 1.0, 3.0, 4.0], [0.5, 3.0, 2.0, 1.0], [1.0, 1.0, 0.5], [2.0]]
 	"""
 	class Node(object):
 		"""
@@ -337,6 +343,25 @@ class NaryTree(object):
 	def _superpaths(self, name):
 		"""Given a name (hopefully attached to a node), returns a list of the subpaths "above" that node."""
 		raise NotImplementedError
+
+	################################################################################################
+	# Level order traversal
+	def level_order_traversal(self):
+		"""Returns the level order traversal of an NaryTree."""
+		if not self.root:
+			return []
+		queue = deque([self.root])
+		result = []
+		while len(queue):
+			level_result = []
+			for i in range(len(queue)):
+				node = queue.popleft()
+				level_result.append(node.value) # or just the node...? 
+				for child in node.children:
+					queue.append(child)
+			result.append(level_result)
+		
+		return result
 
 	################################################################################################
 	def search_for_path(self, path_from_root, allow_unnamed=False):
@@ -654,7 +679,7 @@ def rolling_search(
 	assert ratio_tree.rep_type == 'ratio'
 	assert difference_tree.rep_type == 'difference'
 
-	object_list = get_indices_of_object_occurrence(filepath = filepath, part_num = part_num)
+	object_list = get_object_indices(filepath = filepath, part_num = part_num)
 	fragments_found = []
 	for this_win in windows:
 		for this_frame in roll_window(array = object_list, window_length = this_win):

@@ -10,7 +10,6 @@ import os
 
 from setuptools import setup, find_packages, Command
 
-# I use semantic versioning
 version_file = "/Users/lukepoeppel/decitala/decitala/VERSION"
 with open(version_file) as version:
 	__version__ = version.readline()
@@ -58,7 +57,7 @@ setup(
 	},
 	entry_points={
 		"console_scripts": [
-			"decitala = decitala.cli:decitala",
+			"decitala = decitala.cli:decitala"
 		]
 	}
 )

@@ -11,7 +11,8 @@ import decimal
 import logging
 import numpy as np
 
-from itertools import chain, combinations
+from itertools import chain, combinations, groupby
+from more_itertools import consecutive_groups
 from scipy.linalg import norm
 
 from music21 import converter
@@ -92,6 +93,7 @@ def successive_ratio_array(fragment):
 
 def successive_difference_array(fragment):
 	"""
+	TODO: just replace the call in fragment.py with np.diff :-) 
 	Returns array defined by the difference of successive elements. By convention, we set the first value to 0.0.
 
 	:param numpy.array fragment: array defining a rhythmic fragment.
@@ -201,7 +203,7 @@ def roll_window(array, window_length):
 	"""
 	Takes in a list and returns a list of lists that holds rolling windows of length window_length.
 
-	:param np.array array: arbitrary array. 
+	:param numpy.array array: any iterable
 
 	>>> composers = np.array(['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet'])
 	>>> for this in roll_window(array=composers, window_length=3):
@@ -227,72 +229,115 @@ def roll_window(array, window_length):
 
 	return l
 
+def power_list(data_in):
+	"""
+	Given a list, returns its power set as a list (excluding the empty list). 
+
+	>>> l = [1, 2, 3]
+	>>> power_list(l)
+	[(1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]
+
+	>>> for x in power_list([(0.0, 2.0), (4.0, 5.5), (6.0, 7.25)]):
+	...     print(x)
+	((0.0, 2.0),)
+	((4.0, 5.5),)
+	((6.0, 7.25),)
+	((0.0, 2.0), (4.0, 5.5))
+	((0.0, 2.0), (6.0, 7.25))
+	((4.0, 5.5), (6.0, 7.25))
+	((0.0, 2.0), (4.0, 5.5), (6.0, 7.25))
+	"""
+	assert type(data_in) == list
+	power_list = list(chain.from_iterable(combinations(data_in, r) for r in range(len(data_in) + 1)))
+	return [x for x in power_list if len(x) != 0]
+
 ####################################################################################################
-# Subdivision 
-"""
-Find clusters
-Get all combinations of clusters
-Within each cluster, get every combination
-"""
+# Subdivision (or, technically, superdivision...)
+def _find_clusters(array):
+	"""
+	Finds the regions with consecutive equal elements.
 
-def find_clusters(array):
-	copied = copy.copy(list(array))
-	clusters = []
-	i = 0
-		
-	while i < len(copied) - 1:
-		import pdb; pdb.set_trace()
-		curr_cluster = [i]
-		if copied[i] == copied[i+1]:
-			curr_cluster.append(i+1)
-			i += 1
+	>>> varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
+	>>> clusters = _find_clusters(varied_ragavardhana)
+	>>> clusters
+	[[0, 2], [4, 5], [7, 9]]
+	>>> varied_ragavardhana[clusters[0][0]:clusters[0][1]+1]
+	array([1., 1., 1.])
+	>>> varied_ragavardhana[clusters[1][0]:clusters[1][1]+1]
+	array([0.75, 0.75])
+	>>> varied_ragavardhana[clusters[2][0]:clusters[2][1]+1]
+	array([0.25, 0.25, 0.25])
+	"""
+	ranges = [list(this_range) for _, this_range in groupby(range(len(array)), lambda i: array[i])]
+	start_end_indices = [[this_range[0], this_range[-1]] for this_range in ranges if len(this_range) > 1]
+	return start_end_indices
+
+def _compliment_of_index_ranges(array, clusters):
+	"""
+	>>> varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
+	>>> _compliment_of_index_ranges(varied_ragavardhana, [_find_clusters(varied_ragavardhana)[0]]) 
+	[[3, 5]]
+	>>> varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
+	>>> _compliment_of_index_ranges(varied_ragavardhana_2, _find_clusters(varied_ragavardhana_2))
+	[[3, 4], [6, 7]]
+	"""
+	flattened = []
+	for this_range in clusters:
+		as_range = list(range(this_range[0], this_range[1]+1))
+		flattened.extend(as_range)
+	
+	total_range = list(range(0, len(array)))
+	diff = sorted(list(set(total_range) - set(flattened)))
+
+	compliments = []
+	for elem in consecutive_groups(diff):
+		elem_list = list(elem)
+		if len(elem_list) == 1:
+			elem_list.append(elem_list[0]+1)
+			compliments.append(elem_list)
 		else:
-			i += 1
+			compliments.append([elem_list[0], elem_list[-1]])
+
+	return compliments
+
+def _make_one_superdivision(array, clusters):
+	superdivision = [0] * len(array)
+	compliment_ranges = _compliment_of_index_ranges(array, clusters)
+	for x in compliment_ranges:
+		superdivision[x[0]:x[1]+1] = array[x[0]:x[1]+1]
+
+	for this_cluster in clusters:
+		region = array[this_cluster[0]:this_cluster[1]+1]
+		summed = sum(region)
+		superdivision.insert(this_cluster[0], summed)
 		
-		clusters.append(curr_cluster)
-
-	return clusters
-
-#ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
-#print(find_clusters(ragavardhana))
-
-def find_areas_of_possible_subdivision(array):
+	return np.array([x for x in superdivision if x != 0])
+	
+def find_possible_superdivisions(array):
 	"""
-	# >>> ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
-	# >>> find_areas_of_possible_subdivision(ragavardhana)
-	# [(0, 2), (1, 3), (0, 3)]
-	"""
-	windows = list(range(2, len(array)))
-	for this_window_size in windows:
-		for this_frame in roll_window(array, this_window_size):
-			print(this_frame)
-
-# ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
-# print(find_areas_of_possible_subdivision(ragavardhana))
-
-
-def find_all_subdivisions(array):
-	"""
-	Find index *ranges* with identical elements (as tuples). 
-	Take the power set of those possible ranges.
-	Combine by indices.
-
-	e.g.
-	np.array([1, 1, 1, 0.5, 0.75, 0.5])
-	index range: [(0, 3)]
+	There is a more general approach to the subdivision problem, but we note that Messiaen's subdivision
+	of tala components tends to be even. 
 
 	# >>> ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
 	# >>> for x in find_all_subdivisions(ragavardhana):
 	# ...     print(x)
 	# array([1.  , 1.  , 1.  , 0.5 , 0.75, 0.5 ])
-	# array([2.  , 1.  , 0.5 , 0.75, 0.5 ])
-	# array([1.  , 2.  , 0.5 , 0.75, 0.5 ])
 	# array([3.  , 0.5 , 0.75, 0.5 ])
 	"""
-	all_subdivisions = []
-	return all_subdivisions
+	possible_super_divisions = [array]
+	clusters = _find_clusters(array)
+	possible_combinations = power_list(clusters)
+	for this_combination in possible_combinations:
+		superdivision = _make_one_superdivision(array, this_combination)
+		possible_super_divisions.append(superdivision)
+	
+	return possible_super_divisions
 
-
+#varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
+#varied_ragavardhana = np.array([1, 1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
+#for x in find_possible_superdivisions(varied_ragavardhana):
+	#print(x)
+	
 ####################################################################################################
 # La Valeur Ajoutee
 def get_added_values(ql_lst, print_type = True):
@@ -380,33 +425,6 @@ def removeAddedValuesFromList(lst):
 	return lst
 
 ####################################################################################################
-def powerList(lst):
-	"""
-	Given a list, returns it's 'power set' (excluding, of course, the empty list). 
-
-	>>> l = [1, 2, 3]
-	>>> powerList(l)
-	array([(1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)], dtype=object)
-
-	>>> for x in powerList([(0.0, 2.0), (4.0, 5.5), (6.0, 7.25)]):
-	...     print(x)
-	((0.0, 2.0),)
-	((4.0, 5.5),)
-	((6.0, 7.25),)
-	((0.0, 2.0), (4.0, 5.5))
-	((0.0, 2.0), (6.0, 7.25))
-	((4.0, 5.5), (6.0, 7.25))
-	((0.0, 2.0), (4.0, 5.5), (6.0, 7.25))
-	"""
-	s = list(lst)
-	preList = list(chain.from_iterable(combinations(s, r) for r in range(len(s) + 1)))
-
-	for x in preList:
-		if len(x) == 0:
-			preList.remove(x)
-
-	return np.array(preList)
-
 def _euclidian_norm(vector):
 	'''
 	Returns the euclidian norm of a vector (the square root of the inner product of a vector 
@@ -423,7 +441,7 @@ def _euclidian_norm(vector):
 	return norm.quantize(decimal.Decimal('0.00001'), decimal.ROUND_DOWN)
 
 def cauchy_schwartz(vector1, vector2):
-	'''
+	"""
 	Tests the Cauchy-Schwartz inequality on two vectors. Namely, if the absolute value of 
 	the dot product of the two vectors is less than the product of the norms, the vectors are 
 	linearly independant (and the function returns True); if they are equal, they are dependant 
@@ -449,7 +467,7 @@ def cauchy_schwartz(vector1, vector2):
 	>>> e_vec2 = np.array([0.25, 0.25, 0.25, 0.25])
 	>>> cauchy_schwartz(e_vec1, e_vec2)
 	False
-	'''
+	"""
 	assert len(vector1) == len(vector2)
 	return abs(np.dot(vector1, vector2)) <  (norm(vector1) * norm(vector2))
 
@@ -457,11 +475,13 @@ def cauchy_schwartz(vector1, vector2):
 # Score helpers
 def get_object_indices(filepath, part_num):
 	"""
+	
+	
 	NOW SUPPORTS RESTS & GRACE NOTES
 	Given a file path and part number, returns a list containing tuples of the form [(OBJ, (start, end))].
 
-	>>> bach_path = '/Users/lukepoeppel/Documents/GitHub/music21/music21/corpus/bach/bwv66.6.mxl'
-	>>> for data in get_indices_of_object_occurrence(bach_path, 0)[0:12]:
+	bach_path = '/Users/lukepoeppel/Documents/GitHub/music21/music21/corpus/bach/bwv66.6.mxl'
+	for data in get_object_indices(bach_path, 0)[0:12]:
 	...     print(data)
 	(<music21.note.Note C#>, (0.0, 0.5))
 	(<music21.note.Note B>, (0.5, 1.0))
@@ -481,7 +501,7 @@ def get_object_indices(filepath, part_num):
 		part = score.parts[part_num]
 		object_list = []
 		stripped = part.stripTies(retainContainers = True)
-		for this_obj in stripped.recurse().iter.notesAndRests: 
+		for this_obj in stripped.recurse().iter.notesAndRests:
 			object_list.append(this_obj)
 
 		return object_list
@@ -492,12 +512,6 @@ def get_object_indices(filepath, part_num):
 		data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
 
 	return data_out
-
-niverolle = "/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_2e_example.xml"
-x = get_object_indices(niverolle, 0)
-print(x)
-#x = get_stripped_object_list(niverolle, 0)
-#print(x)
 
 if __name__ == '__main__':
 	import doctest

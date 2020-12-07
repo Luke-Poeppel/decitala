@@ -22,7 +22,6 @@ from music21 import stream
 
 import logging
 logging.basicConfig(level=logging.INFO)
-#logger = logging.getLogger(__file__)
 
 """
 from pofp import (
@@ -89,7 +88,7 @@ def create_database(
 		db_name,
 		filter_single_anga_class_talas=True,
 		filter_subtalas=True,
-		keep_graces=True
+		keep_grace_notes=True
 	):
 	filename = score_path.split('/')[-1]
 	logging.info("File: {}".format(filename))
@@ -98,7 +97,7 @@ def create_database(
 	logging.info("Modifications: {}".format(allowed_modifications))
 	logging.info("Filter single anga class talas: {}".format(filter_single_anga_class_talas))
 	logging.info("Filter subtalas: {}".format(filter_subtalas))
-	logging.info("Keep grace notes: {}".format(keep_graces))
+	logging.info("Keep grace notes: {}".format(keep_grace_notes))
 
 	return 2
 

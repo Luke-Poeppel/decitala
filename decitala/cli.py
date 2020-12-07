@@ -27,7 +27,7 @@ def cli(verbose, name):
 		click.echo("You are in verbose mode.")
 	click.secho("Hello, World!", fg="blue", bold=True)
 	click.secho("This is a command line tool test.")
-	click.echo("Bye, {}".format(name))
+	click.echo(":-) {}".format(name))
 
 @decitala.command()
 @click.option("--path", default="", help="Path to filepath parsed for the database.")
