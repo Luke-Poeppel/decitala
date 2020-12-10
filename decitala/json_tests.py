@@ -19,9 +19,19 @@ nodeStructure: {
 	]
 }
 """
-tree = '{"root": {"value": 1.0, "name": null, "parent": null, "children": [{"value": 0.5, "name": null, "parent": null, "children": [{"value": 0.5, "name": null, "parent": null, "children": [{"value": 1.0, "name": "D", "parent": null, "children": []}]}, {"value": 3.0, "name": "B", "parent": null, "children": []}]}, {"value": 1.0, "name": null, "parent": null, "children": [{"value": 2.0, "name": "C", "parent": null, "children": [{"value": 1.0, "name": "Test Overwrite", "parent": null, "children": []}]}]}, {"value": 3.0, "name": "A", "parent": null, "children": []}, {"value": 4.0, "name": null, "parent": null, "children": [{"value": 1.0, "name": null, "parent": null, "children": [{"value": 0.5, "name": null, "parent": null, "children": [{"value": 2.0, "name": "Full Path", "parent": null, "children": []}]}]}]}]}}'
 
 from nested_lookup import nested_delete, nested_lookup, get_occurrence_of_key
+
+tree = '{"root": {"value": 1.0, "name": null, "parent": null, "children": [{"value": 0.5, "name": null, "parent": null, "children": [{"value": 0.5, "name": null, "parent": null, "children": [{"value": 1.0, "name": "D", "parent": null, "children": []}]}, {"value": 3.0, "name": "B", "parent": null, "children": []}]}, {"value": 1.0, "name": null, "parent": null, "children": [{"value": 2.0, "name": "C", "parent": null, "children": [{"value": 1.0, "name": "Test Overwrite", "parent": null, "children": []}]}]}, {"value": 3.0, "name": "A", "parent": null, "children": []}, {"value": 4.0, "name": null, "parent": null, "children": [{"value": 1.0, "name": null, "parent": null, "children": [{"value": 0.5, "name": null, "parent": null, "children": [{"value": 2.0, "name": "Full Path", "parent": null, "children": []}]}]}]}]}}'
+simple_tree = '{"root": {"value": 1.0, "name": null, "parent": null, "children": [{"value": 0.5, "name": null, "parent": null, "children": []}]}}'
+
+def encapsulate(d):
+	rv = {}
+	value, name, parents, children = d.values()
+	rv['text'] = {'value': value, 'name': name, 'parents': parents}
+	rv['children'] = [encapsulate(c) for c in children]
+
+	return rv
 
 def serialize(tree, for_treant=False):
 	"""tree=pickled tree will not be needed in the actual tree."""
@@ -29,40 +39,15 @@ def serialize(tree, for_treant=False):
 		x = json.loads(tree)
 		return json.dumps(x, indent=4)
 	else:
-		#tree = tree.replace('null', 'True')
-		x = json.loads(tree)
-		return json.dumps(x, indent=4)#, indent=4)
-		#print(get_occurrence_of_key(x, 'parent'))
-		#res = nested_delete(x, 'parent')
-		#print(res)
-		#tree = tree.replace('"name"', "root")
-		#tree = tree.replace('"value"', "value")
-		#return x
-		#x = json.loads(tree)
-		#print(type(x))
+		loaded = json.loads(tree)
+		w_text_field = {"nodeStructure":encapsulate(loaded["root"])}
+		return json.dumps(w_text_field, indent=4)
 
-
-serialized = serialize(tree, for_treant=True)
+#serialized = serialize(tree, for_treant=True)
 #print(serialized)
 
 
-simple_tree = '{"root": {"value": 1.0, "name": null, "parent": null, "children": [{"value": 0.5, "name": null, "parent": null, "children": []}]}}'
-
-def add_encapsulation(json_input, lookup_key1, lookup_key2):
-	for key, val in json_input.items():
-		updated_key = "item"
-		subdict = dict()
-		if key == lookup_key1:
-			vals[key] = json_input["value"]
-		elif key == lookup_key2:
-			vals[key] = json_input["name"]
-			# I can't access the two keys in the same iteration, so you can't add them 
-			# to the subdict. Also, where to update the subdict...? 
-		else:
-			item_generator(v, lookup_key)
-
-print(serialized)
-
+#print({'root': encapsulate(data['root'])})
 
 # don't need to do a check: simply add the subdict to EVERY level. 
 
