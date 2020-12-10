@@ -8,6 +8,7 @@
 ####################################################################################################
 import copy
 import json
+import jsonpickle
 import numpy as np
 import os
 import re
@@ -15,13 +16,13 @@ import pytest
 
 from collections import deque
 
-from .fragment import (
+from fragment import (
 	Decitala,
 	GreekFoot,
 	GeneralFragment
 )
 
-from .utils import (
+from utils import (
 	cauchy_schwartz,
 	roll_window,
 	#get_indices_of_object_occurrence,
@@ -127,16 +128,9 @@ class NaryTree(object):
 	>>> # Level order traversal
 	>>> TestTree.level_order_traversal()
 	[[1.0], [0.5, 1.0, 3.0, 4.0], [0.5, 3.0, 2.0, 1.0], [1.0, 1.0, 0.5], [2.0]]
-	>>> # We can serialize an NaryTree as follows:
-	>>> import json
-	>>> import jsonpickle
-	>>> frozen = jsonpickle.encode(TestTree, unpicklable=False)
-	>>> frozen
-
-
-
+	>>> # We can serialize an NaryTree as either a native Python type or Javascript type (for using Treant.js).
 	>>> TestTree.serialize()
-	'1.0,#,0.5,1.0,3.0,4.0,#,0.5,3.0,#,2.0,#,#,1.0,#,1.0,#,#,1.0,#,0.5,#,#,#,2.0,#,#'
+	'{"root": {"value": 1.0, "name": null, "parent": null, "children": [{"value": 0.5, "name": null, "parent": null, "children": [{"value": 0.5, "name": null, "parent": null, "children": [{"value": 1.0, "name": "D", "parent": null, "children": []}]}, {"value": 3.0, "name": "B", "parent": null, "children": []}]}, {"value": 1.0, "name": null, "parent": null, "children": [{"value": 2.0, "name": "C", "parent": null, "children": [{"value": 1.0, "name": "Test Overwrite", "parent": null, "children": []}]}]}, {"value": 3.0, "name": "A", "parent": null, "children": []}, {"value": 4.0, "name": null, "parent": null, "children": [{"value": 1.0, "name": null, "parent": null, "children": [{"value": 0.5, "name": null, "parent": null, "children": [{"value": 2.0, "name": "Full Path", "parent": null, "children": []}]}]}]}]}}'
 	"""
 	class Node(object):
 		"""
@@ -290,6 +284,31 @@ class NaryTree(object):
 		return (self.size() == 0)
 
 	################################################################################################
+	def serialize(self, for_treant=False):
+		"""tree=pickled tree will not be needed in the actual tree."""
+		def encapsulate(d):
+			rv = {}
+			value, name, parents, children = d.values()
+			# Javascript's JSON.parse has a hard time with nulls. 
+			if name == None:
+				name = ""
+			if parents == None:
+				parents = ""
+			rv['text'] = {'value': value, 'name': name, 'parents': parents}
+			rv['children'] = [encapsulate(c) for c in children]
+			return rv
+
+		pickled = jsonpickle.encode(self, unpicklable=False)
+
+		if not for_treant:
+			loaded = json.loads(pickled)
+			return json.dumps(loaded)
+		else:
+			loaded = json.loads(tree)
+			w_text_field = {"nodeStructure" : encapsulate(loaded["root"])}
+			return json.dumps(w_text_field)
+
+	################################################################################################
 	def _all_possible_paths_helper(self, node, path = []):
 		"""Helper function for self.all_possible_paths()."""
 		path.append(node.value)
@@ -373,19 +392,6 @@ class NaryTree(object):
 			result.append(level_result)
 		
 		return result
-	################################################################################################
-	def serialize(self):
-		if not self.root:
-			return ""
-		res = [self.root.value, "#"]
-		q = deque([self.root])
-		while q:
-			node = q.popleft()
-			for child in node.children:
-				res.append(child.value)
-				q.append(child)
-			res.append("#")
-		return ",".join([str(x) for x in res])
 
 	################################################################################################
 	def search_for_path(self, path_from_root, allow_unnamed=False):

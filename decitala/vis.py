@@ -20,15 +20,20 @@ import matplotlib as mpl
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 from collections import Counter
 
-from decitala import Decitala
-from paths import (
-	SubPath, 
-	Path,
-	get_full_model3_path
+from trees import (
+	FragmentTree
 )
+
+# from decitala import Decitala
+# from paths import (
+# 	SubPath, 
+# 	Path,
+# 	get_full_model3_path
+# )
 
 FONTNAME = 'Times'
 FONTSIZE_TITLE = 15
@@ -45,6 +50,33 @@ livre_dorgue_0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
 livre_dorgue_1_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db'
 
 ####################################################################################################
+
+def make_tree_diagram(FragmentTree, path):
+	"""
+	Powered by Treant. 
+	"""
+	os.mkdir(path) 
+
+greek_path = "/Users/lukepoeppel/decitala/Fragments/Greek_Metrics/XML"
+greek_feet = FragmentTree(greek_path, "greek_foot", "ratio")
+
+# make_tree_diagram(greek_feet, "/Users/lukepoeppel/decitala/")
+
+
+
+
+
+
+
+
+
+
+
+
+####################################################################################################
+
+
+
 # Visualization
 
 def tala_counter(data, title, show = True, filename = None):
@@ -119,12 +151,12 @@ def tala_roll(data, title, show = True, filename = None):
 #print(type('a'))
 #print(type(sb))
 
-subpaths = get_full_model3_path(liturgie3_database_path)
-full_path = Path(subpaths)
+# subpaths = get_full_model3_path(liturgie3_database_path)
+# full_path = Path(subpaths)
 
-tala_roll(full_path, 'Haikai Testing', show = True)
+# tala_roll(full_path, 'Haikai Testing', show = True)
 
-#tala_counter(data=full_path, title="$Sept \: Haïkaï \: Reduction$ \n (Part 0)", show = True, filename='testwrite')
-#tala_counter(data=full_path, title="$Liturgie \: de \: Cristal$ \n (Part 4)", show = False, filename='liturgie4_hist')
+# #tala_counter(data=full_path, title="$Sept \: Haïkaï \: Reduction$ \n (Part 0)", show = True, filename='testwrite')
+# #tala_counter(data=full_path, title="$Liturgie \: de \: Cristal$ \n (Part 4)", show = False, filename='liturgie4_hist')
 
 

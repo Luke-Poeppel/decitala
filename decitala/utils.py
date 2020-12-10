@@ -326,7 +326,7 @@ def _make_one_superdivision(array, clusters):
 	
 varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
 c = [[0, 2], [7, 9]]
-print(_make_one_superdivision(varied_ragavardhana_2, c))
+# print(_make_one_superdivision(varied_ragavardhana_2, c))
 #what I want: array([3, 0.5, 0.75, 0.75, 0.5, 0.75])
 
 def find_possible_superdivisions(array):

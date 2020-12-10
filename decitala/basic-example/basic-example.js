@@ -1,223 +1,3 @@
-
-// var config = {
-//         container: "#basic-example",
-        
-//         connectors: {
-//             type: 'step'
-//         },
-//         node: {
-//             HTMLclass: 'nodeExample1'
-//         }
-//     },
-//     ceo = {
-//         text: {
-//             name: "Mark Hilbert",
-//             title: "Chief executive officer",
-//             contact: "Tel: 01 213 123 134",
-//         },
-//         image: "headshots/2.jpg"
-//     },
-
-//     cto = {
-//         parent: ceo,
-//         text:{
-//             name: "Joe Linux",
-//             title: "Chief Technology Officer",
-//         },
-//         stackChildren: true,
-//         image: "headshots/1.jpg"
-//     },
-//     cbo = {
-//         parent: ceo,
-//         stackChildren: true,
-//         text:{
-//             name: "Linda May",
-//             title: "Chief Business Officer",
-//         },
-//         image: "headshots/5.jpg"
-//     },
-//     cdo = {
-//         parent: ceo,
-//         text:{
-//             name: "John Green",
-//             title: "Chief accounting officer",
-//             contact: "Tel: 01 213 123 134",
-//         },
-//         image: "headshots/6.jpg"
-//     },
-//     cio = {
-//         parent: cto,
-//         text:{
-//             name: "Ron Blomquist",
-//             title: "Chief Information Security Officer"
-//         },
-//         image: "headshots/8.jpg"
-//     },
-//     ciso = {
-//         parent: cto,
-//         text:{
-//             name: "Michael Rubin",
-//             title: "Chief Innovation Officer",
-//             contact: {val: "we@aregreat.com", href: "mailto:we@aregreat.com"}
-//         },
-//         image: "headshots/9.jpg"
-//     },
-//     cio2 = {
-//         parent: cdo,
-//         text:{
-//             name: "Erica Reel",
-//             title: "Chief Customer Officer"
-//         },
-//         link: {
-//             href: "http://www.google.com"
-//         },
-//         image: "headshots/10.jpg"
-//     },
-//     ciso2 = {
-//         parent: cbo,
-//         text:{
-//             name: "Alice Lopez",
-//             title: "Chief Communications Officer"
-//         },
-//         image: "headshots/7.jpg"
-//     },
-//     ciso3 = {
-//         parent: cbo,
-//         text:{
-//             name: "Mary Johnson",
-//             title: "Chief Brand Officer"
-//         },
-//         image: "headshots/4.jpg"
-//     },
-//     ciso4 = {
-//         parent: cbo,
-//         text:{
-//             name: "Kirk Douglas",
-//             title: "Chief Business Development Officer"
-//         },
-//         image: "headshots/11.jpg"
-//     }
-
-//     chart_config = [
-//         config,
-//         ceo,
-//         cto,
-//         cbo,
-//         cdo,
-//         cio,
-//         ciso,
-//         cio2,
-//         ciso2,
-//         ciso3,
-//         ciso4
-//     ];
-
-
-
-
-    // Another approach, same result
-    // JSON approach
-
-// var chart_config = {
-//     chart: {
-//         container: "#basic-example",
-        
-//         connectors: {
-//             type: 'step'
-//         },
-//         node: {
-//             HTMLclass: 'nodeExample1'
-//         }
-//     },
-//     nodeStructure: {
-//         text: {
-//             name: "Mark Hill",
-//             title: "Chief executive officer",
-//             contact: "Tel: 01 213 123 134",
-//         },
-//         image: "../headshots/2.jpg",
-//         children: [
-//             {
-//                 text:{
-//                     name: "Joe Linux",
-//                     title: "Chief Technology Officer",
-//                 },
-//                 stackChildren: true,
-//                 image: "../headshots/1.jpg",
-//                 children: [
-//                     {
-//                         text:{
-//                             name: "Ron Blomquist",
-//                             title: "Chief Information Security Officer"
-//                         },
-//                         image: "../headshots/8.jpg"
-//                     },
-//                     {
-//                         text:{
-//                             name: "Michael Rubin",
-//                             title: "Chief Innovation Officer",
-//                             contact: "we@aregreat.com"
-//                         },
-//                         image: "../headshots/9.jpg"
-//                     }
-//                 ]
-//             },
-//             {
-//                 stackChildren: true,
-//                 text:{
-//                     name: "Linda May",
-//                     title: "Chief Business Officer",
-//                 },
-//                 image: "../headshots/5.jpg",
-//                 children: [
-//                     {
-//                         text:{
-//                             name: "Alice Lopez",
-//                             title: "Chief Communications Officer"
-//                         },
-//                         image: "../headshots/7.jpg"
-//                     },
-//                     {
-//                         text:{
-//                             name: "Mary Johnson",
-//                             title: "Chief Brand Officer"
-//                         },
-//                         image: "../headshots/4.jpg"
-//                     },
-//                     {
-//                         text:{
-//                             name: "Kirk Douglas",
-//                             title: "Chief Business Development Officer"
-//                         },
-//                         image: "../headshots/11.jpg"
-//                     }
-//                 ]
-//             },
-//             {
-//                 text:{
-//                     name: "John Green",
-//                     title: "Chief accounting officer",
-//                     contact: "Tel: 01 213 123 134",
-//                 },
-//                 image: "../headshots/6.jpg",
-//                 children: [
-//                     {
-//                         text:{
-//                             name: "Erica Reel",
-//                             title: "Chief Customer Officer"
-//                         },
-//                         link: {
-//                             href: "http://www.google.com"
-//                         },
-//                         image: "../headshots/10.jpg"
-//                     }
-//                 ]
-//             }
-//         ]
-//     }
-// };
-
-
 // var chart_config = {
 //     chart: {
 //         container: "#basic-example",
@@ -226,108 +6,30 @@
 //             type: 'curve'
 //         },
 //         node: {
-//             HTMLclass: 'nodeExample1'
+//             HTMLclass: "nodeExample1"
 //         }
 //     },
 
 //     nodeStructure: {
 //         text: {
-//             name: "Aditala",
-//             value: "1.0",
+//             name: "ROOT",
+//             value: 1.0,
 //         },
 //         children: [
 //             {
 //                 text:{
-//                     name: "Joe Linux",
-//                     title: "Chief Technology Officer",
+//                     name: "Pancama",
+//                     value: 0.5
 //                 },
-//                 stackChildren: true,
-//                 children: [
-//                     {
-//                         text:{
-//                             name: "Ron Blomquist",
-//                             title: "Chief Information Security Officer"
-//                         },
-//                     },
-//                     {
-//                         text:{
-//                             name: "Michael Rubin",
-//                             title: "Chief Innovation Officer",
-//                             contact: "we@aregreat.com"
-//                         },
-//                     }
-//                 ]
-//             },
-//             {
 //                 stackChildren: false,
-//                 text:{
-//                     name: "Linda May",
-//                     title: "Chief Business Officer",
-//                 },
-//                 children: [
-//                     {
-//                         text:{
-//                             name: "Alice Lopez",
-//                             title: "Chief Communications Officer"
-//                         },
-//                     },
-//                     {
-//                         text:{
-//                             name: "Mary Johnson",
-//                             title: "Chief Brand Officer"
-//                         },
-//                     },
-//                     {
-//                         text:{
-//                             name: "Kirk Douglas",
-//                             title: "Chief Business Development Officer"
-//                         },
-//                     }
-//                 ]
-//             },
-//             {
-//                 text:{
-//                     name: "John Green",
-//                     title: "Chief accounting officer",
-//                     contact: "Tel: 01 213 123 134",
-//                 },
-//                 children: [
-//                     {
-//                         text:{
-//                             name: "Erica Reel",
-//                             title: "Chief Customer Officer"
-//                         },
-//                         link: {
-//                             href: "http://www.google.com"
-//                         },
-//                     }
-//                 ]
 //             }
 //         ]
 //     }
-// };
+// }
 
+var tree = JSON.parse('{"nodeStructure": {"text": {"value": 1.0, "name": "", "parents": ""}, "children": [{"text": {"value": 0.5, "name": "", "parents": ""}, "children": [{"text": {"value": 0.5, "name": "", "parents": ""}, "children": [{"text": {"value": 1.0, "name": "D", "parents": ""}, "children": []}]}, {"text": {"value": 3.0, "name": "B", "parents": ""}, "children": []}]}, {"text": {"value": 1.0, "name": "", "parents": ""}, "children": [{"text": {"value": 2.0, "name": "C", "parents": ""}, "children": [{"text": {"value": 1.0, "name": "Test Overwrite", "parents": ""}, "children": []}]}]}, {"text": {"value": 3.0, "name": "A", "parents": ""}, "children": []}, {"text": {"value": 4.0, "name": "", "parents": ""}, "children": [{"text": {"value": 1.0, "name": "", "parents": ""}, "children": [{"text": {"value": 0.5, "name": "", "parents": ""}, "children": [{"text": {"value": 2.0, "name": "Full Path", "parents": ""}, "children": []}]}]}]}]}}')
+// var tree = JSON.parse('{"nodeStructure": {"text": {"value": 1.0, "name": "", "parents": ""}, "children": [{"text": {"value": 0.5, "name": "", "parents": ""}, "children": []}]}}')
 
-
-// var config = {
-//     chart: {
-//         container: "#tree-simple"
-//     },
-
-//     nodeStructure: {
-//         text: { name: "Parent node" },
-//         children: [
-//             {
-//                 text: { name: "First child" }
-//             },
-//             {
-//                 text: { name: "Second child" }
-//             }
-//         ]
-//     }
-// };
-
-// use literal_eval? 
 var chart_config = {
     chart: {
         container: "#basic-example",
@@ -339,23 +41,137 @@ var chart_config = {
             HTMLclass: "nodeExample1"
         }
     },
-
-    nodeStructure: {
-        text: {
-            name: "ROOT",
-            value: 1.0,
-        },
-        children: [
-            {
-                text:{
-                    name: "Pancama",
-                    value: 0.5
-                },
-                stackChildren: false,
-            }
-        ]
-    }
+    nodeStructure: tree["nodeStructure"]
 }
+
+console.log(tree["nodeStructure"])
+    
+// }
+
+// 
+// removeProps(tree,['parent']);
+
+
+
+// var chart_config = tree
+
+// {
+//     "nodeStructure": {
+//          "text": {
+//               "value": 1,
+//               "name": "",
+//               "parents": ""
+//          },
+//          "children": [
+//               {
+//                    "text": {
+//                         "value": 0.5,
+//                         "name": "",
+//                         "parents": ""
+//                    },
+//                    "children": [
+//                         {
+//                              "text": {
+//                                   "value": 0.5,
+//                                   "name": "",
+//                                   "parents": ""
+//                              },
+//                              "children": [
+//                                   {
+//                                        "text": {
+//                                             "value": 1,
+//                                             "name": "D",
+//                                             "parents": ""
+//                                        },
+//                                        "children": []
+//                                   }
+//                              ]
+//                         },
+//                         {
+//                              "text": {
+//                                   "value": 3,
+//                                   "name": "B",
+//                                   "parents": ""
+//                              },
+//                              "children": []
+//                         }
+//                    ]
+//               },
+//               {
+//                    "text": {
+//                         "value": 1,
+//                         "name": "",
+//                         "parents": ""
+//                    },
+//                    "children": [
+//                         {
+//                              "text": {
+//                                   "value": 2,
+//                                   "name": "C",
+//                                   "parents": ""
+//                              },
+//                              "children": [
+//                                   {
+//                                        "text": {
+//                                             "value": 1,
+//                                             "name": "Test Overwrite",
+//                                             "parents": ""
+//                                        },
+//                                        "children": []
+//                                   }
+//                              ]
+//                         }
+//                    ]
+//               },
+//               {
+//                    "text": {
+//                         "value": 3,
+//                         "name": "A",
+//                         "parents": ""
+//                    },
+//                    "children": []
+//               },
+//               {
+//                    "text": {
+//                         "value": 4,
+//                         "name": "",
+//                         "parents": ""
+//                    },
+//                    "children": [
+//                         {
+//                              "text": {
+//                                   "value": 1,
+//                                   "name": "",
+//                                   "parents": ""
+//                              },
+//                              "children": [
+//                                   {
+//                                        "text": {
+//                                             "value": 0.5,
+//                                             "name": "",
+//                                             "parents": ""
+//                                        },
+//                                        "children": [
+//                                             {
+//                                                  "text": {
+//                                                  "value": 2,
+//                                                  "name": "Full Path",
+//                                                  "parents": ""
+//                                                  },
+//                                                  "children": []
+//                                             }
+//                                        ]
+//                                   }
+//                              ]
+//                         }
+//                    ]
+//               }
+//          ]
+//     }
+// }
+
+
+
 
 
 
