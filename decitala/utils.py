@@ -301,43 +301,74 @@ def _compliment_of_index_ranges(array, clusters):
 	return compliments
 
 def _make_one_superdivision(array, clusters):
+	"""
+	>>> varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
+	>>> c = _find_clusters(varied_ragavardhana_2)
+	>>> # one combination is [[0, 2], [7, 9]]
+	
+	_make_one_superdivision(varied_ragavardhana_2, [[0, 2], [7, 9]])
+	what I want: array([3, 0.5, 0.75, 0.75, 0.5, 0.75])
+	got: array([3.  , 0.5 , 0.75, 0.75, 0.75, 0.5 ])
+	"""
 	superdivision = [0] * len(array)
 	compliment_ranges = _compliment_of_index_ranges(array, clusters)
 	for x in compliment_ranges:
 		superdivision[x[0]:x[1]+1] = array[x[0]:x[1]+1]
 
+	# superdivision looks good! 
+
 	for this_cluster in clusters:
-		region = array[this_cluster[0]:this_cluster[1]+1]
+		region = array[this_cluster[0]:this_cluster[1]+1] # this is good too! 
 		summed = sum(region)
-		superdivision.insert(this_cluster[0], summed)
+		superdivision.insert(this_cluster[0], summed) # this is the problem. 
 		
 	return np.array([x for x in superdivision if x != 0])
 	
+varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
+c = [[0, 2], [7, 9]]
+print(_make_one_superdivision(varied_ragavardhana_2, c))
+#what I want: array([3, 0.5, 0.75, 0.75, 0.5, 0.75])
+
 def find_possible_superdivisions(array):
 	"""
 	There is a more general approach to the subdivision problem, but we note that Messiaen's subdivision
 	of tala components tends to be even. 
 
-	# >>> ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
-	# >>> for x in find_all_subdivisions(ragavardhana):
-	# ...     print(x)
-	# array([1.  , 1.  , 1.  , 0.5 , 0.75, 0.5 ])
-	# array([3.  , 0.5 , 0.75, 0.5 ])
+	varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
+	for x in find_possible_superdivisions(varied_ragavardhana):
+	...     print(x)
+	[1.   1.   1.   0.5  0.75 0.5 ]
+	[3.   0.5  0.75 0.5 ]
+	
+	varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
+	for x in find_possible_superdivisions(varied_ragavardhana_2):
+	...     print(x)
+	[1.   1.   1.   0.5  0.75 0.75 0.5  0.25 0.25 0.25]
+	[3.   0.5  0.75 0.75 0.5  0.25 0.25 0.25]
+	[1.   1.   1.   0.5  1.5  0.5  0.25 0.25 0.25]
+	[1.   1.   1.   0.5  0.75 0.75 0.5  0.75]
+	[3.   1.5  0.5  0.75 0.5  0.25 0.25 0.25]
+	[3.   0.5  0.75 0.75 0.75 0.5 ]
+	[1.   1.   1.   0.5  1.5  0.75 0.5  0.25]
+	[3.   1.5  0.5  0.75 0.75 0.5  0.25]
+
+	Messes up with the combos.
 	"""
 	possible_super_divisions = [array]
 	clusters = _find_clusters(array)
 	possible_combinations = power_list(clusters)
 	for this_combination in possible_combinations:
+		print(this_combination)
 		superdivision = _make_one_superdivision(array, this_combination)
 		possible_super_divisions.append(superdivision)
 	
 	return possible_super_divisions
 
 #varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
-#varied_ragavardhana = np.array([1, 1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
-#for x in find_possible_superdivisions(varied_ragavardhana):
+#varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
+#for x in find_possible_superdivisions(varied_ragavardhana_2):
 	#print(x)
-	
+
 ####################################################################################################
 # La Valeur Ajoutee
 def get_added_values(ql_lst, print_type = True):

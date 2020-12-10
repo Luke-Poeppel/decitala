@@ -127,6 +127,16 @@ class NaryTree(object):
 	>>> # Level order traversal
 	>>> TestTree.level_order_traversal()
 	[[1.0], [0.5, 1.0, 3.0, 4.0], [0.5, 3.0, 2.0, 1.0], [1.0, 1.0, 0.5], [2.0]]
+	>>> # We can serialize an NaryTree as follows:
+	>>> import json
+	>>> import jsonpickle
+	>>> frozen = jsonpickle.encode(TestTree, unpicklable=False)
+	>>> frozen
+
+
+
+	>>> TestTree.serialize()
+	'1.0,#,0.5,1.0,3.0,4.0,#,0.5,3.0,#,2.0,#,#,1.0,#,1.0,#,#,1.0,#,0.5,#,#,#,2.0,#,#'
 	"""
 	class Node(object):
 		"""
@@ -137,6 +147,7 @@ class NaryTree(object):
 			self.value = value
 			self.name = name
 			self.parent = None
+
 			self.children = set()
 
 		def __repr__(self):
@@ -362,6 +373,19 @@ class NaryTree(object):
 			result.append(level_result)
 		
 		return result
+	################################################################################################
+	def serialize(self):
+		if not self.root:
+			return ""
+		res = [self.root.value, "#"]
+		q = deque([self.root])
+		while q:
+			node = q.popleft()
+			for child in node.children:
+				res.append(child.value)
+				q.append(child)
+			res.append("#")
+		return ",".join([str(x) for x in res])
 
 	################################################################################################
 	def search_for_path(self, path_from_root, allow_unnamed=False):
