@@ -28,7 +28,7 @@ class CleanCommand(Command):
 		assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
 		os.system('rm -vrf ./build ./dist ./*.pyc ./*.tgz ./*.egg-info')
 
-__MODULES__ = ["decitala.fragment", "decitala.utils", "decitala.trees", "decitala.cli"]# "decitala.pofp", "decitala.database", "decitala.utils"]
+__MODULES__ = ["decitala.fragment", "decitala.utils", "decitala.trees", "decitala.cli", "decitala.vis"]# "decitala.pofp", "decitala.database", "decitala.utils"]
 
 setup(
 	name="decitala",
@@ -51,7 +51,6 @@ setup(
 	install_requires=[
 		"kdtree",
 		"numpy",
-		"Naked"
 	],
 	cmdclass={
 		'clean': CleanCommand,

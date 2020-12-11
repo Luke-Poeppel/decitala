@@ -12,7 +12,8 @@ import os
 from progress.bar import Bar
 
 from decitala import __version__
-#from .database import create_database
+from .vis import make_tree_diagram
+from .trees import FragmentTree
 
 @click.group()
 @click.version_option(__version__, "--version", "-v", message="%(version)s")
@@ -50,3 +51,12 @@ def create_db(path, part, mods, filt1, filt2):
 	click.secho("Finished creating database.", fg="blue", bold=True)
 
 #"/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml"
+
+@decitala.command()
+@click.option("--data", default="", help="Path to database of rhythmic fragments.")
+@click.option("--frag_type", default="", help="Type of fragment; either `decitala` or `greek_foot`.")
+@click.option("--rep_type", default="", help="Representation of fragment; `ratio` or `difference`.")
+@click.option("--destination", default="", help="Destination of tree diagram.")
+def draw_tree(data, destination, frag_type, rep_type):
+	fragment_tree = FragmentTree(data, frag_type, rep_type)
+	make_tree_diagram(fragment_tree, destination)

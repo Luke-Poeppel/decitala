@@ -16,13 +16,13 @@ import pytest
 
 from collections import deque
 
-from fragment import (
+from .fragment import (
 	Decitala,
 	GreekFoot,
 	GeneralFragment
 )
 
-from utils import (
+from .utils import (
 	cauchy_schwartz,
 	roll_window,
 	#get_indices_of_object_occurrence,

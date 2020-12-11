@@ -16,9 +16,8 @@ import os
 import shutil
 
 from collections import Counter
-from Naked.toolshed.shell import execute_js
 
-from trees import (
+from .trees import (
 	NaryTree,
 	FragmentTree
 )
@@ -34,10 +33,16 @@ FONTSIZE_LABEL = 14
 def make_tree_diagram(FragmentTree, path):
 	"""Powered by Treant."""
 	stupid_tree = NaryTree()
-	root = NaryTree().Node(value = 1.0, name = None) # based on fragment tree rep_type
-	for this_fragment in FragmentTree.filtered_data:
-		fragment_list = this_fragment.successive_ratio_array().tolist() # based on fragment tree rep_type
-		root.add_path_of_children(fragment_list, this_fragment.name)
+	if FragmentTree.rep_type == "ratio":
+		root = NaryTree().Node(value = 1.0, name = None)
+		for this_fragment in FragmentTree.filtered_data:
+			fragment_list = this_fragment.successive_ratio_array().tolist()
+			root.add_path_of_children(fragment_list, this_fragment.name)
+	else:
+		root = NaryTree().Node(value = 0.0, name = None)
+		for this_fragment in FragmentTree.filtered_data:
+			fragment_list = this_fragment.successive_difference_array().tolist()
+			root.add_path_of_children(fragment_list, this_fragment.name)
 	
 	stupid_tree.root = root
 	serialized = stupid_tree.serialize(for_treant=True)
@@ -62,27 +67,9 @@ def make_tree_diagram(FragmentTree, path):
 	os.system("browserify {0} -o {1}".format(parse_data_file, browserified_file))
 
 	logging.info("Creating tree...")
-	execute_js("parse_data.js")
+	# execute_js("parse_data.js")
 	logging.info("Done ✔")
 	logging.info("See {}".format(path))
-
-# Example
-greek_path = "/Users/lukepoeppel/decitala/Fragments/Greek_Metrics/XML"
-tala_path = "/Users/lukepoeppel/decitala/Fragments/Decitalas"
-greek_feet = FragmentTree(greek_path, "greek_foot", "ratio")
-decitalas = FragmentTree(tala_path, "decitala", "ratio")
-make_tree_diagram(FragmentTree=decitalas, path="/Users/lukepoeppel/fitme")
-
-
-
-
-
-
-
-
-
-
-
 
 ####################################################################################################
 
