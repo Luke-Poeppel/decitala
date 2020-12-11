@@ -69,9 +69,9 @@ def make_tree_diagram(FragmentTree, path):
 # Example
 greek_path = "/Users/lukepoeppel/decitala/Fragments/Greek_Metrics/XML"
 tala_path = "/Users/lukepoeppel/decitala/Fragments/Decitalas"
-# greek_feet = FragmentTree(greek_path, "greek_foot", "ratio")
+greek_feet = FragmentTree(greek_path, "greek_foot", "ratio")
 # decitalas = FragmentTree(tala_path, "decitala", "ratio")
-# make_tree_diagram(FragmentTree=decitalas, path="/Users/lukepoeppel/mytree5")
+# make_tree_diagram(FragmentTree=greek_feet, path="/Users/lukepoeppel/andrewtree")
 
 
 
