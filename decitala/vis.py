@@ -8,23 +8,19 @@
 #
 # Location: Kent, CT 2020
 ####################################################################################################
-"""
-TODO:
-- sideways sorted histogram with the full_id and ql_array().
-
-NOTE:
-- Want: some basic demographic information for the Fragment info for both Sept Haikai and Liturgie.
-	- paths.py gives us access to the path information, but we also need access to the fragment information...
-"""
+import json
 import matplotlib as mpl
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
+import Naked
 import os
+import shutil
 
 from collections import Counter
 
 from trees import (
+	NaryTree,
 	FragmentTree
 )
 
@@ -50,17 +46,32 @@ livre_dorgue_0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
 livre_dorgue_1_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db'
 
 ####################################################################################################
-
 def make_tree_diagram(FragmentTree, path):
-	"""
-	Powered by Treant. 
-	"""
-	os.mkdir(path) 
+	"""Powered by Treant."""
+	stupid_tree = NaryTree()
+	root = NaryTree().Node(value = 1.0, name = None) # based on fragment tree rep_type
+	for this_fragment in FragmentTree.filtered_data:
+		fragment_list = this_fragment.successive_ratio_array().tolist() # based on fragment tree rep_type
+		root.add_path_of_children(fragment_list, this_fragment.name)
+	
+	stupid_tree.root = root
+	serialized = stupid_tree.serialize(for_treant=True)
 
+	# os.mkdir(path)
+	# os.chdir(path)
+	# name = path.split('/')[-1]
+	# with open(name + '.json', 'w') as json_file:
+	# 	json.dump(serialized, json_file)
+	
+
+	# shutil.copyfile("/tree_diagram_resources/basic-example.js/", name + "/" + name + ".js")
+
+	
+
+# Example
 greek_path = "/Users/lukepoeppel/decitala/Fragments/Greek_Metrics/XML"
 greek_feet = FragmentTree(greek_path, "greek_foot", "ratio")
-
-# make_tree_diagram(greek_feet, "/Users/lukepoeppel/decitala/")
+make_tree_diagram(FragmentTree=greek_feet, path="/Users/lukepoeppel/decitala/decitala/simple")
 
 
 

@@ -528,7 +528,7 @@ class GreekFoot(GeneralFragment):
 					self.full_path = greek_path + '/' + match
 					self.name = match[:-4]
 					self.filename = match
-					self.stream = converter.parse(self.full_path)
+					self.stream = converter.parseFile(self.full_path)
 
 		super().__init__(filepath=self.full_path, name=self.name)
 	

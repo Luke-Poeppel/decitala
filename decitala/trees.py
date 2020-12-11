@@ -304,7 +304,7 @@ class NaryTree(object):
 			loaded = json.loads(pickled)
 			return json.dumps(loaded)
 		else:
-			loaded = json.loads(tree)
+			loaded = json.loads(pickled)
 			w_text_field = {"nodeStructure" : encapsulate(loaded["root"])}
 			return json.dumps(w_text_field)
 
@@ -512,15 +512,10 @@ class FragmentTree(NaryTree):
 	<fragment.GreekFoot Peon_II>
 	"""
 	def __init__(self, data_path, frag_type, rep_type, **kwargs):
-		if type(data_path) != str:
-			raise FragmentTreeException("Path must be a string.")
-		
-		if frag_type.lower() not in ["decitala", "greek_foot"]:
-			raise FragmentTreeException("The only possible frag_types are `decitala` and `greek_foot`")
+		assert type(data_path)==str, FragmentTreeException("Path must be a string.")
+		assert frag_type.lower() in ["decitala", "greek_foot"], FragmentTreeException("The only possible frag_types are `decitala` and `greek_foot`")
+		assert rep_type.lower() in ["ratio", "difference"], FragmentTreeException("The only possible rep_types are `ratio` and `difference`")
 
-		if rep_type.lower() not in ["ratio", "difference"]:
-			raise FragmentTreeException("The only possible rep_types are `ratio` and `difference`")
-		
 		self.data_path = data_path
 		self.frag_type = frag_type
 		self.rep_type = rep_type
@@ -584,6 +579,32 @@ class FragmentTree(NaryTree):
 				i += 1
 
 			self.root = root_node
+	
+	def serialize(self, for_treant=False):
+		"""tree=pickled tree will not be needed in the actual tree."""
+		def encapsulate(d):
+			rv = {}
+			value, name, parents, children = d.values()
+			# Javascript's JSON.parse has a hard time with nulls. 
+			if name == None:
+				name = ""
+			if parents == None:
+				parents = ""
+			rv['text'] = {'value': value, 'name': name, 'parents': parents}
+			rv['children'] = [encapsulate(c) for c in children]
+			return rv
+
+		pickled = jsonpickle.encode(self, unpicklable=False)
+
+		if not for_treant:
+			loaded = json.loads(pickled)
+			return json.dumps(loaded)
+		else:
+			loaded = json.loads(pickled)
+			w_text_field = {"nodeStructure" : encapsulate(loaded["root"])}
+			#del w_text_field["raw_data"]
+			#del w_text_field["filtered_data"]
+			return json.dumps(w_text_field)
 
 ####################################################################################################
 class _SearchConfig():

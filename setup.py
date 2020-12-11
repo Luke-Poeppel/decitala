@@ -51,7 +51,7 @@ setup(
 	install_requires=[
 		"kdtree",
 		"numpy",
-		"nested-lookup"
+		"Naked"
 	],
 	cmdclass={
 		'clean': CleanCommand,
