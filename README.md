@@ -1,1 +1,1 @@
-
+Tools for automating ethnological rhythmic analysis of Olivier Messiaen's music.

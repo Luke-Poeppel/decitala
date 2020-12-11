@@ -10,40 +10,25 @@
 ####################################################################################################
 import json
 import matplotlib as mpl
-import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
-import Naked
 import os
 import shutil
 
 from collections import Counter
+from Naked.toolshed.shell import execute_js
 
 from trees import (
 	NaryTree,
 	FragmentTree
 )
 
-# from decitala import Decitala
-# from paths import (
-# 	SubPath, 
-# 	Path,
-# 	get_full_model3_path
-# )
+import logging
+logging.basicConfig(level=logging.INFO)
 
 FONTNAME = 'Times'
-FONTSIZE_TITLE = 15
+FONTSIZE_TITLE = 14
 FONTSIZE_LABEL = 14
-
-#databases
-haikai0_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
-haikai1_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_1.db'
-
-liturgie3_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_3.db'
-liturgie4_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_4.db'
-
-livre_dorgue_0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
-livre_dorgue_1_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db'
 
 ####################################################################################################
 def make_tree_diagram(FragmentTree, path):
@@ -56,22 +41,37 @@ def make_tree_diagram(FragmentTree, path):
 	
 	stupid_tree.root = root
 	serialized = stupid_tree.serialize(for_treant=True)
-
-	# os.mkdir(path)
-	# os.chdir(path)
-	# name = path.split('/')[-1]
-	# with open(name + '.json', 'w') as json_file:
-	# 	json.dump(serialized, json_file)
 	
-
-	# shutil.copyfile("/tree_diagram_resources/basic-example.js/", name + "/" + name + ".js")
-
+	logging.info("Creating directory and writing tree to JSON...")
+	os.mkdir(path)
+	os.chdir(path)
+	with open("tree.json", "w") as json_file:
+		json.dump(serialized, json_file)
+	logging.info("Done ✔")
 	
+	logging.info("Copying .js files...")
+	templates = "/Users/lukepoeppel/decitala/decitala/treant_templates"
+	for this_file in os.listdir(templates):
+		shutil.copyfile(templates+"/"+this_file, path+"/"+this_file)
+	logging.info("Done ✔")
+
+	logging.info("Running browserify...")
+	parse_data_file = path+"/parse_data.js"
+	browserified_file = path+"/"+"bundle.js"
+	
+	os.system("browserify {0} -o {1}".format(parse_data_file, browserified_file))
+
+	logging.info("Creating tree...")
+	execute_js("parse_data.js")
+	logging.info("Done ✔")
+	logging.info("See {}".format(path))
 
 # Example
 greek_path = "/Users/lukepoeppel/decitala/Fragments/Greek_Metrics/XML"
-greek_feet = FragmentTree(greek_path, "greek_foot", "ratio")
-make_tree_diagram(FragmentTree=greek_feet, path="/Users/lukepoeppel/decitala/decitala/simple")
+tala_path = "/Users/lukepoeppel/decitala/Fragments/Decitalas"
+# greek_feet = FragmentTree(greek_path, "greek_foot", "ratio")
+# decitalas = FragmentTree(tala_path, "decitala", "ratio")
+# make_tree_diagram(FragmentTree=decitalas, path="/Users/lukepoeppel/mytree5")
 
 
 
@@ -126,7 +126,8 @@ def tala_counter(data, title, show = True, filename = None):
 		#plt.close()
 	if show:
 		plt.show()
-	
+
+#rename to fragment roll
 def tala_roll(data, title, show = True, filename = None):
 	"""
 	To fix the color situation, maybe make a dictionary that assigns to 
@@ -159,6 +160,17 @@ def tala_roll(data, title, show = True, filename = None):
 
 ####################################################################################################
 # Testing
+
+#databases
+haikai0_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
+haikai1_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_1.db'
+
+liturgie3_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_3.db'
+liturgie4_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_4.db'
+
+livre_dorgue_0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
+livre_dorgue_1_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db'
+
 #print(type('a'))
 #print(type(sb))
 

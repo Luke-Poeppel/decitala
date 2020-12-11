@@ -580,31 +580,12 @@ class FragmentTree(NaryTree):
 
 			self.root = root_node
 	
-	def serialize(self, for_treant=False):
-		"""tree=pickled tree will not be needed in the actual tree."""
-		def encapsulate(d):
-			rv = {}
-			value, name, parents, children = d.values()
-			# Javascript's JSON.parse has a hard time with nulls. 
-			if name == None:
-				name = ""
-			if parents == None:
-				parents = ""
-			rv['text'] = {'value': value, 'name': name, 'parents': parents}
-			rv['children'] = [encapsulate(c) for c in children]
-			return rv
-
-		pickled = jsonpickle.encode(self, unpicklable=False)
-
-		if not for_treant:
-			loaded = json.loads(pickled)
-			return json.dumps(loaded)
-		else:
-			loaded = json.loads(pickled)
-			w_text_field = {"nodeStructure" : encapsulate(loaded["root"])}
-			#del w_text_field["raw_data"]
-			#del w_text_field["filtered_data"]
-			return json.dumps(w_text_field)
+	@classmethod
+	def from_composition(cls, path, part):
+		"""
+		Class method for generating a FragmentTree from a composition. 
+		"""
+		raise NotImplementedError
 
 ####################################################################################################
 class _SearchConfig():
