@@ -10,8 +10,7 @@ import os
 
 from setuptools import setup, find_packages, Command
 
-version_file = "/Users/lukepoeppel/decitala/decitala/VERSION"
-with open(version_file) as version:
+with open(os.path.join("decitala", "VERSION")) as version:
 	__version__ = version.readline()
 
 class CleanCommand(Command):
@@ -28,7 +27,16 @@ class CleanCommand(Command):
 		assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
 		os.system('rm -vrf ./build ./dist ./*.pyc ./*.tgz ./*.egg-info')
 
-__MODULES__ = ["decitala.fragment", "decitala.utils", "decitala.trees", "decitala.cli", "decitala.vis"]# "decitala.pofp", "decitala.database", "decitala.utils"]
+__MODULES__ = [
+	"decitala.cli", 
+	"decitala.database", 
+	"decitala.fragment", 
+	"decitala.paths",
+	"decitala.pofp",
+	"decitala.trees", 
+	"decitala.utils", 
+	"decitala.vis",
+]
 
 setup(
 	name="decitala",

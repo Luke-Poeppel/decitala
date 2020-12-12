@@ -42,6 +42,59 @@ multiplicative_augmentations = [
 ]
 
 ####################################################################################################
+# Notational Conversion Functions
+def carnatic_string_to_ql_array(string):
+	"""
+	:return: a string of carnatic values converted to a standard ql array. 
+	:rtype: numpy.array. 
+	
+	NOTE: The symbols must have spaces between them or there will be conversion issues. 
+
+	>>> carnatic_string_to_ql_array(string = 'oc o | | Sc S o o o')
+	array([0.375, 0.25 , 0.5  , 0.5  , 1.5  , 1.   , 0.25 , 0.25 , 0.25 ])
+	"""
+	split_string = string.split()
+	return np.array([float(this_carnatic_val[2]) for this_token in split_string for this_carnatic_val in carnatic_symbols if (this_carnatic_val[1] == this_token)])
+
+def ql_array_to_carnatic_string(ql_array):
+	"""
+	:return: a list of quarter length values converted to carnatic rhythmic notation.
+	:rtype: str
+	
+	>>> ql_array_to_carnatic_string([0.5, 0.25, 0.25, 0.375, 1.0, 1.5, 1.0, 0.5, 1.0])
+	'| o o oc S Sc S | S'
+	"""
+	return ' '.join(np.array([this_carnatic_val[1] for this_val in ql_array for this_carnatic_val in carnatic_symbols if (float(this_carnatic_val[2]) == this_val)]))
+
+def ql_array_to_greek_diacritics(ql_array):
+	"""
+	Returns the input ``ql_array`` in greek prosodic notation. This notation only allows
+	for two types of rhythmic values (long & short). 
+
+	:return: a list of quarter length values converted to greek prosodic notation.
+	:rtype: str
+
+	>>> ql_array_to_greek_diacritics(ql_array=[1.0, 0.5, 0.5, 1.0, 1.0, 0.5])
+	'–– ⏑ ⏑ –– –– ⏑'
+	"""
+	ql_array = np.array(ql_array) # Ensures native numpy type.
+	assert len(np.unique(ql_array)) == 2
+
+	long_val = max(ql_array)
+	short_val = min(ql_array)
+	long_factor = 2.0 / long_val
+	short_factor = 1.0 / short_val
+
+	ql_array = np.array([(x * long_factor) if x == long_val else (x * short_factor) for x in ql_array])
+	greek_string_lst = []
+	for this_val in ql_array:
+		for this_diacritic_name, this_diacritic_symbol, this_diacritic_val in greek_diacritics:
+			if this_val == this_diacritic_val:
+				greek_string_lst.append(this_diacritic_symbol)
+
+	return ' '.join(greek_string_lst)
+
+####################################################################################################
 # Rhythm helpers
 def augment(fragment, factor=1.0, difference=0.0):
 	"""
@@ -145,113 +198,6 @@ def contiguous_multiplication(array):
 	return np.array(out)
 
 ####################################################################################################
-# Notational Conversion Functions
-def carnatic_string_to_ql_array(string):
-	"""
-	:return: a string of carnatic values converted to a standard ql array. 
-	:rtype: numpy.array. 
-	
-	**NOTE**: The carnatic symbols must have spaces between them or there will be conversion issues. 
-
-	>>> carnatic_string_to_ql_array(string = 'oc o | | Sc S o o o')
-	array([0.375, 0.25 , 0.5  , 0.5  , 1.5  , 1.   , 0.25 , 0.25 , 0.25 ])
-	"""
-	split_string = string.split()
-	return np.array([float(this_carnatic_val[2]) for this_token in split_string for this_carnatic_val in carnatic_symbols if (this_carnatic_val[1] == this_token)])
-
-def ql_array_to_carnatic_string(ql_array):
-	"""
-	:return: a list of quarter length values converted to carnatic rhythmic notation.
-	:rtype: str
-	
-	>>> ql_array_to_carnatic_string([0.5, 0.25, 0.25, 0.375, 1.0, 1.5, 1.0, 0.5, 1.0])
-	'| o o oc S Sc S | S'
-	"""
-	return ' '.join(np.array([this_carnatic_val[1] for this_val in ql_array for this_carnatic_val in carnatic_symbols if (float(this_carnatic_val[2]) == this_val)]))
-
-def ql_array_to_greek_diacritics(ql_array):
-	"""
-	Returns the input ``ql_array`` in greek prosodic notation. This notation only allows
-	for two types of rhythmic values (long & short). 
-
-	:return: a list of quarter length values converted to greek prosodic notation.
-	:rtype: str
-
-	>>> ql_array_to_greek_diacritics(ql_array=[1.0, 0.5, 0.5, 1.0, 1.0, 0.5])
-	'–– ⏑ ⏑ –– –– ⏑'
-	"""
-	ql_array = np.array(ql_array) # Ensures native numpy type.
-	assert len(np.unique(ql_array)) == 2
-
-	long_val = max(ql_array)
-	short_val = min(ql_array)
-	long_factor = 2.0 / long_val
-	short_factor = 1.0 / short_val
-
-	ql_array = np.array([(x * long_factor) if x == long_val else (x * short_factor) for x in ql_array])
-	greek_string_lst = []
-	for this_val in ql_array:
-		for this_diacritic_name, this_diacritic_symbol, this_diacritic_val in greek_diacritics:
-			if this_val == this_diacritic_val:
-				greek_string_lst.append(this_diacritic_symbol)
-
-	return ' '.join(greek_string_lst)
-
-####################################################################################################
-# Windowing
-def roll_window(array, window_length):
-	"""
-	Takes in a list and returns a list of lists that holds rolling windows of length window_length.
-
-	:param numpy.array array: any iterable
-
-	>>> composers = np.array(['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet'])
-	>>> for this in roll_window(array=composers, window_length=3):
-	...     print(this)
-	['Mozart', 'Monteverdi', 'Messiaen']
-	['Monteverdi', 'Messiaen', 'Mahler']
-	['Messiaen', 'Mahler', 'MacDowell']
-	['Mahler', 'MacDowell', 'Massenet']
-	"""
-	assert type(window_length) == int
-
-	l = []
-	iterable = iter(array)
-	win = []
-	for _ in range(0, window_length):
-		win.append(next(iterable))
-	
-	l.append(win)
-
-	for thisElem in iterable:
-		win = win[1:] + [thisElem]
-		l.append(win)
-
-	return l
-
-def power_list(data_in):
-	"""
-	Given a list, returns its power set as a list (excluding the empty list). 
-
-	>>> l = [1, 2, 3]
-	>>> power_list(l)
-	[(1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]
-
-	>>> for x in power_list([(0.0, 2.0), (4.0, 5.5), (6.0, 7.25)]):
-	...     print(x)
-	((0.0, 2.0),)
-	((4.0, 5.5),)
-	((6.0, 7.25),)
-	((0.0, 2.0), (4.0, 5.5))
-	((0.0, 2.0), (6.0, 7.25))
-	((4.0, 5.5), (6.0, 7.25))
-	((0.0, 2.0), (4.0, 5.5), (6.0, 7.25))
-	"""
-	assert type(data_in) == list
-	power_list = list(chain.from_iterable(combinations(data_in, r) for r in range(len(data_in) + 1)))
-	return [x for x in power_list if len(x) != 0]
-
-####################################################################################################
 # Subdivision (or, technically, superdivision...)
 def _find_clusters(array):
 	"""
@@ -304,70 +250,53 @@ def _make_one_superdivision(array, clusters):
 	"""
 	>>> varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
 	>>> c = _find_clusters(varied_ragavardhana_2)
-	>>> # one combination is [[0, 2], [7, 9]]
-	
-	_make_one_superdivision(varied_ragavardhana_2, [[0, 2], [7, 9]])
-	what I want: array([3, 0.5, 0.75, 0.75, 0.5, 0.75])
-	got: array([3.  , 0.5 , 0.75, 0.75, 0.75, 0.5 ])
+	>>> # one combination of the clusters is [[0, 2], [7, 9]]
+	>>> _make_one_superdivision(varied_ragavardhana_2, [[0, 2], [7, 9]])
+	array([3.  , 0.5 , 0.75, 0.75, 0.5 , 0.75])
 	"""
 	superdivision = [0] * len(array)
 	compliment_ranges = _compliment_of_index_ranges(array, clusters)
 	for x in compliment_ranges:
 		superdivision[x[0]:x[1]+1] = array[x[0]:x[1]+1]
 
-	# superdivision looks good! 
-
 	for this_cluster in clusters:
 		region = array[this_cluster[0]:this_cluster[1]+1] # this is good too! 
 		summed = sum(region)
-		superdivision.insert(this_cluster[0], summed) # this is the problem. 
+		superdivision[this_cluster[0]] = summed # this is the problem. 
 		
 	return np.array([x for x in superdivision if x != 0])
 	
-varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
-c = [[0, 2], [7, 9]]
-# print(_make_one_superdivision(varied_ragavardhana_2, c))
-#what I want: array([3, 0.5, 0.75, 0.75, 0.5, 0.75])
-
 def find_possible_superdivisions(array):
 	"""
 	There is a more general approach to the subdivision problem, but we note that Messiaen's subdivision
 	of tala components tends to be even. 
 
-	varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
-	for x in find_possible_superdivisions(varied_ragavardhana):
+	>>> varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
+	>>> for x in find_possible_superdivisions(varied_ragavardhana):
 	...     print(x)
 	[1.   1.   1.   0.5  0.75 0.5 ]
 	[3.   0.5  0.75 0.5 ]
 	
-	varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
-	for x in find_possible_superdivisions(varied_ragavardhana_2):
+	>>> varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
+	>>> for x in find_possible_superdivisions(varied_ragavardhana_2):
 	...     print(x)
 	[1.   1.   1.   0.5  0.75 0.75 0.5  0.25 0.25 0.25]
 	[3.   0.5  0.75 0.75 0.5  0.25 0.25 0.25]
 	[1.   1.   1.   0.5  1.5  0.5  0.25 0.25 0.25]
 	[1.   1.   1.   0.5  0.75 0.75 0.5  0.75]
-	[3.   1.5  0.5  0.75 0.5  0.25 0.25 0.25]
-	[3.   0.5  0.75 0.75 0.75 0.5 ]
-	[1.   1.   1.   0.5  1.5  0.75 0.5  0.25]
-	[3.   1.5  0.5  0.75 0.75 0.5  0.25]
-
-	Messes up with the combos.
+	[3.   0.5  1.5  0.5  0.25 0.25 0.25]
+	[3.   0.5  0.75 0.75 0.5  0.75]
+	[1.   1.   1.   0.5  1.5  0.5  0.75]
+	[3.   0.5  1.5  0.5  0.75]
 	"""
 	possible_super_divisions = [array]
 	clusters = _find_clusters(array)
 	possible_combinations = power_list(clusters)
 	for this_combination in possible_combinations:
-		print(this_combination)
 		superdivision = _make_one_superdivision(array, this_combination)
 		possible_super_divisions.append(superdivision)
 	
 	return possible_super_divisions
-
-#varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
-#varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
-#for x in find_possible_superdivisions(varied_ragavardhana_2):
-	#print(x)
 
 ####################################################################################################
 # La Valeur Ajoutee
@@ -456,6 +385,61 @@ def removeAddedValuesFromList(lst):
 	return lst
 
 ####################################################################################################
+# Windowing
+def roll_window(array, window_length):
+	"""
+	Takes in a list and returns a list of lists that holds rolling windows of length window_length.
+
+	:param numpy.array array: any iterable
+
+	>>> composers = np.array(['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet'])
+	>>> for this in roll_window(array=composers, window_length=3):
+	...     print(this)
+	['Mozart', 'Monteverdi', 'Messiaen']
+	['Monteverdi', 'Messiaen', 'Mahler']
+	['Messiaen', 'Mahler', 'MacDowell']
+	['Mahler', 'MacDowell', 'Massenet']
+	"""
+	assert type(window_length) == int
+
+	l = []
+	iterable = iter(array)
+	win = []
+	for _ in range(0, window_length):
+		win.append(next(iterable))
+	
+	l.append(win)
+
+	for thisElem in iterable:
+		win = win[1:] + [thisElem]
+		l.append(win)
+
+	return l
+
+def power_list(data_in):
+	"""
+	Given a list, returns its power set as a list (excluding the empty list). 
+
+	>>> l = [1, 2, 3]
+	>>> power_list(l)
+	[(1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]
+
+	>>> for x in power_list([(0.0, 2.0), (4.0, 5.5), (6.0, 7.25)]):
+	...     print(x)
+	((0.0, 2.0),)
+	((4.0, 5.5),)
+	((6.0, 7.25),)
+	((0.0, 2.0), (4.0, 5.5))
+	((0.0, 2.0), (6.0, 7.25))
+	((4.0, 5.5), (6.0, 7.25))
+	((0.0, 2.0), (4.0, 5.5), (6.0, 7.25))
+	"""
+	assert type(data_in) == list
+	power_list = list(chain.from_iterable(combinations(data_in, r) for r in range(len(data_in) + 1)))
+	return [x for x in power_list if len(x) != 0]
+
+####################################################################################################
+# Math helpers
 def _euclidian_norm(vector):
 	'''
 	Returns the euclidian norm of a vector (the square root of the inner product of a vector 
@@ -506,8 +490,6 @@ def cauchy_schwartz(vector1, vector2):
 # Score helpers
 def get_object_indices(filepath, part_num):
 	"""
-	
-	
 	NOW SUPPORTS RESTS & GRACE NOTES
 	Given a file path and part number, returns a list containing tuples of the form [(OBJ, (start, end))].
 

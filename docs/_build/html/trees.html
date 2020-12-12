@@ -34,8 +34,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="decitala  documentation" href="index.html"/>
-        <link rel="next" title="pofp.py" href="pofp.html"/>
-        <link rel="prev" title="fragment.py" href="fragment.html"/> 
+        <link rel="next" title="utils.py" href="utils.html"/>
+        <link rel="prev" title="pofp.py" href="pofp.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -83,12 +83,12 @@
             
                 <p class="caption"><span class="caption-text">Modules</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">trees.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">cli.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paths.html">paths.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contour.html">contour.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">trees.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils.py</a></li>
 </ul>
 
@@ -258,6 +258,12 @@ hashed by their value and are stored in a set. For demonstration, we will create
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Allow for unnamed paths to be found.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">allow_unnamed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">[1.0, 0.5, 0.5]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Level order traversal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">level_order_traversal</span><span class="p">()</span>
+<span class="go">[[1.0], [0.5, 1.0, 3.0, 4.0], [0.5, 3.0, 2.0, 1.0], [1.0, 1.0, 0.5], [2.0]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># We can serialize an NaryTree as either a native Python type or Javascript type (for using Treant.js).</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
+<span class="go">&#39;{&quot;root&quot;: {&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: &quot;D&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}, {&quot;value&quot;: 3.0, &quot;name&quot;: &quot;B&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}, {&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 2.0, &quot;name&quot;: &quot;C&quot;, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: &quot;Test Overwrite&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}]}, {&quot;value&quot;: 3.0, &quot;name&quot;: &quot;A&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}, {&quot;value&quot;: 4.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 2.0, &quot;name&quot;: &quot;Full Path&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}]}]}]}}&#39;</span>
 </pre></div>
 </div>
 <dl class="py class">
@@ -334,6 +340,12 @@ may have any arbitrary number of children, but each child has only 1 parent.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="decitala.trees.NaryTree.serialize">
+<code class="sig-name descname">serialize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">for_treant</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.NaryTree.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>tree=pickled tree will not be needed in the actual tree.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="decitala.trees.NaryTree.all_possible_paths">
 <code class="sig-name descname">all_possible_paths</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.NaryTree.all_possible_paths" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all possible paths from the root node, not all of which are necesarrily named.
@@ -345,6 +357,12 @@ Currently returns a numpy error.</p>
 <code class="sig-name descname">all_named_paths</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cutoff</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.NaryTree.all_named_paths" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all named paths from the root. An optional <code class="docutils literal notranslate"><span class="pre">cutoff</span></code> parameter restricts to paths of 
 length <span class="math notranslate nohighlight">\(n\)</span>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.trees.NaryTree.level_order_traversal">
+<code class="sig-name descname">level_order_traversal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.NaryTree.level_order_traversal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the level order traversal of an NaryTree.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -430,6 +448,12 @@ Otherwise creates <a class="reference internal" href="fragment.html#decitala.fra
 <span class="go">&lt;fragment.GreekFoot Peon_II&gt;</span>
 </pre></div>
 </div>
+<dl class="py method">
+<dt id="decitala.trees.FragmentTree.from_composition">
+<em class="property">classmethod </em><code class="sig-name descname">from_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.FragmentTree.from_composition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class method for generating a FragmentTree from a composition.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
@@ -540,10 +564,10 @@ see documentation for <a class="reference internal" href="#decitala.trees.get_by
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pofp.html" class="btn btn-neutral float-right" title="pofp.py" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="utils.html" class="btn btn-neutral float-right" title="utils.py" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="fragment.html" class="btn btn-neutral" title="fragment.py" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pofp.html" class="btn btn-neutral" title="pofp.py" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

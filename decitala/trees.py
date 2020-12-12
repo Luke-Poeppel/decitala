@@ -581,7 +581,7 @@ class FragmentTree(NaryTree):
 			self.root = root_node
 	
 	@classmethod
-	def from_composition(cls, path, part):
+	def from_composition(cls, filepath, part):
 		"""
 		Class method for generating a FragmentTree from a composition. 
 		"""

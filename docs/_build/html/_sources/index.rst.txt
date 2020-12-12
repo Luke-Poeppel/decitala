@@ -19,13 +19,14 @@ Excerpt from the Sangitaaratnaakara :download:`pdf <_static/Sangitaratnakara_Vol
    :caption: Modules
    :glob:
 
-   fragment
-   trees
-   pofp
+   cli
    database
+   fragment
    paths
-   contour
+   pofp 
+   trees
    utils
+   vis
 
 Indices and tables
 ==================
