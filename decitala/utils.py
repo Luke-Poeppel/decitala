@@ -23,8 +23,8 @@ carnatic_symbols = np.array([
 	['Laghu', '|', 0.5],
 	['Laghu-Virama', '|c', 0.75],
 	['Guru', 'S', 1.0],
-	['Pluta', 'Sc', 1.5],           #Note: Normally a crescent moon superscript. Since it serves the same function as a virâma––we use the same notation. 
-	#['kakapadam', '8X', 2.0]       #Decide what the appropriate convention is...
+	['Pluta', 'Sc', 1.5],           # Note: Normally a crescent moon superscript. Since it serves the same function as a virâma––we use the same notation. 
+	#['kakapadam', '8X', 2.0]       # Decide what the appropriate convention is...
 ])
 
 greek_diacritics = [
@@ -289,7 +289,7 @@ def find_possible_superdivisions(array):
 	[1.   1.   1.   0.5  1.5  0.5  0.75]
 	[3.   0.5  1.5  0.5  0.75]
 	"""
-	possible_super_divisions = [array]
+	possible_super_divisions = [np.array(array)]
 	clusters = _find_clusters(array)
 	possible_combinations = power_list(clusters)
 	for this_combination in possible_combinations:

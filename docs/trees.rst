@@ -12,6 +12,17 @@ efficiently search for such modification.
 
 We define the following representations of a rhythm (see X for the implementation):
 
+| Symbol | Corresponding Search              |
+|--------|-----------------------------------|
+| r      | ratio                             |
+| rr     | retrograde-ratio                  |
+| d      | difference                        |
+| rd     | retrograde-difference             |
+| sr     | subdivision-ratio                 |
+| rsr    | retrograde-subdivision-ratio      |
+| sd     | subdivision-difference            |
+| rsd    | retrograde-subdivision-difference |
+
 .. automodule:: decitala.trees
    :members:
    :member-order: bysource

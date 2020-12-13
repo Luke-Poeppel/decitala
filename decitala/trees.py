@@ -16,23 +16,24 @@ import pytest
 
 from collections import deque
 
-from .fragment import (
+from fragment import (
 	Decitala,
 	GreekFoot,
 	GeneralFragment
 )
 
-from .utils import (
+from utils import (
 	cauchy_schwartz,
 	roll_window,
 	#get_indices_of_object_occurrence,
 	get_object_indices,
 	successive_ratio_array,
-	successive_difference_array
+	successive_difference_array,
+	find_possible_superdivisions
 )
 
-decitala_path = "/Users/lukepoeppel/decitala/Fragments/Decitalas"
-greek_path = "/Users/lukepoeppel/decitala/Fragments/Greek_Metrics/XML"
+decitala_path = os.path.abspath("../Fragments/Decitalas")
+greek_path = os.path.abspath("../Fragments/Greek_Metrics/XML")
 
 ############### EXCEPTIONS ###############
 class TreeException(Exception):
@@ -41,8 +42,10 @@ class TreeException(Exception):
 class FragmentTreeException(TreeException):
 	pass
 
-############### EXCEPTIONS ###############
+class SearchException(Exception):
+	pass
 
+####################################################################################################
 class NaryTree(object):
 	"""
 	A single-rooted nary tree for ratio and difference representations of rhythmic fragments. Nodes are 
@@ -540,7 +543,7 @@ class FragmentTree(NaryTree):
 			for this_file in os.listdir(data_path):
 				raw_data.append(GreekFoot(this_file[:-4]))
 			self.raw_data = raw_data
-		else:
+		else: # this is bad
 			raw_data = []
 			for this_file in os.listdir(data_path):
 				raw_data.append(GeneralFragment(this_file))
@@ -551,6 +554,7 @@ class FragmentTree(NaryTree):
 		if rep_type == 'ratio':
 			root_node = self.Node(value = 1.0, name = 'ROOT')
 	
+			# why am I doing this...? 
 			possible_num_onsets = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
 			i = 0
 			while i < len(possible_num_onsets):
@@ -588,55 +592,110 @@ class FragmentTree(NaryTree):
 		raise NotImplementedError
 
 ####################################################################################################
+"""
+Messiaen alters fragments in a number of ways before including them in his compositions. This search 
+structure is complex, but useful. If we are interested in whether fragment X in a composition belongs to
+a dataset, we must do a few things. 
+
+1. Provide the ql array of fragment X
+2. Create a ratio and/or difference form FragmentTree for a given dataset
+3. Provide the allowed modifications
+
+
+NOTE (to self): You shouldn't *have* to provide a difference & ratio tree; can't I do something nice?  
+^ Default to None and check the modifications against it. 
+
+"""
 class _SearchConfig():
-	"""
-	Helper class for managing relationship between search ql_arrays and search trees. 
-	"""
-	def __init__(self, ql_array, ratio_tree, difference_tree, modifications):
+	"""Helper class for managing relationship between search ql_arrays and search trees."""
+	def __init__(self, ql_array, ratio_tree=None, difference_tree=None, modifications=[]):
 		self.ql_array = ql_array
+		
+		if ratio_tree is None and difference_tree is None:
+			raise SearchException("You need to provide at least one tree.")
+		
 		self.ratio_tree = ratio_tree
 		self.difference_tree = difference_tree
+
+		assert set(modifications).issubset({"r", "rr", "d", "rd", "sr", "rsr"}), SearchException("Current supported searches are r, rr, d, rd, sr, rsr.")
+		assert len(set(modifications)) == len(modifications), SearchException("You have a duplicate element in your allowed modifications.")
 		self.modifications = modifications
-		
+
+		if (len(set(self.modifications).intersection({"r", "rr", "sr", "rsr"})) == 0) and self.ratio_tree == None:
+			raise SearchException("You did not provide a ratio FragmentTree.")
+		if (len(set(self.modifications).intersection({"d", "rd"})) == 0) and self.difference_tree == None:
+			raise SearchException("You did not provide a difference FragmentTree.") 
+
+	def __repr__(self):
+		return "<_SearchConfig: {}>".format(self.modifications)
+
 	def __getitem__(self, modification):
 		if modification not in self.modifications:
 			raise Exceptions("'{0}' is not in '{1}'".format(modification, self.modifications))
 	
 		retrograde = self.ql_array[::-1]
+		
 		ratio_array = successive_ratio_array(self.ql_array)
 		difference_array = successive_difference_array(self.ql_array)
 		retrograde_ratio_array = successive_ratio_array(retrograde)
 		retrograde_difference_array = successive_difference_array(retrograde)
 		
-		if modification == "ratio":
+		all_superdivisions = find_possible_superdivisions(self.ql_array)
+		superdivisions_ratio = [successive_ratio_array(x) for x in all_superdivisions]
+		retrograde_superdivisions_pre = [x[::-1] for x in all_superdivisions]
+		retrograde_superdivisions_ratio = [successive_ratio_array(x) for x in retrograde_superdivisions_pre]
+
+		if modification == "r":
 			return (self.ratio_tree, ratio_array)
-		elif modification == "retrograde-ratio":
+		elif modification == "rr":
 			return (self.ratio_tree, retrograde_ratio_array)
-		elif modification == "difference":
+		elif modification == "d":
 			return (self.difference_tree, difference_array)
-		elif modification == "retrograde-difference":
+		elif modification == "rd":
 			return (self.difference_tree, retrograde_difference_array)
-		else:
-			return None
-			
-def _get_ratio_or_difference(input_fragment, found_fragment, modification):
-	"""
-	Helper function for retrieving the modifying factor/difference between the input fragment 
-	and found fragment in the tree. 
-	"""
-	split_mod = modification.split("-")
-	if "ratio" in split_mod:
-		ratio = abs(input_fragment[0] / found_fragment.ql_array()[0])
-		return (modification, ratio)
-	else:
-		difference = abs(input_fragment[0] - found_fragment.ql_array()[0])
-		return (modification, difference)
+		elif modification == "sr":
+			return (self.ratio_tree, superdivisions_ratio[1:]) # exclude original 
+		elif modification == "rsr":
+			return (self.ratio_tree, retrograde_superdivisions_ratio[1:]) # exclude original
+
+	def _get_modification_data(self, found_fragment, modification):
+		"""Helper function for retrieving the modifier between the input & founds fragments."""
+		if modification == "r":
+			ratio = abs(self.ql_array[0] / found_fragment.ql_array()[0])
+			return (modification, ratio)
+		elif modification == "rr":
+			flipped = self.ql_array[::-1]
+			ratio = abs(flipped[0] / found_fragment.ql_array()[0])
+			return (modification, ratio)
+		elif modification == "d":
+			difference = abs(self.ql_array[0] - found_fragment.ql_array()[0])
+			return (modification, difference)
+		elif modification == "rd":
+			flipped = self.ql_array[::-1]
+			difference = abs(flipped[0] - found_fragment.ql_array()[0])
+			return (modification, difference)
+		elif modification == "sr":
+			# How can I get the superdivision information easily...?
+			ratio = abs(self.ql_array[0] / found_fragment.ql_array()[0])
+			return (modification, ratio)
+		elif modification == "rsr":
+			# See the above. 
+			flipped = self.ql_array[::-1]
+			ratio = abs(flipped[0] / found_fragment.ql_array()[0])
+			return (modification, ratio)
 
 def get_by_ql_array(
 		ql_array,
-		ratio_tree,
-		difference_tree,
-		allowed_modifications=["ratio", "retrograde-ratio", "difference", "retrograde-difference"],
+		ratio_tree=None,
+		difference_tree=None,
+		allowed_modifications=[
+			"r", 
+			"rr", 
+			"d", 
+			"rd", 
+			"sr",
+			"rsr"
+		],
 		allow_unnamed=False
 	):
 	"""
@@ -644,37 +703,48 @@ def get_by_ql_array(
 	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.
 	:param fragment.FragmentTree difference_tree: tree storing difference representations.
 	:param list allowed_modifications: possible ways for a fragment to be modified. 
-									Current possibilities are ``ratio``, ``retrograde-ratio``, ``difference``, and ``retrograde-difference``.
+									Current possibilities are ``r``, ``rr``, ``d``, ``rd``, ``sr``, and ``rsr``.
 									*NOTE*: the order of ``allowed_modifications`` is the order of the search. 
 	:param bool allow_unnamed: whether or not to allow the retrieval of unnamed paths. Default is ``False``.
 
 	>>> fragment = np.array([3.0, 1.5, 1.5, 3.0])
 	>>> ratio_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='ratio')
 	>>> difference_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='difference')
-	>>> allowed_modifications = ["ratio", "retrograde-ratio"]
+	>>> allowed_modifications = ["r", "rr"]
 	>>> get_by_ql_array(fragment, ratio_tree, difference_tree, allowed_modifications)
-	(<fragment.GreekFoot Choriamb>, ('ratio', 1.5))
+	(<fragment.GreekFoot Choriamb>, ('r', 1.5))
 	"""
-	tala = None
+	assert type(allowed_modifications) == list
+	
+	fragment = None
 	config = _SearchConfig(ql_array=ql_array, ratio_tree=ratio_tree, difference_tree=difference_tree, modifications=allowed_modifications)
 	i = 0
 	while i < len(allowed_modifications):
 		curr_modification = allowed_modifications[i]
 		search_tree, search_ql_array = config[curr_modification]
-		search = search_tree.search_for_path(search_ql_array, allow_unnamed)
+		
+		# check if single array or list of arrays...
+		if isinstance(search_ql_array[0], np.ndarray):
+			for this_array in search_ql_array:
+				search = search_tree.search_for_path(this_array, allow_unnamed)
+				if search is not None:
+					break
+		else:
+			search = search_tree.search_for_path(search_ql_array, allow_unnamed)
+
 		if search is not None:
-			tala = search
-			change = _get_ratio_or_difference(ql_array, tala, curr_modification)
+			fragment = search
+			change = config._get_modification_data(fragment, curr_modification)
 			break
 		else:
 			i += 1
 
-	if tala:
-		return (tala, change)
+	if fragment:
+		return (fragment, change)
 	else:
 		return None
 
-# TODO: maybe check for grace notes? 
+####################################################################################################
 def rolling_search(
 		filepath, 
 		part_num, 
@@ -702,11 +772,11 @@ def rolling_search(
 	>>> ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
 	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
 	... 	print(tala_data)
-	((<fragment.GreekFoot Spondee>, ('ratio', 0.125)), (0.0, 0.5))
-	((<fragment.GreekFoot Trochee>, ('ratio', 0.125)), (0.25, 0.625))
-	((<fragment.GreekFoot Spondee>, ('ratio', 0.0625)), (0.5, 0.75))
-	((<fragment.GreekFoot Iamb>, ('ratio', 0.125)), (0.625, 1.0))
-	((<fragment.GreekFoot Spondee>, ('ratio', 0.125)), (0.75, 1.25))
+	((<fragment.GreekFoot Spondee>, ('r', 0.125)), (0.0, 0.5))
+	((<fragment.GreekFoot Trochee>, ('r', 0.125)), (0.25, 0.625))
+	((<fragment.GreekFoot Spondee>, ('r', 0.0625)), (0.5, 0.75))
+	((<fragment.GreekFoot Iamb>, ('r', 0.125)), (0.625, 1.0))
+	((<fragment.GreekFoot Spondee>, ('r', 0.125)), (0.75, 1.25))
 	"""
 	assert ratio_tree.rep_type == 'ratio'
 	assert difference_tree.rep_type == 'difference'
@@ -724,6 +794,8 @@ def rolling_search(
 						pass
 				as_quarter_lengths.append(this_obj.quarterLength)
 
+			# print(as_quarter_lengths)
+			# print(as_quarter_lengths[0])
 			searched = get_by_ql_array(as_quarter_lengths, ratio_tree, difference_tree)
 			if searched is not None:
 				offset_1 = this_frame[0][0]
@@ -732,6 +804,15 @@ def rolling_search(
 				fragments_found.append((searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
 		
 	return fragments_found
+
+# ratio_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='ratio')
+# difference_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='difference')
+# ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
+
+# searched = rolling_search(ex, 0, ratio_tree, difference_tree)
+
+# # for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
+# # 	print(tala_data)
 
 def rolling_search_on_array(
 		ql_array, 
@@ -755,11 +836,11 @@ def rolling_search_on_array(
 	>>> example_fragment = np.array([0.25, 0.5, 0.25, 0.5])
 	>>> for x in rolling_search_on_array(ql_array=example_fragment, ratio_tree=greek_ratio_tree, difference_tree=greek_difference_tree):
 	...     print(x, x[0].ql_array())
-	(<fragment.GreekFoot Iamb>, ('ratio', 0.25)) [1. 2.]
-	(<fragment.GreekFoot Trochee>, ('ratio', 0.25)) [2. 1.]
-	(<fragment.GreekFoot Iamb>, ('ratio', 0.25)) [1. 2.]
-	(<fragment.GreekFoot Amphibrach>, ('ratio', 0.25)) [1. 2. 1.]
-	(<fragment.GreekFoot Amphimacer>, ('ratio', 0.25)) [2. 1. 2.]
+	(<fragment.GreekFoot Iamb>, ('r', 0.25)) [1. 2.]
+	(<fragment.GreekFoot Trochee>, ('r', 0.25)) [2. 1.]
+	(<fragment.GreekFoot Iamb>, ('r', 0.25)) [1. 2.]
+	(<fragment.GreekFoot Amphibrach>, ('r', 0.25)) [1. 2. 1.]
+	(<fragment.GreekFoot Amphimacer>, ('r', 0.25)) [2. 1. 2.]
 	"""
 	assert ratio_tree.rep_type == 'ratio'
 	assert difference_tree.rep_type == 'difference'
@@ -839,9 +920,8 @@ array([3.  , 0.5 , 0.75, 0.5 ]) -> array([1. , 1. , 1. , 0.5 , 0.75, 0.5 ]) by s
 
 # Testing
 """
-"""
+
 if __name__ == '__main__':
 	import doctest
-	print("Hello, World!")
-	doctest.testmod()"""
+	#doctest.testmod()
 

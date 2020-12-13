@@ -13,14 +13,12 @@ import copy
 import numpy as np
 import os
 import re
-import unittest
-import warnings
 
 from music21 import converter
 from music21 import note
 from music21 import stream
 
-from .utils import (
+from utils import (
 	carnatic_string_to_ql_array, 
 	ql_array_to_carnatic_string,
 	ql_array_to_greek_diacritics,

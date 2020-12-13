@@ -57,8 +57,14 @@ setup(
 	python_requires='>=3.7',
 	include_package_data=True,
 	install_requires=[
-		"kdtree",
+		"ast",
+		"click",
+		"collections",
+		"itertools",
+		"jsonpickle",
 		"numpy",
+		"sqlite3",
+		"matplotlib"
 	],
 	cmdclass={
 		'clean': CleanCommand,
