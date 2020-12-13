@@ -35,12 +35,12 @@ def make_tree_diagram(FragmentTree, path):
 	stupid_tree = NaryTree()
 	if FragmentTree.rep_type == "ratio":
 		root = NaryTree().Node(value = 1.0, name = None)
-		for this_fragment in FragmentTree.filtered_data:
+		for this_fragment in FragmentTree.sorted_data:
 			fragment_list = this_fragment.successive_ratio_array().tolist()
 			root.add_path_of_children(fragment_list, this_fragment.name)
 	else:
 		root = NaryTree().Node(value = 0.0, name = None)
-		for this_fragment in FragmentTree.filtered_data:
+		for this_fragment in FragmentTree.sorted_data:
 			fragment_list = this_fragment.successive_difference_array().tolist()
 			root.add_path_of_children(fragment_list, this_fragment.name)
 	
@@ -72,10 +72,6 @@ def make_tree_diagram(FragmentTree, path):
 	logging.info("See {}".format(path))
 
 ####################################################################################################
-
-
-
-# Visualization
 
 def tala_counter(data, title, show = True, filename = None):
 	"""

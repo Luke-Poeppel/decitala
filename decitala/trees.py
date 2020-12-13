@@ -564,7 +564,7 @@ class FragmentTree(NaryTree):
 				root_node.add_path_of_children(path = list(this_tala.successive_difference_array()), final_node_name = this_tala)
 			self.root = root_node
 		
-		self.sorted_data = None # Free up memory
+		# self.sorted_data = None # Free up memory
 	
 	@classmethod
 	def from_composition(
