@@ -294,14 +294,14 @@ class GeneralFragment(object):
 		:rtype: float
 		"""
 		raise NotImplementedError
-		#as_time_scale = transform_to_time_scale(array = self.ql_array())
-		#return get_average_c_score(array = as_time_scale)
 	
 	def nPVI(self):
 		"""
 		:return: the nPVI of the fragment (Low, Grabe, & Nolan, 2000).
 		:rtype: float
 		"""
+		assert len(self.ql_array()) > 1
+
 		IOI = self.ql_array()
 		num_onsets = len(IOI)
 		summation = 0

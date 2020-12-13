@@ -514,78 +514,68 @@ class FragmentTree(NaryTree):
 	"""
 	def __init__(self, data_path, frag_type, rep_type, **kwargs):
 		assert type(data_path)==str, FragmentTreeException("Path must be a string.")
-		assert frag_type.lower() in ["decitala", "greek_foot"], FragmentTreeException("The only possible frag_types are `decitala` and `greek_foot`")
+		assert frag_type.lower() in ["decitala", "greek_foot", "general_fragment"], FragmentTreeException("The only possible frag_types are `decitala`, `greek_foot`, and `general_fragment`.")
 		assert rep_type.lower() in ["ratio", "difference"], FragmentTreeException("The only possible rep_types are `ratio` and `difference`")
 
 		self.data_path = data_path
-		self.frag_type = frag_type
-		self.rep_type = rep_type
+		self.frag_type = frag_type.lower()
+		self.rep_type = rep_type.lower()
 
 		super().__init__()
+		
+		raw_data = []
 
-		# This is a TODO in Aleph_One.
-
-		if frag_type.lower() == 'decitala':
-			raw_data = []
+		if self.frag_type == "decitala":
 			for this_file in os.listdir(data_path):
 				x = re.search(r'\d+', this_file)
 				try:
 					span_end = x.span()[1] + 1
 					raw_data.append(Decitala(name=this_file[span_end:]))
-				except AttributeError:
+				except AttributeError: # Is this ok...?
 					pass
-
 			self.raw_data = raw_data
-		elif frag_type.lower() == 'greek_foot':
-			raw_data = []
+		
+		if self.frag_type == "greek_foot":
 			for this_file in os.listdir(data_path):
 				raw_data.append(GreekFoot(this_file[:-4]))
 			self.raw_data = raw_data
-		else: # this is bad
-			raw_data = []
+
+		if self.frag_type == "general_fragment":
 			for this_file in os.listdir(data_path):
 				raw_data.append(GeneralFragment(this_file))
 			self.raw_data = raw_data
 
 		self.filtered_data = filter_data(self.raw_data)
+		self.raw_data = None # Free up memory
 
-		if rep_type == 'ratio':
-			root_node = self.Node(value = 1.0, name = 'ROOT')
-	
-			# why am I doing this...? 
-			possible_num_onsets = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
-			i = 0
-			while i < len(possible_num_onsets):
-				curr_onset_list = []
-				for this_tala in self.filtered_data:
-					if len(this_tala.ql_array()) == possible_num_onsets[i]:
-						curr_onset_list.append(this_tala)
-				for this_tala in curr_onset_list:
-					root_node.add_path_of_children(path = list(this_tala.successive_ratio_array()), final_node_name = this_tala)
-				i += 1
+		self.depth = max([len(x.ql_array()) for x in self.filtered_data])
+		self.sorted_data = sorted(self.filtered_data, key = lambda x: len(x.ql_array()))
+		self.filtered_data = None # Free up memory
 
+		if self.rep_type == "ratio":
+			root_node = NaryTree().Node(value = 1.0, name = 'ROOT')
+			for this_tala in self.sorted_data:
+				root_node.add_path_of_children(path = list(this_tala.successive_ratio_array()), final_node_name = this_tala)
 			self.root = root_node
 		
-		if rep_type == 'difference':
+		if self.rep_type == "difference":
 			root_node = NaryTree().Node(value = 0.0, name = 'ROOT')
-
-			possible_num_onsets = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
-			i = 0
-			while i < len(possible_num_onsets):
-				curr_onset_list = []
-				for this_tala in self.filtered_data:
-					if len(this_tala.ql_array()) == possible_num_onsets[i]:
-						curr_onset_list.append(this_tala)
-				for this_tala in curr_onset_list:
-					root_node.add_path_of_children(path = this_tala.successive_difference_array(), final_node_name = this_tala)
-				i += 1
-
+			for this_tala in self.sorted_data:
+				root_node.add_path_of_children(path = list(this_tala.successive_difference_array()), final_node_name = this_tala)
 			self.root = root_node
+		
+		self.sorted_data = None # Free up memory
 	
 	@classmethod
-	def from_composition(cls, filepath, part):
+	def from_composition(
+			cls, 
+			filepath, 
+			part, 
+			rep_type="ratio",
+			max_window=14
+		):
 		"""
-		Class method for generating a FragmentTree from a composition. 
+		Class method for generating a FragmentTree from a composition.  
 		"""
 		raise NotImplementedError
 
@@ -783,13 +773,25 @@ def rolling_search(
 	assert ratio_tree.rep_type == "ratio"
 	assert difference_tree.rep_type == "difference"
 
+	# We can downgrade windows according to the depth of the provided trees.
+	depths = []
+	if ratio_tree is not None:
+		depths.append(ratio_tree.depth)
+	if difference_tree is not None:
+		depths.append(ratio_tree.depth)
+
+	max_window_size = max(depths)
+	closest_window = min(windows, key=lambda x: abs(x - max_window_size))
+	index_of_closest = windows.index(closest_window)
+	windows = windows[0:index_of_closest+1]
+
 	object_list = get_object_indices(filepath = filepath, part_num = part_num)
 	fragments_found = []
 	for this_win in windows:
 		frames = roll_window(array = object_list, window_length = this_win)
 		for this_frame in frames:
 			objects = [x[0] for x in this_frame]
-			if any(x.isRest for x in objects): # skip any window that has a rest in it, 
+			if any(x.isRest for x in objects): # Skip any window that has a rest in it, 
 				continue
 			else:
 				as_quarter_lengths = []
@@ -916,4 +918,3 @@ def test_varied_ragavardhana(tala_ratio_tree):
 if __name__ == '__main__':
 	import doctest
 	doctest.testmod()
-
