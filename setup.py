@@ -61,6 +61,7 @@ setup(
 		"click",
 		"collections",
 		"itertools",
+		"more-itertools",
 		"jsonpickle",
 		"numpy",
 		"sqlite3",

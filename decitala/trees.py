@@ -16,16 +16,15 @@ import pytest
 
 from collections import deque
 
-from fragment import (
+from .fragment import (
 	Decitala,
 	GreekFoot,
 	GeneralFragment
 )
 
-from utils import (
+from .utils import (
 	cauchy_schwartz,
 	roll_window,
-	#get_indices_of_object_occurrence,
 	get_object_indices,
 	successive_ratio_array,
 	successive_difference_array,
@@ -406,9 +405,8 @@ class NaryTree(object):
 		:return: either the name of the final node or, if ``allow_unnamed=True``, possibly ``path_from_root``.
 		:raises `~decitala.trees.TreeException`: when an invalid path or representation type is provided.
 		"""
-		assert path_from_root[0] == 0.0 or path_from_root[0] == 1.0
-		if len(path_from_root) < 2:
-			raise TreeException("Path provided must be at least 2 values long.")
+		assert path_from_root[0] == 0.0 or path_from_root[0] == 1.0, TreeException("{} is an invalid root value.".format(path_from_root[0]))
+		assert len(path_from_root) >= 2, TreeException("Path provided must be at least 2 values long.")
 
 		curr = self.root
 		i = 1
@@ -592,20 +590,7 @@ class FragmentTree(NaryTree):
 		raise NotImplementedError
 
 ####################################################################################################
-"""
-Messiaen alters fragments in a number of ways before including them in his compositions. This search 
-structure is complex, but useful. If we are interested in whether fragment X in a composition belongs to
-a dataset, we must do a few things. 
-
-1. Provide the ql array of fragment X
-2. Create a ratio and/or difference form FragmentTree for a given dataset
-3. Provide the allowed modifications
-
-
-NOTE (to self): You shouldn't *have* to provide a difference & ratio tree; can't I do something nice?  
-^ Default to None and check the modifications against it. 
-
-"""
+# Search
 class _SearchConfig():
 	"""Helper class for managing relationship between search ql_arrays and search trees."""
 	def __init__(self, ql_array, ratio_tree=None, difference_tree=None, modifications=[]):
@@ -617,13 +602,14 @@ class _SearchConfig():
 		self.ratio_tree = ratio_tree
 		self.difference_tree = difference_tree
 
+		# Check agreement between provided FragmentTree(s) and provided modifications.
 		assert set(modifications).issubset({"r", "rr", "d", "rd", "sr", "rsr"}), SearchException("Current supported searches are r, rr, d, rd, sr, rsr.")
 		assert len(set(modifications)) == len(modifications), SearchException("You have a duplicate element in your allowed modifications.")
 		self.modifications = modifications
 
-		if (len(set(self.modifications).intersection({"r", "rr", "sr", "rsr"})) == 0) and self.ratio_tree == None:
+		if (len(set(self.modifications).intersection({"r", "rr", "sr", "rsr"})) != 0) and self.ratio_tree is None:
 			raise SearchException("You did not provide a ratio FragmentTree.")
-		if (len(set(self.modifications).intersection({"d", "rd"})) == 0) and self.difference_tree == None:
+		if (len(set(self.modifications).intersection({"d", "rd"})) != 0) and self.difference_tree is None:
 			raise SearchException("You did not provide a difference FragmentTree.") 
 
 	def __repr__(self):
@@ -716,17 +702,23 @@ def get_by_ql_array(
 	"""
 	assert type(allowed_modifications) == list
 	
+	# remove any grace notes.
+	ql_array = [val for val in ql_array if val != 0]
+
 	fragment = None
 	config = _SearchConfig(ql_array=ql_array, ratio_tree=ratio_tree, difference_tree=difference_tree, modifications=allowed_modifications)
 	i = 0
 	while i < len(allowed_modifications):
 		curr_modification = allowed_modifications[i]
 		search_tree, search_ql_array = config[curr_modification]
-		
-		# check if single array or list of arrays...
-		if isinstance(search_ql_array[0], np.ndarray):
+
+		if curr_modification in {"sr", "rsr"}:
 			for this_array in search_ql_array:
-				search = search_tree.search_for_path(this_array, allow_unnamed)
+				if len(this_array) < 2:
+					pass
+				else:
+					search = search_tree.search_for_path(this_array, allow_unnamed)
+
 				if search is not None:
 					break
 		else:
@@ -748,22 +740,32 @@ def get_by_ql_array(
 def rolling_search(
 		filepath, 
 		part_num, 
-		ratio_tree, 
-		difference_tree,
-		allow_unnamed=False,
+		ratio_tree=None, 
+		difference_tree=None,
+		allowed_modifications=[
+			"r", 
+			"rr", 
+			"d", 
+			"rd", 
+			"sr",
+			"rsr"
+		],
 		windows=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19],
+		allow_unnamed=False,
 	):
 	"""
 	Rolling search on a music21-readable file on a given part. For search types, see 
-	documentation for :func:`decitala.trees.get_by_ql_array`. The given window lengths 
-	are the lengths of all the talas in the dataset. 
+	documentation for :func:`decitala.trees.get_by_ql_array`. The default window lengths 
+	are the lengths of fragments in the decitala dataset.
 
 	:param str filepath: path to file to be searched.
 	:param int part_num: part in the file to be searched (0-indexed).
 	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.
 	:param fragment.FragmentTree difference_tree: tree storing difference representations.
-	:param bool allow_unnamed: whether or not to allow unnamed fragments found to be returned.
+	:param allowed_modifications list: see :func:`decitala.trees.get_by_ql_array`.
 	:param list windows: possible length of the search frame. 
+	:param bool allow_unnamed: whether or not to allow unnamed fragments found to be returned.
+	
 	:return: list holding fragments in the array, along with the modification and the offset region in which it occurs. 
 	:rtype: list
 
@@ -778,25 +780,23 @@ def rolling_search(
 	((<fragment.GreekFoot Iamb>, ('r', 0.125)), (0.625, 1.0))
 	((<fragment.GreekFoot Spondee>, ('r', 0.125)), (0.75, 1.25))
 	"""
-	assert ratio_tree.rep_type == 'ratio'
-	assert difference_tree.rep_type == 'difference'
+	assert ratio_tree.rep_type == "ratio"
+	assert difference_tree.rep_type == "difference"
 
 	object_list = get_object_indices(filepath = filepath, part_num = part_num)
 	fragments_found = []
 	for this_win in windows:
-		for this_frame in roll_window(array = object_list, window_length = this_win):
-			as_quarter_lengths = []
-			for this_obj, thisRange in this_frame:
-				if this_obj.isRest:
-					if this_obj.quarterLength == 0.25: # zis iz a prroblem. 
-						as_quarter_lengths.append(this_obj)
-					else:
-						pass
-				as_quarter_lengths.append(this_obj.quarterLength)
-
-			# print(as_quarter_lengths)
-			# print(as_quarter_lengths[0])
-			searched = get_by_ql_array(as_quarter_lengths, ratio_tree, difference_tree)
+		frames = roll_window(array = object_list, window_length = this_win)
+		for this_frame in frames:
+			objects = [x[0] for x in this_frame]
+			if any(x.isRest for x in objects): # skip any window that has a rest in it, 
+				continue
+			else:
+				as_quarter_lengths = []
+				for this_obj, this_range in this_frame:
+					as_quarter_lengths.append(this_obj.quarterLength)
+			
+			searched = get_by_ql_array(as_quarter_lengths, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
 			if searched is not None:
 				offset_1 = this_frame[0][0]
 				offset_2 = this_frame[-1][0]
@@ -805,23 +805,23 @@ def rolling_search(
 		
 	return fragments_found
 
-# ratio_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='ratio')
-# difference_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='difference')
-# ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
-
-# searched = rolling_search(ex, 0, ratio_tree, difference_tree)
-
-# # for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
-# # 	print(tala_data)
-
 def rolling_search_on_array(
 		ql_array, 
-		ratio_tree, 
-		difference_tree, 
-		windows=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]
+		ratio_tree=None, 
+		difference_tree=None,
+		allowed_modifications=[
+			"r", 
+			"rr", 
+			"d", 
+			"rd", 
+			"sr",
+			"rsr"
+		],
+		windows=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19],
+		allow_unnamed=False,
 	):
 	"""
-	Rolling search for a fragment in a ratio and difference tree. For search types, 
+	Rolling search on an array (useful for quick checks in a score). For search types, 
 	see documentation for :func:`decitala.trees.get_by_ql_array`. 
 
 	:param numpy.array ql_array: fragment to be searched.
@@ -835,25 +835,23 @@ def rolling_search_on_array(
 	>>> greek_difference_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='difference')
 	>>> example_fragment = np.array([0.25, 0.5, 0.25, 0.5])
 	>>> for x in rolling_search_on_array(ql_array=example_fragment, ratio_tree=greek_ratio_tree, difference_tree=greek_difference_tree):
-	...     print(x, x[0].ql_array())
-	(<fragment.GreekFoot Iamb>, ('r', 0.25)) [1. 2.]
-	(<fragment.GreekFoot Trochee>, ('r', 0.25)) [2. 1.]
-	(<fragment.GreekFoot Iamb>, ('r', 0.25)) [1. 2.]
-	(<fragment.GreekFoot Amphibrach>, ('r', 0.25)) [1. 2. 1.]
-	(<fragment.GreekFoot Amphimacer>, ('r', 0.25)) [2. 1. 2.]
+	...     print(x)
+	(<fragment.GreekFoot Iamb>, ('r', 0.25))
+	(<fragment.GreekFoot Trochee>, ('r', 0.25))
+	(<fragment.GreekFoot Iamb>, ('r', 0.25))
+	(<fragment.GreekFoot Amphibrach>, ('r', 0.25))
+	(<fragment.GreekFoot Amphimacer>, ('r', 0.25))
 	"""
-	assert ratio_tree.rep_type == 'ratio'
-	assert difference_tree.rep_type == 'difference'
-	assert len(windows) == len(set(windows)) # ensures unique windows
+	assert ratio_tree.rep_type == "ratio"
+	assert difference_tree.rep_type == "difference"
 
 	fragments_found = []
-	frames = []
 	max_window_size = min(windows, key = lambda x: abs(x - len(ql_array)))
 	max_index = windows.index(max_window_size)
 	windows = windows[0:max_index + 1]
-	for this_win in windows:
-		for this_frame in roll_window(array = ql_array, window_length = this_win):
-			searched = get_by_ql_array(this_frame, ratio_tree, difference_tree)
+	for this_window in windows:
+		for this_frame in roll_window(array = ql_array, window_length = this_window):
+			searched = get_by_ql_array(this_frame, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
 			if searched is not None:
 				fragments_found.append(searched)
 
@@ -897,31 +895,25 @@ def test_filter(fake_fragment_dataset):
 	]
 	assert set(filtered) == set(expected)
 
-"""
-TODO: work in utils.py (clustering)
+def test_livre_dorgue_talas(tala_ratio_tree, tala_difference_tree):
+	laya = [1.0, 0.5, 1.5, 1.5, 1.5, 1.0, 1.5, 0.25, 0.25, 0.25] #ratio
+	bhagna = [0.125, 0.125, 0.125, 0.125, 0.25, 0.25, 0.375] #ratio
+	niccanka = [0.75, 1.25, 1.25, 1.75, 1.25, 1.25, 1.25, 0.75] #difference
+	
+	laya_search = get_by_ql_array(laya, ratio_tree=tala_ratio_tree, difference_tree=tala_difference_tree)
+	bhagna_search = get_by_ql_array(bhagna, ratio_tree=tala_ratio_tree, difference_tree=tala_difference_tree)
+	niccanka_search = get_by_ql_array(niccanka, ratio_tree=tala_ratio_tree, difference_tree=tala_difference_tree)
 
-Messiaen explains in the Traité the origin of his varied_ragavardhana. 
-array([0.25 , 0.375, 0.25 , 1.5  ]) -> array([1.5  , 0.25 , 0.375, 0.25 ]) by retrograde
-array([1.5  , 0.25 , 0.375, 0.25 ]) -> array([3.  , 0.5 , 0.75, 0.5 ]) by *2
-array([3.  , 0.5 , 0.75, 0.5 ]) -> array([1. , 1. , 1. , 0.5 , 0.75, 0.5 ]) by subdivision
-"""
+	assert laya_search[0].name == "106_Laya"
+	assert bhagna_search[0].name == "116_Bhagna"
+	assert niccanka_search[1][1] == 0.25
 
-"""
-	ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
-	difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
-	ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
-	for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
-	... 	print(tala_data)
-	((<fragment.Decitala 5_Pancama>, ('ratio', 1.0)), (0.0, 0.5))
-	((<fragment.Decitala 17_Yatilagna>, ('retrograde-ratio', 1.0)), (0.25, 0.625))
-	((<fragment.Decitala 5_Pancama>, ('ratio', 0.5)), (0.5, 0.75))
-	((<fragment.Decitala 17_Yatilagna>, ('ratio', 0.5)), (0.625, 1.0))
-	((<fragment.Decitala 5_Pancama>, ('ratio', 1.0)), (0.75, 1.25))
-
-# Testing
-"""
-
+def test_varied_ragavardhana(tala_ratio_tree):
+	varied_ragavardhana = np.array([1.0, 1.0, 1.0, 0.5, 0.75, 0.5])
+	searched = get_by_ql_array(varied_ragavardhana, ratio_tree=tala_ratio_tree, allowed_modifications=["r", "sr", "rsr"])
+	assert searched[0].name, searched[1] == ("93_Ragavardhana", ("rsr", 2.0))
+	
 if __name__ == '__main__':
 	import doctest
-	#doctest.testmod()
+	doctest.testmod()
 

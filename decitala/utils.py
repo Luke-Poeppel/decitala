@@ -12,7 +12,7 @@ import logging
 import numpy as np
 
 from itertools import chain, combinations, groupby
-from more_itertools import consecutive_groups
+from more_itertools import consecutive_groups, windowed, powerset
 from scipy.linalg import norm
 
 from music21 import converter
@@ -134,7 +134,7 @@ def successive_ratio_array(fragment):
 			ratio = array[start_index + 1] / array[start_index]
 			return round(ratio, 5)
 		except ZeroDivisionError:
-			raise Exception('Something is off...')
+			raise Exception("There is a 0 at some point in the input array.")
 
 	ratio_lst = [1.0]
 	i = 0
@@ -388,37 +388,29 @@ def removeAddedValuesFromList(lst):
 # Windowing
 def roll_window(array, window_length):
 	"""
-	Takes in a list and returns a list of lists that holds rolling windows of length window_length.
+	Takes in a list and returns a numpy vstack holding rolling windows of length ``window_length``.
 
-	:param numpy.array array: any iterable
+	:param numpy.array array: an iterable
+	:return: rolling windows of array, each of length `window_length`. 
+	:rtype: numpy.vstack
 
 	>>> composers = np.array(['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet'])
-	>>> for this in roll_window(array=composers, window_length=3):
-	...     print(this)
-	['Mozart', 'Monteverdi', 'Messiaen']
-	['Monteverdi', 'Messiaen', 'Mahler']
-	['Messiaen', 'Mahler', 'MacDowell']
-	['Mahler', 'MacDowell', 'Massenet']
+	>>> for window in roll_window(array=composers, window_length=3):
+	...     print(window)
+	['Mozart' 'Monteverdi' 'Messiaen']
+	['Monteverdi' 'Messiaen' 'Mahler']
+	['Messiaen' 'Mahler' 'MacDowell']
+	['Mahler' 'MacDowell' 'Massenet']
 	"""
 	assert type(window_length) == int
+	windows = list(windowed(seq=array, n=window_length, step=1))
+	return windows # np.vstack(windows)
 
-	l = []
-	iterable = iter(array)
-	win = []
-	for _ in range(0, window_length):
-		win.append(next(iterable))
-	
-	l.append(win)
-
-	for thisElem in iterable:
-		win = win[1:] + [thisElem]
-		l.append(win)
-
-	return l
-
-def power_list(data_in):
+def power_list(data):
 	"""
-	Given a list, returns its power set as a list (excluding the empty list). 
+	:param data: an iterable
+	:return: power set of the data as a list (excluding the empty list).
+	:rtype: list
 
 	>>> l = [1, 2, 3]
 	>>> power_list(l)
@@ -434,8 +426,8 @@ def power_list(data_in):
 	((4.0, 5.5), (6.0, 7.25))
 	((0.0, 2.0), (4.0, 5.5), (6.0, 7.25))
 	"""
-	assert type(data_in) == list
-	power_list = list(chain.from_iterable(combinations(data_in, r) for r in range(len(data_in) + 1)))
+	assert type(data) == list
+	power_list = powerset(data)
 	return [x for x in power_list if len(x) != 0]
 
 ####################################################################################################
@@ -490,38 +482,14 @@ def cauchy_schwartz(vector1, vector2):
 # Score helpers
 def get_object_indices(filepath, part_num):
 	"""
-	NOW SUPPORTS RESTS & GRACE NOTES
-	Given a file path and part number, returns a list containing tuples of the form [(OBJ, (start, end))].
-
-	bach_path = '/Users/lukepoeppel/Documents/GitHub/music21/music21/corpus/bach/bwv66.6.mxl'
-	for data in get_object_indices(bach_path, 0)[0:12]:
-	...     print(data)
-	(<music21.note.Note C#>, (0.0, 0.5))
-	(<music21.note.Note B>, (0.5, 1.0))
-	(<music21.note.Note A>, (1.0, 2.0))
-	(<music21.note.Note B>, (2.0, 3.0))
-	(<music21.note.Note C#>, (3.0, 4.0))
-	(<music21.note.Note E>, (4.0, 5.0))
-	(<music21.note.Note C#>, (5.0, 6.0))
-	(<music21.note.Note B>, (6.0, 7.0))
-	(<music21.note.Note A>, (7.0, 8.0))
-	(<music21.note.Note C#>, (8.0, 9.0))
-	(<music21.note.Note A>, (9.0, 9.5))
-	(<music21.note.Note B>, (9.5, 10.0))
+	Returns data of the form [(object, (start, end)), ...] for a given file path and part number. 
+	(Supports rests and grace notes.)
 	"""
-	def get_stripped_object_list(filepath, part_num):
-		score = converter.parse(filepath)
-		part = score.parts[part_num]
-		object_list = []
-		stripped = part.stripTies(retainContainers = True)
-		for this_obj in stripped.recurse().iter.notesAndRests:
-			object_list.append(this_obj)
-
-		return object_list
-	
+	score = converter.parse(filepath)
+	part = score.parts[part_num]
 	data_out = []
-	stripped_object_list = get_stripped_object_list(filepath, part_num)
-	for this_obj in stripped_object_list:
+	stripped = part.stripTies(retainContainers = True)
+	for this_obj in stripped.recurse().iter.notesAndRests:
 		data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
 
 	return data_out
