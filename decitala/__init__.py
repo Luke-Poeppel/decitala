@@ -1,4 +1,4 @@
 import os
-version_file = os.path.abspath("decitala/VERSION")
-with open(version_file) as version:
-	__version__ = version.readline()
+here = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(here, "VERSION")) as version_file:
+	__version__ = version_file.readline()

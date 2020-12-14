@@ -52,7 +52,7 @@ class GeneralFragment(object):
 	:raises `~decitala.fragment.FragmentException`: when an array and file are provided or neither are provided.
 	
 	>>> random_fragment_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml'
-	>>> g1 = GeneralFragment(filepath=random_fragment_path, name='test')
+	>>> g1 = GeneralFragment(data=random_fragment_path, name='test')
 	>>> g1
 	<GeneralFragment_test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]>
 	>>> g1.filename
@@ -82,29 +82,28 @@ class GeneralFragment(object):
 	[1.   0.5  0.25 0.25 0.5  0.5  1.  ]
 	>>> 
 	>>> # We may also initialize with an array...
-	>>> GeneralFragment(array=np.array([0.75, 0.75, 0.5, 0.25]))
+	>>> GeneralFragment(data=np.array([0.75, 0.75, 0.5, 0.25]))
 	<GeneralFragment: [0.75 0.75 0.5  0.25]>
 	"""
-	def __init__(self, filepath=None, array=None, name=None, **kwargs):
-		try:
-			if (filepath == None == array) or (filepath != None != array):
-				raise FragmentException('Invalid instantiation...')
-		except ValueError:
-			pass
-
-		self.name = name
-		if filepath is not None:
-			assert type(filepath) == str
+	def __init__(self, data, name=None, **kwargs):
+		if isinstance(data, str):
+			assert os.path.isfile(data), FragmentException("The path provided does not lead to a file.")
+		
 			self.creation_type = 'filepath'
-			self.filepath = filepath
+			self.filepath = data
 			self.filename = self.filepath.split('/')[-1]
 
-			stream = converter.parse(filepath)
+			stream = converter.parse(self.filepath)
 			self.stream = stream
-		else:
-			assert len(array) >= 1
+		elif isinstance(data, np.ndarray) or isinstance(data, list):
+			assert len(data) >= 1
+			
 			self.creation_type = 'array'
-			self.temp_ql_array = np.array(array)
+			self.temp_ql_array = np.array(data)
+		else:
+			raise FragmentException("{} is an invalid instantiation.".format(data))
+
+		self.name = name
 
 	def __repr__(self):
 		if self.name is None:
@@ -181,7 +180,7 @@ class GeneralFragment(object):
 		:return: the d-seg of the fragment, as introducted in "The Perception of Rhythm in Non-Tonal Music" (Marvin, 1991). Maps a fragment into a sequence of relative durations. 
 		:rtype: numpy.array
 
-		>>> g3 = GeneralFragment(array=np.array([0.25, 0.75, 2.0, 1.0]), name='marvin-p70')
+		>>> g3 = GeneralFragment(np.array([0.25, 0.75, 2.0, 1.0]), name='marvin-p70')
 		>>> g3.dseg()
 		array([0, 1, 3, 2])
 		"""
@@ -207,7 +206,7 @@ class GeneralFragment(object):
 		:return: d-seg of the fragment with all contiguous equal values reduced to a single instance.
 		:rtype: numpy.array
 
-		>>> g4 = GeneralFragment(array=[0.125, 0.125, 1.75, 0.5], name='marvin-p74-x')
+		>>> g4 = GeneralFragment([0.125, 0.125, 1.75, 0.5], name='marvin-p74-x')
 		>>> g4.dseg(as_str=True)
 		'<0 0 2 1>'
 		>>> g4.reduced_dseg(as_str=True)
@@ -402,7 +401,7 @@ class Decitala(GeneralFragment):
 			else:
 				pass
 
-		super().__init__(filepath=self.full_path, name=self.name)
+		super().__init__(data=self.full_path, name=self.name)
 	
 	def __repr__(self):
 		return '<fragment.Decitala {}>'.format(self.name)
@@ -528,7 +527,7 @@ class GreekFoot(GeneralFragment):
 					self.filename = match
 					self.stream = converter.parseFile(self.full_path)
 
-		super().__init__(filepath=self.full_path, name=self.name)
+		super().__init__(data=self.full_path, name=self.name)
 	
 	def __repr__(self):
 		return '<fragment.GreekFoot {}>'.format(self.name)
@@ -540,6 +539,19 @@ class GreekFoot(GeneralFragment):
 
 ####################################################################################################
 # Testing
+def test_sama_kankala_sama():
+	d1 = Decitala("Sama")
+	d2 = Decitala("Kankala_Sama")
+
+	assert d1.name == "53_Sama"
+	assert d2.name == "65_C_Kankala_Sama"
+
+def test_rati_ratilila():
+	d3 = Decitala("Rati")
+	d4 = Decitala("Ratilila")
+
+	assert d3.id_num == 82
+	assert d4.id_num == 9
 
 if __name__ == '__main__':
 	import doctest
