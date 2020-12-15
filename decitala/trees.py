@@ -511,17 +511,17 @@ class FragmentTree(NaryTree):
 	<trees.FragmentTree: nodes=31>
 	>>> ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0])
 	<fragment.GreekFoot Peon_II>
-	>>> # We can also create a FragmentTree object from a list of GeneralFragment objects or from a directory of files using the `data` parameter.
-	>>> g1 = GeneralFragment([1.0, 1.0, 1.0], name="frag1")
-	>>> g2 = GeneralFragment([0.25, 0.25, 0.5, 0.5], name="frag2")
-	>>> g3 = GeneralFragment([0.5, 0.25, 0.25, 1.0, 1.0, 0.5], name="frag3")
+	>>> # We can also create a FragmentTree object from either a list of GeneralFragment, Decitala, and GreekFoot objects or from a directory of files using the `data` parameter.
+	>>> g1 = GeneralFragment([1.0, 1.0, 1.0, 1.0, 1.0], name="myfragment")
+	>>> g2 = Decitala("Ragavardhana")
+	>>> g3 = GreekFoot("Ionic_Major")
 	>>> data = [g1, g2, g3]
 	>>> mytree = FragmentTree(data = data, rep_type="difference")
 	>>> for path in mytree.all_named_paths():
 	...     print(path)
-	<fragment.GeneralFragment_frag1: [1. 1. 1.]>
-	<fragment.GeneralFragment_frag2: [0.25 0.25 0.5  0.5 ]>
-	<fragment.GeneralFragment_frag3: [0.5  0.25 0.25 1.   1.   0.5 ]>
+	<fragment.Decitala 93_Ragavardhana>
+	<fragment.GeneralFragment_myfragment: [1. 1. 1. 1. 1.]>
+	<fragment.GreekFoot Ionic_Major>
 	"""
 	def __init__(self, data=None, frag_type="general_fragment", rep_type="ratio", **kwargs):
 		assert frag_type.lower() in ["decitala", "greek_foot", "general_fragment"], FragmentTreeException("The only possible frag_types are `decitala`, `greek_foot`, and `general_fragment`.")
@@ -559,7 +559,7 @@ class FragmentTree(NaryTree):
 				self.raw_data = raw_data
 
 			if isinstance(data, list):
-				assert all(type(x).__name__ == "GeneralFragment" for x in data), FragmentTreeException("The elements of data must be GeneralFragment objects.")
+				assert all(type(x).__name__ in ["GeneralFragment", "Decitala", "GreekFoot"] for x in data), FragmentTreeException("The elements of data must be GeneralFragment, Decitala, or GreekFoot objects.")
 				self.raw_data = data
 		
 		super().__init__()
