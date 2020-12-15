@@ -380,7 +380,7 @@ class NaryTree(object):
 		raise NotImplementedError
 
 	################################################################################################
-	# Level order traversal
+	# Level-Order Traversal
 	def level_order_traversal(self):
 		"""Returns the level order traversal of an NaryTree."""
 		if not self.root:
@@ -834,20 +834,24 @@ def rolling_search(
 	windows = windows[0:index_of_closest+1]
 
 	object_list = get_object_indices(filepath = filepath, part_num = part_num)
+	
 	fragments_found = []
 	for this_win in windows:
 		frames = roll_window(array = object_list, window_length = this_win)
 		for this_frame in frames:
 			objects = [x[0] for x in this_frame]
-			if any(x.isRest for x in objects): # Skip any window that has a rest in it, 
+			if any(x.isRest for x in objects): # Skip any window that has a rest in it.
 				continue
 			else:
 				as_quarter_lengths = []
 				for this_obj, this_range in this_frame:
 					as_quarter_lengths.append(this_obj.quarterLength)
-			
+				
+				as_quarter_lengths = [x for x in as_quarter_lengths if x != 0] # Remove grace notes from search array.
+				if len(as_quarter_lengths) < 2:
+					continue
+
 			searched = get_by_ql_array(as_quarter_lengths, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
-			# If try_contiguous_summation is True (and searched is still None), try it and add a note to the modification data. mod-cs
 			if searched is not None:
 				offset_1 = this_frame[0][0]
 				offset_2 = this_frame[-1][0]
@@ -860,6 +864,20 @@ def rolling_search(
 					for this_obj, this_range in new_frame:
 						as_quarter_lengths.append(this_obj.quarterLength)
 					searched = get_by_ql_array(as_quarter_lengths, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
+					if searched is not None:
+						rewritten_search = [searched[0]] + [list(x) for x in searched[1:]]
+						
+						rewritten_search[1][0] = rewritten_search[1][0] + "-cs"
+						frag = (rewritten_search[0],)
+						mod = tuple(rewritten_search[1])
+						rewritten_search = (frag, mod)
+												
+						offset_1 = this_frame[0][0]
+						offset_2 = this_frame[-1][0]
+
+						fragments_found.append((rewritten_search, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
+					else:
+						pass
 				else:
 					pass
 				
