@@ -28,7 +28,8 @@ from .utils import (
 	get_object_indices,
 	successive_ratio_array,
 	successive_difference_array,
-	find_possible_superdivisions
+	find_possible_superdivisions,
+	contiguous_summation
 )
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -852,10 +853,16 @@ def rolling_search(
 				offset_2 = this_frame[-1][0]
 
 				fragments_found.append((searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
-			# contiguous summation
-			#else:
+			else:
+				if try_contiguous_summation == True:
+					new_frame = contiguous_summation(this_frame)
+					as_quarter_lengths = []
+					for this_obj, this_range in new_frame:
+						as_quarter_lengths.append(this_obj.quarterLength)
+					searched = get_by_ql_array(as_quarter_lengths, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
+				else:
+					pass
 				
-
 	return fragments_found
 
 def rolling_search_on_array(
