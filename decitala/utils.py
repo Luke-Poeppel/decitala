@@ -8,11 +8,10 @@
 ####################################################################################################
 import copy
 import decimal
-import logging
 import numpy as np
 
 from itertools import chain, combinations, groupby
-from more_itertools import consecutive_groups, windowed, powerset
+from more_itertools import consecutive_groups, windowed, powerset, groupby_transform
 from scipy.linalg import norm
 
 from music21 import converter
@@ -494,16 +493,60 @@ def get_object_indices(filepath, part_num):
 
 	return data_out
 
-# bird = "/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/Le_Chocard_des_Alpes/XML/chocard_des_alpes_1er_example.xml"
-# objects = get_object_indices(bird, 0)
-# frames = roll_window(array = objects, window_length = 3)
-# for this_frame in frames:
-# 	print(this_frame)
-# 	indices = [x[1] for x in this_frame]
-# 	print(indices[0][0], indices[-1][-1])
+def contiguous_summation(object_indices):
+	"""
+	Given data (or subset of data) from :meth:get_object_indices, finds every location where the pitch and 
+	rhythmic material are contiguously equal and sums these regions. 
+	
+	>>> from music21 import note
+	>>> example_data = [
+	...		(note.Note("F#"), (6.5, 6.75)), 
+	...     (note.Note("G"), (6.75, 7.0)), 
+	...     (note.Note("G"), (7.0, 7.25)), 
+	...     (note.Note("C#"), (7.25, 7.5)), 
+	...     (note.Note("G"), (7.5, 7.75)), 
+	...     (note.Note("G"), (7.75, 8.0)), 
+	...     (note.Note("A-"), (8.0, 8.125)), 
+	...     (note.Note("E"), (8.125, 8.25)), 
+	...     (note.Note("E-"), (8.25, 8.5)), 
+	...     (note.Note("G"), (8.5, 8.75))
+	... ]
+	>>> for this_object in contiguous_summation(example_data):
+	...     print(this_object)
+	(<music21.note.Note F#>, (6.5, 6.75))
+	(<music21.note.Note G>, (6.75, 7.25))
+	(<music21.note.Note C#>, (7.25, 7.5))
+	(<music21.note.Note G>, (7.5, 8.0))
+	(<music21.note.Note A->, (8.0, 8.125))
+	(<music21.note.Note E>, (8.125, 8.25))
+	(<music21.note.Note E->, (8.25, 8.5))
+	(<music21.note.Note G>, (8.5, 8.75))
+	"""
+	new_data = []
+	regions_property = lambda i: (object_indices[i][1][1] - object_indices[i][1][0] and object_indices[i][0].pitch.midi)
+	ranges = [list(this_range) for _, this_range in groupby(range(len(object_indices)), regions_property)]
+	start_end_indices = [[this_range[0], this_range[-1]] for this_range in ranges if len(this_range) > 1]
 
-def contiguous_summation(data):
-	pass
+	compliment_ranges = _compliment_of_index_ranges(object_indices, start_end_indices)
+	new_object_indices = [0] * len(object_indices)	
+	for x in compliment_ranges:
+		if (x[1] - x[0] == 1.0):
+			new_object_indices[x[0]:x[1]] = object_indices[x[0]:x[1]]
+		else:
+			new_object_indices[x[0]:x[1]+1] = object_indices[x[0]:x[1]+1]
+
+	for this_index_range in start_end_indices:
+		start = this_index_range[0]
+		stop = this_index_range[1]
+
+		pitch_data = object_indices[start][0]
+		start_offset = object_indices[start][1][0]
+		stop_offset = object_indices[stop][1][-1]
+		summed_data = (pitch_data, (start_offset, stop_offset))
+		
+		new_object_indices[this_index_range[0]] = summed_data
+	
+	return [x for x in new_object_indices if x != 0]
 
 if __name__ == '__main__':
 	import doctest

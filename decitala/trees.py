@@ -602,7 +602,7 @@ class FragmentTree(NaryTree):
 		Class method for generating a FragmentTree from a composition. 
 
 		:param str filepath: path to file 
-		:param int part: 
+		:param int part: part number
 		"""
 		assert os.path.isfile(filepath)
 		assert type(part) == int
@@ -852,7 +852,10 @@ def rolling_search(
 				offset_2 = this_frame[-1][0]
 
 				fragments_found.append((searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
-		
+			# contiguous summation
+			#else:
+				
+
 	return fragments_found
 
 def rolling_search_on_array(
