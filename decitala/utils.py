@@ -494,6 +494,14 @@ def get_object_indices(filepath, part_num):
 
 	return data_out
 
+# bird = "/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/Le_Chocard_des_Alpes/XML/chocard_des_alpes_1er_example.xml"
+# objects = get_object_indices(bird, 0)
+# frames = roll_window(array = objects, window_length = 3)
+# for this_frame in frames:
+# 	print(this_frame)
+# 	indices = [x[1] for x in this_frame]
+# 	print(indices[0][0], indices[-1][-1])
+
 def contiguous_summation(data):
 	pass
 

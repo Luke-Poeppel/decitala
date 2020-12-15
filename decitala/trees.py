@@ -590,16 +590,38 @@ class FragmentTree(NaryTree):
 	
 	@classmethod
 	def from_composition(
-			cls, 
-			filepath, 
-			part, 
+			cls,
+			filepath,
+			part=0,
 			rep_type="ratio",
-			max_window=14
+			windows=list(range(2, 10))
 		):
 		"""
-		Class method for generating a FragmentTree from a composition.  
+		Class method for generating a FragmentTree from a composition. 
+
+		:param str filepath: path to file 
+		:param int part: 
 		"""
-		raise NotImplementedError
+		assert os.path.isfile(filepath)
+		assert type(part) == int
+		
+		object_list = get_object_indices(filepath = filepath, part_num = part)
+		data = []
+		for this_window in windows:
+			frames = roll_window(array = object_list, window_length = this_window)
+			for this_frame in frames:
+				objects = [x[0] for x in this_frame]
+				indices = [x[1] for x in this_frame]
+				if any(x.isRest for x in objects): # Skip any window that has a rest in it.
+					continue
+				else:
+					as_quarter_lengths = []
+					for this_obj, this_range in this_frame:
+						as_quarter_lengths.append(this_obj.quarterLength)
+					name = str(indices[0][0]) + "-" + str(indices[-1][-1])
+					data.append(GeneralFragment(as_quarter_lengths, name=name))
+
+		return FragmentTree(data=data, rep_type=rep_type)
 
 ####################################################################################################
 # Search
