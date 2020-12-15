@@ -27,8 +27,10 @@ from .utils import (
 )
 
 # Fragments
-decitala_path = os.path.abspath("../Fragments/Decitalas")
-greek_path = os.path.abspath("../Fragments/Greek_Metrics/XML")
+here = os.path.abspath(os.path.dirname(__file__))
+
+decitala_path = os.path.dirname(here) + "/Fragments/Decitalas"
+greek_path = os.path.dirname(here) + "/Fragments/Greek_Metrics/XML"
 
 # ID's of decitalas with "subtalas"
 subdecitala_array = np.array([26, 38, 55, 65, 68])

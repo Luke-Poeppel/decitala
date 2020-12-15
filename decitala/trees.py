@@ -31,8 +31,10 @@ from .utils import (
 	find_possible_superdivisions
 )
 
-decitala_path = os.path.abspath("../Fragments/Decitalas")
-greek_path = os.path.abspath("../Fragments/Greek_Metrics/XML")
+here = os.path.abspath(os.path.dirname(__file__))
+
+decitala_path = os.path.dirname(here) + "/Fragments/Decitalas"
+greek_path = os.path.dirname(here) + "/Fragments/Greek_Metrics/XML"
 
 ############### EXCEPTIONS ###############
 class TreeException(Exception):
