@@ -19,7 +19,7 @@ from music21 import note
 from music21 import stream
 
 from .utils import (
-	carnatic_string_to_ql_array, 
+	carnatic_string_to_ql_array,
 	ql_array_to_carnatic_string,
 	ql_array_to_greek_diacritics,
 	successive_ratio_array,
@@ -43,8 +43,8 @@ class DecitalaException(FragmentException):
 ############### EXCEPTIONS ###############
 class GeneralFragment(object):
 	"""
-	Class representing a generic rhythmic fragment. The user must provide either a path to a readable
-	XML file or an array of quarter length values. 
+	Class representing a generic rhythmic fragment. The user must provide either a path to a music21 readable
+	file or an array of quarter length values. 
 
 	:param str filepath: path to encoded fragment (initialized to None).
 	:param numpy.array: array of quarter length values (initialized to None).
@@ -54,7 +54,7 @@ class GeneralFragment(object):
 	>>> random_fragment_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml'
 	>>> g1 = GeneralFragment(data=random_fragment_path, name='test')
 	>>> g1
-	<GeneralFragment_test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]>
+	<fragment.GeneralFragment_test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]>
 	>>> g1.filename
 	'63_Nandi.xml'
 	>>> g1.coolness_level = 'pretty cool'
@@ -83,7 +83,7 @@ class GeneralFragment(object):
 	>>> 
 	>>> # We may also initialize with an array...
 	>>> GeneralFragment(data=np.array([0.75, 0.75, 0.5, 0.25]))
-	<GeneralFragment: [0.75 0.75 0.5  0.25]>
+	<fragment.GeneralFragment: [0.75 0.75 0.5  0.25]>
 	"""
 	def __init__(self, data, name=None, **kwargs):
 		if isinstance(data, str):
@@ -107,9 +107,9 @@ class GeneralFragment(object):
 
 	def __repr__(self):
 		if self.name is None:
-			return '<GeneralFragment: {}>'.format(self.ql_array())
+			return '<fragment.GeneralFragment: {}>'.format(self.ql_array())
 		else:
-			return '<GeneralFragment_{0}: {1}>'.format(self.name, self.ql_array())
+			return '<fragment.GeneralFragment_{0}: {1}>'.format(self.name, self.ql_array())
 	
 	def __hash__(self):
 		"""
@@ -151,20 +151,13 @@ class GeneralFragment(object):
 		"""
 		return tuple(self.ql_array(retrograde=retrograde))
 
-	def __len__(self):
-		"""
-		:return: the length of the fragment, i.e. the number of onsets.
-		:rtype: int
-		"""
-		return len(self.ql_array())
-
 	@property
 	def num_onsets(self):
 		"""
 		:return: the number of onsets in the fragment.
 		:rtype: int
 		"""
-		return self.__len__()
+		return len(self.ql_array())
 
 	@property
 	def ql_duration(self):

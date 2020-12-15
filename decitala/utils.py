@@ -397,14 +397,14 @@ def roll_window(array, window_length):
 	>>> composers = np.array(['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet'])
 	>>> for window in roll_window(array=composers, window_length=3):
 	...     print(window)
-	['Mozart' 'Monteverdi' 'Messiaen']
-	['Monteverdi' 'Messiaen' 'Mahler']
-	['Messiaen' 'Mahler' 'MacDowell']
-	['Mahler' 'MacDowell' 'Massenet']
+	('Mozart', 'Monteverdi', 'Messiaen')
+	('Monteverdi', 'Messiaen', 'Mahler')
+	('Messiaen', 'Mahler', 'MacDowell')
+	('Mahler', 'MacDowell', 'Massenet')
 	"""
 	assert type(window_length) == int
 	windows = list(windowed(seq=array, n=window_length, step=1))
-	return windows # np.vstack(windows)
+	return windows
 
 def power_list(data):
 	"""
@@ -493,6 +493,9 @@ def get_object_indices(filepath, part_num):
 		data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
 
 	return data_out
+
+def contiguous_summation(data):
+	pass
 
 if __name__ == '__main__':
 	import doctest

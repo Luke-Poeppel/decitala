@@ -498,52 +498,71 @@ class FragmentTree(NaryTree):
 	"""
 	NaryTree that holds multiplicative or additive representations of a rhythmic dataset. 
 
-	:param str data_path: path to folder of music21-readable files.
+	:param str data: path to folder of music21-readable files.
 	:param str frag_type: determines the class defining the set of fragments. 
 					If the ``frag_type=='decitala'``, creates :class:`~decitala.fragment.Decitala` objects;
 					if ``frag_type=='greek_foot'``, creates :class:`~decitala.fragment.GreekFoot`.
-					Otherwise creates :class:`~decitala.fragment.GeneralFragment` objects.
-	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` and ``difference``.
+					Otherwise creates :class:`~decitala.fragment.GeneralFragment` (default) objects.
+	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` (default) and ``difference``.
 	:raises `~decitala.trees.FragmentTreeException`: when an invalid path or representation type is provided.
 
-	>>> ratio_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='ratio')
+	>>> ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
 	>>> ratio_tree
-	<trees.NaryTree: nodes=31>
+	<trees.FragmentTree: nodes=31>
 	>>> ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0])
 	<fragment.GreekFoot Peon_II>
+	>>> # We can also create a FragmentTree object from a list of GeneralFragment objects or from a directory of files using the `data` parameter.
+	>>> g1 = GeneralFragment([1.0, 1.0, 1.0], name="frag1")
+	>>> g2 = GeneralFragment([0.25, 0.25, 0.5, 0.5], name="frag2")
+	>>> g3 = GeneralFragment([0.5, 0.25, 0.25, 1.0, 1.0, 0.5], name="frag3")
+	>>> data = [g1, g2, g3]
+	>>> mytree = FragmentTree(data = data, rep_type="difference")
+	>>> for path in mytree.all_named_paths():
+	...     print(path)
+	<fragment.GeneralFragment_frag1: [1. 1. 1.]>
+	<fragment.GeneralFragment_frag2: [0.25 0.25 0.5  0.5 ]>
+	<fragment.GeneralFragment_frag3: [0.5  0.25 0.25 1.   1.   0.5 ]>
 	"""
-	def __init__(self, data_path, frag_type, rep_type, **kwargs):
-		assert type(data_path)==str, FragmentTreeException("Path must be a string.")
+	def __init__(self, data=None, frag_type="general_fragment", rep_type="ratio", **kwargs):
 		assert frag_type.lower() in ["decitala", "greek_foot", "general_fragment"], FragmentTreeException("The only possible frag_types are `decitala`, `greek_foot`, and `general_fragment`.")
 		assert rep_type.lower() in ["ratio", "difference"], FragmentTreeException("The only possible rep_types are `ratio` and `difference`")
 
-		self.data_path = data_path
+		self.data = data
 		self.frag_type = frag_type.lower()
 		self.rep_type = rep_type.lower()
 
-		super().__init__()
-		
 		raw_data = []
+		if (frag_type == "decitala" or frag_type == "greek_foot"):
+			if data is None:
+				if self.frag_type == "decitala":
+					for this_file in os.listdir(decitala_path):
+						x = re.search(r'\d+', this_file)
+						try:
+							span_end = x.span()[1] + 1
+							raw_data.append(Decitala(name=this_file[span_end:]))
+						except AttributeError: # Is this ok...?
+							pass
+					self.raw_data = raw_data
 
-		if self.frag_type == "decitala":
-			for this_file in os.listdir(data_path):
-				x = re.search(r'\d+', this_file)
-				try:
-					span_end = x.span()[1] + 1
-					raw_data.append(Decitala(name=this_file[span_end:]))
-				except AttributeError: # Is this ok...?
-					pass
-			self.raw_data = raw_data
+				if self.frag_type == "greek_foot":
+					for this_file in os.listdir(greek_path):
+						raw_data.append(GreekFoot(this_file[:-4]))
+					self.raw_data = raw_data
+
+			else:
+				raise FragmentTreeException("To use the {} frag_type, you may not provide data.".format(frag_type))
+		else:
+			if isinstance(data, str):
+				assert os.path.isdir(data), FragmentTreeException("Invalid path provided.")
+				for this_file in os.listdir(self.data):
+					raw_data.append(GeneralFragment(this_file))
+				self.raw_data = raw_data
+
+			if isinstance(data, list):
+				assert all(type(x).__name__ == "GeneralFragment" for x in data), FragmentTreeException("The elements of data must be GeneralFragment objects.")
+				self.raw_data = data
 		
-		if self.frag_type == "greek_foot":
-			for this_file in os.listdir(data_path):
-				raw_data.append(GreekFoot(this_file[:-4]))
-			self.raw_data = raw_data
-
-		if self.frag_type == "general_fragment":
-			for this_file in os.listdir(data_path):
-				raw_data.append(GeneralFragment(this_file))
-			self.raw_data = raw_data
+		super().__init__()
 
 		self.filtered_data = filter_data(self.raw_data)
 		self.raw_data = None # Free up memory
@@ -554,17 +573,20 @@ class FragmentTree(NaryTree):
 
 		if self.rep_type == "ratio":
 			root_node = NaryTree().Node(value = 1.0, name = 'ROOT')
-			for this_tala in self.sorted_data:
-				root_node.add_path_of_children(path = list(this_tala.successive_ratio_array()), final_node_name = this_tala)
+			for this_fragment in self.sorted_data:
+				root_node.add_path_of_children(path = list(this_fragment.successive_ratio_array()), final_node_name = this_fragment)
 			self.root = root_node
 		
 		if self.rep_type == "difference":
 			root_node = NaryTree().Node(value = 0.0, name = 'ROOT')
-			for this_tala in self.sorted_data:
-				root_node.add_path_of_children(path = list(this_tala.successive_difference_array()), final_node_name = this_tala)
+			for this_fragment in self.sorted_data:
+				root_node.add_path_of_children(path = list(this_fragment.successive_difference_array()), final_node_name = this_fragment)
 			self.root = root_node
 		
 		# self.sorted_data = None # Free up memory
+	
+	def __repr__(self):
+		return '<trees.FragmentTree: nodes={}>'.format(self.size())
 	
 	@classmethod
 	def from_composition(
@@ -684,8 +706,8 @@ def get_by_ql_array(
 	:param bool allow_unnamed: whether or not to allow the retrieval of unnamed paths. Default is ``False``.
 
 	>>> fragment = np.array([3.0, 1.5, 1.5, 3.0])
-	>>> ratio_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='ratio')
-	>>> difference_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='difference')
+	>>> ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
+	>>> difference_tree = FragmentTree(frag_type='greek_foot', rep_type='difference')
 	>>> allowed_modifications = ["r", "rr"]
 	>>> get_by_ql_array(fragment, ratio_tree, difference_tree, allowed_modifications)
 	(<fragment.GreekFoot Choriamb>, ('r', 1.5))
@@ -740,12 +762,13 @@ def rolling_search(
 			"sr",
 			"rsr"
 		],
+		try_contiguous_summation=True,
 		windows=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19],
 		allow_unnamed=False,
 	):
 	"""
 	Rolling search on a music21-readable file on a given part. For search types, see 
-	documentation for :func:`decitala.trees.get_by_ql_array`. The default window lengths 
+	documentation for :func:`~decitala.trees.get_by_ql_array`. The default window lengths 
 	are the lengths of fragments in the decitala dataset.
 
 	:param str filepath: path to file to be searched.
@@ -759,8 +782,8 @@ def rolling_search(
 	:return: list holding fragments in the array, along with the modification and the offset region in which it occurs. 
 	:rtype: list
 
-	>>> ratio_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='ratio')
-	>>> difference_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='difference')
+	>>> ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
+	>>> difference_tree = FragmentTree(frag_type='greek_foot', rep_type='difference')
 	>>> ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
 	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
 	... 	print(tala_data)
@@ -799,6 +822,7 @@ def rolling_search(
 					as_quarter_lengths.append(this_obj.quarterLength)
 			
 			searched = get_by_ql_array(as_quarter_lengths, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
+			# If try_contiguous_summation is True (and searched is still None), try it and add a note to the modification data. mod-cs
 			if searched is not None:
 				offset_1 = this_frame[0][0]
 				offset_2 = this_frame[-1][0]
@@ -824,7 +848,7 @@ def rolling_search_on_array(
 	):
 	"""
 	Rolling search on an array (useful for quick checks in a score). For search types, 
-	see documentation for :func:`decitala.trees.get_by_ql_array`. 
+	see documentation for :func:`~decitala.trees.get_by_ql_array`. 
 
 	:param numpy.array ql_array: fragment to be searched.
 	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.
@@ -833,8 +857,8 @@ def rolling_search_on_array(
 	:return: list holding fragments in the array present in the trees.
 	:rtype: list
 
-	>>> greek_ratio_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='ratio')
-	>>> greek_difference_tree = FragmentTree(data_path=greek_path, frag_type='greek_foot', rep_type='difference')
+	>>> greek_ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
+	>>> greek_difference_tree = FragmentTree(frag_type='greek_foot', rep_type='difference')
 	>>> example_fragment = np.array([0.25, 0.5, 0.25, 0.5])
 	>>> for x in rolling_search_on_array(ql_array=example_fragment, ratio_tree=greek_ratio_tree, difference_tree=greek_difference_tree):
 	...     print(x)
@@ -863,26 +887,26 @@ def rolling_search_on_array(
 # Testing
 @pytest.fixture
 def tala_ratio_tree():
-	ratio_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='ratio')
+	ratio_tree = FragmentTree(frag_type='decitala', rep_type='ratio')
 	return ratio_tree
 
 @pytest.fixture
 def tala_difference_tree():
-	difference_tree = FragmentTree(data_path=decitala_path, frag_type='decitala', rep_type='difference')
+	difference_tree = FragmentTree(frag_type='decitala', rep_type='difference')
 	return difference_tree
 
 @pytest.fixture
 def fake_fragment_dataset():
-	g1 = GeneralFragment(array=[3.0, 1.5, 1.5, 0.75, 0.75])
-	g2 = GeneralFragment(array=[1.5, 1.0])
-	g3 = GeneralFragment(array=[0.75, 0.5, 0.75])
-	g4 = GeneralFragment(array=[0.25, 0.25, 0.5])
-	g5 = GeneralFragment(array=[0.75, 0.5])
-	g6 = GeneralFragment(array=[0.5, 1.0, 2.0, 4.0])
-	g7 = GeneralFragment(array=[1.5, 1.0, 1.5])
-	g8 = GeneralFragment(array=[1.0, 1.0, 2.0])
-	g9 = GeneralFragment(array=[1.0, 0.5, 0.5, 0.25, 0.25])
-	g10 = GeneralFragment(array=[0.25, 0.5, 1.0, 2.0])
+	g1 = GeneralFragment([3.0, 1.5, 1.5, 0.75, 0.75])
+	g2 = GeneralFragment([1.5, 1.0])
+	g3 = GeneralFragment([0.75, 0.5, 0.75])
+	g4 = GeneralFragment([0.25, 0.25, 0.5])
+	g5 = GeneralFragment([0.75, 0.5])
+	g6 = GeneralFragment([0.5, 1.0, 2.0, 4.0])
+	g7 = GeneralFragment([1.5, 1.0, 1.5])
+	g8 = GeneralFragment([1.0, 1.0, 2.0])
+	g9 = GeneralFragment([1.0, 0.5, 0.5, 0.25, 0.25])
+	g10 = GeneralFragment([0.25, 0.5, 1.0, 2.0])
 
 	return [g1, g2, g3, g4, g5, g6, g7, g8, g9, g10]
 
@@ -915,6 +939,11 @@ def test_varied_ragavardhana(tala_ratio_tree):
 	searched = get_by_ql_array(varied_ragavardhana, ratio_tree=tala_ratio_tree, allowed_modifications=["r", "sr", "rsr"])
 	assert searched[0].name, searched[1] == ("93_Ragavardhana", ("rsr", 2.0))
 	
+def test_contiguous_summation(tala_ratio_tree, tala_difference_tree):
+	# Example from p.93 of Traite (T5/V2).
+	#ex_67 = [0.25, 0.125, 0.125, 0.125, 0.125, ]
+	pass
+
 if __name__ == '__main__':
 	import doctest
 	doctest.testmod()
