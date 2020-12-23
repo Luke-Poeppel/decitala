@@ -526,7 +526,7 @@ class FragmentTree(NaryTree):
 	>>> for path in mytree.all_named_paths():
 	...     print(path)
 	<fragment.Decitala 93_Ragavardhana>
-	<fragment.GeneralFragment_myfragment: [1. 1. 1. 1. 1.]>
+	<fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]>
 	<fragment.GreekFoot Ionic_Major>
 	"""
 	def __init__(self, data=None, frag_type="general_fragment", rep_type="ratio", **kwargs):
@@ -868,16 +868,14 @@ def rolling_search(
 
 				if try_contiguous_summation:
 					new_frame = contiguous_summation(this_frame)
-					if this_frame == new_frame:
+					contiguous_summation_ql_array = frame_to_ql_array(new_frame)
+
+					if len(contiguous_summation_ql_array) < 2 or np.array_equal(ql_array, contiguous_summation_ql_array):
 						continue
 
-					ql_array = frame_to_ql_array(new_frame)
-					if len(ql_array) < 2:
-						continue
-
-					searched = get_by_ql_array(ql_array, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
+					searched = get_by_ql_array(contiguous_summation_ql_array, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
 					if searched is not None:
-						## TODO: make this cleaner
+						# TODO: make this cleaner
 						rewritten_search = [searched[0]] + [list(x) for x in searched[1:]]
 						rewritten_search[1][0] = rewritten_search[1][0] + "-cs"
 						frag = (rewritten_search[0],)

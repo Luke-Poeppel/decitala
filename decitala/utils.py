@@ -113,7 +113,7 @@ def augment(fragment, factor=1.0, difference=0.0):
 	>>> augment(fragment=[1.0, 1.0, 0.5, 0.25], factor=2.0, difference=0.25)
 	array([2.25, 2.25, 1.25, 0.75])
 	"""
-	assert factor >= 1.0
+	assert factor >= 0.0
 	return np.array([(this_val * factor) + difference for this_val in fragment])
 
 def successive_ratio_array(fragment):
@@ -542,11 +542,18 @@ def contiguous_summation(object_indices):
 	... 	(chord.Chord(["E-3", "D4"], quarterLength=0.125), (0.375, 0.5)), 
 	... 	(chord.Chord(["A2", "A-3"], quarterLength=0.25), (0.5, 0.75)), 
 	... ]
-	>>> for this_object in contiguous_summation(example_data2):
+	>>> sum_search = contiguous_summation(example_data2)
+	>>> for this_object in sum_search:
 	...     print(this_object)
 	(<music21.chord.Chord F#2 F3>, (0.0, 0.375))
 	(<music21.chord.Chord E-3 D4>, (0.375, 0.5))
 	(<music21.chord.Chord A2 A-3>, (0.5, 0.75))
+	>>> # The quarter lengths of the objects change according to the new summation. 
+	>>> for this_object in sum_search:
+	... 	print(this_object[0].quarterLength)
+	0.375
+	0.125
+	0.25
 	"""
 	new_data = []
 	regions_property = lambda i: (object_indices[i][1][1] - object_indices[i][1][0] and [x.midi for x in object_indices[i][0].pitches])
@@ -572,13 +579,31 @@ def contiguous_summation(object_indices):
 			new_objects[x[0]] = object_indices[x[0]]
 		else:
 			new_objects[x[0]:x[1]+1] = object_indices[x[0]:x[1]+1]
+	
+	new_objects = [x for x in new_objects if x != 0]
 
-	return [x for x in new_objects if x != 0]
+	for data in new_objects:
+		new_ql = data[1][1] - data[1][0]
+		data[0].quarterLength = new_ql
+		
+	return new_objects 
+
+# example_data2 = [
+# 	(chord.Chord(["F#2", "F3"], quarterLength=0.125), (0.0, 0.125)), 
+# 	(chord.Chord(["F#2", "F3"], quarterLength=0.125), (0.125, 0.25)), 
+# 	(chord.Chord(["F#2", "F3"], quarterLength=0.125), (0.25, 0.375)), 
+# 	(chord.Chord(["E-3", "D4"], quarterLength=0.125), (0.375, 0.5)), 
+# 	(chord.Chord(["A2", "A-3"], quarterLength=0.25), (0.5, 0.75)), 
+# ]
+# sum_search = contiguous_summation(example_data2)
+
+# for this_object in sum_search:
+# 	print(this_object[0].quarterLength)
 
 def frame_to_ql_array(data):
 	"""
 	NOTE: in use, the note objects already have quarter lengths; here, they come from the index range.
-	>>> my_frame = (
+	>>> my_frame = [
 	...     (note.Note("B-", quarterLength=0.125), (4.125, 4.25)), 
 	...		(note.Note("A", quarterLength=0.25), (4.25, 4.5)), 
 	...		(note.Note("B", quarterLength=0.125), (4.5, 4.625)), 
@@ -586,7 +611,7 @@ def frame_to_ql_array(data):
 	...		(note.Note("A", quarterLength=0.25), (4.75, 5.0)), 
 	...		(note.Note("G", quarterLength=0.25), (5.0, 5.25)), 
 	...		(note.Note("G", quarterLength=0.25), (5.25, 5.5)), 
-	...	)
+	...	]
 	>>> frame_to_ql_array(my_frame)
 	array([0.125, 0.25 , 0.125, 0.125, 0.25 , 0.25 , 0.25 ])
 	"""
