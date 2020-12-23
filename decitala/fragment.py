@@ -19,6 +19,7 @@ from music21 import note
 from music21 import stream
 
 from .utils import (
+	augment,
 	carnatic_string_to_ql_array,
 	ql_array_to_carnatic_string,
 	ql_array_to_greek_diacritics,
@@ -56,7 +57,7 @@ class GeneralFragment(object):
 	>>> random_fragment_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml'
 	>>> g1 = GeneralFragment(data=random_fragment_path, name='test')
 	>>> g1
-	<fragment.GeneralFragment_test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]>
+	<fragment.GeneralFragment test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]>
 	>>> g1.filename
 	'63_Nandi.xml'
 	>>> g1.coolness_level = 'pretty cool'
@@ -111,7 +112,7 @@ class GeneralFragment(object):
 		if self.name is None:
 			return '<fragment.GeneralFragment: {}>'.format(self.ql_array())
 		else:
-			return '<fragment.GeneralFragment_{0}: {1}>'.format(self.name, self.ql_array())
+			return '<fragment.GeneralFragment {0}: {1}>'.format(self.name, self.ql_array())
 	
 	def __hash__(self):
 		"""
@@ -311,6 +312,25 @@ class GeneralFragment(object):
 		final = summation * 100 / (num_onsets - 1)
 		
 		return final
+	
+	def augment(self, factor=1.0, difference=0.0):
+		"""
+		This method returns a new GeneralFragment object with a ql_array corresponding to the original
+		fragment augmented by a given ratio and difference. 
+
+		:param factor float: the factor by which the GeneralFragment will be augmented.
+		:param difference float: the difference by which the GeneralFragment will be augmented. 
+		:rtype: `~decitala.fragment.GeneralFragment` object. 
+
+		>>> pre_augmentation = GeneralFragment([2.0, 2.0], name="Spondee")
+		>>> pre_augmentation
+		<fragment.GeneralFragment Spondee: [2. 2.]>
+		>>> pre_augmentation.augment(factor=2.0, difference=0.75)
+		<fragment.GeneralFragment Spondee/r:2.0/d:0.75: [4.75 4.75]>
+		"""
+		new_ql_array = augment(self.ql_array(), factor=factor, difference=difference)
+		new_name = self.name + "/r:{}/".format(factor) + "d:{}".format(difference)
+		return GeneralFragment(new_ql_array, new_name)
 	
 	def show(self):
 		if self.stream:

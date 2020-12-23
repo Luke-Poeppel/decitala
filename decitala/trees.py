@@ -725,6 +725,8 @@ def get_by_ql_array(
 		allow_unnamed=False
 	):
 	"""
+	Searches a given ratio and/or difference tree for a given fragment. Supports fragments with grace notes. 
+
 	:param numpy.array ql_array: fragment to be searched.
 	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.
 	:param fragment.FragmentTree difference_tree: tree storing difference representations.
@@ -742,7 +744,7 @@ def get_by_ql_array(
 	"""
 	assert type(allowed_modifications) == list
 	
-	# remove any grace notes.
+	# Remove any grace notes.
 	ql_array = [val for val in ql_array if val != 0]
 
 	fragment = None
@@ -805,9 +807,11 @@ def rolling_search(
 	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.
 	:param fragment.FragmentTree difference_tree: tree storing difference representations.
 	:param allowed_modifications list: see :func:`decitala.trees.get_by_ql_array`.
+	:param try_contiguous_summation bool: ties together all elements of equal pitch and duration and searches. 
 	:param list windows: possible length of the search frame. 
 	:param bool allow_unnamed: whether or not to allow unnamed fragments found to be returned.
-	
+	:param verbose bool: whether or not to log results in real time. 
+
 	:return: list holding fragments in the array, along with the modification and the offset region in which it occurs. 
 	:rtype: list
 
@@ -825,7 +829,7 @@ def rolling_search(
 	try:
 		assert ratio_tree.rep_type == "ratio"
 		assert difference_tree.rep_type == "difference"
-	except AssertionError:
+	except AttributeError:
 		pass
 
 	depths = []
@@ -861,37 +865,34 @@ def rolling_search(
 					fragments_found.append((searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
 					if verbose:
 						logging.info("{0}, {1}".format(searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
-				else:
-					if try_contiguous_summation == True:
-						if any(x.isChord for x in objects):
-							continue
 
-						new_frame = contiguous_summation(this_frame)
-						ql_array = frame_to_ql_array(new_frame)
-						if len(ql_array) < 2:
-							continue
+				if try_contiguous_summation:
+					new_frame = contiguous_summation(this_frame)
+					if this_frame == new_frame:
+						continue
 
-						searched = get_by_ql_array(ql_array, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
-						if searched is not None:
-							## TODO: make this cleaner
-							rewritten_search = [searched[0]] + [list(x) for x in searched[1:]]
-							rewritten_search[1][0] = rewritten_search[1][0] + "-cs"
-							frag = (rewritten_search[0],)
-							mod = tuple(rewritten_search[1])
-							rewritten_search = (frag, mod)
-							## TODO: make this cleaner
-													
-							offset_1 = this_frame[0][0]
-							offset_2 = this_frame[-1][0]
+					ql_array = frame_to_ql_array(new_frame)
+					if len(ql_array) < 2:
+						continue
 
-							fragments_found.append((rewritten_search, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
-							if verbose:
-								logging.info("{0}, {1}".format(rewritten_search, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
-						else:
-							pass
-					else:
-						pass
-				
+					searched = get_by_ql_array(ql_array, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
+					if searched is not None:
+						## TODO: make this cleaner
+						rewritten_search = [searched[0]] + [list(x) for x in searched[1:]]
+						rewritten_search[1][0] = rewritten_search[1][0] + "-cs"
+						frag = (rewritten_search[0],)
+						mod = tuple(rewritten_search[1])
+						rewritten_search = (frag, mod)
+												
+						offset_1 = this_frame[0][0]
+						offset_2 = this_frame[-1][0]
+
+						result = (rewritten_search, (offset_1.offset, offset_2.offset + offset_2.quarterLength))		
+						fragments_found.append(result)
+						
+						if verbose:
+							logging.info("{0}, {1}".format(result[0], result[1]))
+	
 	return fragments_found
 
 def rolling_search_on_array(
@@ -1009,4 +1010,4 @@ def test_contiguous_summation(tala_ratio_tree, tala_difference_tree):
 
 if __name__ == '__main__':
 	import doctest
-	doctest.testmod()
+	# doctest.testmod()
