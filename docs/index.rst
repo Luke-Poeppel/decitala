@@ -8,7 +8,6 @@ Decitala Documentation
 
 Tools for automating ethnological rhythmic analysis of Olivier Messiaen's music. The basic
 pipeline used in this package is Search → Path Finding (Database Creation) → Path Ranking → Analysis.
-Excerpt from the Sangitaaratnaakara :download:`pdf <_static/Sangitaratnakara_Volume_3_Decitalas.pdf>`
 
 .. toctree::
    :maxdepth: 2

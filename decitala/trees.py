@@ -16,6 +16,9 @@ import pytest
 
 from collections import deque
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
 from .fragment import (
 	Decitala,
 	GreekFoot,
@@ -29,11 +32,11 @@ from .utils import (
 	successive_ratio_array,
 	successive_difference_array,
 	find_possible_superdivisions,
-	contiguous_summation
+	contiguous_summation,
+	frame_to_ql_array
 )
 
 here = os.path.abspath(os.path.dirname(__file__))
-
 decitala_path = os.path.dirname(here) + "/Fragments/Decitalas"
 greek_path = os.path.dirname(here) + "/Fragments/Greek_Metrics/XML"
 
@@ -788,8 +791,9 @@ def rolling_search(
 			"rsr"
 		],
 		try_contiguous_summation=True,
-		windows=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19],
+		windows=list(range(2, 20)),
 		allow_unnamed=False,
+		verbose=True
 	):
 	"""
 	Rolling search on a music21-readable file on a given part. For search types, see 
@@ -818,23 +822,25 @@ def rolling_search(
 	((<fragment.GreekFoot Iamb>, ('r', 0.125)), (0.625, 1.0))
 	((<fragment.GreekFoot Spondee>, ('r', 0.125)), (0.75, 1.25))
 	"""
-	assert ratio_tree.rep_type == "ratio"
-	assert difference_tree.rep_type == "difference"
+	try:
+		assert ratio_tree.rep_type == "ratio"
+		assert difference_tree.rep_type == "difference"
+	except AssertionError:
+		pass
 
-	# We can downgrade windows according to the depth of the provided trees.
 	depths = []
 	if ratio_tree is not None:
 		depths.append(ratio_tree.depth)
 	if difference_tree is not None:
-		depths.append(ratio_tree.depth)
+		depths.append(difference_tree.depth)
 
-	max_window_size = max(depths)
+	object_list = get_object_indices(filepath = filepath, part_num = part_num)
+	
+	max_window_size = min(max(depths), len(object_list))
 	closest_window = min(windows, key=lambda x: abs(x - max_window_size))
 	index_of_closest = windows.index(closest_window)
 	windows = windows[0:index_of_closest+1]
 
-	object_list = get_object_indices(filepath = filepath, part_num = part_num)
-	
 	fragments_found = []
 	for this_win in windows:
 		frames = roll_window(array = object_list, window_length = this_win)
@@ -843,43 +849,48 @@ def rolling_search(
 			if any(x.isRest for x in objects): # Skip any window that has a rest in it.
 				continue
 			else:
-				as_quarter_lengths = []
-				for this_obj, this_range in this_frame:
-					as_quarter_lengths.append(this_obj.quarterLength)
-				
-				as_quarter_lengths = [x for x in as_quarter_lengths if x != 0] # Remove grace notes from search array.
-				if len(as_quarter_lengths) < 2:
+				ql_array = frame_to_ql_array(this_frame)
+				if len(ql_array) < 2:
 					continue
+			
+				searched = get_by_ql_array(ql_array, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
+				if searched is not None:
+					offset_1 = this_frame[0][0]
+					offset_2 = this_frame[-1][0]
 
-			searched = get_by_ql_array(as_quarter_lengths, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
-			if searched is not None:
-				offset_1 = this_frame[0][0]
-				offset_2 = this_frame[-1][0]
+					fragments_found.append((searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
+					if verbose:
+						logging.info("{0}, {1}".format(searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
+				else:
+					if try_contiguous_summation == True:
+						if any(x.isChord for x in objects):
+							continue
 
-				fragments_found.append((searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
-			else:
-				if try_contiguous_summation == True:
-					new_frame = contiguous_summation(this_frame)
-					as_quarter_lengths = []
-					for this_obj, this_range in new_frame:
-						as_quarter_lengths.append(this_obj.quarterLength)
-					searched = get_by_ql_array(as_quarter_lengths, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
-					if searched is not None:
-						rewritten_search = [searched[0]] + [list(x) for x in searched[1:]]
-						
-						rewritten_search[1][0] = rewritten_search[1][0] + "-cs"
-						frag = (rewritten_search[0],)
-						mod = tuple(rewritten_search[1])
-						rewritten_search = (frag, mod)
-												
-						offset_1 = this_frame[0][0]
-						offset_2 = this_frame[-1][0]
+						new_frame = contiguous_summation(this_frame)
+						ql_array = frame_to_ql_array(new_frame)
+						if len(ql_array) < 2:
+							continue
 
-						fragments_found.append((rewritten_search, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
+						searched = get_by_ql_array(ql_array, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
+						if searched is not None:
+							## TODO: make this cleaner
+							rewritten_search = [searched[0]] + [list(x) for x in searched[1:]]
+							rewritten_search[1][0] = rewritten_search[1][0] + "-cs"
+							frag = (rewritten_search[0],)
+							mod = tuple(rewritten_search[1])
+							rewritten_search = (frag, mod)
+							## TODO: make this cleaner
+													
+							offset_1 = this_frame[0][0]
+							offset_2 = this_frame[-1][0]
+
+							fragments_found.append((rewritten_search, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
+							if verbose:
+								logging.info("{0}, {1}".format(rewritten_search, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
+						else:
+							pass
 					else:
 						pass
-				else:
-					pass
 				
 	return fragments_found
 

@@ -15,6 +15,8 @@ from more_itertools import consecutive_groups, windowed, powerset, groupby_trans
 from scipy.linalg import norm
 
 from music21 import converter
+from music21 import note
+from music21 import chord
 
 carnatic_symbols = np.array([
 	['Druta', 'o', 0.25],
@@ -197,8 +199,8 @@ def contiguous_multiplication(array):
 	return np.array(out)
 
 ####################################################################################################
-# Subdivision (or, technically, superdivision...)
-def _find_clusters(array):
+# Subdivision
+def _find_clusters(array, data_mode=False):
 	"""
 	Finds the regions with consecutive equal elements.
 
@@ -212,33 +214,63 @@ def _find_clusters(array):
 	array([0.75, 0.75])
 	>>> varied_ragavardhana[clusters[2][0]:clusters[2][1]+1]
 	array([0.25, 0.25, 0.25])
+
+	We can also find clusters of pitch and rhythmic information for data from `utils.get_object_indices`. 
+	>>> example_data = [
+	...		(note.Note("F#"), (6.5, 6.75)), 
+	...     (note.Note("G"), (6.75, 7.0)), 
+	...     (note.Note("G"), (7.0, 7.25)), 
+	...     (note.Note("C#"), (7.25, 7.5)), 
+	...     (note.Note("G"), (7.5, 7.75)), 
+	...     (note.Note("G"), (7.75, 8.0)), 
+	...     (note.Note("A-"), (8.0, 8.125)), 
+	... ]
+	>>> _find_clusters(example_data, data_mode=True)
+	[[1, 2], [4, 5]]
+	>>> example_data2 = [
+	... 	(chord.Chord(["F#2", "F3"], quarterLength=0.125), (0.0, 0.125)), 
+	... 	(chord.Chord(["F#2", "F3"], quarterLength=0.125), (0.125, 0.25)), 
+	... 	(chord.Chord(["F#2", "F3"], quarterLength=0.125), (0.25, 0.375)), 
+	... 	(chord.Chord(["E-3", "D4"], quarterLength=0.125), (0.375, 0.5)), 
+	... 	(chord.Chord(["A2", "A-3"], quarterLength=0.25), (0.5, 0.75)), 
+	... ]
+	>>> _find_clusters(example_data2, data_mode=True)
+	[[0, 2]]
 	"""
-	ranges = [list(this_range) for _, this_range in groupby(range(len(array)), lambda i: array[i])]
-	start_end_indices = [[this_range[0], this_range[-1]] for this_range in ranges if len(this_range) > 1]
-	return start_end_indices
+	if not(data_mode):
+		ranges = [list(this_range) for _, this_range in groupby(range(len(array)), lambda i: array[i])]
+	else:
+		regions_property = lambda i: (array[i][1][1] - array[i][1][0] and [x.midi for x in array[i][0].pitches])
+		ranges = [list(this_range) for _, this_range in groupby(range(len(array)), regions_property)]
+
+	cluster_index_ranges = [[this_range[0], this_range[-1]] for this_range in ranges if len(this_range) > 1]
+
+	return cluster_index_ranges
 
 def _compliment_of_index_ranges(array, clusters):
 	"""
+	TODO: if the compliment range has only one val, it should just be one val, not two (otherwise can't distinguish). 
+
 	>>> varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
 	>>> _compliment_of_index_ranges(varied_ragavardhana, [_find_clusters(varied_ragavardhana)[0]]) 
 	[[3, 5]]
 	>>> varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
 	>>> _compliment_of_index_ranges(varied_ragavardhana_2, _find_clusters(varied_ragavardhana_2))
-	[[3, 4], [6, 7]]
+	[[3], [6]]
+	>>> 
 	"""
-	flattened = []
+	flattened_cluster_ranges = []
 	for this_range in clusters:
-		as_range = list(range(this_range[0], this_range[1]+1))
-		flattened.extend(as_range)
-	
+		index_range = list(range(this_range[0], this_range[1]+1))
+		flattened_cluster_ranges.extend(index_range)
+
 	total_range = list(range(0, len(array)))
-	diff = sorted(list(set(total_range) - set(flattened)))
+	diff = sorted(list(set(total_range) - set(flattened_cluster_ranges)))
 
 	compliments = []
 	for elem in consecutive_groups(diff):
 		elem_list = list(elem)
 		if len(elem_list) == 1:
-			elem_list.append(elem_list[0]+1)
 			compliments.append(elem_list)
 		else:
 			compliments.append([elem_list[0], elem_list[-1]])
@@ -256,7 +288,10 @@ def _make_one_superdivision(array, clusters):
 	superdivision = [0] * len(array)
 	compliment_ranges = _compliment_of_index_ranges(array, clusters)
 	for x in compliment_ranges:
-		superdivision[x[0]:x[1]+1] = array[x[0]:x[1]+1]
+		if len(x) == 1:
+			superdivision[x[0]] = array[x[0]]
+		else:
+			superdivision[x[0]:x[1]+1] = array[x[0]:x[1]+1]
 
 	for this_cluster in clusters:
 		region = array[this_cluster[0]:this_cluster[1]+1] # this is good too! 
@@ -431,21 +466,6 @@ def power_list(data):
 
 ####################################################################################################
 # Math helpers
-def _euclidian_norm(vector):
-	'''
-	Returns the euclidian norm of a vector (the square root of the inner product of a vector 
-	with itself) rounded to 5 decimal places. 
-
-	>>> _euclidian_norm(np.array([1.0, 1.0, 1.0]))
-	Decimal('1.73205')
-	>>> _euclidian_norm(np.array([1, 2, 3, 4]))
-	Decimal('5.47722')
-	'''
-	norm_squared = np.dot(vector, vector)
-	norm = decimal.Decimal(str(np.sqrt(norm_squared)))
-
-	return norm.quantize(decimal.Decimal('0.00001'), decimal.ROUND_DOWN)
-
 def cauchy_schwartz(vector1, vector2):
 	"""
 	Tests the Cauchy-Schwartz inequality on two vectors. Namely, if the absolute value of 
@@ -498,7 +518,6 @@ def contiguous_summation(object_indices):
 	Given data (or subset of data) from :meth:get_object_indices, finds every location where the pitch and 
 	rhythmic material are contiguously equal and sums these regions. 
 	
-	>>> from music21 import note
 	>>> example_data = [
 	...		(note.Note("F#"), (6.5, 6.75)), 
 	...     (note.Note("G"), (6.75, 7.0)), 
@@ -507,9 +526,6 @@ def contiguous_summation(object_indices):
 	...     (note.Note("G"), (7.5, 7.75)), 
 	...     (note.Note("G"), (7.75, 8.0)), 
 	...     (note.Note("A-"), (8.0, 8.125)), 
-	...     (note.Note("E"), (8.125, 8.25)), 
-	...     (note.Note("E-"), (8.25, 8.5)), 
-	...     (note.Note("G"), (8.5, 8.75))
 	... ]
 	>>> for this_object in contiguous_summation(example_data):
 	...     print(this_object)
@@ -518,35 +534,67 @@ def contiguous_summation(object_indices):
 	(<music21.note.Note C#>, (7.25, 7.5))
 	(<music21.note.Note G>, (7.5, 8.0))
 	(<music21.note.Note A->, (8.0, 8.125))
-	(<music21.note.Note E>, (8.125, 8.25))
-	(<music21.note.Note E->, (8.25, 8.5))
-	(<music21.note.Note G>, (8.5, 8.75))
+	>>> # Also works with chords.
+	>>> example_data2 = [
+	... 	(chord.Chord(["F#2", "F3"], quarterLength=0.125), (0.0, 0.125)), 
+	... 	(chord.Chord(["F#2", "F3"], quarterLength=0.125), (0.125, 0.25)), 
+	... 	(chord.Chord(["F#2", "F3"], quarterLength=0.125), (0.25, 0.375)), 
+	... 	(chord.Chord(["E-3", "D4"], quarterLength=0.125), (0.375, 0.5)), 
+	... 	(chord.Chord(["A2", "A-3"], quarterLength=0.25), (0.5, 0.75)), 
+	... ]
+	>>> for this_object in contiguous_summation(example_data2):
+	...     print(this_object)
+	(<music21.chord.Chord F#2 F3>, (0.0, 0.375))
+	(<music21.chord.Chord E-3 D4>, (0.375, 0.5))
+	(<music21.chord.Chord A2 A-3>, (0.5, 0.75))
 	"""
 	new_data = []
-	regions_property = lambda i: (object_indices[i][1][1] - object_indices[i][1][0] and object_indices[i][0].pitch.midi)
+	regions_property = lambda i: (object_indices[i][1][1] - object_indices[i][1][0] and [x.midi for x in object_indices[i][0].pitches])
 	ranges = [list(this_range) for _, this_range in groupby(range(len(object_indices)), regions_property)]
-	start_end_indices = [[this_range[0], this_range[-1]] for this_range in ranges if len(this_range) > 1]
+	
+	cluster_index_ranges = [[this_range[0], this_range[-1]] for this_range in ranges if len(this_range) > 1]
+	compliment_ranges = _compliment_of_index_ranges(object_indices, cluster_index_ranges)
+	
+	new_objects = [0] * len(object_indices)
 
-	compliment_ranges = _compliment_of_index_ranges(object_indices, start_end_indices)
-	new_object_indices = [0] * len(object_indices)	
-	for x in compliment_ranges:
-		if (x[1] - x[0] == 1.0):
-			new_object_indices[x[0]:x[1]] = object_indices[x[0]:x[1]]
-		else:
-			new_object_indices[x[0]:x[1]+1] = object_indices[x[0]:x[1]+1]
-
-	for this_index_range in start_end_indices:
-		start = this_index_range[0]
-		stop = this_index_range[1]
-
-		pitch_data = object_indices[start][0]
+	for this_index_range in cluster_index_ranges:
+		start, stop = this_index_range[0], this_index_range[1]
 		start_offset = object_indices[start][1][0]
 		stop_offset = object_indices[stop][1][-1]
+		
+		pitch_data = object_indices[start][0]
 		summed_data = (pitch_data, (start_offset, stop_offset))
 		
-		new_object_indices[this_index_range[0]] = summed_data
+		new_objects[this_index_range[0]] = summed_data
 	
-	return [x for x in new_object_indices if x != 0]
+	for x in compliment_ranges:
+		if len(x) == 1:
+			new_objects[x[0]] = object_indices[x[0]]
+		else:
+			new_objects[x[0]:x[1]+1] = object_indices[x[0]:x[1]+1]
+
+	return [x for x in new_objects if x != 0]
+
+def frame_to_ql_array(data):
+	"""
+	NOTE: in use, the note objects already have quarter lengths; here, they come from the index range.
+	>>> my_frame = (
+	...     (note.Note("B-", quarterLength=0.125), (4.125, 4.25)), 
+	...		(note.Note("A", quarterLength=0.25), (4.25, 4.5)), 
+	...		(note.Note("B", quarterLength=0.125), (4.5, 4.625)), 
+	...		(note.Note("B-", quarterLength=0.125), (4.625, 4.75)), 
+	...		(note.Note("A", quarterLength=0.25), (4.75, 5.0)), 
+	...		(note.Note("G", quarterLength=0.25), (5.0, 5.25)), 
+	...		(note.Note("G", quarterLength=0.25), (5.25, 5.5)), 
+	...	)
+	>>> frame_to_ql_array(my_frame)
+	array([0.125, 0.25 , 0.125, 0.125, 0.25 , 0.25 , 0.25 ])
+	"""
+	qls = []
+	for this_obj, this_range in data:
+		qls.append(this_obj.quarterLength)
+	
+	return np.array([x for x in qls if x != 0])
 
 if __name__ == '__main__':
 	import doctest
