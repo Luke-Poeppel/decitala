@@ -156,18 +156,51 @@
   <div class="section" id="module-decitala.database">
 <span id="database-py"></span><h1>database.py<a class="headerlink" href="#module-decitala.database" title="Permalink to this headline">¶</a></h1>
 <p>Tools for creating sqlite3 databases of extracted rhythmic data from Messiaen’s music.</p>
-<dl class="py function">
-<dt id="decitala.database.create_database2">
-<code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">create_database2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_path</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">db_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.database.create_database2" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for creating a decitala and paths database in the cwd. 
-NOTE: this function creates the raw database with no filtering</p>
+<dl class="py exception">
+<dt id="decitala.database.DatabaseException">
+<em class="property">exception </em><code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">DatabaseException</code><a class="headerlink" href="#decitala.database.DatabaseException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="decitala.database.create_filtered_database">
-<code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">create_filtered_database</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_path</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">db_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.database.create_filtered_database" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for creating a decitala and paths database in the cwd. 
-NOTE: this function creates the filtered database. (No subtalas, no single anga-class talas)</p>
+<dt id="decitala.database.filter_single_anga_class_fragments">
+<code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">filter_single_anga_class_fragments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.database.filter_single_anga_class_fragments" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – <span class="math notranslate nohighlight">\([((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]\)</span></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>data from the input with all single-anga-class talas removed. For information on anga-class, see: 
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.fragment.Decitala.num_anga_classes</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.database.create_database">
+<code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">create_database</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_path</span></em>, <em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">frag_types</span><span class="o">=</span><span class="default_value">['decitala']</span></em>, <em class="sig-param"><span class="n">rep_types</span><span class="o">=</span><span class="default_value">['ratio', 'difference']</span></em>, <em class="sig-param"><span class="n">allowed_modifications</span><span class="o">=</span><span class="default_value">['r', 'rr', 'd', 'rd', 'sr', 'rsr']</span></em>, <em class="sig-param"><span class="n">try_contiguous_summation</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">windows</span><span class="o">=</span><span class="default_value">[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]</span></em>, <em class="sig-param"><span class="n">allow_unnamed</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">filter_single_anga_class</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">keep_grace_notes</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.database.create_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function generates an sqlite3 database for storing extracted rhythmic data from <a class="reference internal" href="trees.html#decitala.trees.rolling_search" title="decitala.trees.rolling_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.trees.rolling_search</span></code></a>.
+The database holds has one page for storing all extracted fragments, their onsets/offsets of occurrence, and their 
+modification data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db_path</strong> (<em>str</em>) – path where the .db file will be written.</p></li>
+<li><p><strong>filepath</strong> (<em>str</em>) – path to score.</p></li>
+<li><p><strong>filter_single_anga_class</strong> (<em>bool</em>) – whether or not to remove single-anga class fragments from the data in rolling_search.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – whether or not to log information about the database creation process (including data from rolling search).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sqlite3 database</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>db file</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

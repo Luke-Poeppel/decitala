@@ -43,6 +43,10 @@ here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/Fragments/Decitalas"
 greek_path = os.path.dirname(here) + "/Fragments/Greek_Metrics/XML"
 
+############### EXCEPTIONS ###############
+class DatabaseException(Exception):
+	pass
+
 def _check_tuple_in_tuple_range(tup1, tup2):
 	"""
 	Checks if tuple 1 is contained in tuple 2, e.g. (2, 4) in (1, 5)
@@ -86,7 +90,7 @@ def filter_single_anga_class_fragments(data):
 	"""
 	return list(filter(lambda x: x[0][0].num_anga_classes != 1, data))
 
-def filter_subtalas(data):
+def _filter_subtalas(data):
 	"""
 	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
 	:return: data from the input with all sub-talas removed; that is, talas that sit inside of another. 
@@ -136,6 +140,21 @@ def create_database(
 		keep_grace_notes=True,
 		verbose=True
 	):
+	"""
+	This function generates an sqlite3 database for storing extracted rhythmic data from :obj:`decitala.trees.rolling_search`.
+	The database holds has one page for storing all extracted fragments, their onsets/offsets of occurrence, and their 
+	modification data. 
+
+	:param str db_path: path where the .db file will be written. 
+	:param str filepath: path to score.
+	:param bool filter_single_anga_class: whether or not to remove single-anga class fragments from the data in rolling_search. 
+	:param bool verbose: whether or not to log information about the database creation process (including data from rolling search). 
+	
+	:return: sqlite3 database
+	:rtype: .db file
+	"""
+	assert os.path.isfile(filepath), "The path provided is not a valid file."
+
 	filename = filepath.split('/')[-1]
 	if verbose:
 		logging.info("Preparing database...")
@@ -257,9 +276,6 @@ def create_database(
 		
 		if verbose:
 			logging.info("Done preparing ✔")
-
-####################################################################################################
-# Testing
 
 if __name__ == "__main__":
 	import doctest

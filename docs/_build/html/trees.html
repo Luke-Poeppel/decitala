@@ -441,7 +441,7 @@ using the Cauchy-Schwartz inequality.</p>
 
 <dl class="py class">
 <dt id="decitala.trees.FragmentTree">
-<em class="property">class </em><code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">FragmentTree</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">frag_type</span><span class="o">=</span><span class="default_value">'general_fragment'</span></em>, <em class="sig-param"><span class="n">rep_type</span><span class="o">=</span><span class="default_value">'ratio'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.FragmentTree" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">FragmentTree</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">frag_type</span><span class="o">=</span><span class="default_value">'general_fragment'</span></em>, <em class="sig-param"><span class="n">rep_type</span><span class="o">=</span><span class="default_value">'ratio'</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.FragmentTree" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#decitala.trees.NaryTree" title="decitala.trees.NaryTree"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.trees.NaryTree</span></code></a></p>
 <p>NaryTree that holds multiplicative or additive representations of a rhythmic dataset.</p>
 <dl class="field-list simple">
@@ -464,23 +464,34 @@ Otherwise creates <a class="reference internal" href="fragment.html#decitala.fra
 <span class="go">&lt;trees.FragmentTree: nodes=31&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
 <span class="go">&lt;fragment.GreekFoot Peon_II&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># We can also create a FragmentTree object from a list of GeneralFragment objects or from a directory of files using the `data` parameter.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;frag1&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g2</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;frag2&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g3</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;frag3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># We can also create a FragmentTree object from either a list of GeneralFragment, Decitala, and GreekFoot objects or from a directory of files using the `data` parameter.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># We can also give it a name. </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;myfragment&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g2</span> <span class="o">=</span> <span class="n">Decitala</span><span class="p">(</span><span class="s2">&quot;Ragavardhana&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g3</span> <span class="o">=</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Ionic_Major&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">,</span> <span class="n">g3</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mytree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;difference&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mytree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;difference&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;MyCoolTree&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mytree</span>
+<span class="go">&lt;trees.FragmentTree MyCoolTree: nodes=10&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">mytree</span><span class="o">.</span><span class="n">all_named_paths</span><span class="p">():</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<span class="go">&lt;fragment.GeneralFragment_frag1: [1. 1. 1.]&gt;</span>
-<span class="go">&lt;fragment.GeneralFragment_frag2: [0.25 0.25 0.5  0.5 ]&gt;</span>
-<span class="go">&lt;fragment.GeneralFragment_frag3: [0.5  0.25 0.25 1.   1.   0.5 ]&gt;</span>
+<span class="go">&lt;fragment.Decitala 93_Ragavardhana&gt;</span>
+<span class="go">&lt;fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]&gt;</span>
+<span class="go">&lt;fragment.GreekFoot Ionic_Major&gt;</span>
 </pre></div>
 </div>
 <dl class="py method">
 <dt id="decitala.trees.FragmentTree.from_composition">
-<em class="property">classmethod </em><code class="sig-name descname">from_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part</span></em>, <em class="sig-param"><span class="n">rep_type</span><span class="o">=</span><span class="default_value">'ratio'</span></em>, <em class="sig-param"><span class="n">max_window</span><span class="o">=</span><span class="default_value">14</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.FragmentTree.from_composition" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">from_composition</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">rep_type</span><span class="o">=</span><span class="default_value">'ratio'</span></em>, <em class="sig-param"><span class="n">windows</span><span class="o">=</span><span class="default_value">[2, 3, 4, 5, 6, 7, 8, 9]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.FragmentTree.from_composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class method for generating a FragmentTree from a composition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – path to file</p></li>
+<li><p><strong>part</strong> (<em>int</em>) – part number</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -488,7 +499,8 @@ Otherwise creates <a class="reference internal" href="fragment.html#decitala.fra
 <dl class="py function">
 <dt id="decitala.trees.get_by_ql_array">
 <code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">get_by_ql_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ql_array</span></em>, <em class="sig-param"><span class="n">ratio_tree</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">difference_tree</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">allowed_modifications</span><span class="o">=</span><span class="default_value">['r', 'rr', 'd', 'rd', 'sr', 'rsr']</span></em>, <em class="sig-param"><span class="n">allow_unnamed</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.get_by_ql_array" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Searches a given ratio and/or difference tree for a given fragment. Supports fragments with grace notes.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ql_array</strong> (<em>numpy.array</em>) – fragment to be searched.</p></li>
@@ -513,7 +525,7 @@ Current possibilities are <code class="docutils literal notranslate"><span class
 
 <dl class="py function">
 <dt id="decitala.trees.rolling_search">
-<code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">rolling_search</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">ratio_tree</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">difference_tree</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">allowed_modifications</span><span class="o">=</span><span class="default_value">['r', 'rr', 'd', 'rd', 'sr', 'rsr']</span></em>, <em class="sig-param"><span class="n">try_contiguous_summation</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">windows</span><span class="o">=</span><span class="default_value">[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19]</span></em>, <em class="sig-param"><span class="n">allow_unnamed</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.rolling_search" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">rolling_search</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">ratio_tree</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">difference_tree</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">allowed_modifications</span><span class="o">=</span><span class="default_value">['r', 'rr', 'd', 'rd', 'sr', 'rsr']</span></em>, <em class="sig-param"><span class="n">try_contiguous_summation</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">windows</span><span class="o">=</span><span class="default_value">[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]</span></em>, <em class="sig-param"><span class="n">allow_unnamed</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.rolling_search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rolling search on a music21-readable file on a given part. For search types, see 
 documentation for <a class="reference internal" href="#decitala.trees.get_by_ql_array" title="decitala.trees.get_by_ql_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_by_ql_array()</span></code></a>. The default window lengths 
 are the lengths of fragments in the decitala dataset.</p>
@@ -525,8 +537,10 @@ are the lengths of fragments in the decitala dataset.</p>
 <li><p><strong>ratio_tree</strong> (<em>fragment.FragmentTree</em>) – tree storing ratio representations.</p></li>
 <li><p><strong>difference_tree</strong> (<em>fragment.FragmentTree</em>) – tree storing difference representations.</p></li>
 <li><p><strong>list</strong> (<em>allowed_modifications</em>) – see <a class="reference internal" href="#decitala.trees.get_by_ql_array" title="decitala.trees.get_by_ql_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">decitala.trees.get_by_ql_array()</span></code></a>.</p></li>
+<li><p><strong>bool</strong> (<em>verbose</em>) – ties together all elements of equal pitch and duration and searches.</p></li>
 <li><p><strong>windows</strong> (<em>list</em>) – possible length of the search frame.</p></li>
 <li><p><strong>allow_unnamed</strong> (<em>bool</em>) – whether or not to allow unnamed fragments found to be returned.</p></li>
+<li><p><strong>bool</strong> – whether or not to log results in real time.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -583,6 +597,12 @@ see documentation for <a class="reference internal" href="#decitala.trees.get_by
 <span class="go">(&lt;fragment.GreekFoot Amphimacer&gt;, (&#39;r&#39;, 0.25))</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.trees.grand_corbeau_examples">
+<code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">grand_corbeau_examples</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decitala.trees.grand_corbeau_examples" title="Permalink to this definition">¶</a></dt>
+<dd><p>These are classic examples of contiguous summation.</p>
 </dd></dl>
 
 </div>

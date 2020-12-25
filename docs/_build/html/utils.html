@@ -393,6 +393,78 @@ of tala components tends to be even.</p>
 (Supports rests and grace notes.)</p>
 </dd></dl>
 
+<dl class="py function">
+<dt id="decitala.utils.contiguous_summation">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">contiguous_summation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">object_indices</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.utils.contiguous_summation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given data (or subset of data) from :meth:get_object_indices, finds every location where the pitch and 
+rhythmic material are contiguously equal and sums these regions.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">example_data</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;F#&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">6.5</span><span class="p">,</span> <span class="mf">6.75</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">6.75</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C#&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.25</span><span class="p">,</span> <span class="mf">7.5</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.5</span><span class="p">,</span> <span class="mf">7.75</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.75</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A-&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">8.125</span><span class="p">)),</span> 
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_object</span> <span class="ow">in</span> <span class="n">contiguous_summation</span><span class="p">(</span><span class="n">example_data</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">this_object</span><span class="p">)</span>
+<span class="go">(&lt;music21.note.Note F#&gt;, (6.5, 6.75))</span>
+<span class="go">(&lt;music21.note.Note G&gt;, (6.75, 7.25))</span>
+<span class="go">(&lt;music21.note.Note C#&gt;, (7.25, 7.5))</span>
+<span class="go">(&lt;music21.note.Note G&gt;, (7.5, 8.0))</span>
+<span class="go">(&lt;music21.note.Note A-&gt;, (8.0, 8.125))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Also works with chords.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example_data2</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;F#2&quot;</span><span class="p">,</span> <span class="s2">&quot;F3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;F#2&quot;</span><span class="p">,</span> <span class="s2">&quot;F3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;F#2&quot;</span><span class="p">,</span> <span class="s2">&quot;F3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;E-3&quot;</span><span class="p">,</span> <span class="s2">&quot;D4&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.375</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;A2&quot;</span><span class="p">,</span> <span class="s2">&quot;A-3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">)),</span> 
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sum_search</span> <span class="o">=</span> <span class="n">contiguous_summation</span><span class="p">(</span><span class="n">example_data2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_object</span> <span class="ow">in</span> <span class="n">sum_search</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">this_object</span><span class="p">)</span>
+<span class="go">(&lt;music21.chord.Chord F#2 F3&gt;, (0.0, 0.375))</span>
+<span class="go">(&lt;music21.chord.Chord E-3 D4&gt;, (0.375, 0.5))</span>
+<span class="go">(&lt;music21.chord.Chord A2 A-3&gt;, (0.5, 0.75))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># The quarter lengths of the objects change according to the new summation. </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_object</span> <span class="ow">in</span> <span class="n">sum_search</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">this_object</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)</span>
+<span class="go">0.375</span>
+<span class="go">0.125</span>
+<span class="go">0.25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example_data3</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;F#2&quot;</span><span class="p">,</span> <span class="s2">&quot;F3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.625</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;F#2&quot;</span><span class="p">,</span> <span class="s2">&quot;F3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.75</span><span class="p">,</span> <span class="mf">1.875</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;F#2&quot;</span><span class="p">,</span> <span class="s2">&quot;F3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.875</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;F#2&quot;</span><span class="p">,</span> <span class="s2">&quot;F3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.25</span><span class="p">))</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_object</span> <span class="ow">in</span> <span class="n">contiguous_summation</span><span class="p">(</span><span class="n">example_data3</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">this_object</span><span class="p">)</span>
+<span class="go">(&lt;music21.chord.Chord F#2 F3&gt;, (1.625, 2.0))</span>
+<span class="go">(&lt;music21.chord.Chord F#2 F3&gt;, (2.0, 2.25))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.frame_to_ql_array">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">frame_to_ql_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.utils.frame_to_ql_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>NOTE: in use, the note objects already have quarter lengths; here, they come from the index range.
+&gt;&gt;&gt; my_frame = [
+…     (note.Note(“B-“, quarterLength=0.125), (4.125, 4.25)), 
+…             (note.Note(“A”, quarterLength=0.25), (4.25, 4.5)), 
+…             (note.Note(“B”, quarterLength=0.125), (4.5, 4.625)), 
+…             (note.Note(“B-“, quarterLength=0.125), (4.625, 4.75)), 
+…             (note.Note(“A”, quarterLength=0.25), (4.75, 5.0)), 
+…             (note.Note(“G”, quarterLength=0.25), (5.0, 5.25)), 
+…             (note.Note(“G”, quarterLength=0.25), (5.25, 5.5)), 
+…     ]
+&gt;&gt;&gt; frame_to_ql_array(my_frame)
+array([0.125, 0.25 , 0.125, 0.125, 0.25 , 0.25 , 0.25 ])</p>
+</dd></dl>
+
 </div>
 
 

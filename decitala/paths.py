@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 ####################################################################################################
 # File:     paths.py
-# Purpose:  Data structure for handling paths from sqlite database. 
+# Purpose:  Extraction and analysis of data from `:obj:decitala.database.create_database`. 
 # 
 # Author:   Luke Poeppel
 #
 # Location: Kent, CT 2020
 ####################################################################################################
-"""
-Stores data for each pareto optimal path.
-"""
+
 import numpy as np
 import re
 import sqlite3 as lite 

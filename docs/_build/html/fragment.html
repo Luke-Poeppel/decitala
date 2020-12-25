@@ -188,7 +188,7 @@ file or an array of quarter length values.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">random_fragment_path</span> <span class="o">=</span> <span class="s1">&#39;/Users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">random_fragment_path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span>
-<span class="go">&lt;fragment.GeneralFragment_test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]&gt;</span>
+<span class="go">&lt;fragment.GeneralFragment test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">filename</span>
 <span class="go">&#39;63_Nandi.xml&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">coolness_level</span> <span class="o">=</span> <span class="s1">&#39;pretty cool&#39;</span>
@@ -263,6 +263,23 @@ file or an array of quarter length values.</p>
 <dd class="field-even"><p>int</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.fragment.GeneralFragment.num_anga_classes">
+<em class="property">property </em><code class="sig-name descname">num_anga_classes</code><a class="headerlink" href="#decitala.fragment.GeneralFragment.num_anga_classes" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the number of anga classes in the fragment (the number of unique rhythmic values).</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]))</span><span class="o">.</span><span class="n">num_anga_classes</span>
+<span class="go">3</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -441,6 +458,31 @@ file or an array of quarter length values.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="decitala.fragment.GeneralFragment.augment">
+<code class="sig-name descname">augment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">difference</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.augment" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method returns a new GeneralFragment object with a ql_array corresponding to the original
+fragment augmented by a given ratio and difference.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>float</strong> (<em>difference</em>) – the factor by which the GeneralFragment will be augmented.</p></li>
+<li><p><strong>float</strong> – the difference by which the GeneralFragment will be augmented.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><cite>~decitala.fragment.GeneralFragment</cite> object.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pre_augmentation</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Spondee&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pre_augmentation</span>
+<span class="go">&lt;fragment.GeneralFragment Spondee: [2. 2.]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pre_augmentation</span><span class="o">.</span><span class="n">augment</span><span class="p">(</span><span class="n">factor</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="go">&lt;fragment.GeneralFragment Spondee/r:2.0/d:0.75: [4.75 4.75]&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -556,25 +598,6 @@ numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. So
 <dd class="field-even"><p>int</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.fragment.Decitala.num_anga_classes">
-<em class="property">property </em><code class="sig-name descname">num_anga_classes</code><a class="headerlink" href="#decitala.fragment.Decitala.num_anga_classes" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the number of anga classes in the tala (the number of unique rhythmic values).</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int.</p>
-</dd>
-</dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Decitala</span><span class="p">(</span><span class="s1">&#39;Karanayati&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">num_anga_classes</span>
-<span class="go">1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">Decitala</span><span class="p">(</span><span class="s1">&#39;Rajatala&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">num_anga_classes</span>
-<span class="go">4</span>
-</pre></div>
-</div>
 </dd></dl>
 
 </dd></dl>

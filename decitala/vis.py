@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 ####################################################################################################
 # File:     vis.py
-# Purpose:  Histogram and roll visualization for talas found in a particular piece. Either 
-#           path-dependant or net find. 
+# Purpose:  Histogram, roll visualization, and Treant FragmentTree diagrams. 
 #
 # Author:   Luke Poeppel
 #
