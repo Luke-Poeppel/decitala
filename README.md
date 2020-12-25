@@ -1,3 +1,3 @@
 Tools for automating ethnological rhythmic analysis of Olivier Messiaen's music.
 
-This package requires music21 which is available here:  https://github.com/cuthbertLab/music21. 
+This package requires music21 which is available here:  https://github.com/cuthbertLab/music21. For viewing sqlite3 databases, one useful application is https://sqlitebrowser.org/. 

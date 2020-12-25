@@ -60,6 +60,7 @@ setup(
 		"ast",
 		"click",
 		"collections",
+		"coloredlogs",
 		"itertools",
 		"more-itertools",
 		"jsonpickle",

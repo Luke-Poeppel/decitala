@@ -57,7 +57,6 @@ def get_all_paths_info(db_path):
 
 ####################################################################################################
 # SubPath(s) and Path(s)
-
 class SubPath(object):
 	"""
 	Object for storing information about a subpath in a given database. Keeps track of the path onsets, 
