@@ -90,28 +90,28 @@ def filter_single_anga_class_fragments(data):
 	"""
 	return list(filter(lambda x: x[0][0].num_anga_classes != 1, data))
 
-def _filter_subtalas(data):
+def filter_sub_fragments(data):
 	"""
 	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
 	:return: data from the input with all sub-talas removed; that is, talas that sit inside of another. 
 	:rtype: list
 	"""
-	just_talas = list(set([x[0][0] for x in data]))
+	just_fragments = list(set([x[0][0] for x in data]))
 
 	def _check_individual_containment(a, b):
 		return ', '.join(map(str, a)) in ', '.join(map(str, b))
 	
 	def _check_all(x):
 		check = False
-		for this_tala in just_talas:
-			if this_tala == x:
+		for this_fragment in just_fragments:
+			if this_fragment == x:
 				pass
 			else:
-				if _check_individual_containment(x.successive_ratio_array(), this_tala.successive_ratio_array()):
+				if _check_individual_containment(x.successive_ratio_array(), this_fragment.successive_ratio_array()):
 					check = True
 		return check
 
-	filtered = [x for x in just_talas if not(_check_all(x))]
+	filtered = [x for x in just_fragments if not(_check_all(x))]
 	filtered_ids = [x.id_num for x in filtered]
 	
 	return [x for x in data if x[0][0].id_num in filtered_ids]
@@ -135,8 +135,9 @@ def create_database(
 		try_contiguous_summation=True,
 		windows=list(range(1, 20)),
 		allow_unnamed=False,
-		# Path creating parameters
-		filter_single_anga_class=True,
+		# Filtering parameters. 
+		filter_found_single_anga_class=True,
+		filter_found_sub_fragments=True,
 		keep_grace_notes=True,
 		verbose=True
 	):
@@ -144,6 +145,8 @@ def create_database(
 	This function generates an sqlite3 database for storing extracted rhythmic data from :obj:`decitala.trees.rolling_search`.
 	The database holds has one page for storing all extracted fragments, their onsets/offsets of occurrence, and their 
 	modification data. 
+
+	NOTE: I suggest setting filter_sub_fragments to True for compositions and False for birdsong transcriptions. 
 
 	:param str db_path: path where the .db file will be written. 
 	:param str filepath: path to score.
@@ -165,8 +168,8 @@ def create_database(
 		logging.info("Representation types: {}".format(rep_types))
 		logging.info("Modifications: {}".format(allowed_modifications))
 		logging.info("Try contiguous summations: {}".format(try_contiguous_summation))
-		logging.info("Filter single anga class fragments: {}".format(filter_single_anga_class))
-		# logging.info("Filter subtalas: {}".format(filter_subtalas))
+		logging.info("Filter single anga class fragments: {}".format(filter_found_single_anga_class))
+		logging.info("Filter sub fragments: {}".format(filter_found_sub_fragments))
 		logging.info("Keep grace notes: {}".format(keep_grace_notes))
 
 	ALL_DATA = []
@@ -206,11 +209,20 @@ def create_database(
 		logging.info("\n")
 		logging.info("{} fragments extracted".format(initial_length))
 
-	if filter_single_anga_class:
+	if filter_found_single_anga_class:
 		ALL_DATA = filter_single_anga_class_fragments(ALL_DATA)
 		if verbose:
+			logging.info("Removing all single anga class fragments...")
 			logging.info("Removed {0} fragments ({1} remaining)".format(initial_length - len(ALL_DATA), len(ALL_DATA)))
 	
+	new_length = len(ALL_DATA)
+
+	if filter_found_sub_fragments:
+		ALL_DATA = filter_sub_fragments(ALL_DATA)
+		if verbose:
+			logging.info("Removing all sub fragments...")
+			logging.info("Removed {0} fragments ({1} remaining)".format(new_length - len(ALL_DATA), len(ALL_DATA)))
+
 	if verbose:
 		logging.info("Calculated break points: {}".format(get_break_points(ALL_DATA)))
 
