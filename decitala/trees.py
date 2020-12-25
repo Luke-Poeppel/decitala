@@ -854,6 +854,9 @@ def rolling_search(
 
 	fragments_found = []
 	for this_win in windows:
+		if verbose:
+			logging.info("\n")
+			logging.info("Searching window of size {}.".format(this_win))
 		frames = roll_window(array = object_list, window_length = this_win)
 		for this_frame in frames:
 			objects = [x[0] for x in this_frame]
