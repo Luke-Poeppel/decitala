@@ -132,8 +132,7 @@ def create_database(
 		windows=list(range(1, 20)),
 		allow_unnamed=False,
 		# Path creating parameters
-		filter_single_anga_class_talas=True,
-		filter_subtalas=True,
+		filter_single_anga_class=True,
 		keep_grace_notes=True,
 		verbose=True
 	):
@@ -147,8 +146,8 @@ def create_database(
 		logging.info("Representation types: {}".format(rep_types))
 		logging.info("Modifications: {}".format(allowed_modifications))
 		logging.info("Try contiguous summations: {}".format(try_contiguous_summation))
-		logging.info("Filter single anga class talas: {}".format(filter_single_anga_class_talas))
-		logging.info("Filter subtalas: {}".format(filter_subtalas))
+		logging.info("Filter single anga class fragments: {}".format(filter_single_anga_class))
+		# logging.info("Filter subtalas: {}".format(filter_subtalas))
 		logging.info("Keep grace notes: {}".format(keep_grace_notes))
 
 	ALL_DATA = []
@@ -188,10 +187,10 @@ def create_database(
 		logging.info("\n")
 		logging.info("{} fragments extracted".format(initial_length))
 
-	if filter_single_anga_class_talas:
+	if filter_single_anga_class:
 		ALL_DATA = filter_single_anga_class_fragments(ALL_DATA)
 		if verbose:
-			logging.info("Removed {0} fragments (now {1})".format(initial_length - len(ALL_DATA), len(ALL_DATA)))
+			logging.info("Removed {0} fragments ({1} remaining)".format(initial_length - len(ALL_DATA), len(ALL_DATA)))
 	
 	if verbose:
 		logging.info("Calculated break points: {}".format(get_break_points(ALL_DATA)))
@@ -206,7 +205,7 @@ def create_database(
 			logging.info("\n")
 			logging.info("Connected to database at: {}".format(db_path))
 		cur = conn.cursor()
-		cur.execute("CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Tala BLOB, Mod TEXT, Factor INT)")
+		cur.execute("CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor INT)")
 
 		for this_partition in partitioned_data:
 			for this_fragment in this_partition:
@@ -255,6 +254,9 @@ def create_database(
 					post_nulls = ", ".join(nulls)
 					new = "INSERT INTO Paths_{0} VALUES('{1}', {2}, '{3}')".format(str(i), mid, post_nulls, formatted_pitch_content)
 					cur.execute(new)
+		
+		if verbose:
+			logging.info("Done preparing ✔")
 
 ####################################################################################################
 # Testing
