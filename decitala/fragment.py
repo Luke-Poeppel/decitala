@@ -163,6 +163,17 @@ class GeneralFragment(object):
 		return len(self.ql_array())
 
 	@property
+	def num_anga_classes(self):
+		"""
+		:return: the number of anga classes in the fragment (the number of unique rhythmic values).
+		:rtype: int.
+
+		>>> GeneralFragment(data=np.array([0.75, 0.75, 0.5, 0.25])).num_anga_classes
+		3
+		"""
+		return len(set(self.ql_array()))
+
+	@property
 	def ql_duration(self):
 		"""
 		:return: the overall duration of the fragment (as expressed in quarter lengths).
@@ -474,19 +485,6 @@ class Decitala(GeneralFragment):
 		:rtype: int
 		"""
 		return (self.ql_duration / 0.5)
-	
-	@property
-	def num_anga_classes(self):
-		"""
-		:return: the number of anga classes in the tala (the number of unique rhythmic values).
-		:rtype: int.
-
-		>>> Decitala('Karanayati').num_anga_classes
-		1
-		>>> Decitala('Rajatala').num_anga_classes
-		4
-		"""
-		return len(set(self.ql_array()))
 	
 ####################################################################################################
 class GreekFoot(GeneralFragment):
