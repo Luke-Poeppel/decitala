@@ -16,9 +16,6 @@ import pytest
 
 from collections import deque
 
-import logging
-logging.basicConfig(level=logging.INFO)
-
 from .fragment import (
 	Decitala,
 	GreekFoot,
@@ -35,6 +32,9 @@ from .utils import (
 	contiguous_summation,
 	frame_to_ql_array
 )
+
+import logging
+logging.basicConfig(level=logging.INFO)
 
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/Fragments/Decitalas"
@@ -518,24 +518,28 @@ class FragmentTree(NaryTree):
 	>>> ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0])
 	<fragment.GreekFoot Peon_II>
 	>>> # We can also create a FragmentTree object from either a list of GeneralFragment, Decitala, and GreekFoot objects or from a directory of files using the `data` parameter.
+	>>> # We can also give it a name. 
 	>>> g1 = GeneralFragment([1.0, 1.0, 1.0, 1.0, 1.0], name="myfragment")
 	>>> g2 = Decitala("Ragavardhana")
 	>>> g3 = GreekFoot("Ionic_Major")
 	>>> data = [g1, g2, g3]
-	>>> mytree = FragmentTree(data = data, rep_type="difference")
+	>>> mytree = FragmentTree(data = data, rep_type="difference", name="MyCoolTree")
+	>>> mytree
+	<trees.FragmentTree MyCoolTree: nodes=10>
 	>>> for path in mytree.all_named_paths():
 	...     print(path)
 	<fragment.Decitala 93_Ragavardhana>
 	<fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]>
 	<fragment.GreekFoot Ionic_Major>
 	"""
-	def __init__(self, data=None, frag_type="general_fragment", rep_type="ratio", **kwargs):
+	def __init__(self, data=None, frag_type="general_fragment", rep_type="ratio", name=None, **kwargs):
 		assert frag_type.lower() in ["decitala", "greek_foot", "general_fragment"], FragmentTreeException("The only possible frag_types are `decitala`, `greek_foot`, and `general_fragment`.")
 		assert rep_type.lower() in ["ratio", "difference"], FragmentTreeException("The only possible rep_types are `ratio` and `difference`")
 
 		self.data = data
 		self.frag_type = frag_type.lower()
 		self.rep_type = rep_type.lower()
+		self.name = name
 
 		raw_data = []
 		if (frag_type == "decitala" or frag_type == "greek_foot"):
@@ -592,7 +596,10 @@ class FragmentTree(NaryTree):
 		# self.sorted_data = None # Free up memory
 	
 	def __repr__(self):
-		return '<trees.FragmentTree: nodes={}>'.format(self.size())
+		if self.name:
+			return '<trees.FragmentTree {0}: nodes={1}>'.format(self.name, self.size())
+		else:
+			return '<trees.FragmentTree: nodes={}>'.format(self.size())
 	
 	@classmethod
 	def from_composition(
@@ -875,19 +882,17 @@ def rolling_search(
 
 					searched = get_by_ql_array(contiguous_summation_ql_array, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
 					if searched is not None:
-						# TODO: make this cleaner
-						rewritten_search = [searched[0]] + [list(x) for x in searched[1:]]
+						rewritten_search = [searched[0]] + [list(x) for x in searched[1:]] # fragment + modification data
 						rewritten_search[1][0] = rewritten_search[1][0] + "-cs"
-						frag = (rewritten_search[0],)
-						mod = tuple(rewritten_search[1])
-						rewritten_search = (frag, mod)
-												
+						frag = rewritten_search[0]
+						mod = rewritten_search[1]
+						rewritten_search = (frag, tuple(mod))
+
 						offset_1 = this_frame[0][0]
 						offset_2 = this_frame[-1][0]
 
 						result = (rewritten_search, (offset_1.offset, offset_2.offset + offset_2.quarterLength))		
 						fragments_found.append(result)
-						
 						if verbose:
 							logging.info("{0}, {1}".format(result[0], result[1]))
 	
@@ -972,6 +977,16 @@ def fake_fragment_dataset():
 
 	return [g1, g2, g3, g4, g5, g6, g7, g8, g9, g10]
 
+@pytest.fixture
+def grand_corbeau_examples():
+	"""
+	These are classic examples of contiguous summation. 
+	"""
+	from music21 import chord
+	phrase_1 = [(chord.Chord(["F#2", "F3"]), (0.0, 0.125)), (chord.Chord(["F#2", "F3"]), (0.125, 0.25)), (chord.Chord(["E-3", "D4"]), (0.25, 0.375)), (chord.Chord(["A2", "A-3>"]) (0.375, 0.625))]
+	phrase_2 = [(chord.Chord(["F#2", "F3"]), (1.625, 1.75)), (chord.Chord(["F#2", "F3"]), (1.75, 1.875)), (chord.Chord(["F#2", "F3"]), (1.875, 2.0)), (chord.Chord(["F#2", "F3"]), (2.0, 2.25))]
+	phrase_3 = [(chord.Chord(["F#2", "F3"]), (2.75, 2.875)), (chord.Chord(["F#2", "F3"]), (2.875, 3.0)), (chord.Chord(["F#2", "F3"]), (3.0, 3.125)), (chord.Chord(["E-3", "D4"]), (3.125, 3.25)), (chord.Chord(["A2", "A-3"]), (3.25, 3.5))]
+
 def test_filter(fake_fragment_dataset):
 	filtered = filter_data(fake_fragment_dataset)
 	expected = [
@@ -1008,4 +1023,4 @@ def test_contiguous_summation(tala_ratio_tree, tala_difference_tree):
 
 if __name__ == '__main__':
 	import doctest
-	# doctest.testmod()
+	doctest.testmod()
