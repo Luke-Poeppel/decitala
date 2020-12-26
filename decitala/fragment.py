@@ -43,7 +43,9 @@ class FragmentException(Exception):
 class DecitalaException(FragmentException):
 	pass
 
-############### EXCEPTIONS ###############
+class GreekFootException(FragmentException):
+	pass
+
 class GeneralFragment(object):
 	"""
 	Class representing a generic rhythmic fragment. The user must provide either a path to a music21 readable
@@ -399,35 +401,49 @@ class Decitala(GeneralFragment):
 	[1.5  0.5  1.   0.5  0.5  0.25 0.25]
 	"""
 	def __init__(self, name, **kwargs):
-		if name:
-			if name.endswith('.xml'):
-				searchName = name
-			else:
-				searchName = name + '.xml'
-			
-			search_name_split = searchName.split('_')
-			matches = []
-			for thisFile in os.listdir(decitala_path):
-				x = re.search(searchName, thisFile)
-				if bool(x):
-					matches.append(thisFile)
+		matches = []
+		for this_file in os.listdir(decitala_path):
+			x = re.search(name, this_file)
+			if bool(x):
+				matches.append(this_file)
 
-			for match in matches:
-				split = match.split('_')
-				if len(search_name_split) == len(split) - 1:
-					self.full_path = decitala_path + '/' + match
-					self.name = match[:-4]
-					self.filename = match
-					self.stream = converter.parse(decitala_path + '/' + match)
-				elif len(search_name_split) == len(split) - 2 and len(split[1]) == 1:
-					self.full_path = decitala_path + '/' + match
-					self.name = match[:-4]
-					self.filename = match
-					self.stream = converter.parse(decitala_path + '/' + match)
-			else:
+		if len(matches) == 0:
+			raise DecitalaException("No matches were found for name {}.".format(name))
+		
+		if len(matches) == 1:
+			match = matches[0]
+			self.full_path = decitala_path + "/" + match
+			self.name = match[:-4]
+			self.filename = match
+			self.stream = converter.parse(self.full_path)
+		else:
+			new_name = "".join([x for x in name if not x.isdigit()])
+			if new_name[-4:] == ".xml":
 				pass
+			else:
+				new_name = new_name + ".xml"
 
-		super().__init__(data=self.full_path, name=self.name)
+			if new_name[0] == "_":
+				new_name = new_name[1:]
+			new_name_split = new_name.split("_")
+
+			for this_match in matches:
+				match_new_name = "".join([x for x in this_match if not x.isdigit()])
+				if match_new_name[0] == "_":
+					match_new_name = match_new_name[1:]
+				
+				match_split = match_new_name.split("_")
+
+				if match_split == new_name_split:
+					self.full_path = decitala_path + "/" + this_match
+					self.name = this_match[:-4]
+					self.filename = this_match
+					self.stream = converter.parse(self.full_path)
+
+		try:
+			super().__init__(data=self.full_path, name=self.name)
+		except AttributeError:
+			raise DecitalaException("Something is wrong with the name {}.".format(name)) 
 	
 	def __repr__(self):
 		return '<fragment.Decitala {}>'.format(self.name)
@@ -519,28 +535,36 @@ class GreekFoot(GeneralFragment):
 	[2. 1. 2.]
 	"""
 	def __init__(self, name, **kwargs):
-		if name: # all files either of the form X, X_Y
-			if name.endswith('.xml'):
-				searchName = name
-			else:
-				searchName = name + '.xml'
+		matches = []
+		for this_file in os.listdir(greek_path):
+			x = re.search(name, this_file)
+			if bool(x):
+				matches.append(this_file)
+
+		if len(matches) == 0:
+			raise DecitalaException("No matches were found for name {}.".format(name))
+		
+		if len(matches) == 1:
+			match = matches[0]
+			self.full_path = greek_path + "/" + match
+			self.name = match[:-4]
+			self.filename = match
+			self.stream = converter.parse(self.full_path)
+		else:
+			if name[-4:] == ".xml":
+				name = name[:-4]
 			
-			search_name_split = searchName.split('_')
-			matches = []
-			for thisFile in os.listdir(greek_path):
-				x = re.search(searchName, thisFile)
-				if bool(x):
-					matches.append(thisFile)
+			for this_match in matches:
+				if name == this_match[:-4]:
+					self.full_path = greek_path + "/" + this_match
+					self.name = this_match[:-4]
+					self.filename = this_match
+					self.stream = converter.parse(self.full_path)
 
-			for match in matches:
-				split = match.split('_')
-				if len(search_name_split) == len(split):
-					self.full_path = greek_path + '/' + match
-					self.name = match[:-4]
-					self.filename = match
-					self.stream = converter.parseFile(self.full_path)
-
-		super().__init__(data=self.full_path, name=self.name)
+		try:
+			super().__init__(data=self.full_path, name=self.name)
+		except AttributeError:
+			raise GreekFootException("Something is wrong with the name {}.".format(name)) 
 	
 	def __repr__(self):
 		return '<fragment.GreekFoot {}>'.format(self.name)
@@ -549,22 +573,6 @@ class GreekFoot(GeneralFragment):
 	def greek_string(self):
 		"""See docstring of :obj:`decitala.tools.ql_array_to_greek_diacritics`."""
 		return ql_array_to_greek_diacritics(self.ql_array())
-
-####################################################################################################
-# Testing
-def test_sama_kankala_sama():
-	d1 = Decitala("Sama")
-	d2 = Decitala("Kankala_Sama")
-
-	assert d1.name == "53_Sama"
-	assert d2.name == "65_C_Kankala_Sama"
-
-def test_rati_ratilila():
-	d3 = Decitala("Rati")
-	d4 = Decitala("Ratilila")
-
-	assert d3.id_num == 82
-	assert d4.id_num == 9
 
 if __name__ == '__main__':
 	import doctest
