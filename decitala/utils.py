@@ -554,23 +554,11 @@ def contiguous_summation(object_indices):
 	0.375
 	0.125
 	0.25
-	>>> example_data3 = [
-	... 	(chord.Chord(["F#2", "F3"], quarterLength=0.125), (1.625, 1.75)), 
-	... 	(chord.Chord(["F#2", "F3"], quarterLength=0.125), (1.75, 1.875)), 
-	... 	(chord.Chord(["F#2", "F3"], quarterLength=0.125), (1.875, 2.0)), 
-	... 	(chord.Chord(["F#2", "F3"], quarterLength=0.25), (2.0, 2.25))
-	... ]
-	>>> for this_object in contiguous_summation(example_data3):
-	...     print(this_object)
-	(<music21.chord.Chord F#2 F3>, (1.625, 2.0))
-	(<music21.chord.Chord F#2 F3>, (2.0, 2.25))
 	"""
 	new_data = []
 	regions_property = lambda i: ((object_indices[i][1][1] - object_indices[i][1][0]), [x.midi for x in object_indices[i][0].pitches])
 	ranges = [list(this_range) for _, this_range in groupby(range(len(object_indices)), regions_property)]
-	
-	# print(ranges)
-	
+		
 	cluster_index_ranges = [[this_range[0], this_range[-1]] for this_range in ranges if len(this_range) > 1]
 	compliment_ranges = _compliment_of_index_ranges(object_indices, cluster_index_ranges)
 	
