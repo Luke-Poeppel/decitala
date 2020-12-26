@@ -866,7 +866,7 @@ def rolling_search(
 				ql_array = frame_to_ql_array(this_frame)
 				if len(ql_array) < 2:
 					continue
-			
+
 				searched = get_by_ql_array(ql_array, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
 				if searched is not None:
 					offset_1 = this_frame[0][0]
@@ -877,29 +877,30 @@ def rolling_search(
 						logging.info("{0}, {1}".format(searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
 
 				if try_contiguous_summation:
-					new_frame = contiguous_summation(this_frame)
+					copied_frame = copy.copy(this_frame)
+					new_frame = contiguous_summation(copied_frame)
 					contiguous_summation_ql_array = frame_to_ql_array(new_frame)
 
 					if len(contiguous_summation_ql_array) < 2 or np.array_equal(ql_array, contiguous_summation_ql_array):
 						continue
 
-					searched = get_by_ql_array(contiguous_summation_ql_array, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
-					if searched is not None:
-						rewritten_search = [searched[0]] + [list(x) for x in searched[1:]] # fragment + modification data
+					contiguous_summation_search = get_by_ql_array(contiguous_summation_ql_array, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
+					if contiguous_summation_search is not None:
+						rewritten_search = [contiguous_summation_search[0]] + [list(x) for x in contiguous_summation_search[1:]] # fragment + modification data
 						rewritten_search[1][0] = rewritten_search[1][0] + "-cs"
 						frag = rewritten_search[0]
 						mod = rewritten_search[1]
 						rewritten_search = (frag, tuple(mod))
 
-						offset_1 = this_frame[0][0]
-						offset_2 = this_frame[-1][0]
+						offset_1 = new_frame[0][0]
+						offset_2 = new_frame[-1][0]
 
 						result = (rewritten_search, (offset_1.offset, offset_2.offset + offset_2.quarterLength))		
 						fragments_found.append(result)
 						if verbose:
 							logging.info("{0}, {1}".format(result[0], result[1]))
 	
-	return fragments_found
+	return sorted(fragments_found, key = lambda x: x[1][0])
 
 def rolling_search_on_array(
 		ql_array, 
