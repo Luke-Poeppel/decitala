@@ -157,19 +157,25 @@
 <span id="fragment-py"></span><h1>fragment.py<a class="headerlink" href="#module-decitala.fragment" title="Permalink to this headline">¶</a></h1>
 <dl class="py exception">
 <dt id="decitala.fragment.FragmentException">
-<em class="property">exception </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">FragmentException</code><a class="headerlink" href="#decitala.fragment.FragmentException" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">FragmentException</code><a class="reference internal" href="_modules/decitala/fragment.html#FragmentException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.FragmentException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 </dd></dl>
 
 <dl class="py exception">
 <dt id="decitala.fragment.DecitalaException">
-<em class="property">exception </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">DecitalaException</code><a class="headerlink" href="#decitala.fragment.DecitalaException" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">DecitalaException</code><a class="reference internal" href="_modules/decitala/fragment.html#DecitalaException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.DecitalaException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#decitala.fragment.FragmentException" title="decitala.fragment.FragmentException"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.FragmentException</span></code></a></p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="decitala.fragment.GreekFootException">
+<em class="property">exception </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">GreekFootException</code><a class="reference internal" href="_modules/decitala/fragment.html#GreekFootException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GreekFootException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#decitala.fragment.FragmentException" title="decitala.fragment.FragmentException"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.FragmentException</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="decitala.fragment.GeneralFragment">
-<em class="property">class </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">GeneralFragment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">GeneralFragment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class representing a generic rhythmic fragment. The user must provide either a path to a music21 readable
 file or an array of quarter length values.</p>
@@ -222,7 +228,7 @@ file or an array of quarter length values.</p>
 </div>
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.ql_array">
-<code class="sig-name descname">ql_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">retrograde</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.ql_array" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ql_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">retrograde</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.ql_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.ql_array" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>retrograde</strong> (<em>bool</em>) – whether or not to return the fragment in its original form or in retrograde.</p>
@@ -238,7 +244,7 @@ file or an array of quarter length values.</p>
 
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.ql_tuple">
-<code class="sig-name descname">ql_tuple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">retrograde</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.ql_tuple" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">ql_tuple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">retrograde</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.ql_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.ql_tuple" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>retrograde</strong> (<em>bool</em>) – whether or not to return the fragment in its original form or in retrograde.</p>
@@ -297,7 +303,7 @@ file or an array of quarter length values.</p>
 
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.dseg">
-<code class="sig-name descname">dseg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">as_str</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.dseg" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">dseg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">as_str</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.dseg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.dseg" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>as_str</strong> (<em>bool</em>) – whether or not to return the d-seg as a string.</p>
@@ -318,7 +324,7 @@ file or an array of quarter length values.</p>
 
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.reduced_dseg">
-<code class="sig-name descname">reduced_dseg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">as_str</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.reduced_dseg" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reduced_dseg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">as_str</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.reduced_dseg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.reduced_dseg" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>as_str</strong> (<em>bool</em>) – whether or not to return the reduced d-seg as a string.</p>
@@ -341,22 +347,22 @@ file or an array of quarter length values.</p>
 
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.successive_ratio_array">
-<code class="sig-name descname">successive_ratio_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.successive_ratio_array" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">successive_ratio_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.successive_ratio_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.successive_ratio_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>See docstring of <a class="reference internal" href="utils.html#decitala.utils.successive_ratio_array" title="decitala.utils.successive_ratio_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.utils.successive_ratio_array</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.successive_difference_array">
-<code class="sig-name descname">successive_difference_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.successive_difference_array" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">successive_difference_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.successive_difference_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.successive_difference_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>See docstring of <a class="reference internal" href="utils.html#decitala.utils.successive_difference_array" title="decitala.utils.successive_difference_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.utils.successive_difference_array</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.cyclic_permutations">
-<code class="sig-name descname">cyclic_permutations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.cyclic_permutations" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cyclic_permutations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.cyclic_permutations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.cyclic_permutations" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>all cyclic permutations of <code class="xref py py-meth docutils literal notranslate"><span class="pre">ql_array()</span></code> as in Morris (year?).</p>
+<dd class="field-odd"><p>all cyclic permutations of <code class="xref py py-meth docutils literal notranslate"><span class="pre">ql_array()</span></code> as in Morris.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>numpy.array</p>
@@ -379,14 +385,16 @@ file or an array of quarter length values.</p>
 
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.morris_symmetry_class">
-<code class="sig-name descname">morris_symmetry_class</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.morris_symmetry_class" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">morris_symmetry_class</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.morris_symmetry_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.morris_symmetry_class" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the fragment’s form of rhythmic symmetry, as defined by Morris (“Sets, Scales and Rhythmic Cycles</p>
+<dd class="field-odd"><p>the fragment’s form of rhythmic symmetry, as defined by Morris in “Sets, Scales and Rhythmic Cycles. 
+A Classification of Talas in Indian Music” (1999).</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
 </dd>
 </dl>
-<p>A Classification of Talas in Indian Music”). 
-:rtype: str</p>
 <ul class="simple">
 <li><ol class="upperroman simple">
 <li><p>Maximally Trivial:                         of the form <span class="math notranslate nohighlight">\(X\)</span> (one onset, one anga class)</p></li>
@@ -421,10 +429,10 @@ file or an array of quarter length values.</p>
 
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.std">
-<code class="sig-name descname">std</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.std" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">std</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.std" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the standard deviation of the fragment’s ql_array.</p>
+<dd class="field-odd"><p>the standard deviation of <cite>self.ql_array()</cite>.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>float</p>
@@ -434,7 +442,7 @@ file or an array of quarter length values.</p>
 
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.c_score">
-<code class="sig-name descname">c_score</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.c_score" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">c_score</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.c_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.c_score" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the c-score of the fragment, as defined in Povel and Essens (1985).</p>
@@ -447,7 +455,7 @@ file or an array of quarter length values.</p>
 
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.nPVI">
-<code class="sig-name descname">nPVI</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.nPVI" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">nPVI</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.nPVI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.nPVI" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the nPVI of the fragment (Low, Grabe, &amp; Nolan, 2000).</p>
@@ -460,18 +468,18 @@ file or an array of quarter length values.</p>
 
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.augment">
-<code class="sig-name descname">augment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">difference</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GeneralFragment.augment" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method returns a new GeneralFragment object with a ql_array corresponding to the original
-fragment augmented by a given ratio and difference.</p>
+<code class="sig-name descname">augment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factor</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">difference</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.augment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.augment" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method returns a new <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GeneralFragment</span></code></a> object with a ql_array 
+corresponding to the original fragment augmented by a given ratio and difference.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>float</strong> (<em>difference</em>) – the factor by which the GeneralFragment will be augmented.</p></li>
+<li><p><strong>float</strong> (<em>difference</em>) – the factor by which the fragment will be augmented.</p></li>
 <li><p><strong>float</strong> – the difference by which the GeneralFragment will be augmented.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><cite>~decitala.fragment.GeneralFragment</cite> object.</p>
+<dd class="field-even"><p><a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GeneralFragment</span></code></a> object.</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pre_augmentation</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">([</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Spondee&quot;</span><span class="p">)</span>
@@ -487,7 +495,7 @@ fragment augmented by a given ratio and difference.</p>
 
 <dl class="py class">
 <dt id="decitala.fragment.Decitala">
-<em class="property">class </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">Decitala</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.Decitala" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">Decitala</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#Decitala"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.Decitala" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.GeneralFragment</span></code></a></p>
 <p>Class defining a Decitala object. The class currently reads from the <cite>Fragments/Decitala</cite>
 folder which contains XML files for each fragment.</p>
@@ -496,7 +504,7 @@ folder which contains XML files for each fragment.</p>
 <dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name of the decitala, as is transliterated in the Lavignac, 1921.</p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="#decitala.fragment.DecitalaException" title="decitala.fragment.DecitalaException"><strong>decitala.fragment.DecitalaException</strong></a> – when there is an issue with the name.</p>
+<dd class="field-even"><p><a class="reference internal" href="#decitala.fragment.DecitalaException" title="decitala.fragment.DecitalaException"><strong>DecitalaException</strong></a> – when there is an issue with the name.</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ragavardhana</span> <span class="o">=</span> <span class="n">Decitala</span><span class="p">(</span><span class="s1">&#39;Ragavardhana&#39;</span><span class="p">)</span>
@@ -557,22 +565,22 @@ folder which contains XML files for each fragment.</p>
 
 <dl class="py method">
 <dt id="decitala.fragment.Decitala.get_by_id">
-<em class="property">classmethod </em><code class="sig-name descname">get_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.Decitala.get_by_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class method which retrieves a <cite>decitala.fragment.Decitala</cite> object based on a given ID number. These 
+<em class="property">classmethod </em><code class="sig-name descname">get_by_id</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#Decitala.get_by_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.Decitala.get_by_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class method which retrieves a <a class="reference internal" href="#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Decitala</span></code></a> object based on a given ID number. These 
 numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. Some talas have (as I’m calling them) 
 “sub-talas,” meaning that their id is not unique. Querying by those talas is currently not supported.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>a Decitala object</p>
+<dd class="field-odd"><p>a <a class="reference internal" href="#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Decitala</span></code></a> object</p>
 </dd>
 <dt class="field-even">Parameters</dt>
 <dd class="field-even"><p><strong>input_id</strong> (<em>int</em>) – id number of the tala (in range 1-120).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#decitala.fragment.Decitala" title="decitala.fragment.Decitala">decitala.fragment.Decitala</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Decitala</span></code></a></p>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="#decitala.fragment.DecitalaException" title="decitala.fragment.DecitalaException"><strong>decitala.fragment.DecitalaException</strong></a> – when there is an issue with the <cite>input_it</cite>.</p>
+<dd class="field-even"><p><a class="reference internal" href="#decitala.fragment.DecitalaException" title="decitala.fragment.DecitalaException"><strong>DecitalaException</strong></a> – when there is an issue with the <cite>input_id</cite>.</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Decitala</span><span class="o">.</span><span class="n">get_by_id</span><span class="p">(</span><span class="mi">89</span><span class="p">)</span>
@@ -584,7 +592,7 @@ numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. So
 <dl class="py method">
 <dt id="decitala.fragment.Decitala.carnatic_string">
 <em class="property">property </em><code class="sig-name descname">carnatic_string</code><a class="headerlink" href="#decitala.fragment.Decitala.carnatic_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>See docstring of :<cite>decitala.tools.successive_ratio_array</cite>.</p>
+<dd><p>See docstring of <a class="reference internal" href="utils.html#decitala.utils.successive_ratio_array" title="decitala.utils.successive_ratio_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.utils.successive_ratio_array</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -604,10 +612,9 @@ numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. So
 
 <dl class="py class">
 <dt id="decitala.fragment.GreekFoot">
-<em class="property">class </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">GreekFoot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.fragment.GreekFoot" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">GreekFoot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GreekFoot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GreekFoot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.GeneralFragment</span></code></a></p>
-<p>Class that stores greek foot data. Reads from a folder containing all greek feet XML files.
-Inherits from GeneralFragment.</p>
+<p>Class that stores greek foot data. Reads from a folder containing all greek feet XML files.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bacchius</span> <span class="o">=</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s1">&#39;Bacchius&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bacchius</span>
 <span class="go">&lt;fragment.GreekFoot Bacchius&gt;</span>
@@ -638,7 +645,7 @@ Inherits from GeneralFragment.</p>
 <dl class="py method">
 <dt id="decitala.fragment.GreekFoot.greek_string">
 <em class="property">property </em><code class="sig-name descname">greek_string</code><a class="headerlink" href="#decitala.fragment.GreekFoot.greek_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>See docstring of <code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.tools.ql_array_to_greek_diacritics</span></code>.</p>
+<dd><p>See docstring of <a class="reference internal" href="utils.html#decitala.utils.ql_array_to_greek_diacritics" title="decitala.utils.ql_array_to_greek_diacritics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.utils.ql_array_to_greek_diacritics</span></code></a>.</p>
 </dd></dl>
 
 </dd></dl>

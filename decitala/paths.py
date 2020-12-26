@@ -1,69 +1,130 @@
 # -*- coding: utf-8 -*-
 ####################################################################################################
 # File:     paths.py
-# Purpose:  Extraction and analysis of data from `:obj:decitala.database.create_database`. 
+# Purpose:  Extraction and analysis of path data. 
 # 
 # Author:   Luke Poeppel
 #
 # Location: Kent, CT 2020
 ####################################################################################################
-
+"""
+Tools for analyzing the extracted data present in sqlite3 databases (from :obj:`~decitala.database.create_database`.)
+"""
 import numpy as np
+import os
 import re
 import sqlite3 as lite 
 import unittest
-import warnings
 
 from ast import literal_eval
 from collections import Counter
 from scipy import stats
 
-from music21 import chord
-from music21 import converter
-from music21 import note
-from music21 import stream
+from music21 import (
+	chord,
+	converter,
+	note,
+	stream
+)
 
-from fragment import Decitala
-
-def get_all_paths_info(db_path):
-	"""
-	Returns all the path info
-	"""
-	conn = lite.connect(db_path)
-	cur = conn.cursor()
-	execute = cur.execute("SELECT * FROM sqlite_master where type='table'")
-
-	all_tables_info = []
-	for table in execute.fetchall():
-		table_info = []
-		if table[1][0:4] in 'Paths':
-			paths_table_num = table[1].split('_')[-1]
-			path_string = "SELECT * FROM Paths_{}".format(str(paths_table_num))
-			cur.execute(path_string)
-			count = 0
-			rows = cur.fetchall()
-			for row in rows:
-				count += 1
-			
-			table_info.append(int(table[1].split('_')[-1]))
-			table_info.append(count)
-
-		if table_info:
-			all_tables_info.append(table_info)
-
-	return all_tables_info
+############### EXCEPTIONS ###############
+class PathsException(Exception):
+	pass
 
 ####################################################################################################
-# SubPath(s) and Path(s)
 class SubPath(object):
+	"""
+	Object for storing information about a subpath in a given database. Keeps track of the path onsets, 
+	the decitalas within it, and calculates relevant information (e.g. `gap_score`). Under the right 
+	conditions, :obj:`~decitala.paths.SubPath`s compose a full :obj:`decitala.paths.Path` object. 
+	"""
+	def __init__(self, db_path, table_num, path_num, **kwargs):
+		assert os.path.isfile(db_path), PathsException("The database path provided is invalid.")
+
+		self.db_path = db_path
+		self.table_num = table_num
+		self.path_num = path_num
+
+		conn = lite.connect(self.db_path)
+		cur = conn.cursor()
+
+		path_string = "SELECT * FROM Paths_{}".format(str(table_num))
+		cur.execute(path_string)
+		rows = cur.fetchall()
+
+		path = []
+		pitch_data = []
+		for i, this_row in enumerate(rows):
+			for this_data in this_row:
+				if this_data[0:3] == '(((':
+					evaluated = literal_eval(this_data)
+					pitch_data.append(evaluated)
+
+			if self.path_num == (i + 1):
+				stop_index = 0
+				for this_data in this_row:
+					if this_data == 'NULL':
+						stop_index = this_row.index(this_data)
+						break
+					elif this_data[0:3] == '(((':
+						stop_index = this_row.index(this_data)
+
+				for this_data in this_row[0:stop_index]:
+					evaluated = literal_eval(this_data)
+					path.append(evaluated)
+
+				pitch_data = literal_eval(this_row[-1])
+				break
+			else:
+				pass
+			
+		self.path = path
+		self.pitch_data = pitch_data
+
+		fragments_pre = []
+		fragment_path_string = "SELECT * FROM Fragments"
+		cur.execute(fragment_path_string)
+		fragment_rows = cur.fetchall()
+
+		for this_range in self.path:
+			for this_row in fragment_rows:
+				if this_range[0] == this_row[0] and this_range[1] == this_row[1]:
+					fragments_pre.append(this_row[2])
+		
+		print(fragments_pre)
+		
+		# def _remove_id(full_name):
+		# 	x = re.search(r'\d+', full_name)
+		# 	split = full_name.split('_')
+		# 	if not(len(split[1]) == 1):
+		# 		new_str = '_'.join(split[1:])
+		# 		return new_str
+		# 	else:
+		# 		new_str = '_'.join(split[2:])
+		# 		return new_str
+
+		# decitalas_post = [_remove_id(x) for x in decitalas_pre]
+		# self.decitalas = [Decitala(string) for string in decitalas_post]
+
+
+	def __repr__(self):
+		return '<SubPath_{0}: {1}>'.format(str(self.path_num), str(self.path))
+
+lodb_path = "/Users/lukepoeppel/livre_dorgue_0_new.db"
+sp17 = SubPath(lodb_path, 17, 7)
+
+print(sp17)
+
+
+####################################################################################################
+
+class SubPathOld(object):
 	"""
 	Object for storing information about a subpath in a given database. Keeps track of the path onsets, 
 	the decitalas within it, and calculates relevant information (e.g. gap_score). Under the right 
 	conditions, Subpaths compose a full Path object (defined below).
 
 	NOTE: the individual paths in a sqlite table are 1-indexed. 
-
-	TODO: __add__() method for subpaths (this is a bit more complicated...)
 
 	>>> livre_dorgue0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
 	>>> sp = SubPath(db_path=livre_dorgue0_path, table_num=8, path_num=62)
@@ -184,7 +245,7 @@ class SubPath(object):
 
 		# Get tala information. (More efficient to do it separately.)
 		decitalas_pre = []
-		fragment_path_string = "SELECT * FROM Fragment"
+		fragment_path_string = "SELECT * FROM Fragments"
 		cur.execute(fragment_path_string)
 		rows = cur.fetchall()
 
@@ -308,9 +369,48 @@ class SubPath(object):
 		"""
 		raise NotImplementedError
 
-haikai0_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
+
+
+
+
+
+
+
+
+
+
+
+# haikai0_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
 
 ####################################################################################################
+def get_all_paths_info(db_path):
+	"""
+	Returns all the path info
+	"""
+	conn = lite.connect(db_path)
+	cur = conn.cursor()
+	execute = cur.execute("SELECT * FROM sqlite_master where type='table'")
+
+	all_tables_info = []
+	for table in execute.fetchall():
+		table_info = []
+		if table[1][0:4] in 'Paths':
+			paths_table_num = table[1].split('_')[-1]
+			path_string = "SELECT * FROM Paths_{}".format(str(paths_table_num))
+			cur.execute(path_string)
+			count = 0
+			rows = cur.fetchall()
+			for row in rows:
+				count += 1
+			
+			table_info.append(int(table[1].split('_')[-1]))
+			table_info.append(count)
+
+		if table_info:
+			all_tables_info.append(table_info)
+
+	return all_tables_info
+
 # Model 
 def model3(subpath, weights):
 	components = []
@@ -378,14 +478,14 @@ def get_full_model3_path(db_path, first_path_weights = [0.7, 0.3], rest_weights 
 
 ####################################################################################################
 # Testing
-haikai0_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
-haikai1_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_1.db'
+# haikai0_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
+# haikai1_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_1.db'
 
-liturgie3_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_3.db'
-liturgie4_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_4.db'
+# liturgie3_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_3.db'
+# liturgie4_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_4.db'
 
-livre_dorgue_0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
-livre_dorgue_1_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db'
+# livre_dorgue_0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
+# livre_dorgue_1_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db'
 
 class Path(object):
 	"""
@@ -420,15 +520,7 @@ class Path(object):
 		raise NotImplementedError
 
 ###############################################################################
-# Helper function to ignore annoying warnings 
-# source: https://www.neuraldump.net/2017/06/how-to-suppress-python-unittest-warnings/
-
-def ignore_warnings(test_func):
-	def do_test(self, *args, **kwargs):
-		with warnings.catch_warnings():
-			warnings.simplefilter("ignore")
-			test_func(self, *args, **kwargs)
-	return do_test
+# Testing
 
 class Test(unittest.TestCase):
 	def set_up(self):

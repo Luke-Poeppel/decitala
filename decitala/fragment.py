@@ -244,7 +244,7 @@ class GeneralFragment(object):
 		
 	def cyclic_permutations(self):
 		"""
-		:return: all cyclic permutations of :meth:`~decitala.fragment.Decitala.ql_array` as in Morris (year?).
+		:return: all cyclic permutations of :meth:`~decitala.fragment.Decitala.ql_array` as in Morris.
 		:rtype: numpy.array
 		"""
 		return np.array([np.roll(self.ql_array(), -i) for i in range(self.num_onsets)])
@@ -259,8 +259,8 @@ class GeneralFragment(object):
 
 	def morris_symmetry_class(self):
 		"""
-		:return: the fragment's form of rhythmic symmetry, as defined by Morris ("Sets, Scales and Rhythmic Cycles 
-		A Classification of Talas in Indian Music"). 
+		:return: the fragment's form of rhythmic symmetry, as defined by Morris in "Sets, Scales and Rhythmic Cycles. 
+				A Classification of Talas in Indian Music" (1999). 
 		:rtype: str
 
 		- I. Maximally Trivial:				of the form :math:`X` (one onset, one anga class)
@@ -291,7 +291,7 @@ class GeneralFragment(object):
 
 	def std(self):
 		"""
-		:return: the standard deviation of the fragment's ql_array.
+		:return: the standard deviation of `self.ql_array()`.
 		:rtype: float
 		"""
 		return np.std(self.ql_array())
@@ -328,12 +328,12 @@ class GeneralFragment(object):
 	
 	def augment(self, factor=1.0, difference=0.0):
 		"""
-		This method returns a new GeneralFragment object with a ql_array corresponding to the original
-		fragment augmented by a given ratio and difference. 
+		This method returns a new :obj:`~decitala.fragment.GeneralFragment` object with a ql_array 
+		corresponding to the original fragment augmented by a given ratio and difference. 
 
-		:param factor float: the factor by which the GeneralFragment will be augmented.
+		:param factor float: the factor by which the fragment will be augmented.
 		:param difference float: the difference by which the GeneralFragment will be augmented. 
-		:rtype: `~decitala.fragment.GeneralFragment` object. 
+		:rtype: :obj:`~decitala.fragment.GeneralFragment` object. 
 
 		>>> pre_augmentation = GeneralFragment([2.0, 2.0], name="Spondee")
 		>>> pre_augmentation
@@ -356,7 +356,7 @@ class Decitala(GeneralFragment):
 	folder which contains XML files for each fragment. 
 
 	:param str name: Name of the decitala, as is transliterated in the Lavignac, 1921. 
-	:raises `decitala.fragment.DecitalaException`: when there is an issue with the name.
+	:raises `~decitala.fragment.DecitalaException`: when there is an issue with the name.
 		
 	>>> ragavardhana = Decitala('Ragavardhana')
 	>>> ragavardhana
@@ -461,14 +461,14 @@ class Decitala(GeneralFragment):
 	@classmethod
 	def get_by_id(cls, input_id):
 		"""
-		A class method which retrieves a `decitala.fragment.Decitala` object based on a given ID number. These 
+		A class method which retrieves a :obj:`~decitala.fragment.Decitala` object based on a given ID number. These 
 		numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. Some talas have (as I'm calling them) 
 		"sub-talas," meaning that their id is not unique. Querying by those talas is currently not supported.
 
-		:return: a Decitala object
+		:return: a :obj:`~decitala.fragment.Decitala` object
 		:param int input_id: id number of the tala (in range 1-120).
-		:rtype: decitala.fragment.Decitala
-		:raises `decitala.fragment.DecitalaException`: when there is an issue with the `input_it`.
+		:rtype: :obj:`~decitala.fragment.Decitala`
+		:raises `~decitala.fragment.DecitalaException`: when there is an issue with the `input_id`.
 
 		>>> Decitala.get_by_id(89)
 		<fragment.Decitala 89_Lalitapriya>
@@ -491,7 +491,7 @@ class Decitala(GeneralFragment):
 	
 	@property
 	def carnatic_string(self):
-		"""See docstring of :`decitala.tools.successive_ratio_array`."""
+		"""See docstring of :obj:`decitala.utils.successive_ratio_array`."""
 		return ql_array_to_carnatic_string(self.ql_array())
 	
 	@property
@@ -506,7 +506,6 @@ class Decitala(GeneralFragment):
 class GreekFoot(GeneralFragment):
 	"""
 	Class that stores greek foot data. Reads from a folder containing all greek feet XML files.
-	Inherits from GeneralFragment. 
 
 	>>> bacchius = GreekFoot('Bacchius')
 	>>> bacchius
@@ -571,7 +570,7 @@ class GreekFoot(GeneralFragment):
 	
 	@property
 	def greek_string(self):
-		"""See docstring of :obj:`decitala.tools.ql_array_to_greek_diacritics`."""
+		"""See docstring of :obj:`decitala.utils.ql_array_to_greek_diacritics`."""
 		return ql_array_to_greek_diacritics(self.ql_array())
 
 if __name__ == '__main__':

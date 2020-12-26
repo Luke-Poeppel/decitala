@@ -513,9 +513,9 @@ def get_object_indices(filepath, part_num):
 
 	return data_out
 
-def contiguous_summation(object_indices):
+def contiguous_summation(data):
 	"""
-	Given data (or subset of data) from :meth:get_object_indices, finds every location where the pitch and 
+	Given some ``data`` from :meth:get_object_indices, finds every location where the pitch and 
 	rhythmic material are contiguously equal and sums these regions. 
 	
 	>>> example_data = [
@@ -590,7 +590,10 @@ def contiguous_summation(object_indices):
 
 def frame_to_ql_array(data):
 	"""
-	NOTE: in use, the note objects already have quarter lengths; here, they come from the index range.
+	:param list data: data from get_object_indices
+	:return: numpy array holding the associated quarter length of a given window. 
+	:rtype: numpy.array
+
 	>>> my_frame = [
 	...     (note.Note("B-", quarterLength=0.125), (4.125, 4.25)), 
 	...		(note.Note("A", quarterLength=0.25), (4.25, 4.5)), 

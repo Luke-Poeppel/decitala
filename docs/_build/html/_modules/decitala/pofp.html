@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>decitala.pofp &mdash; decitala  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="decitala  documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">database.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fragment.html">fragment.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../paths.html">paths.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pofp.html">pofp.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trees.html">trees.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils.py</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">decitala</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>decitala.pofp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for decitala.pofp</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">####################################################################################################</span>
+<span class="c1"># File:     po_non_overlapping_onsets.py</span>
+<span class="c1"># Purpose:  M. Raynards technique for solving the non-overlapping onset ranges problem using </span>
+<span class="c1">#           Pareto optimal frontiers of sequences.</span>
+<span class="c1"># </span>
+<span class="c1"># Author:   Luke Poeppel, M. Raynard.</span>
+<span class="c1">#</span>
+<span class="c1"># Location: Kent, CT 2020</span>
+<span class="c1">####################################################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**NOTE**: M. Raynard helpfully provided a technique for solving the given problem (an iterative approach</span>
+<span class="sd">to the end-overlapping indices problem) in a StackOverflow post from Summer, 2020. The link to the </span>
+<span class="sd">original post is: https://stackoverflow.com/questions/62734114/iterative-solution-to-end-overlapping-indices.</span>
+
+<span class="sd">Once we have retrieved :math:`n` talas in a part, we want to check whether or not they align. </span>
+<span class="sd">If a tala :math:`T_1` ranges from onsets :math:`X_i` to :math:`Y_i` and a tala :math:`T_2` ranges from </span>
+<span class="sd">onsets :math:`X_j` to :math:`Y_j`, if :math:`X_j &lt; Y_i`, we can&#39;t satisfactorily align :math:`T_1` and</span>
+<span class="sd">:math:`T_2`; this means that one (or both) of these talas was not intentionally included, and simply </span>
+<span class="sd">exists as a sub-tala or cyclic rotation. Multiple possible alignments exist, so we calculate them all</span>
+<span class="sd">using an iterative solution to the end-overlapping indices problem using a Pareto frontier of paths. </span>
+
+<span class="sd">The output to the alignment function, :obj:`decitala.pofp.get_pareto_optimal_longest_paths`, may be exponential </span>
+<span class="sd">in size with respect to the input. As such, we use the observation that there often exist &quot;break points&quot; in the</span>
+<span class="sd">data collected from rolling search: points at which there exists no overlap. We divide the data by each of </span>
+<span class="sd">these regions (if they exist) and generate the longest paths separately. </span>
+
+<span class="sd">Several of the functions below have the parameter ``data``. This parameter is of the form returned </span>
+<span class="sd">by :obj:`decitala.trees.rolling_search` and looks like :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`</span>
+<span class="sd">for :math:`X_i` the fragment name/modification, :math:`b_i` the start offset and :math:`s_i` the stop offset. </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+
+<div class="viewcode-block" id="check_break_point"><a class="viewcode-back" href="../../pofp.html#decitala.pofp.check_break_point">[docs]</a><span class="k">def</span> <span class="nf">check_break_point</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Helper function for `pofp.get_break_points`. Checks index i of the onset_list that all values </span>
+<span class="sd">	prior to it are less than or equal to :math:`b_i` and :math:`s_i`. If True, this means that </span>
+<span class="sd">	the data at index i is &gt;= all previous.</span>
+
+<span class="sd">	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`</span>
+<span class="sd">	:param int i: index of the data to check. </span>
+<span class="sd">	:return: whether or not the queried index is a break point. </span>
+<span class="sd">	:rtype: bool</span>
+
+<span class="sd">	&gt;&gt;&gt; tup_lst = [</span>
+<span class="sd">	...		((&#39;info1&#39;,), (0.0, 2.0)), ((&#39;info2&#39;,), (0.0, 4.0)), ((&#39;info3&#39;,), (2.0, 4.0)), ((&#39;info4&#39;,), (2.0, 5.75)), </span>
+<span class="sd">	... 	((&#39;info5&#39;,), (2.5, 4.5)), ((&#39;info6&#39;,), (4.0, 5.5)), ((&#39;info7&#39;,), (6.0, 7.25))</span>
+<span class="sd">	... ] </span>
+<span class="sd">	&gt;&gt;&gt; for info in tup_lst:</span>
+<span class="sd">	... 	print(info)</span>
+<span class="sd">	((&#39;info1&#39;,), (0.0, 2.0))</span>
+<span class="sd">	((&#39;info2&#39;,), (0.0, 4.0))</span>
+<span class="sd">	((&#39;info3&#39;,), (2.0, 4.0))</span>
+<span class="sd">	((&#39;info4&#39;,), (2.0, 5.75))</span>
+<span class="sd">	((&#39;info5&#39;,), (2.5, 4.5))</span>
+<span class="sd">	((&#39;info6&#39;,), (4.0, 5.5))</span>
+<span class="sd">	((&#39;info7&#39;,), (6.0, 7.25))</span>
+<span class="sd">	&gt;&gt;&gt; print(check_break_point(tup_lst, 2))</span>
+<span class="sd">	False</span>
+<span class="sd">	&gt;&gt;&gt; print(check_break_point(tup_lst, 6))</span>
+<span class="sd">	True</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span>
+	<span class="n">check</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">]:</span>
+		<span class="n">range_data</span> <span class="o">=</span> <span class="n">this_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">range_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">range_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+			<span class="n">check</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">check</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+	
+	<span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">check</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="mi">1</span><span class="p">}:</span>
+		<span class="k">return</span> <span class="kc">True</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="get_break_points"><a class="viewcode-back" href="../../pofp.html#decitala.pofp.get_break_points">[docs]</a><span class="k">def</span> <span class="nf">get_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`</span>
+<span class="sd">	:return: every index in the input at which the data is at most end-overlapping. </span>
+<span class="sd">	:rtype: list</span>
+
+<span class="sd">	&gt;&gt;&gt; tup_lst = [</span>
+<span class="sd">	...		((&#39;info1&#39;,), (0.0, 2.0)), ((&#39;info2&#39;,), (0.0, 4.0)), ((&#39;info3&#39;,), (2.0, 4.0)), ((&#39;info4&#39;,), (2.0, 5.75)), </span>
+<span class="sd">	... 	((&#39;info5&#39;,), (2.5, 4.5)), ((&#39;info6&#39;,), (4.0, 5.5)), ((&#39;info7&#39;,), (6.0, 7.25))</span>
+<span class="sd">	... ] </span>
+<span class="sd">	&gt;&gt;&gt; get_break_points(tup_lst)</span>
+<span class="sd">	[6]</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">break_points</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">check_break_point</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+			<span class="n">break_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+			
+		<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+	
+	<span class="k">return</span> <span class="n">break_points</span></div>
+
+<div class="viewcode-block" id="partition_data_by_break_points"><a class="viewcode-back" href="../../pofp.html#decitala.pofp.partition_data_by_break_points">[docs]</a><span class="k">def</span> <span class="nf">partition_data_by_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Partitions the input data according to all calculated breakpoints. </span>
+
+<span class="sd">	&gt;&gt;&gt; tup_lst = [</span>
+<span class="sd">	...		((&#39;info1&#39;,), (0.0, 2.0)), ((&#39;info2&#39;,), (0.0, 4.0)), ((&#39;info3&#39;,), (2.0, 4.0)), ((&#39;info4&#39;,), (2.0, 5.75)), </span>
+<span class="sd">	... 	((&#39;info5&#39;,), (2.5, 4.5)), ((&#39;info6&#39;,), (4.0, 5.5)), ((&#39;info7&#39;,), (6.0, 7.25))</span>
+<span class="sd">	... ] </span>
+<span class="sd">	&gt;&gt;&gt; for this_partition in partition_data_by_break_points(tup_lst):</span>
+<span class="sd">	...    print(this_partition)</span>
+<span class="sd">	[((&#39;info1&#39;,), (0.0, 2.0)), ((&#39;info2&#39;,), (0.0, 4.0)), ((&#39;info3&#39;,), (2.0, 4.0)), ((&#39;info4&#39;,), (2.0, 5.75)), ((&#39;info5&#39;,), (2.5, 4.5)), ((&#39;info6&#39;,), (4.0, 5.5))]</span>
+<span class="sd">	[((&#39;info7&#39;,), (6.0, 7.25))]</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">break_points</span> <span class="o">=</span> <span class="n">get_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">break_points</span><span class="p">,</span> <span class="n">break_points</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">])]</span>
+
+	<span class="k">return</span> <span class="n">out</span></div>
+
+<span class="c1">####################################################################################################</span>
+<div class="viewcode-block" id="get_pareto_optimal_longest_paths"><a class="viewcode-back" href="../../pofp.html#decitala.pofp.get_pareto_optimal_longest_paths">[docs]</a><span class="k">def</span> <span class="nf">get_pareto_optimal_longest_paths</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Algorithm courtesy of M. Raynard. </span>
+
+<span class="sd">	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`</span>
+<span class="sd">	:return: list of lists, each holding a pareto-optimal longest path constructed from the data.</span>
+<span class="sd">	:rtype: list</span>
+
+<span class="sd">	&gt;&gt;&gt; tup_lst = [</span>
+<span class="sd">	...     ((&quot;info1&quot;,), (0.0, 2.0)), ((&quot;info2&quot;,), (0.0, 4.0)), ((&quot;info3&quot;,), (2.5, 4.5)), ((&quot;info4&quot;,), (2.0, 5.75)),</span>
+<span class="sd">	...     ((&quot;info5&quot;,), (2.0, 4.0)), ((&quot;info6&quot;,), (6.0, 7.25)), ((&quot;info7&quot;,), (4.0, 5.5))]</span>
+<span class="sd">	&gt;&gt;&gt; # With only 7 windows, we can extract four possible paths!</span>
+<span class="sd">	&gt;&gt;&gt; for this_path in get_pareto_optimal_longest_paths(tup_lst):</span>
+<span class="sd">	...    path = [x[1] for x in this_path]</span>
+<span class="sd">	...    print(path)</span>
+<span class="sd">	[(0.0, 2.0), (2.0, 4.0), (4.0, 5.5), (6.0, 7.25)]</span>
+<span class="sd">	[(0.0, 2.0), (2.0, 5.75), (6.0, 7.25)]</span>
+<span class="sd">	[(0.0, 2.0), (2.5, 4.5), (6.0, 7.25)]</span>
+<span class="sd">	[(0.0, 4.0), (4.0, 5.5), (6.0, 7.25)]</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">tup_lst</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+	<span class="n">sources</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+		<span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tup_lst</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">d</span> <span class="o">&lt;=</span> <span class="n">a</span> <span class="k">for</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tup_lst</span><span class="p">)</span>
+	<span class="p">}</span> 
+
+	<span class="n">sinks</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+		<span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tup_lst</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">b</span> <span class="o">&lt;=</span> <span class="n">c</span> <span class="k">for</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tup_lst</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="n">min_successor</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span> <span class="nb">min</span><span class="p">(</span><span class="n">d</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">tup_lst</span> <span class="k">if</span> <span class="n">c</span> <span class="o">&gt;=</span> <span class="n">b</span><span class="p">)</span>
+		<span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">tup_lst</span><span class="p">)</span> <span class="o">-</span> <span class="n">sinks</span>
+	<span class="p">}</span>
+
+	<span class="n">successors</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span> <span class="p">[</span>
+			<span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+			<span class="k">for</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tup_lst</span>
+			<span class="k">if</span> <span class="n">b</span> <span class="o">&lt;=</span> <span class="n">c</span> <span class="o">&lt;=</span> <span class="n">d</span> <span class="ow">and</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="n">min_successor</span><span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)]</span>
+		<span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tup_lst</span>
+	<span class="p">}</span>
+
+	<span class="n">solutions</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">def</span> <span class="nf">print_path_rec</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">sinks</span><span class="p">:</span>
+			<span class="n">solutions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">path</span> <span class="o">+</span> <span class="p">[</span><span class="n">node</span><span class="p">]])</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">successor</span> <span class="ow">in</span> <span class="n">successors</span><span class="p">[</span><span class="n">node</span><span class="p">]:</span>
+				<span class="n">print_path_rec</span><span class="p">(</span><span class="n">successor</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="p">[</span><span class="n">node</span><span class="p">])</span>
+
+	<span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+		<span class="n">print_path_rec</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="p">[])</span>
+
+	<span class="n">flatten</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+	<span class="n">flattened</span> <span class="o">=</span> <span class="n">flatten</span><span class="p">(</span><span class="n">solutions</span><span class="p">)</span>
+
+	<span class="n">flattened</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+	<span class="n">pareto_optimal_paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">flattened</span> <span class="k">for</span> <span class="n">flattened</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">flattened</span><span class="p">))</span>
+
+	<span class="c1">#temporary (stupid) solution</span>
+	<span class="n">stupid_out</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">this_path</span> <span class="ow">in</span> <span class="n">pareto_optimal_paths</span><span class="p">:</span>
+		<span class="n">new_path</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">this_range</span> <span class="ow">in</span> <span class="n">this_path</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">this_range</span> <span class="o">==</span> <span class="n">this_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+					<span class="n">new_path</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">this_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">this_range</span><span class="p">])</span>
+					<span class="k">continue</span>
+		<span class="n">stupid_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">stupid_out</span></div>
+
+<span class="c1">####################################################################################################</span>
+<span class="c1"># Testing</span>
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">data</span><span class="p">():</span>
+	<span class="n">sh_data</span> <span class="o">=</span> <span class="p">[</span>
+		<span class="p">((</span><span class="s1">&#39;info_0&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_1&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.75</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_2&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.25</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_3&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_4&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">5.75</span><span class="p">,</span> <span class="mf">9.75</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_5&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">5.75</span><span class="p">,</span> <span class="mf">13.25</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_6&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">8.25</span><span class="p">,</span> <span class="mf">11.25</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_7&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">8.25</span><span class="p">,</span> <span class="mf">13.25</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_8&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">9.75</span><span class="p">,</span> <span class="mf">12.25</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_9&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">10.25</span><span class="p">,</span> <span class="mf">13.25</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_10&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">13.25</span><span class="p">,</span> <span class="mf">14.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_11&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">13.25</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_12&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">15.0</span><span class="p">,</span> <span class="mf">19.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_13&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">19.0</span><span class="p">,</span> <span class="mf">19.875</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_14&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">19.0</span><span class="p">,</span> <span class="mf">20.875</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_15&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">19.375</span><span class="p">,</span> <span class="mf">20.875</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_16&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">20.875</span><span class="p">,</span> <span class="mf">22.125</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_17&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">20.875</span><span class="p">,</span> <span class="mf">22.625</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_18&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">21.625</span><span class="p">,</span> <span class="mf">23.125</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_19&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">22.625</span><span class="p">,</span> <span class="mf">30.625</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_20&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">23.125</span><span class="p">,</span> <span class="mf">27.625</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_21&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">24.625</span><span class="p">,</span> <span class="mf">29.625</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_22&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">26.125</span><span class="p">,</span> <span class="mf">29.625</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_23&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">26.125</span><span class="p">,</span> <span class="mf">30.625</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_24&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">27.625</span><span class="p">,</span> <span class="mf">30.625</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_25&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">30.625</span><span class="p">,</span> <span class="mf">31.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_26&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">30.625</span><span class="p">,</span> <span class="mf">32.5</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_27&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">31.0</span><span class="p">,</span> <span class="mf">32.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_28&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">31.0</span><span class="p">,</span> <span class="mf">33.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_29&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">31.5</span><span class="p">,</span> <span class="mf">34.0</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_30&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">32.5</span><span class="p">,</span> <span class="mf">34.625</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_31&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">34.0</span><span class="p">,</span> <span class="mf">35.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_32&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">34.625</span><span class="p">,</span> <span class="mf">35.875</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_33&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">34.625</span><span class="p">,</span> <span class="mf">36.375</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_34&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">35.375</span><span class="p">,</span> <span class="mf">37.125</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_35&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">35.875</span><span class="p">,</span> <span class="mf">37.125</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_36&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">36.375</span><span class="p">,</span> <span class="mf">37.625</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_37&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">36.375</span><span class="p">,</span> <span class="mf">38.125</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_38&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">38.125</span><span class="p">,</span> <span class="mf">39.0</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_39&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">38.125</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_40&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">38.5</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_41&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">40.0</span><span class="p">,</span> <span class="mf">41.25</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_42&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">40.0</span><span class="p">,</span> <span class="mf">41.75</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_43&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">41.75</span><span class="p">,</span> <span class="mf">45.75</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_44&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">45.75</span><span class="p">,</span> <span class="mf">46.625</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_45&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">45.75</span><span class="p">,</span> <span class="mf">47.625</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_46&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">46.125</span><span class="p">,</span> <span class="mf">47.625</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_47&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">47.625</span><span class="p">,</span> <span class="mf">48.875</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_48&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">47.625</span><span class="p">,</span> <span class="mf">49.375</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_49&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">49.375</span><span class="p">,</span> <span class="mf">53.375</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_50&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">49.375</span><span class="p">,</span> <span class="mf">56.875</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_51&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">51.875</span><span class="p">,</span> <span class="mf">54.875</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_52&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">51.875</span><span class="p">,</span> <span class="mf">56.875</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_53&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">53.375</span><span class="p">,</span> <span class="mf">55.875</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_54&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">53.875</span><span class="p">,</span> <span class="mf">56.875</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_55&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">56.875</span><span class="p">,</span> <span class="mf">58.125</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_56&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">56.875</span><span class="p">,</span> <span class="mf">58.625</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_57&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">58.625</span><span class="p">,</span> <span class="mf">62.625</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_58&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">61.125</span><span class="p">,</span> <span class="mf">63.375</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info_59&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">62.625</span><span class="p">,</span> <span class="mf">63.875</span><span class="p">)),</span> 
+		<span class="p">((</span><span class="s1">&#39;info_60&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">62.625</span><span class="p">,</span> <span class="mf">64.375</span><span class="p">))</span>
+	<span class="p">]</span>
+	<span class="k">return</span> <span class="n">sh_data</span>
+
+<span class="k">class</span> <span class="nc">TestSeptHaikaiData</span><span class="p">:</span>
+	<span class="k">def</span> <span class="nf">test_check_break_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="n">check_break_point</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="kc">True</span> <span class="c1"># checks info_10 starts new section.</span>
+	
+	<span class="k">def</span> <span class="nf">test_get_break_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+		<span class="n">break_points</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">43</span><span class="p">,</span> <span class="mi">44</span><span class="p">,</span> <span class="mi">47</span><span class="p">,</span> <span class="mi">49</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">57</span><span class="p">]</span>
+		<span class="k">assert</span> <span class="n">break_points</span> <span class="o">==</span> <span class="n">get_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">test_pareto_optimal_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+		<span class="n">random_start</span> <span class="o">=</span> <span class="mi">23</span>
+		<span class="n">random_stop</span> <span class="o">=</span> <span class="mi">29</span>
+		<span class="n">data_excerpt</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">random_start</span><span class="p">:</span><span class="n">random_stop</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+		<span class="n">paths</span> <span class="o">=</span> <span class="n">get_pareto_optimal_longest_paths</span><span class="p">(</span><span class="n">data_excerpt</span><span class="p">)</span>
+
+		<span class="k">assert</span> <span class="n">paths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="p">[[(</span><span class="s1">&#39;info_23&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">26.125</span><span class="p">,</span> <span class="mf">30.625</span><span class="p">)],</span> <span class="p">[(</span><span class="s1">&#39;info_25&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">30.625</span><span class="p">,</span> <span class="mf">31.5</span><span class="p">)],</span> <span class="p">[(</span><span class="s1">&#39;info_29&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">31.5</span><span class="p">,</span> <span class="mf">34.0</span><span class="p">)]]</span>
+	
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="kn">import</span> <span class="nn">doctest</span>
+	<span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Luke Poeppel.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/language_data.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

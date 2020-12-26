@@ -158,13 +158,13 @@
 <p>Tools for creating sqlite3 databases of extracted rhythmic data from Messiaen’s music.</p>
 <dl class="py exception">
 <dt id="decitala.database.DatabaseException">
-<em class="property">exception </em><code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">DatabaseException</code><a class="headerlink" href="#decitala.database.DatabaseException" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">DatabaseException</code><a class="reference internal" href="_modules/decitala/database.html#DatabaseException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.database.DatabaseException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="decitala.database.filter_single_anga_class_fragments">
-<code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">filter_single_anga_class_fragments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.database.filter_single_anga_class_fragments" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">filter_single_anga_class_fragments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/database.html#filter_single_anga_class_fragments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.database.filter_single_anga_class_fragments" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – <span class="math notranslate nohighlight">\([((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]\)</span></p>
@@ -180,11 +180,28 @@
 </dd></dl>
 
 <dl class="py function">
+<dt id="decitala.database.filter_sub_fragments">
+<code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">filter_sub_fragments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/database.html#filter_sub_fragments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.database.filter_sub_fragments" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – <span class="math notranslate nohighlight">\([((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]\)</span></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>data from the input with all sub-talas removed; that is, talas that sit inside of another.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="decitala.database.create_database">
-<code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">create_database</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_path</span></em>, <em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">frag_types</span><span class="o">=</span><span class="default_value">['decitala']</span></em>, <em class="sig-param"><span class="n">rep_types</span><span class="o">=</span><span class="default_value">['ratio', 'difference']</span></em>, <em class="sig-param"><span class="n">allowed_modifications</span><span class="o">=</span><span class="default_value">['r', 'rr', 'd', 'rd', 'sr', 'rsr']</span></em>, <em class="sig-param"><span class="n">try_contiguous_summation</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">windows</span><span class="o">=</span><span class="default_value">[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]</span></em>, <em class="sig-param"><span class="n">allow_unnamed</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">filter_single_anga_class</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">keep_grace_notes</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.database.create_database" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">create_database</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_path</span></em>, <em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">frag_types</span><span class="o">=</span><span class="default_value">['decitala']</span></em>, <em class="sig-param"><span class="n">rep_types</span><span class="o">=</span><span class="default_value">['ratio', 'difference']</span></em>, <em class="sig-param"><span class="n">allowed_modifications</span><span class="o">=</span><span class="default_value">['r', 'rr', 'd', 'rd', 'sr', 'rsr']</span></em>, <em class="sig-param"><span class="n">try_contiguous_summation</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">windows</span><span class="o">=</span><span class="default_value">[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]</span></em>, <em class="sig-param"><span class="n">allow_unnamed</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">filter_found_single_anga_class</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">filter_found_sub_fragments</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">keep_grace_notes</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/database.html#create_database"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.database.create_database" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function generates an sqlite3 database for storing extracted rhythmic data from <a class="reference internal" href="trees.html#decitala.trees.rolling_search" title="decitala.trees.rolling_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.trees.rolling_search</span></code></a>.
 The database holds has one page for storing all extracted fragments, their onsets/offsets of occurrence, and their 
 modification data.</p>
+<p>NOTE: I suggest setting filter_sub_fragments to True for compositions and False for birdsong transcriptions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

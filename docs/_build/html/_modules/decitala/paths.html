@@ -1,0 +1,777 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>decitala.paths &mdash; decitala  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="decitala  documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">cli.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">database.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fragment.html">fragment.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../paths.html">paths.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pofp.html">pofp.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trees.html">trees.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils.py</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">decitala</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>decitala.paths</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for decitala.paths</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">####################################################################################################</span>
+<span class="c1"># File:     paths.py</span>
+<span class="c1"># Purpose:  Extraction and analysis of path data. </span>
+<span class="c1"># </span>
+<span class="c1"># Author:   Luke Poeppel</span>
+<span class="c1">#</span>
+<span class="c1"># Location: Kent, CT 2020</span>
+<span class="c1">####################################################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Tools for analyzing the extracted data present in sqlite3 databases (from :obj:`~decitala.database.create_database`.)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span> <span class="k">as</span> <span class="nn">lite</span> 
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">literal_eval</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
+
+<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">chord</span><span class="p">,</span>
+	<span class="n">converter</span><span class="p">,</span>
+	<span class="n">note</span><span class="p">,</span>
+	<span class="n">stream</span>
+<span class="p">)</span>
+
+<span class="c1">############### EXCEPTIONS ###############</span>
+<div class="viewcode-block" id="PathsException"><a class="viewcode-back" href="../../paths.html#decitala.paths.PathsException">[docs]</a><span class="k">class</span> <span class="nc">PathsException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+	<span class="k">pass</span></div>
+
+<span class="c1">####################################################################################################</span>
+<div class="viewcode-block" id="SubPath"><a class="viewcode-back" href="../../paths.html#decitala.paths.SubPath">[docs]</a><span class="k">class</span> <span class="nc">SubPath</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Object for storing information about a subpath in a given database. Keeps track of the path onsets, </span>
+<span class="sd">	the decitalas within it, and calculates relevant information (e.g. `gap_score`). Under the right </span>
+<span class="sd">	conditions, :obj:`~decitala.paths.SubPath`s compose a full :obj:`decitala.paths.Path` object. </span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_path</span><span class="p">,</span> <span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">db_path</span><span class="p">),</span> <span class="n">PathsException</span><span class="p">(</span><span class="s2">&quot;The database path provided is invalid.&quot;</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">db_path</span> <span class="o">=</span> <span class="n">db_path</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">table_num</span> <span class="o">=</span> <span class="n">table_num</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">path_num</span> <span class="o">=</span> <span class="n">path_num</span>
+
+		<span class="n">conn</span> <span class="o">=</span> <span class="n">lite</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span>
+		<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+		<span class="n">path_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Paths_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">table_num</span><span class="p">))</span>
+		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">path_string</span><span class="p">)</span>
+		<span class="n">rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+		<span class="n">path</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="n">pitch_data</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+			<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="n">this_row</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">this_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;(((&#39;</span><span class="p">:</span>
+					<span class="n">evaluated</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">this_data</span><span class="p">)</span>
+					<span class="n">pitch_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluated</span><span class="p">)</span>
+
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_num</span> <span class="o">==</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+				<span class="n">stop_index</span> <span class="o">=</span> <span class="mi">0</span>
+				<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="n">this_row</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">this_data</span> <span class="o">==</span> <span class="s1">&#39;NULL&#39;</span><span class="p">:</span>
+						<span class="n">stop_index</span> <span class="o">=</span> <span class="n">this_row</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">this_data</span><span class="p">)</span>
+						<span class="k">break</span>
+					<span class="k">elif</span> <span class="n">this_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;(((&#39;</span><span class="p">:</span>
+						<span class="n">stop_index</span> <span class="o">=</span> <span class="n">this_row</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">this_data</span><span class="p">)</span>
+
+				<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">stop_index</span><span class="p">]:</span>
+					<span class="n">evaluated</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">this_data</span><span class="p">)</span>
+					<span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluated</span><span class="p">)</span>
+
+				<span class="n">pitch_data</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+				<span class="k">break</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">pass</span>
+			
+		<span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pitch_data</span> <span class="o">=</span> <span class="n">pitch_data</span>
+
+		<span class="n">fragments_pre</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="n">fragment_path_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Fragments&quot;</span>
+		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">fragment_path_string</span><span class="p">)</span>
+		<span class="n">fragment_rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+		<span class="k">for</span> <span class="n">this_range</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="n">fragment_rows</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">this_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">this_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+					<span class="n">fragments_pre</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+		
+		<span class="nb">print</span><span class="p">(</span><span class="n">fragments_pre</span><span class="p">)</span>
+		
+		<span class="c1"># def _remove_id(full_name):</span>
+		<span class="c1"># 	x = re.search(r&#39;\d+&#39;, full_name)</span>
+		<span class="c1"># 	split = full_name.split(&#39;_&#39;)</span>
+		<span class="c1"># 	if not(len(split[1]) == 1):</span>
+		<span class="c1"># 		new_str = &#39;_&#39;.join(split[1:])</span>
+		<span class="c1"># 		return new_str</span>
+		<span class="c1"># 	else:</span>
+		<span class="c1"># 		new_str = &#39;_&#39;.join(split[2:])</span>
+		<span class="c1"># 		return new_str</span>
+
+		<span class="c1"># decitalas_post = [_remove_id(x) for x in decitalas_pre]</span>
+		<span class="c1"># self.decitalas = [Decitala(string) for string in decitalas_post]</span>
+
+
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;SubPath_</span><span class="si">{0}</span><span class="s1">: </span><span class="si">{1}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_num</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">))</span></div>
+
+<span class="n">lodb_path</span> <span class="o">=</span> <span class="s2">&quot;/Users/lukepoeppel/livre_dorgue_0_new.db&quot;</span>
+<span class="n">sp17</span> <span class="o">=</span> <span class="n">SubPath</span><span class="p">(</span><span class="n">lodb_path</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">sp17</span><span class="p">)</span>
+
+
+<span class="c1">####################################################################################################</span>
+
+<div class="viewcode-block" id="SubPathOld"><a class="viewcode-back" href="../../paths.html#decitala.paths.SubPathOld">[docs]</a><span class="k">class</span> <span class="nc">SubPathOld</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Object for storing information about a subpath in a given database. Keeps track of the path onsets, </span>
+<span class="sd">	the decitalas within it, and calculates relevant information (e.g. gap_score). Under the right </span>
+<span class="sd">	conditions, Subpaths compose a full Path object (defined below).</span>
+
+<span class="sd">	NOTE: the individual paths in a sqlite table are 1-indexed. </span>
+
+<span class="sd">	&gt;&gt;&gt; livre_dorgue0_path = &#39;/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db&#39;</span>
+<span class="sd">	&gt;&gt;&gt; sp = SubPath(db_path=livre_dorgue0_path, table_num=8, path_num=62)</span>
+<span class="sd">	&gt;&gt;&gt; sp</span>
+<span class="sd">	&lt;SubPath_62: [(181.0, 184.75), (184.875, 185.875), (186.375, 187.375), (187.375, 188.25), (188.75, 191.75), (191.75, 195.125)]&gt;</span>
+<span class="sd">	&gt;&gt;&gt; sp.path</span>
+<span class="sd">	[(181.0, 184.75), (184.875, 185.875), (186.375, 187.375), (187.375, 188.25), (188.75, 191.75), (191.75, 195.125)]</span>
+<span class="sd">	&gt;&gt;&gt; for x in sp.pitch_data:</span>
+<span class="sd">	...     print(x)</span>
+<span class="sd">	((66,), (77,), (75,))</span>
+<span class="sd">	((60,), (68,), (71,), (82,), (75,))</span>
+<span class="sd">	((74,), (79,), (64,), (70,), (81,))</span>
+<span class="sd">	((75,), (61,), (72,))</span>
+<span class="sd">	((80,), (67,), (78,), (86,))</span>
+<span class="sd">	((69,), (77,), (66,))</span>
+<span class="sd">	&gt;&gt;&gt; for tala in sp.decitalas:</span>
+<span class="sd">	...     print(tala.name, tala.ql_array())</span>
+<span class="sd">	21_Tribhinna [0.5 1.  1.5]</span>
+<span class="sd">	46_Jayacri [1.  0.5 1.  0.5 1. ]</span>
+<span class="sd">	46_Jayacri [1.  0.5 1.  0.5 1. ]</span>
+<span class="sd">	118_Rajamartanda [1.   0.5  0.25]</span>
+<span class="sd">	65_B_Kankala_Khanda [0.25 0.25 1.   1.  ]</span>
+<span class="sd">	21_Tribhinna [0.5 1.  1.5]</span>
+
+<span class="sd">	&gt;&gt;&gt; sp.num_onsets</span>
+<span class="sd">	23</span>
+<span class="sd">	&gt;&gt;&gt; sp.start_onset</span>
+<span class="sd">	181.0</span>
+<span class="sd">	&gt;&gt;&gt; sp.end_onset</span>
+<span class="sd">	195.125</span>
+
+<span class="sd">	&gt;&gt;&gt; sp.gaps()</span>
+<span class="sd">	[0.125, 0.5, 0.0, 0.5, 0.0]</span>
+<span class="sd">	&gt;&gt;&gt; sp.total_gaps()</span>
+<span class="sd">	1.125</span>
+
+<span class="sd">	SubPath().played_total_duration() only returns the total duration of sounded tones, i.e., </span>
+<span class="sd">	ignores silent periods. </span>
+<span class="sd">	&gt;&gt;&gt; sp.played_total_duration()</span>
+<span class="sd">	13.0</span>
+<span class="sd">	</span>
+<span class="sd">	So, SubPath().total_range() is the played_total_duration() + total_gaps()</span>
+<span class="sd">	&gt;&gt;&gt; sp.total_range()</span>
+<span class="sd">	14.125</span>
+<span class="sd">	&gt;&gt;&gt; sp.is_end_overlapping()</span>
+<span class="sd">	False</span>
+
+<span class="sd">	SubPath().gap_score() returns the percentage of total_range() that is continous, that is, without</span>
+<span class="sd">	gaps. </span>
+<span class="sd">	&gt;&gt;&gt; sp.gap_score()</span>
+<span class="sd">	92.035398</span>
+<span class="sd">	&gt;&gt;&gt; sp.non_retrogradable_score()</span>
+<span class="sd">	33.333333</span>
+<span class="sd">	&gt;&gt;&gt; sp.recycling_score()</span>
+<span class="sd">	66.666667</span>
+
+<span class="sd">	SubPath().average_num_onsets_per_tala_score() tracks the average number of onsets in a path</span>
+<span class="sd">	and scores it&#39;s percentile in the context of the table.</span>
+<span class="sd">	&gt;&gt;&gt; sp.average_num_onsets_per_tala_score()</span>
+<span class="sd">	15.76086956521739</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_path</span><span class="p">,</span> <span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="n">path_num</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">db_path</span> <span class="o">=</span> <span class="n">db_path</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">table_num</span> <span class="o">=</span> <span class="n">table_num</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">path_num</span> <span class="o">=</span> <span class="n">path_num</span>
+
+		<span class="n">conn</span> <span class="o">=</span> <span class="n">lite</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span>
+		<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+		<span class="n">path_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Paths_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">table_num</span><span class="p">))</span>
+		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">path_string</span><span class="p">)</span>
+		<span class="n">rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+		<span class="c1"># separate loop, for now. </span>
+		<span class="n">all_averages</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+			<span class="n">each_tala_num_onsets</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="n">this_row</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">this_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;(((&#39;</span><span class="p">:</span>
+					<span class="n">evaluated</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">this_data</span><span class="p">)</span>
+					<span class="k">for</span> <span class="n">this</span> <span class="ow">in</span> <span class="n">evaluated</span><span class="p">:</span>
+						<span class="n">each_tala_num_onsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">this</span><span class="p">))</span>
+
+			<span class="n">all_averages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">each_tala_num_onsets</span><span class="p">),</span> <span class="mi">6</span><span class="p">))</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">all_averages</span> <span class="o">=</span> <span class="n">all_averages</span>
+
+		<span class="n">path</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="n">pitch_data</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+			<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="n">this_row</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">this_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;(((&#39;</span><span class="p">:</span>
+					<span class="n">evaluated</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">this_data</span><span class="p">)</span>
+					<span class="n">pitch_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluated</span><span class="p">)</span>
+
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_num</span> <span class="o">==</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+				<span class="n">stop_index</span> <span class="o">=</span> <span class="mi">0</span>
+				<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="n">this_row</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">this_data</span> <span class="o">==</span> <span class="s1">&#39;NULL&#39;</span><span class="p">:</span>
+						<span class="n">stop_index</span> <span class="o">=</span> <span class="n">this_row</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">this_data</span><span class="p">)</span>
+						<span class="k">break</span>
+					<span class="k">elif</span> <span class="n">this_data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;(((&#39;</span><span class="p">:</span>
+						<span class="n">stop_index</span> <span class="o">=</span> <span class="n">this_row</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">this_data</span><span class="p">)</span>
+
+				<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">stop_index</span><span class="p">]:</span>
+					<span class="n">evaluated</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">this_data</span><span class="p">)</span>
+					<span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluated</span><span class="p">)</span>
+
+				<span class="n">pitch_data</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+				<span class="k">break</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">pass</span>
+			
+		<span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pitch_data</span> <span class="o">=</span> <span class="n">pitch_data</span>
+
+		<span class="c1"># Get tala information. (More efficient to do it separately.)</span>
+		<span class="n">decitalas_pre</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="n">fragment_path_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Fragments&quot;</span>
+		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">fragment_path_string</span><span class="p">)</span>
+		<span class="n">rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+		<span class="k">for</span> <span class="n">this_range</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">this_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">this_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+					<span class="n">decitalas_pre</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+		
+		<span class="k">def</span> <span class="nf">_remove_id</span><span class="p">(</span><span class="n">full_name</span><span class="p">):</span>
+			<span class="n">x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="n">full_name</span><span class="p">)</span>
+			<span class="n">split</span> <span class="o">=</span> <span class="n">full_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+				<span class="n">new_str</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+				<span class="k">return</span> <span class="n">new_str</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">new_str</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+				<span class="k">return</span> <span class="n">new_str</span>
+
+		<span class="n">decitalas_post</span> <span class="o">=</span> <span class="p">[</span><span class="n">_remove_id</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">decitalas_pre</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">decitalas</span> <span class="o">=</span> <span class="p">[</span><span class="n">Decitala</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">decitalas_post</span><span class="p">]</span>
+
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;SubPath_</span><span class="si">{0}</span><span class="s1">: </span><span class="si">{1}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_num</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">start_onset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">end_onset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">num_onsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">for</span> <span class="n">tala_pitches</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pitch_data</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">pitches</span> <span class="ow">in</span> <span class="n">tala_pitches</span><span class="p">:</span>
+				<span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="k">return</span> <span class="n">count</span>
+
+	<span class="k">def</span> <span class="nf">gaps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">gaps</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="n">curr_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+			<span class="n">next_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+			<span class="n">gaps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">curr_range</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+			<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+		<span class="k">return</span> <span class="n">gaps</span>
+
+	<span class="k">def</span> <span class="nf">total_gaps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gaps</span><span class="p">())</span>
+
+	<span class="k">def</span> <span class="nf">played_total_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">total_duration</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
+			<span class="n">curr_range</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+			<span class="n">total_duration</span> <span class="o">+=</span> <span class="n">curr_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">curr_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+		
+		<span class="k">return</span> <span class="n">total_duration</span>
+
+	<span class="k">def</span> <span class="nf">total_range</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+	
+	<span class="k">def</span> <span class="nf">is_end_overlapping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gaps</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span>
+
+	<span class="c1">#################### Individual Scores ####################</span>
+	<span class="k">def</span> <span class="nf">gap_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">percentage_gap</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_gaps</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_range</span><span class="p">())</span> <span class="o">*</span> <span class="mi">100</span>
+		<span class="k">return</span> <span class="nb">round</span><span class="p">((</span><span class="mi">100</span> <span class="o">-</span> <span class="n">percentage_gap</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">non_retrogradable_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">num_non_retrogradable</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">for</span> <span class="n">this_tala</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">decitalas</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">this_tala</span><span class="o">.</span><span class="n">is_non_retrogradable</span><span class="p">:</span>
+				<span class="n">num_non_retrogradable</span> <span class="o">+=</span> <span class="mi">1</span>
+			
+		<span class="k">return</span> <span class="nb">round</span><span class="p">((</span><span class="n">num_non_retrogradable</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decitalas</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">recycling_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">recycled</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">counted</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decitalas</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">counted</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+			<span class="k">if</span> <span class="n">counted</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">recycled</span> <span class="o">+=</span> <span class="n">counted</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+		
+		<span class="k">return</span> <span class="nb">round</span><span class="p">((</span><span class="n">recycled</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decitalas</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+	
+	<span class="k">def</span> <span class="nf">average_num_onsets_per_tala_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">num_onsets_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">tala</span><span class="o">.</span><span class="n">num_onsets</span> <span class="k">for</span> <span class="n">tala</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">decitalas</span><span class="p">]</span>
+		<span class="n">avg_num_onsets</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">num_onsets_data</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">percentileofscore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_averages</span><span class="p">,</span> <span class="n">avg_num_onsets</span><span class="p">)</span>
+
+	<span class="c1">###################### Visualization ######################</span>
+<div class="viewcode-block" id="SubPathOld.show"><a class="viewcode-back" href="../../paths.html#decitala.paths.SubPathOld.show">[docs]</a>	<span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Shows the series of talas with the pitch information normalized to start at onset 0.0. </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">		first_onset = self.start_onset</span>
+<span class="sd">		normalized_path = []</span>
+<span class="sd">		for onset_range in self.path:</span>
+<span class="sd">			normalized_path.append([onset_range[0] - first_onset, onset_range[1] - first_onset])</span>
+<span class="sd">		</span>
+<span class="sd">		#hmmm... we need the tala onsets.</span>
+<span class="sd">		zipped = []</span>
+<span class="sd">		for onset_range, pitch_info in zip(normalized_path, self.pitch_data):</span>
+<span class="sd">			print(onset_range, pitch_info)</span>
+<span class="sd">		&#39;&#39;&#39;</span>
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="SubPathOld.annotate_score"><a class="viewcode-back" href="../../paths.html#decitala.paths.SubPathOld.annotate_score">[docs]</a>	<span class="k">def</span> <span class="nf">annotate_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">score_path</span><span class="p">,</span> <span class="n">part</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Annotates a given score (matching the score on which the database has been created) </span>
+<span class="sd">		with the SubPath data. </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="c1"># haikai0_database_path = &#39;/Users/lukepoeppel/decitala_v2/sept_haikai_0.db&#39;</span>
+
+<span class="c1">####################################################################################################</span>
+<div class="viewcode-block" id="get_all_paths_info"><a class="viewcode-back" href="../../paths.html#decitala.paths.get_all_paths_info">[docs]</a><span class="k">def</span> <span class="nf">get_all_paths_info</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Returns all the path info</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">conn</span> <span class="o">=</span> <span class="n">lite</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+	<span class="n">execute</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM sqlite_master where type=&#39;table&#39;&quot;</span><span class="p">)</span>
+
+	<span class="n">all_tables_info</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">execute</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+		<span class="n">table_info</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">if</span> <span class="n">table</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="ow">in</span> <span class="s1">&#39;Paths&#39;</span><span class="p">:</span>
+			<span class="n">paths_table_num</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">path_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Paths_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">paths_table_num</span><span class="p">))</span>
+			<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">path_string</span><span class="p">)</span>
+			<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="n">rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+			<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+				<span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+			
+			<span class="n">table_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+			<span class="n">table_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">table_info</span><span class="p">:</span>
+			<span class="n">all_tables_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table_info</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">all_tables_info</span></div>
+
+<span class="c1"># Model </span>
+<span class="k">def</span> <span class="nf">model3</span><span class="p">(</span><span class="n">subpath</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+	<span class="n">components</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="n">subpath</span><span class="o">.</span><span class="n">gap_score</span><span class="p">(),</span> <span class="n">subpath</span><span class="o">.</span><span class="n">average_num_onsets_per_tala_score</span><span class="p">()]</span>
+	<span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+		<span class="n">components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">constraint</span><span class="p">)</span>
+	
+	<span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">components</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+
+<div class="viewcode-block" id="subpath_gap_score"><a class="viewcode-back" href="../../paths.html#decitala.paths.subpath_gap_score">[docs]</a><span class="k">def</span> <span class="nf">subpath_gap_score</span><span class="p">(</span><span class="n">subpath1</span><span class="p">,</span> <span class="n">subpath2</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Takes two SubPath objects and returns the PathGapScore</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">path1_start_onset</span> <span class="o">=</span> <span class="n">subpath1</span><span class="o">.</span><span class="n">start_onset</span>
+	<span class="n">path1_end_onset</span> <span class="o">=</span> <span class="n">subpath1</span><span class="o">.</span><span class="n">end_onset</span>
+
+	<span class="n">path2_start_onset</span> <span class="o">=</span> <span class="n">subpath2</span><span class="o">.</span><span class="n">start_onset</span>
+	<span class="n">path2_end_onset</span> <span class="o">=</span> <span class="n">subpath2</span><span class="o">.</span><span class="n">end_onset</span>
+
+	<span class="k">if</span> <span class="n">path2_start_onset</span> <span class="o">&lt;</span> <span class="n">path1_end_onset</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Invalid Path Comparison.&#39;</span><span class="p">)</span>
+	
+	<span class="n">gap</span> <span class="o">=</span> <span class="n">path2_start_onset</span> <span class="o">-</span> <span class="n">path1_end_onset</span>
+	<span class="n">total_range</span> <span class="o">=</span> <span class="n">path2_end_onset</span> <span class="o">-</span> <span class="n">path1_start_onset</span>
+
+	<span class="n">percentage</span> <span class="o">=</span> <span class="p">(</span><span class="n">gap</span> <span class="o">/</span> <span class="n">total_range</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+	<span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="mi">100</span> <span class="o">-</span> <span class="n">percentage</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">get_full_model3_path</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">first_path_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="n">rest_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="n">path_gap_weight</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">):</span>
+	<span class="n">all_info</span> <span class="o">=</span> <span class="n">get_all_paths_info</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+	<span class="n">conn</span> <span class="o">=</span> <span class="n">lite</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+	<span class="n">subpaths</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_info</span><span class="p">):</span>
+		<span class="n">curr_info</span> <span class="o">=</span> <span class="n">all_info</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="n">model_3_scores</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">curr_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+				<span class="n">path</span> <span class="o">=</span> <span class="n">SubPath</span><span class="p">(</span><span class="n">db_path</span> <span class="o">=</span> <span class="n">db_path</span><span class="p">,</span> <span class="n">table_num</span> <span class="o">=</span> <span class="n">curr_info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">path_num</span> <span class="o">=</span> <span class="n">j</span><span class="p">)</span>
+				<span class="n">model_3_scores</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">path</span><span class="p">,</span> <span class="n">model3</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">first_path_weights</span><span class="p">)])</span>
+			
+			<span class="n">model_3_scores</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+			<span class="n">best_path</span> <span class="o">=</span> <span class="n">model_3_scores</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">subpaths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">best_path</span><span class="p">)</span>
+			<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">gap_scores</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">curr_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+				<span class="n">path</span> <span class="o">=</span> <span class="n">SubPath</span><span class="p">(</span><span class="n">db_path</span> <span class="o">=</span> <span class="n">db_path</span><span class="p">,</span> <span class="n">table_num</span> <span class="o">=</span> <span class="n">curr_info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">path_num</span> <span class="o">=</span> <span class="n">j</span><span class="p">)</span>
+				<span class="n">gap_scores</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">path</span><span class="p">,</span> <span class="n">subpath_gap_score</span><span class="p">(</span><span class="n">subpaths</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">path</span><span class="p">)])</span>
+
+			<span class="n">new_model_scores</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">this_path</span> <span class="ow">in</span> <span class="n">gap_scores</span><span class="p">:</span>
+				<span class="n">model4</span> <span class="o">=</span> <span class="n">model3</span><span class="p">(</span><span class="n">this_path</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rest_weights</span><span class="p">)</span>
+				<span class="n">model4</span> <span class="o">+=</span> <span class="n">path_gap_weight</span> <span class="o">*</span> <span class="n">this_path</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+				<span class="n">new_model_scores</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">this_path</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">model4</span><span class="p">])</span>
+			
+			<span class="n">new_model_scores</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+			<span class="n">bestp1</span> <span class="o">=</span> <span class="n">new_model_scores</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">subpaths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bestp1</span><span class="p">)</span>
+			<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+	<span class="k">return</span> <span class="n">subpaths</span>	
+
+<span class="c1">####################################################################################################</span>
+<span class="c1"># Testing</span>
+<span class="c1"># haikai0_database_path = &#39;/Users/lukepoeppel/decitala_v2/sept_haikai_0.db&#39;</span>
+<span class="c1"># haikai1_database_path = &#39;/Users/lukepoeppel/decitala_v2/sept_haikai_1.db&#39;</span>
+
+<span class="c1"># liturgie3_database_path = &#39;/Users/lukepoeppel/decitala_v2/liturgie_3.db&#39;</span>
+<span class="c1"># liturgie4_database_path = &#39;/Users/lukepoeppel/decitala_v2/liturgie_4.db&#39;</span>
+
+<span class="c1"># livre_dorgue_0_path = &#39;/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db&#39;</span>
+<span class="c1"># livre_dorgue_1_path = &#39;/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db&#39;</span>
+
+<div class="viewcode-block" id="Path"><a class="viewcode-back" href="../../paths.html#decitala.paths.Path">[docs]</a><span class="k">class</span> <span class="nc">Path</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Concatenation of multiple SubPath objects (under the right conditions).</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subpaths</span> <span class="o">=</span> <span class="p">[]):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">subpaths</span> <span class="o">=</span> <span class="n">subpaths</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">subpath_nums</span> <span class="o">=</span> <span class="p">[</span><span class="n">subpath</span><span class="o">.</span><span class="n">path_num</span> <span class="k">for</span> <span class="n">subpath</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpaths</span><span class="p">]</span>
+
+		<span class="n">flattened</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">subpath</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpaths</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">onset_range</span><span class="p">,</span> <span class="n">tala</span><span class="p">,</span> <span class="n">pitch_content</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">subpath</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">subpath</span><span class="o">.</span><span class="n">decitalas</span><span class="p">,</span> <span class="n">subpath</span><span class="o">.</span><span class="n">pitch_data</span><span class="p">):</span>
+				<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">onset_range</span><span class="p">,</span> <span class="n">tala</span><span class="p">,</span> <span class="n">pitch_content</span><span class="p">])</span>
+			
+		<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">decitalas</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
+	
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;Paths_&#39;</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpath_nums</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span>
+	
+	<span class="k">def</span> <span class="nf">tala_counter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">Counter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decitalas</span><span class="p">)</span>
+	
+<div class="viewcode-block" id="Path.filter_by_tala"><a class="viewcode-back" href="../../paths.html#decitala.paths.Path.filter_by_tala">[docs]</a>	<span class="k">def</span> <span class="nf">filter_by_tala</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decitala</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Returns data filtered by tala. </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">decitala</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">))</span></div>
+
+	<span class="k">def</span> <span class="nf">filter_by_onset_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lower_bound</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">upperBound</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<span class="c1">###############################################################################</span>
+<span class="c1"># Testing</span>
+
+<div class="viewcode-block" id="Test"><a class="viewcode-back" href="../../paths.html#decitala.paths.Test">[docs]</a><span class="k">class</span> <span class="nc">Test</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">set_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">ImportWarning</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">test_all_num_paths_in_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">all_found_info</span> <span class="o">=</span> <span class="n">get_all_paths_info</span><span class="p">(</span><span class="s1">&#39;/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db&#39;</span><span class="p">)</span>
+		<span class="n">all_num_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_found_info</span><span class="p">]</span>
+
+		<span class="n">real</span> <span class="o">=</span> <span class="p">[</span><span class="mi">24</span><span class="p">,</span> <span class="mi">46</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">108</span><span class="p">,</span> <span class="mi">92</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">all_num_paths</span><span class="p">,</span> <span class="n">real</span><span class="p">)</span>
+	
+	<span class="c1"># Do an easier example so I can check by hand.</span>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	def test_num_onsets_percetile(self):</span>
+<span class="sd">		test_path = &#39;/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db&#39;</span>
+<span class="sd">		all_found_info = get_all_paths_info(test_path)</span>
+<span class="sd">		percentiles = []</span>
+<span class="sd">		for i in range(1, all_found_info[1][1] + 1):</span>
+<span class="sd">			path = SubPath(test_path, 1, i)</span>
+<span class="sd">			percentiles.append(path.average_num_onsets_per_tala_score())</span>
+
+<span class="sd">		real = [0.0, 0.0, 0.0, 0.0, 0.0, 2.272727, 4.444444, 6.0, 7.692308, 12.5, 19.047619, 19.230769, 21.212121, 21.428571, 22.222222, 23.076923, 24.074074, 25.0, 26.666667, 33.333333, 35.416667, 36.363636, 40.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 51.219512, 51.25, 51.351351, 52.857143, 52.941176, 52.941176, 53.225806, 55.0, 55.172414, 62.5, 63.888889, 65.625, 67.105263, 75.0, 75.0, 77.777778, 100.0]</span>
+<span class="sd">		self.assertEqual(real, percentiles)</span>
+<span class="sd">	&#39;&#39;&#39;</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="kn">import</span> <span class="nn">doctest</span>
+	<span class="c1">#doctest.testmod()</span>
+	<span class="c1">#unittest.main()</span>
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Luke Poeppel.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/language_data.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -173,7 +173,7 @@ by <a class="reference internal" href="trees.html#decitala.trees.rolling_search"
 for <span class="math notranslate nohighlight">\(X_i\)</span> the fragment name/modification, <span class="math notranslate nohighlight">\(b_i\)</span> the start offset and <span class="math notranslate nohighlight">\(s_i\)</span> the stop offset.</p>
 <dl class="py function">
 <dt id="decitala.pofp.check_break_point">
-<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">check_break_point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">i</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.pofp.check_break_point" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">check_break_point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">i</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/pofp.html#check_break_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.pofp.check_break_point" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function for <cite>pofp.get_break_points</cite>. Checks index i of the onset_list that all values 
 prior to it are less than or equal to <span class="math notranslate nohighlight">\(b_i\)</span> and <span class="math notranslate nohighlight">\(s_i\)</span>. If True, this means that 
 the data at index i is &gt;= all previous.</p>
@@ -214,7 +214,7 @@ the data at index i is &gt;= all previous.</p>
 
 <dl class="py function">
 <dt id="decitala.pofp.get_break_points">
-<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">get_break_points</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.pofp.get_break_points" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">get_break_points</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/pofp.html#get_break_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.pofp.get_break_points" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – <span class="math notranslate nohighlight">\([((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]\)</span></p>
@@ -238,7 +238,7 @@ the data at index i is &gt;= all previous.</p>
 
 <dl class="py function">
 <dt id="decitala.pofp.partition_data_by_break_points">
-<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">partition_data_by_break_points</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.pofp.partition_data_by_break_points" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">partition_data_by_break_points</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/pofp.html#partition_data_by_break_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.pofp.partition_data_by_break_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Partitions the input data according to all calculated breakpoints.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tup_lst</span> <span class="o">=</span> <span class="p">[</span>
 <span class="gp">... </span>            <span class="p">((</span><span class="s1">&#39;info1&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info2&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info3&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info4&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">)),</span> 
@@ -254,7 +254,7 @@ the data at index i is &gt;= all previous.</p>
 
 <dl class="py function">
 <dt id="decitala.pofp.get_pareto_optimal_longest_paths">
-<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">get_pareto_optimal_longest_paths</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#decitala.pofp.get_pareto_optimal_longest_paths" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">get_pareto_optimal_longest_paths</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/pofp.html#get_pareto_optimal_longest_paths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.pofp.get_pareto_optimal_longest_paths" title="Permalink to this definition">¶</a></dt>
 <dd><p>Algorithm courtesy of M. Raynard.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

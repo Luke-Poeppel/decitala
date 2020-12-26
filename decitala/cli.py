@@ -19,7 +19,7 @@ from .trees import FragmentTree
 @click.version_option(__version__, "--version", "-v", message="%(version)s")
 def decitala():
 	"""
-	Returns the version of the module
+	Returns the version of the module.
 	"""
 	pass
 
