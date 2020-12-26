@@ -14,11 +14,16 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../decitala'))
 
+import decitala
+
 # -- Project information -----------------------------------------------------
 
 project = 'decitala'
 copyright = '2020, Luke Poeppel'
 author = 'Luke Poeppel'
+
+version = decitala.__version__
+release = decitala.__version__
 
 # -- General configuration ---------------------------------------------------
 
