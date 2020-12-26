@@ -515,7 +515,7 @@ def get_object_indices(filepath, part_num):
 
 def contiguous_summation(data):
 	"""
-	Given some ``data`` from :meth:get_object_indices, finds every location where the pitch and 
+	Given some ``data`` from :obj:`~decitala.utils.get_object_indices`, finds every location where the pitch and 
 	rhythmic material are contiguously equal and sums these regions. 
 	
 	>>> example_data = [
@@ -556,29 +556,29 @@ def contiguous_summation(data):
 	0.25
 	"""
 	new_data = []
-	regions_property = lambda i: ((object_indices[i][1][1] - object_indices[i][1][0]), [x.midi for x in object_indices[i][0].pitches])
-	ranges = [list(this_range) for _, this_range in groupby(range(len(object_indices)), regions_property)]
+	regions_property = lambda i: ((data[i][1][1] - data[i][1][0]), [x.midi for x in data[i][0].pitches])
+	ranges = [list(this_range) for _, this_range in groupby(range(len(data)), regions_property)]
 		
 	cluster_index_ranges = [[this_range[0], this_range[-1]] for this_range in ranges if len(this_range) > 1]
-	compliment_ranges = _compliment_of_index_ranges(object_indices, cluster_index_ranges)
+	compliment_ranges = _compliment_of_index_ranges(data, cluster_index_ranges)
 	
-	new_objects = [0] * len(object_indices)
+	new_objects = [0] * len(data)
 
 	for this_index_range in cluster_index_ranges:
 		start, stop = this_index_range[0], this_index_range[1]
-		start_offset = object_indices[start][1][0]
-		stop_offset = object_indices[stop][1][-1]
+		start_offset = data[start][1][0]
+		stop_offset = data[stop][1][-1]
 		
-		pitch_data = object_indices[start][0]
+		pitch_data = data[start][0]
 		summed_data = (pitch_data, (start_offset, stop_offset))
 		
 		new_objects[this_index_range[0]] = summed_data
 	
 	for x in compliment_ranges:
 		if len(x) == 1:
-			new_objects[x[0]] = object_indices[x[0]]
+			new_objects[x[0]] = data[x[0]]
 		else:
-			new_objects[x[0]:x[1]+1] = object_indices[x[0]:x[1]+1]
+			new_objects[x[0]:x[1]+1] = data[x[0]:x[1]+1]
 	
 	new_objects = [x for x in new_objects if x != 0]
 

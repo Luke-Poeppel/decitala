@@ -825,7 +825,7 @@ def rolling_search(
 	>>> ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
 	>>> difference_tree = FragmentTree(frag_type='greek_foot', rep_type='difference')
 	>>> ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
-	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree)[0:5]:
+	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, verbose=False)[0:5]:
 	... 	print(tala_data)
 	((<fragment.GreekFoot Spondee>, ('r', 0.125)), (0.0, 0.5))
 	((<fragment.GreekFoot Trochee>, ('r', 0.125)), (0.25, 0.625))
