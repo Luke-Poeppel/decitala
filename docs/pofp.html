@@ -1,0 +1,361 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pofp.py &mdash; decitala 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="decitala 0.1.0 documentation" href="index.html"/>
+        <link rel="next" title="trees.py" href="trees.html"/>
+        <link rel="prev" title="paths.py" href="paths.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paths.html">paths.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pofp.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trees.html">trees.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils.py</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">decitala</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>pofp.py</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/pofp.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-decitala.pofp">
+<span id="pofp-py"></span><h1>pofp.py<a class="headerlink" href="#module-decitala.pofp" title="Permalink to this headline">¶</a></h1>
+<p><strong>NOTE</strong>: M. Raynard helpfully provided a technique for solving the given problem (an iterative approach
+to the end-overlapping indices problem) in a StackOverflow post from Summer, 2020. The link to the 
+original post is: <a class="reference external" href="https://stackoverflow.com/questions/62734114/iterative-solution-to-end-overlapping-indices">https://stackoverflow.com/questions/62734114/iterative-solution-to-end-overlapping-indices</a>.</p>
+<p>Once we have retrieved <span class="math notranslate nohighlight">\(n\)</span> talas in a part, we want to check whether or not they align. 
+If a tala <span class="math notranslate nohighlight">\(T_1\)</span> ranges from onsets <span class="math notranslate nohighlight">\(X_i\)</span> to <span class="math notranslate nohighlight">\(Y_i\)</span> and a tala <span class="math notranslate nohighlight">\(T_2\)</span> ranges from 
+onsets <span class="math notranslate nohighlight">\(X_j\)</span> to <span class="math notranslate nohighlight">\(Y_j\)</span>, if <span class="math notranslate nohighlight">\(X_j &lt; Y_i\)</span>, we can’t satisfactorily align <span class="math notranslate nohighlight">\(T_1\)</span> and
+<span class="math notranslate nohighlight">\(T_2\)</span>; this means that one (or both) of these talas was not intentionally included, and simply 
+exists as a sub-tala or cyclic rotation. Multiple possible alignments exist, so we calculate them all
+using an iterative solution to the end-overlapping indices problem using a Pareto frontier of paths.</p>
+<p>The output to the alignment function, <a class="reference internal" href="#decitala.pofp.get_pareto_optimal_longest_paths" title="decitala.pofp.get_pareto_optimal_longest_paths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.pofp.get_pareto_optimal_longest_paths</span></code></a>, may be exponential 
+in size with respect to the input. As such, we use the observation that there often exist “break points” in the
+data collected from rolling search: points at which there exists no overlap. We divide the data by each of 
+these regions (if they exist) and generate the longest paths separately.</p>
+<p>Several of the functions below have the parameter <code class="docutils literal notranslate"><span class="pre">data</span></code>. This parameter is of the form returned 
+by <a class="reference internal" href="trees.html#decitala.trees.rolling_search" title="decitala.trees.rolling_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.trees.rolling_search</span></code></a> and looks like <span class="math notranslate nohighlight">\([((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]\)</span>
+for <span class="math notranslate nohighlight">\(X_i\)</span> the fragment name/modification, <span class="math notranslate nohighlight">\(b_i\)</span> the start offset and <span class="math notranslate nohighlight">\(s_i\)</span> the stop offset.</p>
+<dl class="py function">
+<dt id="decitala.pofp.check_break_point">
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">check_break_point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">i</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/pofp.html#check_break_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.pofp.check_break_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function for <cite>pofp.get_break_points</cite>. Checks index i of the onset_list that all values 
+prior to it are less than or equal to <span class="math notranslate nohighlight">\(b_i\)</span> and <span class="math notranslate nohighlight">\(s_i\)</span>. If True, this means that 
+the data at index i is &gt;= all previous.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>list</em>) – <span class="math notranslate nohighlight">\([((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]\)</span></p></li>
+<li><p><strong>i</strong> (<em>int</em>) – index of the data to check.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>whether or not the queried index is a break point.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tup_lst</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>            <span class="p">((</span><span class="s1">&#39;info1&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info2&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info3&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info4&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">((</span><span class="s1">&#39;info5&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info6&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info7&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">))</span>
+<span class="gp">... </span><span class="p">]</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">tup_lst</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+<span class="go">((&#39;info1&#39;,), (0.0, 2.0))</span>
+<span class="go">((&#39;info2&#39;,), (0.0, 4.0))</span>
+<span class="go">((&#39;info3&#39;,), (2.0, 4.0))</span>
+<span class="go">((&#39;info4&#39;,), (2.0, 5.75))</span>
+<span class="go">((&#39;info5&#39;,), (2.5, 4.5))</span>
+<span class="go">((&#39;info6&#39;,), (4.0, 5.5))</span>
+<span class="go">((&#39;info7&#39;,), (6.0, 7.25))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">check_break_point</span><span class="p">(</span><span class="n">tup_lst</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">check_break_point</span><span class="p">(</span><span class="n">tup_lst</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.pofp.get_break_points">
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">get_break_points</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/pofp.html#get_break_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.pofp.get_break_points" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – <span class="math notranslate nohighlight">\([((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]\)</span></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>every index in the input at which the data is at most end-overlapping.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tup_lst</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>            <span class="p">((</span><span class="s1">&#39;info1&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info2&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info3&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info4&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">((</span><span class="s1">&#39;info5&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info6&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info7&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">))</span>
+<span class="gp">... </span><span class="p">]</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_break_points</span><span class="p">(</span><span class="n">tup_lst</span><span class="p">)</span>
+<span class="go">[6]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.pofp.partition_data_by_break_points">
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">partition_data_by_break_points</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/pofp.html#partition_data_by_break_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.pofp.partition_data_by_break_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Partitions the input data according to all calculated breakpoints.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tup_lst</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>            <span class="p">((</span><span class="s1">&#39;info1&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info2&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info3&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info4&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">)),</span> 
+<span class="gp">... </span>    <span class="p">((</span><span class="s1">&#39;info5&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info6&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info7&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">))</span>
+<span class="gp">... </span><span class="p">]</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_partition</span> <span class="ow">in</span> <span class="n">partition_data_by_break_points</span><span class="p">(</span><span class="n">tup_lst</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">this_partition</span><span class="p">)</span>
+<span class="go">[((&#39;info1&#39;,), (0.0, 2.0)), ((&#39;info2&#39;,), (0.0, 4.0)), ((&#39;info3&#39;,), (2.0, 4.0)), ((&#39;info4&#39;,), (2.0, 5.75)), ((&#39;info5&#39;,), (2.5, 4.5)), ((&#39;info6&#39;,), (4.0, 5.5))]</span>
+<span class="go">[((&#39;info7&#39;,), (6.0, 7.25))]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.pofp.get_pareto_optimal_longest_paths">
+<code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">get_pareto_optimal_longest_paths</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/pofp.html#get_pareto_optimal_longest_paths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.pofp.get_pareto_optimal_longest_paths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Algorithm courtesy of M. Raynard.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – <span class="math notranslate nohighlight">\([((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]\)</span></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of lists, each holding a pareto-optimal longest path constructed from the data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tup_lst</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">((</span><span class="s2">&quot;info1&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)),</span> <span class="p">((</span><span class="s2">&quot;info2&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s2">&quot;info3&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)),</span> <span class="p">((</span><span class="s2">&quot;info4&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">((</span><span class="s2">&quot;info5&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s2">&quot;info6&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">)),</span> <span class="p">((</span><span class="s2">&quot;info7&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">))]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># With only 7 windows, we can extract four possible paths!</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_path</span> <span class="ow">in</span> <span class="n">get_pareto_optimal_longest_paths</span><span class="p">(</span><span class="n">tup_lst</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_path</span><span class="p">]</span>
+<span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="go">[(0.0, 2.0), (2.0, 4.0), (4.0, 5.5), (6.0, 7.25)]</span>
+<span class="go">[(0.0, 2.0), (2.0, 5.75), (6.0, 7.25)]</span>
+<span class="go">[(0.0, 2.0), (2.5, 4.5), (6.0, 7.25)]</span>
+<span class="go">[(0.0, 4.0), (4.0, 5.5), (6.0, 7.25)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="trees.html" class="btn btn-neutral float-right" title="trees.py" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="paths.html" class="btn btn-neutral" title="paths.py" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Luke Poeppel.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
