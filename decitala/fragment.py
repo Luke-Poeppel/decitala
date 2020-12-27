@@ -234,9 +234,12 @@ class GeneralFragment(object):
 		else:
 			return '<' + ' '.join([str(int(val)) for val in as_array]) + '>'
 
-	def successive_ratio_array(self):
+	def successive_ratio_array(self, retrograde=False):
 		"""See docstring of :obj:`decitala.utils.successive_ratio_array`."""
-		return successive_ratio_array(self.ql_array())
+		if not retrograde:
+			return successive_ratio_array(self.ql_array())
+		else:
+			return successive_ratio_array(self.ql_array(retrograde=True))
 	
 	def successive_difference_array(self):
 		"""See docstring of :obj:`decitala.utils.successive_difference_array`."""
@@ -257,6 +260,26 @@ class GeneralFragment(object):
 		"""
 		return (self.ql_array(retrograde = False) == self.ql_array(retrograde = True)).all()
 
+	def is_sub_fragment(self, other, try_retrograde=True):
+		"""
+		:param other: a `decitala.fragment.GeneralFragment`, `decitala.fragment.Decitala`, or `decitala.fragment.GreekFoot` object.
+		:param try_retrograde bool: whether to allow searching in retrograde. 
+		:return: whether or not self is a sub-fragment, meaning its successive_ratio_array exists inorder in the others.
+		:rtype: bool
+		"""
+		def _check(array_1, array_2):
+			n = len(array_1)
+			m = len(array_2)
+			return any((array_1.tolist() == array_2[i:i+n].tolist()) for i in range(m-n+1))
+
+		if self.num_onsets > other.num_onsets:
+			return False
+
+		res = _check(array_1 = self.successive_ratio_array(retrograde=False), array_2=other.successive_ratio_array(retrograde=False))
+		if res == False and try_retrograde == True:
+			res = _check(array_1 = self.successive_ratio_array(retrograde=False), array_2=other.successive_ratio_array(retrograde=True))
+		return res
+	
 	def morris_symmetry_class(self):
 		"""
 		:return: the fragment's form of rhythmic symmetry, as defined by Morris in "Sets, Scales and Rhythmic Cycles. 
@@ -399,6 +422,10 @@ class Decitala(GeneralFragment):
 	[0.25 0.25 1.5  0.5  1.   0.5  0.5 ]
 	[0.25 1.5  0.5  1.   0.5  0.5  0.25]
 	[1.5  0.5  1.   0.5  0.5  0.25 0.25]
+	>>> # We can check if a fragment is a sub-fragment of another (meaning its
+	>>> # successive_ratio_array appears inorder in another with the is_sub_fragment method. 
+	>>> Decitala("75_Pratapacekhara").is_sub_fragment(Decitala("Ragavardhana"), try_retrograde=True)
+	True
 	"""
 	def __init__(self, name, **kwargs):
 		matches = []
