@@ -633,14 +633,15 @@ def filter_sub_fragments(data, filter_in_retrograde=True):
 	def _check_all(x):
 		check = False
 		for this_fragment in just_fragments:
-			if this_fragment == x:
+			if np.array_equal(this_fragment.ql_array(), x.ql_array()):
 				pass
 			else:
 				if x.is_sub_fragment(this_fragment, filter_in_retrograde):
 					check = True
 		return check
 
-	return [x for x in just_fragments if not(_check_all(x))]
+	filtered_names = [x.name for x in just_fragments if not(_check_all(x))]
+	return [x for x in data if x[0][0].name in filtered_names]
 
 if __name__ == '__main__':
 	import doctest
