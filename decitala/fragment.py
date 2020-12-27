@@ -51,9 +51,8 @@ class GeneralFragment(object):
 	Class representing a generic rhythmic fragment. The user must provide either a path to a music21 readable
 	file or an array of quarter length values. 
 
-	:param str filepath: path to encoded fragment (initialized to None).
 	:param data: input data to :obj:`~decitala.fragment.GeneralFragment` (either an array of quarter length values
-				or a path to a music21 readable file.
+				or a path to a music21 readable file.)
 	:param str name: optional name argument.
 	:raises `~decitala.fragment.FragmentException`: when an array and file are provided or neither are provided.
 	
@@ -518,7 +517,7 @@ class Decitala(GeneralFragment):
 	
 	@property
 	def carnatic_string(self):
-		"""See docstring of :obj:`decitala.utils.successive_ratio_array`."""
+		"""See docstring of :obj:`decitala.utils.ql_array_to_carnatic_string`."""
 		return ql_array_to_carnatic_string(self.ql_array())
 	
 	@property

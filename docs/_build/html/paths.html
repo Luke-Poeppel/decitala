@@ -233,10 +233,192 @@ conditions, <code class="xref py py-obj docutils literal notranslate"><span clas
 </pre></div>
 </div>
 <dl class="py method">
+<dt id="decitala.paths.SubPath.start_onset">
+<em class="property">property </em><code class="sig-name descname">start_onset</code><a class="headerlink" href="#decitala.paths.SubPath.start_onset" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the starting onset of the path.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.paths.SubPath.end_onset">
+<em class="property">property </em><code class="sig-name descname">end_onset</code><a class="headerlink" href="#decitala.paths.SubPath.end_onset" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the ending onset of the path.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.paths.SubPath.num_onsets">
+<em class="property">property </em><code class="sig-name descname">num_onsets</code><a class="headerlink" href="#decitala.paths.SubPath.num_onsets" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the total number of onsets in the path,</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.paths.SubPath.gaps">
+<code class="sig-name descname">gaps</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#SubPath.gaps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.SubPath.gaps" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list holding the onset gap between the fragments.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.paths.SubPath.total_gaps">
+<code class="sig-name descname">total_gaps</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#SubPath.total_gaps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.SubPath.total_gaps" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>sum of all gaps between the fragments.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.paths.SubPath.played_total_duration">
+<code class="sig-name descname">played_total_duration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#SubPath.played_total_duration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.SubPath.played_total_duration" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>total played duration of the subpath (i.e. overall onset range minus total gaps.)</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.paths.SubPath.total_range">
+<code class="sig-name descname">total_range</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#SubPath.total_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.SubPath.total_range" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>overall range of the subpath.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.paths.SubPath.is_end_overlapping">
+<code class="sig-name descname">is_end_overlapping</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#SubPath.is_end_overlapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.SubPath.is_end_overlapping" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>whether or not all onset ranges in the subpath are end-overlapping.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.paths.SubPath.gap_score">
+<code class="sig-name descname">gap_score</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#SubPath.gap_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.SubPath.gap_score" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="decitala.paths.SubPath.non_retrogradable_score">
+<code class="sig-name descname">non_retrogradable_score</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#SubPath.non_retrogradable_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.SubPath.non_retrogradable_score" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>proportion of the fragments in the subpath that are non-retrogradable.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.paths.SubPath.recycling_score">
+<code class="sig-name descname">recycling_score</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#SubPath.recycling_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.SubPath.recycling_score" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>proportion of the fragments in the subpath that are recycled.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.paths.SubPath.average_num_onsets_per_tala_score">
+<code class="sig-name descname">average_num_onsets_per_tala_score</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#SubPath.average_num_onsets_per_tala_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.SubPath.average_num_onsets_per_tala_score" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="decitala.paths.SubPath.inter_gap_score">
 <code class="sig-name descname">inter_gap_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#SubPath.inter_gap_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.SubPath.inter_gap_score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes two <a class="reference internal" href="#decitala.paths.SubPath" title="decitala.paths.SubPath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubPath</span></code></a> objects and returns the path gap score, i.e. 
 proportion of the gap between them to the total range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> (<a class="reference internal" href="#decitala.paths.SubPath" title="decitala.paths.SubPath"><em>SubPath</em></a>) – other subpath to compare to.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>proportion of the gap between the two subpaths w.r.t. the total range.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="decitala.paths.Path">
+<em class="property">class </em><code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">Path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">subpaths</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#Path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.Path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Concatenation of multiple SubPath objects.</p>
+<dl class="py method">
+<dt id="decitala.paths.Path.fragment_counter">
+<code class="sig-name descname">fragment_counter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#Path.fragment_counter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.Path.fragment_counter" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Counter of the fragment data.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>collections.Counter.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.paths.Path.annotate_score">
+<code class="sig-name descname">annotate_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part_num</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#Path.annotate_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.Path.annotate_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Annotates the part of a given score with the fragment/onset data.</p>
 </dd></dl>
 
 </dd></dl>
@@ -244,26 +426,18 @@ proportion of the gap between them to the total range.</p>
 <dl class="py function">
 <dt id="decitala.paths.get_all_paths_data">
 <code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">get_all_paths_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#get_all_paths_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.get_all_paths_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given a database path, returns a list of lists of the form <code class="docutils literal notranslate"><span class="pre">[[a,</span> <span class="pre">n],</span> <span class="pre">[b,</span> <span class="pre">m],</span> <span class="pre">...]</span></code> where 
-<code class="docutils literal notranslate"><span class="pre">a</span></code> is the path number on the table and <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of paths in that table.</p>
-<dl class="field-list simple">
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>db_path</strong> (<em>str</em>) – path to database file (made in <a class="reference internal" href="database.html#decitala.database.create_database" title="decitala.database.create_database"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.database.create_database</span></code></a>).</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>lists of the form <code class="docutils literal notranslate"><span class="pre">[[a,</span> <span class="pre">n],</span> <span class="pre">[b,</span> <span class="pre">m],</span> <span class="pre">...]</span></code> where 
+<code class="docutils literal notranslate"><span class="pre">a</span></code> is the path number on the table and <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of paths in that table.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
 </dl>
-</dd></dl>
-
-<dl class="py class">
-<dt id="decitala.paths.Path">
-<em class="property">class </em><code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">Path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">subpaths</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#Path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.Path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Concatenation of multiple SubPath objects (under the right conditions).</p>
-<dl class="py method">
-<dt id="decitala.paths.Path.filter_by_tala">
-<code class="sig-name descname">filter_by_tala</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">decitala</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#Path.filter_by_tala"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.Path.filter_by_tala" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns data filtered by tala.</p>
-</dd></dl>
-
 </dd></dl>
 
 </div>

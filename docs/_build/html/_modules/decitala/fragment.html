@@ -209,9 +209,8 @@
 <span class="sd">	Class representing a generic rhythmic fragment. The user must provide either a path to a music21 readable</span>
 <span class="sd">	file or an array of quarter length values. </span>
 
-<span class="sd">	:param str filepath: path to encoded fragment (initialized to None).</span>
 <span class="sd">	:param data: input data to :obj:`~decitala.fragment.GeneralFragment` (either an array of quarter length values</span>
-<span class="sd">				or a path to a music21 readable file.</span>
+<span class="sd">				or a path to a music21 readable file.)</span>
 <span class="sd">	:param str name: optional name argument.</span>
 <span class="sd">	:raises `~decitala.fragment.FragmentException`: when an array and file are provided or neither are provided.</span>
 <span class="sd">	</span>
@@ -457,19 +456,19 @@
 		<span class="n">reduced_dseg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_dseg</span><span class="p">(</span><span class="n">as_str</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 
 		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-			<span class="k">return</span> <span class="s1">&#39;I. Maximally Trivial&#39;</span>
+			<span class="k">return</span> <span class="s2">&quot;I. Maximally Trivial&quot;</span>
 		<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dseg</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-			<span class="k">return</span> <span class="s1">&#39;II. Trivial Symmetry&#39;</span>
+			<span class="k">return</span> <span class="s2">&quot;II. Trivial Symmetry&quot;</span>
 		<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dseg</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-			<span class="k">return</span> <span class="s1">&#39;III. Trivial Dual Symmetry&#39;</span>
+			<span class="k">return</span> <span class="s2">&quot;III. Trivial Dual Symmetry&quot;</span>
 		<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dseg</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-			<span class="k">return</span> <span class="s1">&#39;IV. Maximally Trivial Palindrome&#39;</span>
+			<span class="k">return</span> <span class="s2">&quot;IV. Maximally Trivial Palindrome&quot;</span>
 		<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">reduced_dseg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-			<span class="k">return</span> <span class="s1">&#39;V. Trivial Dual Palindrome&#39;</span>
+			<span class="k">return</span> <span class="s2">&quot;V. Trivial Dual Palindrome&quot;</span>
 		<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dseg</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:</span>
-			<span class="k">return</span> <span class="s1">&#39;VI. Palindrome&#39;</span>
+			<span class="k">return</span> <span class="s2">&quot;VI. Palindrome&quot;</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="k">return</span> <span class="s1">&#39;VII. Stream&#39;</span></div>
+			<span class="k">return</span> <span class="s2">&quot;VII. Stream&quot;</span></div>
 
 <div class="viewcode-block" id="GeneralFragment.std"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.std">[docs]</a>	<span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
@@ -640,9 +639,8 @@
 <span class="sd">		:return: the ID of the fragment, as given by Lavignac (1921).</span>
 <span class="sd">		:rtype: int</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-			<span class="n">idValue</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-			<span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">idValue</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+		<span class="n">idValue</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+		<span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">idValue</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 	
 <div class="viewcode-block" id="Decitala.get_by_id"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.Decitala.get_by_id">[docs]</a>	<span class="nd">@classmethod</span>
 	<span class="k">def</span> <span class="nf">get_by_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_id</span><span class="p">):</span>
@@ -677,7 +675,7 @@
 	
 	<span class="nd">@property</span>
 	<span class="k">def</span> <span class="nf">carnatic_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="sd">&quot;&quot;&quot;See docstring of :obj:`decitala.utils.successive_ratio_array`.&quot;&quot;&quot;</span>
+		<span class="sd">&quot;&quot;&quot;See docstring of :obj:`decitala.utils.ql_array_to_carnatic_string`.&quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="n">ql_array_to_carnatic_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
 	
 	<span class="nd">@property</span>

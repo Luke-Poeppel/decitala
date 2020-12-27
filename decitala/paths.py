@@ -36,7 +36,6 @@ from decitala.fragment import (
 class PathsException(Exception):
 	pass
 
-####################################################################################################
 class SubPath(object):
 	"""
 	Object for storing information about a subpath in a given database. Keeps track of the path onsets, 
@@ -111,11 +110,15 @@ class SubPath(object):
 
 		path = []
 		pitch_data = []
+		all_averages = []
 		for i, this_row in enumerate(rows):
+			each_tala_num_onsets = []
 			for this_data in this_row:
 				if this_data[0:3] == "(((":
 					evaluated = literal_eval(this_data)
 					pitch_data.append(evaluated)
+					for this_eval in evaluated:
+						each_tala_num_onsets.append(len(this_eval))
 
 			if self.path_num == (i + 1):
 				stop_index = 0
@@ -134,9 +137,12 @@ class SubPath(object):
 				break
 			else:
 				pass
+
+			all_averages.append(np.mean(each_tala_num_onsets))
 			
 		self.path = path
 		self.pitch_data = pitch_data
+		self.all_averages = all_averages
 
 		fragment_path_string = "SELECT * FROM Fragments"
 		cur.execute(fragment_path_string)
@@ -160,14 +166,26 @@ class SubPath(object):
 
 	@property
 	def start_onset(self):
+		"""
+		:return: the starting onset of the path.
+		:rtype: float
+		"""
 		return self.path[0][0]
 	
 	@property
 	def end_onset(self):
+		"""
+		:return: the ending onset of the path.
+		:rtype: float
+		"""
 		return self.path[-1][-1]
 
 	@property
 	def num_onsets(self):
+		"""
+		:return: the total number of onsets in the path,
+		:rtype: int
+		"""
 		count = 0
 		for tala_pitches in self.pitch_data:
 			for pitches in tala_pitches:
@@ -175,6 +193,10 @@ class SubPath(object):
 		return count
 
 	def gaps(self):
+		"""
+		:return: list holding the onset gap between the fragments.
+		:rtype: list
+		"""
 		gaps = []
 		i = 0
 		while i < len(self.path) - 1:
@@ -186,9 +208,17 @@ class SubPath(object):
 		return gaps
 
 	def total_gaps(self):
+		"""
+		:return: sum of all gaps between the fragments.
+		:rtype: float
+		"""
 		return sum(self.gaps())
 
 	def played_total_duration(self):
+		"""
+		:return: total played duration of the subpath (i.e. overall onset range minus total gaps.)
+		:rtype: float
+		"""
 		total_duration = 0
 		i = 0
 		while i < len(self.path):
@@ -199,33 +229,54 @@ class SubPath(object):
 		return total_duration
 
 	def total_range(self):
+		"""
+		:return: overall range of the subpath.
+		:rtype: float
+		"""
 		return self.path[-1][-1] - self.path[0][0]
 	
 	def is_end_overlapping(self):
+		"""
+		:return: whether or not all onset ranges in the subpath are end-overlapping. 
+		:rtype: bool
+		"""
 		return sum(self.gaps()) == 0
 
 	def gap_score(self):
+		"""
+		"""
 		percentage_gap = (self.total_gaps() / self.total_range()) * 100
-		return round((100 - percentage_gap), 6)
+		return (100 - percentage_gap)
 
 	def non_retrogradable_score(self):
+		"""
+		:return: proportion of the fragments in the subpath that are non-retrogradable.
+		:rtype: float
+		"""
 		num_non_retrogradable = 0
 		for this_fragment in self.fragments:
 			if this_fragment.is_non_retrogradable:
 				num_non_retrogradable += 1
 			
-		return round((num_non_retrogradable / len(self.fragments)) * 100, 6)
+		return (num_non_retrogradable / len(self.fragments)) * 100
 
 	def recycling_score(self):
+		"""
+		:return: proportion of the fragments in the subpath that are recycled.
+		:rtype: float
+		"""
 		recycled = 0
 		counted = Counter(self.fragments)
 		for key in counted.keys():
 			if counted[key] > 1:
 				recycled += counted[key]
 		
-		return round((recycled / len(self.fragments)) * 100, 6)
+		return (recycled / len(self.fragments)) * 100
 	
 	def average_num_onsets_per_tala_score(self):
+		"""
+		:rtype: float
+		"""
 		num_onsets_data = [this_fragment.num_onsets for this_fragment in self.fragments]
 		avg_num_onsets = round(np.mean(num_onsets_data), 6)
 
@@ -236,6 +287,10 @@ class SubPath(object):
 		"""
 		Takes two :obj:`~decitala.paths.SubPath` objects and returns the path gap score, i.e. 
 		proportion of the gap between them to the total range. 
+
+		:param `~decitala.paths.SubPath` other: other subpath to compare to.
+		:return: proportion of the gap between the two subpaths w.r.t. the total range.
+		:rtype: float
 		"""
 		assert type(other.__name__) == "SubPath"
 		if other.start_onset < self.end_onset:
@@ -245,16 +300,59 @@ class SubPath(object):
 		total_range = other.end_onset - self.start_onset
 
 		percentage = (gap / total_range) * 100
-		return round(100 - percentage, 6)
+		return 100 - percentage
+
+class Path(object):
+	"""Concatenation of multiple SubPath objects."""
+	def __init__(self, subpaths = []):
+		self.subpaths = subpaths
+		self.subpath_nums = [subpath.path_num for subpath in self.subpaths]
+
+		data = []
+		for subpath in self.subpaths:
+			for onset_range, fragment, pitch_content in zip(subpath.path, subpath.fragments, subpath.pitch_data):
+				data.append([onset_range, fragment, pitch_content])
+			
+		self.data = data
+		self.fragments = [data[1] for data in self.data]
+	
+	def __repr__(self):
+		return '<Paths_' + '/'.join(str(x) for x in self.subpath_nums) + '>'
+	
+	def fragment_counter(self):
+		"""
+		:return: Counter of the fragment data.
+		:rtype: collections.Counter.
+		"""
+		return Counter(self.fragments)
+
+	def annotate_score(self, filepath, part_num):
+		"""
+		Annotates the part of a given score with the fragment/onset data. 
+		"""
+		full = converter.parse(filepath)
+		inst = full.parts[part_num]
+
+		for this_obj in inst.recurse().iter.notes:
+			for this_data in self.data:
+				onset_range = this_data[0]
+				fragment = this_data[1]
+				if this_obj.offset == onset_range[0]:
+					this_obj.lyric = fragment.name
+					this_obj.style.color = "green"
+				elif this_obj.offset == onset_range[-1]:
+					this_obj.style.color = "red"
+
+		full.show()
 
 ####################################################################################################
 # MODEL
 def get_all_paths_data(db_path):
 	"""
-	Given a database path, returns a list of lists of the form ``[[a, n], [b, m], ...]`` where 
-	``a`` is the path number on the table and ``n`` is the number of paths in that table. 
-	
 	:param str db_path: path to database file (made in :obj:`decitala.database.create_database`).
+	:return: lists of the form ``[[a, n], [b, m], ...]`` where 
+			``a`` is the path number on the table and ``n`` is the number of paths in that table. 
+	:rtype: list
 	"""
 	conn = lite.connect(db_path)
 	cur = conn.cursor()
@@ -280,16 +378,25 @@ def get_all_paths_data(db_path):
 
 	return all_tables_info
 
+def model(db_path, weights=[]):
+	all_info = get_all_paths_data(db_path)
+	conn = lite.connect(db_path)
 
-
-
-
-
-
-
+	subpaths = []
+	i = 0
+	while i < len(all_info):
+		curr_info = all_info[i]
+		for j in range(1, curr_info[1] + 1):
+			if j == 1:
+				subpath = SubPath(db_path = db_path, table_num = curr_info[0], path_num = j)
+				subpaths.append(subpath)
+			else:
+				pass
+		i += 1
+	
+	return Path(subpaths=subpaths)
 
 ####################################################################################################
-
 
 # Model 
 def model3(subpath, weights):
@@ -338,39 +445,6 @@ def get_full_model3_path(db_path, first_path_weights = [0.7, 0.3], rest_weights 
 			i += 1
 
 	return subpaths	
-
-
-class Path(object):
-	"""
-	Concatenation of multiple SubPath objects (under the right conditions).
-	"""
-	def __init__(self, subpaths = []):
-		self.subpaths = subpaths
-		self.subpath_nums = [subpath.path_num for subpath in self.subpaths]
-
-		flattened = lambda l: [item for sublist in l for item in sublist]
-		data = []
-		for subpath in self.subpaths:
-			for onset_range, tala, pitch_content in zip(subpath.path, subpath.decitalas, subpath.pitch_data):
-				data.append([onset_range, tala, pitch_content])
-			
-		self.data = data
-		self.decitalas = [data[1] for data in self.data]
-	
-	def __repr__(self):
-		return '<Paths_' + '/'.join(str(x) for x in self.subpath_nums) + '>'
-	
-	def tala_counter(self):
-		return Counter(self.decitalas)
-	
-	def filter_by_tala(self, decitala):
-		"""
-		Returns data filtered by tala. 
-		"""
-		return list(filter(lambda x: x[1] == decitala, self.data))
-
-	def filter_by_onset_range(self, lower_bound = None, upperBound = None):
-		raise NotImplementedError
 
 if __name__ == '__main__':
 	import doctest
