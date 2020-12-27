@@ -4,6 +4,3 @@ build/
 decitala.egg-info/
 dist/
 decitala/entropy/
-_build/
-_static/
-_templates/
