@@ -474,7 +474,7 @@ def filter_data(raw_data):
 			pass
 
 		for j, _ in enumerate(copied):
-			try: 
+			try:
 				if i == j:
 					pass
 				elif len(copied[i].ql_array()) != len(copied[j].ql_array()):

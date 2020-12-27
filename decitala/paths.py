@@ -231,24 +231,30 @@ class SubPath(object):
 
 		return stats.percentileofscore(self.all_averages, avg_num_onsets)
 
+	# Comparison
+	def inter_gap_score(self, other):
+		"""
+		Takes two :obj:`~decitala.paths.SubPath` objects and returns the path gap score, i.e. 
+		proportion of the gap between them to the total range. 
+		"""
+		assert type(other.__name__) == "SubPath"
+		if other.start_onset < self.end_onset:
+			raise PathsException("The start of the second SubPath overlaps with the end of this SubPath.")
+		
+		gap = other.start_onset - self.end_onset
+		total_range = other.end_onset - self.start_onset
+
+		percentage = (gap / total_range) * 100
+		return round(100 - percentage, 6)
+
 ####################################################################################################
 # MODEL
-
-
-
-
-
-
-
-
-
-
-# haikai0_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
-
-####################################################################################################
-def get_all_paths_info(db_path):
+def get_all_paths_data(db_path):
 	"""
-	Returns all the path info
+	Given a database path, returns a list of lists of the form ``[[a, n], [b, m], ...]`` where 
+	``a`` is the path number on the table and ``n`` is the number of paths in that table. 
+	
+	:param str db_path: path to database file (made in :obj:`decitala.database.create_database`).
 	"""
 	conn = lite.connect(db_path)
 	cur = conn.cursor()
@@ -274,6 +280,17 @@ def get_all_paths_info(db_path):
 
 	return all_tables_info
 
+
+
+
+
+
+
+
+
+####################################################################################################
+
+
 # Model 
 def model3(subpath, weights):
 	components = []
@@ -283,24 +300,7 @@ def model3(subpath, weights):
 	
 	return round(sum(components), 6)
 
-def subpath_gap_score(subpath1, subpath2):
-	"""
-	Takes two SubPath objects and returns the PathGapScore
-	"""
-	path1_start_onset = subpath1.start_onset
-	path1_end_onset = subpath1.end_onset
 
-	path2_start_onset = subpath2.start_onset
-	path2_end_onset = subpath2.end_onset
-
-	if path2_start_onset < path1_end_onset:
-		raise Exception('Invalid Path Comparison.')
-	
-	gap = path2_start_onset - path1_end_onset
-	total_range = path2_end_onset - path1_start_onset
-
-	percentage = (gap / total_range) * 100
-	return round(100 - percentage, 6)
 
 def get_full_model3_path(db_path, first_path_weights = [0.7, 0.3], rest_weights = [0.7, 0.1], path_gap_weight = 0.2):
 	all_info = get_all_paths_info(db_path)

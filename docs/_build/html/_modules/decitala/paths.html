@@ -387,26 +387,32 @@
 		<span class="n">num_onsets_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">num_onsets</span> <span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fragments</span><span class="p">]</span>
 		<span class="n">avg_num_onsets</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">num_onsets_data</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
 
-		<span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">percentileofscore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_averages</span><span class="p">,</span> <span class="n">avg_num_onsets</span><span class="p">)</span></div>
+		<span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">percentileofscore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_averages</span><span class="p">,</span> <span class="n">avg_num_onsets</span><span class="p">)</span>
+
+	<span class="c1"># Comparison</span>
+<div class="viewcode-block" id="SubPath.inter_gap_score"><a class="viewcode-back" href="../../paths.html#decitala.paths.SubPath.inter_gap_score">[docs]</a>	<span class="k">def</span> <span class="nf">inter_gap_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Takes two :obj:`~decitala.paths.SubPath` objects and returns the path gap score, i.e. </span>
+<span class="sd">		proportion of the gap between them to the total range. </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;SubPath&quot;</span>
+		<span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">start_onset</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_onset</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">PathsException</span><span class="p">(</span><span class="s2">&quot;The start of the second SubPath overlaps with the end of this SubPath.&quot;</span><span class="p">)</span>
+		
+		<span class="n">gap</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">start_onset</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_onset</span>
+		<span class="n">total_range</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">end_onset</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_onset</span>
+
+		<span class="n">percentage</span> <span class="o">=</span> <span class="p">(</span><span class="n">gap</span> <span class="o">/</span> <span class="n">total_range</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+		<span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="mi">100</span> <span class="o">-</span> <span class="n">percentage</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span></div></div>
 
 <span class="c1">####################################################################################################</span>
 <span class="c1"># MODEL</span>
-
-
-
-
-
-
-
-
-
-
-<span class="c1"># haikai0_database_path = &#39;/Users/lukepoeppel/decitala_v2/sept_haikai_0.db&#39;</span>
-
-<span class="c1">####################################################################################################</span>
-<div class="viewcode-block" id="get_all_paths_info"><a class="viewcode-back" href="../../paths.html#decitala.paths.get_all_paths_info">[docs]</a><span class="k">def</span> <span class="nf">get_all_paths_info</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+<div class="viewcode-block" id="get_all_paths_data"><a class="viewcode-back" href="../../paths.html#decitala.paths.get_all_paths_data">[docs]</a><span class="k">def</span> <span class="nf">get_all_paths_data</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Returns all the path info</span>
+<span class="sd">	Given a database path, returns a list of lists of the form ``[[a, n], [b, m], ...]`` where </span>
+<span class="sd">	``a`` is the path number on the table and ``n`` is the number of paths in that table. </span>
+<span class="sd">	</span>
+<span class="sd">	:param str db_path: path to database file (made in :obj:`decitala.database.create_database`).</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">conn</span> <span class="o">=</span> <span class="n">lite</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
 	<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
@@ -432,6 +438,17 @@
 
 	<span class="k">return</span> <span class="n">all_tables_info</span></div>
 
+
+
+
+
+
+
+
+
+<span class="c1">####################################################################################################</span>
+
+
 <span class="c1"># Model </span>
 <span class="k">def</span> <span class="nf">model3</span><span class="p">(</span><span class="n">subpath</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
 	<span class="n">components</span> <span class="o">=</span> <span class="p">[]</span>
@@ -441,24 +458,7 @@
 	
 	<span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">components</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
 
-<div class="viewcode-block" id="subpath_gap_score"><a class="viewcode-back" href="../../paths.html#decitala.paths.subpath_gap_score">[docs]</a><span class="k">def</span> <span class="nf">subpath_gap_score</span><span class="p">(</span><span class="n">subpath1</span><span class="p">,</span> <span class="n">subpath2</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Takes two SubPath objects and returns the PathGapScore</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">path1_start_onset</span> <span class="o">=</span> <span class="n">subpath1</span><span class="o">.</span><span class="n">start_onset</span>
-	<span class="n">path1_end_onset</span> <span class="o">=</span> <span class="n">subpath1</span><span class="o">.</span><span class="n">end_onset</span>
 
-	<span class="n">path2_start_onset</span> <span class="o">=</span> <span class="n">subpath2</span><span class="o">.</span><span class="n">start_onset</span>
-	<span class="n">path2_end_onset</span> <span class="o">=</span> <span class="n">subpath2</span><span class="o">.</span><span class="n">end_onset</span>
-
-	<span class="k">if</span> <span class="n">path2_start_onset</span> <span class="o">&lt;</span> <span class="n">path1_end_onset</span><span class="p">:</span>
-		<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Invalid Path Comparison.&#39;</span><span class="p">)</span>
-	
-	<span class="n">gap</span> <span class="o">=</span> <span class="n">path2_start_onset</span> <span class="o">-</span> <span class="n">path1_end_onset</span>
-	<span class="n">total_range</span> <span class="o">=</span> <span class="n">path2_end_onset</span> <span class="o">-</span> <span class="n">path1_start_onset</span>
-
-	<span class="n">percentage</span> <span class="o">=</span> <span class="p">(</span><span class="n">gap</span> <span class="o">/</span> <span class="n">total_range</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
-	<span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="mi">100</span> <span class="o">-</span> <span class="n">percentage</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span></div>
 
 <span class="k">def</span> <span class="nf">get_full_model3_path</span><span class="p">(</span><span class="n">db_path</span><span class="p">,</span> <span class="n">first_path_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="n">rest_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span> <span class="n">path_gap_weight</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">):</span>
 	<span class="n">all_info</span> <span class="o">=</span> <span class="n">get_all_paths_info</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>

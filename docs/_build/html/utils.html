@@ -470,6 +470,39 @@ rhythmic material are contiguously equal and sums these regions.</p>
 </div>
 </dd></dl>
 
+<dl class="py function">
+<dt id="decitala.utils.filter_single_anga_class_fragments">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">filter_single_anga_class_fragments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/utils.html#filter_single_anga_class_fragments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.filter_single_anga_class_fragments" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – <span class="math notranslate nohighlight">\([((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]\)</span></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>data from the input with all single-anga-class talas removed. For information on anga-class, see: 
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.fragment.Decitala.num_anga_classes</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.filter_sub_fragments">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">filter_sub_fragments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">filter_in_retrograde</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/utils.html#filter_sub_fragments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.filter_sub_fragments" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – <span class="math notranslate nohighlight">\([((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]\)</span></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>data from the input with all sub-talas removed; that is, talas that sit inside of another.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 

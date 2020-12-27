@@ -186,7 +186,8 @@ file or an array of quarter length values.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filepath</strong> (<em>str</em>) – path to encoded fragment (initialized to None).</p></li>
-<li><p><strong>numpy.array</strong> – array of quarter length values (initialized to None).</p></li>
+<li><p><strong>data</strong> – input data to <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GeneralFragment</span></code></a> (either an array of quarter length values
+or a path to a music21 readable file.</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – optional name argument.</p></li>
 </ul>
 </dd>
@@ -312,7 +313,7 @@ file or an array of quarter length values.</p>
 <dd class="field-odd"><p><strong>as_str</strong> (<em>bool</em>) – whether or not to return the d-seg as a string.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the d-seg of the fragment, as introducted in “The Perception of Rhythm in Non-Tonal Music” (Marvin, 1991). Maps a fragment into a sequence of relative durations.</p>
+<dd class="field-even"><p>the d-seg of the fragment, as introducted in <a class="reference external" href="https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents">The Perception of Rhythm in Non-Tonal Music</a> (Marvin, 1991). Maps a fragment into a sequence of relative durations.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array</p>
@@ -350,7 +351,7 @@ file or an array of quarter length values.</p>
 
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.successive_ratio_array">
-<code class="sig-name descname">successive_ratio_array</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.successive_ratio_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.successive_ratio_array" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">successive_ratio_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">retrograde</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.successive_ratio_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.successive_ratio_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>See docstring of <a class="reference internal" href="utils.html#decitala.utils.successive_ratio_array" title="decitala.utils.successive_ratio_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.utils.successive_ratio_array</span></code></a>.</p>
 </dd></dl>
 
@@ -387,12 +388,31 @@ file or an array of quarter length values.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="decitala.fragment.GeneralFragment.is_sub_fragment">
+<code class="sig-name descname">is_sub_fragment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em>, <em class="sig-param"><span class="n">try_retrograde</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.is_sub_fragment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.is_sub_fragment" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> – a <cite>decitala.fragment.GeneralFragment</cite>, <cite>decitala.fragment.Decitala</cite>, or <cite>decitala.fragment.GreekFoot</cite> object.</p></li>
+<li><p><strong>bool</strong> (<em>try_retrograde</em>) – whether to allow searching in retrograde.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>whether or not self is a sub-fragment, meaning its successive_ratio_array exists inorder in the others.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.morris_symmetry_class">
 <code class="sig-name descname">morris_symmetry_class</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.morris_symmetry_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.morris_symmetry_class" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the fragment’s form of rhythmic symmetry, as defined by Morris in “Sets, Scales and Rhythmic Cycles. 
-A Classification of Talas in Indian Music” (1999).</p>
+<dd class="field-odd"><p>the fragment’s form of rhythmic symmetry, as defined by Morris in <a class="reference external" href="http://ecmc.rochester.edu/rdm/pdflib/talapaper.pdf">Sets, Scales and Rhythmic Cycles. 
+A Classification of Talas in Indian Music</a> (1999).</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>str</p>
@@ -435,7 +455,7 @@ A Classification of Talas in Indian Music” (1999).</p>
 <code class="sig-name descname">std</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GeneralFragment.std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.std" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the standard deviation of <cite>self.ql_array()</cite>.</p>
+<dd class="field-odd"><p>the standard deviation of <code class="xref py py-func docutils literal notranslate"><span class="pre">ql_array()</span></code>.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>float</p>
@@ -551,6 +571,10 @@ folder which contains XML files for each fragment.</p>
 <span class="go">[0.25 0.25 1.5  0.5  1.   0.5  0.5 ]</span>
 <span class="go">[0.25 1.5  0.5  1.   0.5  0.5  0.25]</span>
 <span class="go">[1.5  0.5  1.   0.5  0.5  0.25 0.25]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># We can check if a fragment is a sub-fragment of another (meaning its</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># successive_ratio_array appears inorder in another with the is_sub_fragment method. </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Decitala</span><span class="p">(</span><span class="s2">&quot;75_Pratapacekhara&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_sub_fragment</span><span class="p">(</span><span class="n">Decitala</span><span class="p">(</span><span class="s2">&quot;Ragavardhana&quot;</span><span class="p">),</span> <span class="n">try_retrograde</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">True</span>
 </pre></div>
 </div>
 <dl class="py method">

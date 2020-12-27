@@ -232,18 +232,25 @@ conditions, <code class="xref py py-obj docutils literal notranslate"><span clas
 <span class="go"># 15.76086956521739</span>
 </pre></div>
 </div>
+<dl class="py method">
+<dt id="decitala.paths.SubPath.inter_gap_score">
+<code class="sig-name descname">inter_gap_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">other</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#SubPath.inter_gap_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.SubPath.inter_gap_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes two <a class="reference internal" href="#decitala.paths.SubPath" title="decitala.paths.SubPath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubPath</span></code></a> objects and returns the path gap score, i.e. 
+proportion of the gap between them to the total range.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
-<dt id="decitala.paths.get_all_paths_info">
-<code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">get_all_paths_info</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#get_all_paths_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.get_all_paths_info" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the path info</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="decitala.paths.subpath_gap_score">
-<code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">subpath_gap_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">subpath1</span></em>, <em class="sig-param"><span class="n">subpath2</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#subpath_gap_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.subpath_gap_score" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes two SubPath objects and returns the PathGapScore</p>
+<dt id="decitala.paths.get_all_paths_data">
+<code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">get_all_paths_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#get_all_paths_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.get_all_paths_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a database path, returns a list of lists of the form <code class="docutils literal notranslate"><span class="pre">[[a,</span> <span class="pre">n],</span> <span class="pre">[b,</span> <span class="pre">m],</span> <span class="pre">...]</span></code> where 
+<code class="docutils literal notranslate"><span class="pre">a</span></code> is the path number on the table and <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of paths in that table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>db_path</strong> (<em>str</em>) – path to database file (made in <a class="reference internal" href="database.html#decitala.database.create_database" title="decitala.database.create_database"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.database.create_database</span></code></a>).</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">

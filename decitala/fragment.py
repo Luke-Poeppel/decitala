@@ -52,7 +52,8 @@ class GeneralFragment(object):
 	file or an array of quarter length values. 
 
 	:param str filepath: path to encoded fragment (initialized to None).
-	:param numpy.array: array of quarter length values (initialized to None).
+	:param data: input data to :obj:`~decitala.fragment.GeneralFragment` (either an array of quarter length values
+				or a path to a music21 readable file.
 	:param str name: optional name argument.
 	:raises `~decitala.fragment.FragmentException`: when an array and file are provided or neither are provided.
 	
@@ -186,7 +187,7 @@ class GeneralFragment(object):
 	def dseg(self, as_str=False):
 		"""
 		:param bool as_str: whether or not to return the d-seg as a string.
-		:return: the d-seg of the fragment, as introducted in "The Perception of Rhythm in Non-Tonal Music" (Marvin, 1991). Maps a fragment into a sequence of relative durations. 
+		:return: the d-seg of the fragment, as introducted in `The Perception of Rhythm in Non-Tonal Music <https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents>`_ (Marvin, 1991). Maps a fragment into a sequence of relative durations. 
 		:rtype: numpy.array
 
 		>>> g3 = GeneralFragment(np.array([0.25, 0.75, 2.0, 1.0]), name='marvin-p70')
@@ -282,8 +283,8 @@ class GeneralFragment(object):
 	
 	def morris_symmetry_class(self):
 		"""
-		:return: the fragment's form of rhythmic symmetry, as defined by Morris in "Sets, Scales and Rhythmic Cycles. 
-				A Classification of Talas in Indian Music" (1999). 
+		:return: the fragment's form of rhythmic symmetry, as defined by Morris in `Sets, Scales and Rhythmic Cycles. 
+				A Classification of Talas in Indian Music <http://ecmc.rochester.edu/rdm/pdflib/talapaper.pdf>`_ (1999). 
 		:rtype: str
 
 		- I. Maximally Trivial:				of the form :math:`X` (one onset, one anga class)
@@ -298,23 +299,23 @@ class GeneralFragment(object):
 		reduced_dseg = self.reduced_dseg(as_str = False)
 
 		if len(dseg) == 1:
-			return 'I. Maximally Trivial'
+			return "I. Maximally Trivial"
 		elif len(dseg) > 1 and len(np.unique(dseg)) == 1:
-			return 'II. Trivial Symmetry'
+			return "II. Trivial Symmetry"
 		elif len(dseg) == 2 and len(np.unique(dseg)) == 2:
-			return 'III. Trivial Dual Symmetry'
+			return "III. Trivial Dual Symmetry"
 		elif len(dseg) > 2 and len(np.unique(dseg)) == 2:
-			return 'IV. Maximally Trivial Palindrome'
+			return "IV. Maximally Trivial Palindrome"
 		elif len(dseg) > 2 and len(reduced_dseg) == 3:
-			return 'V. Trivial Dual Palindrome'
+			return "V. Trivial Dual Palindrome"
 		elif len(dseg) > 2 and len(np.unique(dseg)) == len(dseg) // 2:
-			return 'VI. Palindrome'
+			return "VI. Palindrome"
 		else:
-			return 'VII. Stream'
+			return "VII. Stream"
 
 	def std(self):
 		"""
-		:return: the standard deviation of `self.ql_array()`.
+		:return: the standard deviation of :func:`~decitala.GeneralFragment.ql_array`.
 		:rtype: float
 		"""
 		return np.std(self.ql_array())
@@ -481,9 +482,8 @@ class Decitala(GeneralFragment):
 		:return: the ID of the fragment, as given by Lavignac (1921).
 		:rtype: int
 		"""
-		if self.name:
-			idValue = re.search(r'\d+', self.name)
-			return int(idValue.group(0))
+		idValue = re.search(r'\d+', self.name)
+		return int(idValue.group(0))
 	
 	@classmethod
 	def get_by_id(cls, input_id):
