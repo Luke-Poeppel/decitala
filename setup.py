@@ -66,7 +66,8 @@ setup(
 		"jsonpickle",
 		"numpy",
 		"sqlite3",
-		"matplotlib"
+		"matplotlib",
+		"timeout-decorator"
 	],
 	cmdclass={
 		'clean': CleanCommand,

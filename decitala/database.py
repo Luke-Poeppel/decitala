@@ -14,13 +14,17 @@ import click
 import numpy as np
 import os
 import sqlite3 as lite
+import timeout_decorator
 import uuid
 
 from music21 import converter
 from music21 import stream
 
 from .utils import (
-	get_object_indices
+	get_object_indices,
+	successive_ratio_array,
+	filter_single_anga_class_fragments,
+	filter_sub_fragments
 )
 
 from .trees import (
@@ -81,42 +85,8 @@ def _pitch_info_from_onset_range(onset_range, all_objects_in_part):
 	
 	return midi
 
-def filter_single_anga_class_fragments(data):
-	"""
-	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
-	:return: data from the input with all single-anga-class talas removed. For information on anga-class, see: 
-			:obj:`decitala.fragment.Decitala.num_anga_classes`.
-	:rtype: list
-	"""
-	return list(filter(lambda x: x[0][0].num_anga_classes != 1, data))
-
-def filter_sub_fragments(data):
-	"""
-	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
-	:return: data from the input with all sub-talas removed; that is, talas that sit inside of another. 
-	:rtype: list
-	"""
-	just_fragments = list(set([x[0][0] for x in data]))
-
-	def _check_individual_containment(a, b):
-		return ', '.join(map(str, a)) in ', '.join(map(str, b))
-	
-	def _check_all(x):
-		check = False
-		for this_fragment in just_fragments:
-			if this_fragment == x:
-				pass
-			else:
-				if _check_individual_containment(x.successive_ratio_array(), this_fragment.successive_ratio_array()):
-					check = True
-		return check
-
-	filtered = [x for x in just_fragments if not(_check_all(x))]
-	filtered_ids = [x.id_num for x in filtered]
-	
-	return [x for x in data if x[0][0].id_num in filtered_ids]
-
 ####################################################################################################
+@timeout_decorator.timeout(75)
 def create_database(
 		db_path,
 		filepath,
@@ -177,7 +147,7 @@ def create_database(
 	for this_frag_type in frag_types:
 		if verbose:
 			logging.info("\n")
-			logging.info("Making fragment tree (and searching) for frag_type: {}".format(this_frag_type))
+			logging.info("Making fragment tree(s) (and searching) for frag_type: {}".format(this_frag_type))
 
 		if "ratio" in rep_types:
 			curr_ratio_tree = FragmentTree(frag_type=this_frag_type, rep_type="ratio")

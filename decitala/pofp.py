@@ -33,6 +33,9 @@ import copy
 import itertools
 import pytest
 
+import logging
+logging.basicConfig(level=logging.INFO)
+
 def check_break_point(data, i):
 	"""
 	Helper function for `pofp.get_break_points`. Checks index i of the onset_list that all values 
@@ -118,7 +121,7 @@ def partition_data_by_break_points(data):
 	return out
 
 ####################################################################################################
-def get_pareto_optimal_longest_paths(data):
+def get_pareto_optimal_longest_paths(data, verbose=False):
 	"""
 	Algorithm courtesy of M. Raynard. 
 
@@ -174,6 +177,8 @@ def get_pareto_optimal_longest_paths(data):
 
 	for source in sources:
 		print_path_rec(source, [])
+		if verbose:
+			logging.info(new_path)
 
 	flatten = lambda l: [item for sublist in l for item in sublist]
 	flattened = flatten(solutions)
