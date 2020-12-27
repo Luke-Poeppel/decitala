@@ -613,6 +613,35 @@ def frame_to_ql_array(data):
 	
 	return np.array([x for x in qls if x != 0])
 
+def filter_single_anga_class_fragments(data):
+	"""
+	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
+	:return: data from the input with all single-anga-class talas removed. For information on anga-class, see: 
+			:obj:`decitala.fragment.Decitala.num_anga_classes`.
+	:rtype: list
+	"""
+	return list(filter(lambda x: x[0][0].num_anga_classes != 1, data))
+
+def filter_sub_fragments(data, filter_in_retrograde=True):
+	"""
+	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
+	:return: data from the input with all sub-talas removed; that is, talas that sit inside of another. 
+	:rtype: list
+	"""
+	just_fragments = list(set([x[0][0] for x in data]))
+
+	def _check_all(x):
+		check = False
+		for this_fragment in just_fragments:
+			if this_fragment == x:
+				pass
+			else:
+				if x.is_sub_fragment(this_fragment, filter_in_retrograde):
+					check = True
+		return check
+
+	return [x for x in just_fragments if not(_check_all(x))]
+
 if __name__ == '__main__':
 	import doctest
 	doctest.testmod()

@@ -5,7 +5,13 @@ from music21 import chord
 
 from decitala.utils import (
 	contiguous_summation,
-	frame_to_ql_array
+	frame_to_ql_array,
+	filter_single_anga_class_fragments,
+	filter_sub_fragments
+)
+
+from decitala.fragment import (
+	Decitala
 )
 
 @pytest.fixture
@@ -30,6 +36,16 @@ def liturgie_opening():
 	]
 	return data
 
+@pytest.fixture
+def decitala_collection():
+	talas = [
+		((Decitala("75_Pratapacekhara"), ('sr', 0.6666666666666666)), (2.0, 6.25)),
+		((Decitala("93_Ragavardhana"), ('rsr', 2.0)), (2.0, 6.75)),
+		((Decitala("Karanayati"), ('r', 1.0)), (0.0, 1.0)),
+		((Decitala("5_Pancama"), ('r', 4.0)), (2.0, 4.0)),
+	]
+	return talas
+
 def test_contiguous_summation_same_chord(gc2_example_data):
 	res = contiguous_summation(gc2_example_data)
 	expected = [
@@ -50,3 +66,11 @@ def test_qls_not_change_after_cs():
 		(chord.Chord(["F#4", "B4", "C5"], quarterLength=0.75), (5.5, 6.25)), 
 		(chord.Chord(["E4", "A4", "C5"], quarterLength=0.5), (6.25, 6.75))
 	]
+
+def test_single_anga_class_and_subtala_filtering(decitala_collection):
+	original = decitala_collection
+	filter_a = filter_single_anga_class_fragments(original)
+	assert len(filter_a) == 2
+
+	filter_b = filter_sub_fragments(filter_a)
+	assert len(filter_b) == 1
