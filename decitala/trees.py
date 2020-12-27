@@ -825,13 +825,13 @@ def rolling_search(
 	>>> ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
 	>>> difference_tree = FragmentTree(frag_type='greek_foot', rep_type='difference')
 	>>> ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
-	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, verbose=False)[0:5]:
+	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=["r"], verbose=False)[0:5]:
 	... 	print(tala_data)
 	((<fragment.GreekFoot Spondee>, ('r', 0.125)), (0.0, 0.5))
+	((<fragment.GreekFoot 5_16>, ('r', 0.125)), (0.0, 0.625))
+	((<fragment.GreekFoot Ionic_Major>, ('r', 0.125)), (0.0, 0.75))
 	((<fragment.GreekFoot Trochee>, ('r', 0.125)), (0.25, 0.625))
-	((<fragment.GreekFoot Spondee>, ('r', 0.0625)), (0.5, 0.75))
-	((<fragment.GreekFoot Iamb>, ('r', 0.125)), (0.625, 1.0))
-	((<fragment.GreekFoot Spondee>, ('r', 0.125)), (0.75, 1.25))
+	((<fragment.GreekFoot Dactyl>, ('r', 0.125)), (0.25, 0.75))
 	"""
 	try:
 		assert ratio_tree.rep_type == "ratio"

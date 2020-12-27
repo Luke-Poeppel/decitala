@@ -18,14 +18,12 @@ pipeline used in this package is Search → Path Finding (Database Creation) →
    :caption: Modules
    :glob:
 
-   cli
    database
    fragment
    paths
    pofp 
    trees
    utils
-   vis
 
 Indices and tables
 ==================

@@ -8,7 +8,7 @@
 # Location: Kent, CT 2020
 ####################################################################################################
 """
-Tools for analyzing the extracted data present in sqlite3 databases (from :obj:`~decitala.database.create_database`.)
+Tools for analyzing the data extracted in :obj:`~decitala.database.create_database`.
 """
 import numpy as np
 import os
@@ -27,6 +27,11 @@ from music21 import (
 	stream
 )
 
+from decitala.fragment import (
+	Decitala,
+	GreekFoot
+)
+
 ############### EXCEPTIONS ###############
 class PathsException(Exception):
 	pass
@@ -37,6 +42,58 @@ class SubPath(object):
 	Object for storing information about a subpath in a given database. Keeps track of the path onsets, 
 	the decitalas within it, and calculates relevant information (e.g. `gap_score`). Under the right 
 	conditions, :obj:`~decitala.paths.SubPath`s compose a full :obj:`decitala.paths.Path` object. 
+
+	:param db_path str: path leading to .db file (made from :obj:`~decitala.database.create_database`).
+	:param table_num int: path table number (denoted `Path_i` in the file).
+	:param path_num int: path number (enumerated by row in the file).
+	:raises `~decitala.paths.PathsException`: when an invalid table/path are provided. 
+
+	>>> livre_dorgue_0_path = "/Users/lukepoeppel/decitala/databases/livre_dorgue_0_new.db"
+	>>> sub_path = SubPath(db_path=livre_dorgue_0_path, table_num=17, path_num=11)
+	>>> sub_path
+	<paths.SubPath_11: [(151.125, 153.125), (153.125, 154.375), (154.375, 161.375)]>
+	>>> sub_path.path
+	[(151.125, 153.125), (153.125, 154.375), (154.375, 161.375)]
+	>>> for region_pitches in sub_path.pitch_data:
+	... 	print(region_pitches)
+	((44,), (63,))
+	((76,), (82,), (89,))
+	((78,), (69,), (75,), (64,), (71,), (82,), (56,), (59,), (61,), (50,), (43,), (68,), (71,), (67,), (64,), (58,))
+	>>> for fragment in sub_path.fragments:
+	... 	print(fragment.name, fragment.ql_array())
+	97_Utsava [0.5 1.5]
+	76_Jhampa [0.375 0.375 0.5  ]
+	15_Caccari [0.25  0.375 0.25  0.375 0.25  0.375 0.25  0.375 0.25  0.375 0.25  0.375
+	 0.25  0.375 0.25  0.375]
+	>>> sub_path.num_onsets
+	21
+	>>> sub_path.start_onset
+	151.125
+	>>> sub_path.end_onset
+	161.375
+	>>> sub_path.gaps()
+	[0.0, 0.0]
+	>>> sub_path.total_gaps()
+	0.0
+	>>> # SubPath.played_total_duration() only returns the total duration of sounded tones, i.e. ignores silent periods. 
+	>>> sub_path.played_total_duration()
+	10.25
+	>>> # SubPath.total_range() is the played_total_duration() + total_gaps()
+	>>> sub_path.total_range()
+	10.25
+	>>> sub_path.is_end_overlapping()
+	True
+	>>> # SubPath.gap_score() returns the percentage of total_range() that is continous, i.e. without gaps. 
+	>>> sub_path.gap_score()
+	100.0
+	>>> sub_path.non_retrogradable_score()
+	0.0
+	>>> sub_path.recycling_score()
+	0.0
+	>>> # SubPath.average_num_onsets_per_tala_score() tracks the average number of onsets in a path
+	# and scores it's percentile in the context of the table.
+	>>> # sub_path.average_num_onsets_per_tala_score()
+	# 15.76086956521739
 	"""
 	def __init__(self, db_path, table_num, path_num, **kwargs):
 		assert os.path.isfile(db_path), PathsException("The database path provided is invalid.")
@@ -56,17 +113,17 @@ class SubPath(object):
 		pitch_data = []
 		for i, this_row in enumerate(rows):
 			for this_data in this_row:
-				if this_data[0:3] == '(((':
+				if this_data[0:3] == "(((":
 					evaluated = literal_eval(this_data)
 					pitch_data.append(evaluated)
 
 			if self.path_num == (i + 1):
 				stop_index = 0
 				for this_data in this_row:
-					if this_data == 'NULL':
+					if this_data == "NULL":
 						stop_index = this_row.index(this_data)
 						break
-					elif this_data[0:3] == '(((':
+					elif this_data[0:3] == "(((":
 						stop_index = this_row.index(this_data)
 
 				for this_data in this_row[0:stop_index]:
@@ -81,194 +138,25 @@ class SubPath(object):
 		self.path = path
 		self.pitch_data = pitch_data
 
-		fragments_pre = []
 		fragment_path_string = "SELECT * FROM Fragments"
 		cur.execute(fragment_path_string)
 		fragment_rows = cur.fetchall()
-
+		fragments = []
 		for this_range in self.path:
 			for this_row in fragment_rows:
 				if this_range[0] == this_row[0] and this_range[1] == this_row[1]:
-					fragments_pre.append(this_row[2])
-		
-		print(fragments_pre)
-		
-		# def _remove_id(full_name):
-		# 	x = re.search(r'\d+', full_name)
-		# 	split = full_name.split('_')
-		# 	if not(len(split[1]) == 1):
-		# 		new_str = '_'.join(split[1:])
-		# 		return new_str
-		# 	else:
-		# 		new_str = '_'.join(split[2:])
-		# 		return new_str
+					fragment_str = this_row[2]
+					fragment_name = fragment_str.split()[-1][:-1] # Remove the final `>`.
+					fragment_abbrev = fragment_str[10:12]
+					if fragment_abbrev == "De": # Decitala
+						fragments.append(Decitala(fragment_name))
+					elif fragment_abbrev == "Gr": # GreekFoot
+						fragments.append(GreekFoot(fragment_name))
 
-		# decitalas_post = [_remove_id(x) for x in decitalas_pre]
-		# self.decitalas = [Decitala(string) for string in decitalas_post]
-
+		self.fragments = fragments
 
 	def __repr__(self):
-		return '<SubPath_{0}: {1}>'.format(str(self.path_num), str(self.path))
-
-lodb_path = "/Users/lukepoeppel/livre_dorgue_0_new.db"
-sp17 = SubPath(lodb_path, 17, 7)
-
-print(sp17)
-
-
-####################################################################################################
-
-class SubPathOld(object):
-	"""
-	Object for storing information about a subpath in a given database. Keeps track of the path onsets, 
-	the decitalas within it, and calculates relevant information (e.g. gap_score). Under the right 
-	conditions, Subpaths compose a full Path object (defined below).
-
-	NOTE: the individual paths in a sqlite table are 1-indexed. 
-
-	>>> livre_dorgue0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
-	>>> sp = SubPath(db_path=livre_dorgue0_path, table_num=8, path_num=62)
-	>>> sp
-	<SubPath_62: [(181.0, 184.75), (184.875, 185.875), (186.375, 187.375), (187.375, 188.25), (188.75, 191.75), (191.75, 195.125)]>
-	>>> sp.path
-	[(181.0, 184.75), (184.875, 185.875), (186.375, 187.375), (187.375, 188.25), (188.75, 191.75), (191.75, 195.125)]
-	>>> for x in sp.pitch_data:
-	...     print(x)
-	((66,), (77,), (75,))
-	((60,), (68,), (71,), (82,), (75,))
-	((74,), (79,), (64,), (70,), (81,))
-	((75,), (61,), (72,))
-	((80,), (67,), (78,), (86,))
-	((69,), (77,), (66,))
-	>>> for tala in sp.decitalas:
-	...     print(tala.name, tala.ql_array())
-	21_Tribhinna [0.5 1.  1.5]
-	46_Jayacri [1.  0.5 1.  0.5 1. ]
-	46_Jayacri [1.  0.5 1.  0.5 1. ]
-	118_Rajamartanda [1.   0.5  0.25]
-	65_B_Kankala_Khanda [0.25 0.25 1.   1.  ]
-	21_Tribhinna [0.5 1.  1.5]
-
-	>>> sp.num_onsets
-	23
-	>>> sp.start_onset
-	181.0
-	>>> sp.end_onset
-	195.125
-
-	>>> sp.gaps()
-	[0.125, 0.5, 0.0, 0.5, 0.0]
-	>>> sp.total_gaps()
-	1.125
-
-	SubPath().played_total_duration() only returns the total duration of sounded tones, i.e., 
-	ignores silent periods. 
-	>>> sp.played_total_duration()
-	13.0
-	
-	So, SubPath().total_range() is the played_total_duration() + total_gaps()
-	>>> sp.total_range()
-	14.125
-	>>> sp.is_end_overlapping()
-	False
-
-	SubPath().gap_score() returns the percentage of total_range() that is continous, that is, without
-	gaps. 
-	>>> sp.gap_score()
-	92.035398
-	>>> sp.non_retrogradable_score()
-	33.333333
-	>>> sp.recycling_score()
-	66.666667
-
-	SubPath().average_num_onsets_per_tala_score() tracks the average number of onsets in a path
-	and scores it's percentile in the context of the table.
-	>>> sp.average_num_onsets_per_tala_score()
-	15.76086956521739
-	"""
-	def __init__(self, db_path, table_num, path_num, **kwargs):
-		assert path_num > 0
-
-		self.db_path = db_path
-		self.table_num = table_num
-		self.path_num = path_num
-
-		conn = lite.connect(self.db_path)
-		cur = conn.cursor()
-
-		path_string = "SELECT * FROM Paths_{}".format(str(table_num))
-		cur.execute(path_string)
-		rows = cur.fetchall()
-
-		# separate loop, for now. 
-		all_averages = []
-		for this_row in rows:
-			each_tala_num_onsets = []
-			for this_data in this_row:
-				if this_data[0:3] == '(((':
-					evaluated = literal_eval(this_data)
-					for this in evaluated:
-						each_tala_num_onsets.append(len(this))
-
-			all_averages.append(round(np.mean(each_tala_num_onsets), 6))
-		
-		self.all_averages = all_averages
-
-		path = []
-		pitch_data = []
-		for i, this_row in enumerate(rows):
-			for this_data in this_row:
-				if this_data[0:3] == '(((':
-					evaluated = literal_eval(this_data)
-					pitch_data.append(evaluated)
-
-			if self.path_num == (i + 1):
-				stop_index = 0
-				for this_data in this_row:
-					if this_data == 'NULL':
-						stop_index = this_row.index(this_data)
-						break
-					elif this_data[0:3] == '(((':
-						stop_index = this_row.index(this_data)
-
-				for this_data in this_row[0:stop_index]:
-					evaluated = literal_eval(this_data)
-					path.append(evaluated)
-
-				pitch_data = literal_eval(this_row[-1])
-				break
-			else:
-				pass
-			
-		self.path = path
-		self.pitch_data = pitch_data
-
-		# Get tala information. (More efficient to do it separately.)
-		decitalas_pre = []
-		fragment_path_string = "SELECT * FROM Fragments"
-		cur.execute(fragment_path_string)
-		rows = cur.fetchall()
-
-		for this_range in self.path:
-			for this_row in rows:
-				if this_range[0] == this_row[0] and this_range[1] == this_row[1]:
-					decitalas_pre.append(this_row[2])
-		
-		def _remove_id(full_name):
-			x = re.search(r'\d+', full_name)
-			split = full_name.split('_')
-			if not(len(split[1]) == 1):
-				new_str = '_'.join(split[1:])
-				return new_str
-			else:
-				new_str = '_'.join(split[2:])
-				return new_str
-
-		decitalas_post = [_remove_id(x) for x in decitalas_pre]
-		self.decitalas = [Decitala(string) for string in decitalas_post]
-
-	def __repr__(self):
-		return '<SubPath_{0}: {1}>'.format(str(self.path_num), str(self.path))
+		return '<paths.SubPath_{0}: {1}>'.format(str(self.path_num), str(self.path))
 
 	@property
 	def start_onset(self):
@@ -316,60 +204,35 @@ class SubPathOld(object):
 	def is_end_overlapping(self):
 		return sum(self.gaps()) == 0
 
-	#################### Individual Scores ####################
 	def gap_score(self):
 		percentage_gap = (self.total_gaps() / self.total_range()) * 100
 		return round((100 - percentage_gap), 6)
 
 	def non_retrogradable_score(self):
 		num_non_retrogradable = 0
-		for this_tala in self.decitalas:
-			if this_tala.is_non_retrogradable:
+		for this_fragment in self.fragments:
+			if this_fragment.is_non_retrogradable:
 				num_non_retrogradable += 1
 			
-		return round((num_non_retrogradable / len(self.decitalas)) * 100, 6)
+		return round((num_non_retrogradable / len(self.fragments)) * 100, 6)
 
 	def recycling_score(self):
 		recycled = 0
-		counted = Counter(self.decitalas)
-		for x in counted.keys():
-			if counted[x] > 1:
-				recycled += counted[x]
+		counted = Counter(self.fragments)
+		for key in counted.keys():
+			if counted[key] > 1:
+				recycled += counted[key]
 		
-		return round((recycled / len(self.decitalas)) * 100, 6)
+		return round((recycled / len(self.fragments)) * 100, 6)
 	
 	def average_num_onsets_per_tala_score(self):
-		num_onsets_data = [tala.num_onsets for tala in self.decitalas]
+		num_onsets_data = [this_fragment.num_onsets for this_fragment in self.fragments]
 		avg_num_onsets = round(np.mean(num_onsets_data), 6)
 
 		return stats.percentileofscore(self.all_averages, avg_num_onsets)
 
-	###################### Visualization ######################
-	def show(self):
-		"""
-		Shows the series of talas with the pitch information normalized to start at onset 0.0. 
-		"""
-		'''
-		first_onset = self.start_onset
-		normalized_path = []
-		for onset_range in self.path:
-			normalized_path.append([onset_range[0] - first_onset, onset_range[1] - first_onset])
-		
-		#hmmm... we need the tala onsets.
-		zipped = []
-		for onset_range, pitch_info in zip(normalized_path, self.pitch_data):
-			print(onset_range, pitch_info)
-		'''
-		raise NotImplementedError
-
-	def annotate_score(self, score_path, part):
-		"""
-		Annotates a given score (matching the score on which the database has been created) 
-		with the SubPath data. 
-		"""
-		raise NotImplementedError
-
-
+####################################################################################################
+# MODEL
 
 
 
@@ -476,16 +339,6 @@ def get_full_model3_path(db_path, first_path_weights = [0.7, 0.3], rest_weights 
 
 	return subpaths	
 
-####################################################################################################
-# Testing
-# haikai0_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_0.db'
-# haikai1_database_path = '/Users/lukepoeppel/decitala_v2/sept_haikai_1.db'
-
-# liturgie3_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_3.db'
-# liturgie4_database_path = '/Users/lukepoeppel/decitala_v2/liturgie_4.db'
-
-# livre_dorgue_0_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
-# livre_dorgue_1_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_1.db'
 
 class Path(object):
 	"""
@@ -519,40 +372,6 @@ class Path(object):
 	def filter_by_onset_range(self, lower_bound = None, upperBound = None):
 		raise NotImplementedError
 
-###############################################################################
-# Testing
-
-class Test(unittest.TestCase):
-	def set_up(self):
-		warnings.simplefilter('ignore', category=ImportWarning)
-
-	def test_all_num_paths_in_table(self):
-		all_found_info = get_all_paths_info('/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db')
-		all_num_paths = [x[1] for x in all_found_info]
-
-		real = [24, 46, 24, 12, 10, 128, 10, 108, 92, 24, 12, 4]
-
-		self.assertEqual(all_num_paths, real)
-	
-	# Do an easier example so I can check by hand.
-	'''
-	def test_num_onsets_percetile(self):
-		test_path = '/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db'
-		all_found_info = get_all_paths_info(test_path)
-		percentiles = []
-		for i in range(1, all_found_info[1][1] + 1):
-			path = SubPath(test_path, 1, i)
-			percentiles.append(path.average_num_onsets_per_tala_score())
-
-		real = [0.0, 0.0, 0.0, 0.0, 0.0, 2.272727, 4.444444, 6.0, 7.692308, 12.5, 19.047619, 19.230769, 21.212121, 21.428571, 22.222222, 23.076923, 24.074074, 25.0, 26.666667, 33.333333, 35.416667, 36.363636, 40.0, 50.0, 50.0, 50.0, 50.0, 50.0, 50.0, 51.219512, 51.25, 51.351351, 52.857143, 52.941176, 52.941176, 53.225806, 55.0, 55.172414, 62.5, 63.888889, 65.625, 67.105263, 75.0, 75.0, 77.777778, 100.0]
-		self.assertEqual(real, percentiles)
-	'''
-
 if __name__ == '__main__':
 	import doctest
-	#doctest.testmod()
-	#unittest.main()
-
-
-
-
+	doctest.testmod()

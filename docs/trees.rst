@@ -1,6 +1,6 @@
-=====
+========
 trees.py
-=====
+========
 
 Messiaen often altered rhythmic fragments from the decitala database before including 
 them in his composition. But he still establishes a kind of equivalence relation such that

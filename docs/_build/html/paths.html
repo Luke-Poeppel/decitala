@@ -87,7 +87,6 @@
             
                 <p class="caption"><span class="caption-text">Modules</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="cli.html">cli.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">paths.py</a></li>
@@ -157,9 +156,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="paths-py">
-<h1>paths.py<a class="headerlink" href="#paths-py" title="Permalink to this headline">¶</a></h1>
-<span class="target" id="module-decitala.paths"></span><p>Tools for analyzing the extracted data present in sqlite3 databases (from <a class="reference internal" href="database.html#decitala.database.create_database" title="decitala.database.create_database"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_database</span></code></a>.)</p>
+  <div class="section" id="module-decitala.paths">
+<span id="paths-py"></span><h1>paths.py<a class="headerlink" href="#module-decitala.paths" title="Permalink to this headline">¶</a></h1>
+<p>Tools for analyzing the data extracted in <a class="reference internal" href="database.html#decitala.database.create_database" title="decitala.database.create_database"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_database</span></code></a>.</p>
 <dl class="py exception">
 <dt id="decitala.paths.PathsException">
 <em class="property">exception </em><code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">PathsException</code><a class="reference internal" href="_modules/decitala/paths.html#PathsException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.PathsException" title="Permalink to this definition">¶</a></dt>
@@ -173,88 +172,66 @@
 <p>Object for storing information about a subpath in a given database. Keeps track of the path onsets, 
 the decitalas within it, and calculates relevant information (e.g. <cite>gap_score</cite>). Under the right 
 conditions, <code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code> object.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt id="decitala.paths.SubPathOld">
-<em class="property">class </em><code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">SubPathOld</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_path</span></em>, <em class="sig-param"><span class="n">table_num</span></em>, <em class="sig-param"><span class="n">path_num</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#SubPathOld"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.SubPathOld" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Object for storing information about a subpath in a given database. Keeps track of the path onsets, 
-the decitalas within it, and calculates relevant information (e.g. gap_score). Under the right 
-conditions, Subpaths compose a full Path object (defined below).</p>
-<p>NOTE: the individual paths in a sqlite table are 1-indexed.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">livre_dorgue0_path</span> <span class="o">=</span> <span class="s1">&#39;/Users/lukepoeppel/decitala_v2/livre_dorgue_0.db&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span> <span class="o">=</span> <span class="n">SubPath</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">livre_dorgue0_path</span><span class="p">,</span> <span class="n">table_num</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">path_num</span><span class="o">=</span><span class="mi">62</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span>
-<span class="go">&lt;SubPath_62: [(181.0, 184.75), (184.875, 185.875), (186.375, 187.375), (187.375, 188.25), (188.75, 191.75), (191.75, 195.125)]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span><span class="o">.</span><span class="n">path</span>
-<span class="go">[(181.0, 184.75), (184.875, 185.875), (186.375, 187.375), (187.375, 188.25), (188.75, 191.75), (191.75, 195.125)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sp</span><span class="o">.</span><span class="n">pitch_data</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">((66,), (77,), (75,))</span>
-<span class="go">((60,), (68,), (71,), (82,), (75,))</span>
-<span class="go">((74,), (79,), (64,), (70,), (81,))</span>
-<span class="go">((75,), (61,), (72,))</span>
-<span class="go">((80,), (67,), (78,), (86,))</span>
-<span class="go">((69,), (77,), (66,))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tala</span> <span class="ow">in</span> <span class="n">sp</span><span class="o">.</span><span class="n">decitalas</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">tala</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">tala</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
-<span class="go">21_Tribhinna [0.5 1.  1.5]</span>
-<span class="go">46_Jayacri [1.  0.5 1.  0.5 1. ]</span>
-<span class="go">46_Jayacri [1.  0.5 1.  0.5 1. ]</span>
-<span class="go">118_Rajamartanda [1.   0.5  0.25]</span>
-<span class="go">65_B_Kankala_Khanda [0.25 0.25 1.   1.  ]</span>
-<span class="go">21_Tribhinna [0.5 1.  1.5]</span>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>str</strong> (<em>db_path</em>) – path leading to .db file (made from <a class="reference internal" href="database.html#decitala.database.create_database" title="decitala.database.create_database"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_database</span></code></a>).</p></li>
+<li><p><strong>int</strong> (<em>path_num</em>) – path table number (denoted <cite>Path_i</cite> in the file).</p></li>
+<li><p><strong>int</strong> – path number (enumerated by row in the file).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#decitala.paths.PathsException" title="decitala.paths.PathsException"><strong>PathsException</strong></a> – when an invalid table/path are provided.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">livre_dorgue_0_path</span> <span class="o">=</span> <span class="s2">&quot;/Users/lukepoeppel/decitala/databases/livre_dorgue_0_new.db&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_path</span> <span class="o">=</span> <span class="n">SubPath</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">livre_dorgue_0_path</span><span class="p">,</span> <span class="n">table_num</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">path_num</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_path</span>
+<span class="go">&lt;paths.SubPath_11: [(151.125, 153.125), (153.125, 154.375), (154.375, 161.375)]&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_path</span><span class="o">.</span><span class="n">path</span>
+<span class="go">[(151.125, 153.125), (153.125, 154.375), (154.375, 161.375)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">region_pitches</span> <span class="ow">in</span> <span class="n">sub_path</span><span class="o">.</span><span class="n">pitch_data</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">region_pitches</span><span class="p">)</span>
+<span class="go">((44,), (63,))</span>
+<span class="go">((76,), (82,), (89,))</span>
+<span class="go">((78,), (69,), (75,), (64,), (71,), (82,), (56,), (59,), (61,), (50,), (43,), (68,), (71,), (67,), (64,), (58,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">sub_path</span><span class="o">.</span><span class="n">fragments</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">fragment</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">fragment</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
+<span class="go">97_Utsava [0.5 1.5]</span>
+<span class="go">76_Jhampa [0.375 0.375 0.5  ]</span>
+<span class="go">15_Caccari [0.25  0.375 0.25  0.375 0.25  0.375 0.25  0.375 0.25  0.375 0.25  0.375</span>
+<span class="go"> 0.25  0.375 0.25  0.375]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_path</span><span class="o">.</span><span class="n">num_onsets</span>
+<span class="go">21</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_path</span><span class="o">.</span><span class="n">start_onset</span>
+<span class="go">151.125</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_path</span><span class="o">.</span><span class="n">end_onset</span>
+<span class="go">161.375</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_path</span><span class="o">.</span><span class="n">gaps</span><span class="p">()</span>
+<span class="go">[0.0, 0.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_path</span><span class="o">.</span><span class="n">total_gaps</span><span class="p">()</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># SubPath.played_total_duration() only returns the total duration of sounded tones, i.e. ignores silent periods. </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_path</span><span class="o">.</span><span class="n">played_total_duration</span><span class="p">()</span>
+<span class="go">10.25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># SubPath.total_range() is the played_total_duration() + total_gaps()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_path</span><span class="o">.</span><span class="n">total_range</span><span class="p">()</span>
+<span class="go">10.25</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_path</span><span class="o">.</span><span class="n">is_end_overlapping</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># SubPath.gap_score() returns the percentage of total_range() that is continous, i.e. without gaps. </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_path</span><span class="o">.</span><span class="n">gap_score</span><span class="p">()</span>
+<span class="go">100.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_path</span><span class="o">.</span><span class="n">non_retrogradable_score</span><span class="p">()</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sub_path</span><span class="o">.</span><span class="n">recycling_score</span><span class="p">()</span>
+<span class="go">0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># SubPath.average_num_onsets_per_tala_score() tracks the average number of onsets in a path</span>
+<span class="go"># and scores it&#39;s percentile in the context of the table.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># sub_path.average_num_onsets_per_tala_score()</span>
+<span class="go"># 15.76086956521739</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span><span class="o">.</span><span class="n">num_onsets</span>
-<span class="go">23</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span><span class="o">.</span><span class="n">start_onset</span>
-<span class="go">181.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span><span class="o">.</span><span class="n">end_onset</span>
-<span class="go">195.125</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span><span class="o">.</span><span class="n">gaps</span><span class="p">()</span>
-<span class="go">[0.125, 0.5, 0.0, 0.5, 0.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span><span class="o">.</span><span class="n">total_gaps</span><span class="p">()</span>
-<span class="go">1.125</span>
-</pre></div>
-</div>
-<p>SubPath().played_total_duration() only returns the total duration of sounded tones, i.e., 
-ignores silent periods. 
-&gt;&gt;&gt; sp.played_total_duration()
-13.0</p>
-<p>So, SubPath().total_range() is the played_total_duration() + total_gaps()
-&gt;&gt;&gt; sp.total_range()
-14.125
-&gt;&gt;&gt; sp.is_end_overlapping()
-False</p>
-<p>SubPath().gap_score() returns the percentage of total_range() that is continous, that is, without
-gaps. 
-&gt;&gt;&gt; sp.gap_score()
-92.035398
-&gt;&gt;&gt; sp.non_retrogradable_score()
-33.333333
-&gt;&gt;&gt; sp.recycling_score()
-66.666667</p>
-<p>SubPath().average_num_onsets_per_tala_score() tracks the average number of onsets in a path
-and scores it’s percentile in the context of the table.
-&gt;&gt;&gt; sp.average_num_onsets_per_tala_score()
-15.76086956521739</p>
-<dl class="py method">
-<dt id="decitala.paths.SubPathOld.show">
-<code class="sig-name descname">show</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#SubPathOld.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.SubPathOld.show" title="Permalink to this definition">¶</a></dt>
-<dd><p>Shows the series of talas with the pitch information normalized to start at onset 0.0.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.paths.SubPathOld.annotate_score">
-<code class="sig-name descname">annotate_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">score_path</span></em>, <em class="sig-param"><span class="n">part</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#SubPathOld.annotate_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.SubPathOld.annotate_score" title="Permalink to this definition">¶</a></dt>
-<dd><p>Annotates a given score (matching the score on which the database has been created) 
-with the SubPath data.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py function">
@@ -280,12 +257,6 @@ with the SubPath data.</p>
 <dd><p>Returns data filtered by tala.</p>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py class">
-<dt id="decitala.paths.Test">
-<em class="property">class </em><code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">Test</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#Test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.Test" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
 </dd></dl>
 
 </div>
