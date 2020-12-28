@@ -53,6 +53,6 @@ html_theme = 'classic'
 # so a file named "default.css" will overwrite the builtin "default.css".
 #html_static_path = ['_static']
 
-# html_theme = 'neo_rtd_theme'
-# import sphinx_theme
-# html_theme_path = [sphinx_theme.get_html_theme_path()]
+html_theme = 'neo_rtd_theme'
+import sphinx_theme
+html_theme_path = [sphinx_theme.get_html_theme_path()]
