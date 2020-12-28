@@ -4,3 +4,4 @@ build/
 decitala.egg-info/
 dist/
 decitala/entropy/
+local_docs/*
