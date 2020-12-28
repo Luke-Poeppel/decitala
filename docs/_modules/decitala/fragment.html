@@ -420,8 +420,8 @@
 
 <div class="viewcode-block" id="GeneralFragment.is_sub_fragment"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.is_sub_fragment">[docs]</a>	<span class="k">def</span> <span class="nf">is_sub_fragment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">try_retrograde</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		:param other: a `decitala.fragment.GeneralFragment`, `decitala.fragment.Decitala`, or `decitala.fragment.GreekFoot` object.</span>
-<span class="sd">		:param try_retrograde bool: whether to allow searching in retrograde. </span>
+<span class="sd">		:param other: a :obj:`~decitala.fragment.GeneralFragment`, :obj:`~decitala.fragment.Decitala`, or :obj:`~decitala.fragment.GreekFoot` object.</span>
+<span class="sd">		:param bool try_retrograde: whether to allow searching in retrograde. </span>
 <span class="sd">		:return: whether or not self is a sub-fragment, meaning its successive_ratio_array exists inorder in the others.</span>
 <span class="sd">		:rtype: bool</span>
 <span class="sd">		&quot;&quot;&quot;</span>
@@ -512,8 +512,8 @@
 <span class="sd">		This method returns a new :obj:`~decitala.fragment.GeneralFragment` object with a ql_array </span>
 <span class="sd">		corresponding to the original fragment augmented by a given ratio and difference. </span>
 
-<span class="sd">		:param factor float: the factor by which the fragment will be augmented.</span>
-<span class="sd">		:param difference float: the difference by which the GeneralFragment will be augmented. </span>
+<span class="sd">		:param float factor: the factor by which the GeneralFragment will be augmented.</span>
+<span class="sd">		:param float difference: the difference by which the GeneralFragment will be augmented. </span>
 <span class="sd">		:rtype: :obj:`~decitala.fragment.GeneralFragment` object. </span>
 
 <span class="sd">		&gt;&gt;&gt; pre_augmentation = GeneralFragment([2.0, 2.0], name=&quot;Spondee&quot;)</span>

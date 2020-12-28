@@ -200,9 +200,9 @@
 <span class="sd">	the decitalas within it, and calculates relevant information (e.g. `gap_score`). Under the right </span>
 <span class="sd">	conditions, :obj:`~decitala.paths.SubPath`s compose a full :obj:`decitala.paths.Path` object. </span>
 
-<span class="sd">	:param db_path str: path leading to .db file (made from :obj:`~decitala.database.create_database`).</span>
-<span class="sd">	:param table_num int: path table number (denoted `Path_i` in the file).</span>
-<span class="sd">	:param path_num int: path number (enumerated by row in the file).</span>
+<span class="sd">	:param str db_path: path leading to .db file (made from :obj:`~decitala.database.create_database`).</span>
+<span class="sd">	:param int table_num: path table number (denoted `Path_i` in the file).</span>
+<span class="sd">	:param int path_num: path number (enumerated by row in the file).</span>
 <span class="sd">	:raises `~decitala.paths.PathsException`: when an invalid table/path are provided. </span>
 
 <span class="sd">	&gt;&gt;&gt; livre_dorgue_0_path = &quot;/Users/lukepoeppel/decitala/databases/livre_dorgue_0_new.db&quot;</span>
@@ -461,7 +461,7 @@
 		<span class="k">return</span> <span class="mi">100</span> <span class="o">-</span> <span class="n">percentage</span></div></div>
 
 <div class="viewcode-block" id="Path"><a class="viewcode-back" href="../../paths.html#decitala.paths.Path">[docs]</a><span class="k">class</span> <span class="nc">Path</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;Concatenation of multiple SubPath objects.&quot;&quot;&quot;</span>
+	<span class="sd">&quot;&quot;&quot;Concatenation of multiple :obj:`~decitala.paths.SubPath` objects.&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subpaths</span> <span class="o">=</span> <span class="p">[]):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">subpaths</span> <span class="o">=</span> <span class="n">subpaths</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">subpath_nums</span> <span class="o">=</span> <span class="p">[</span><span class="n">subpath</span><span class="o">.</span><span class="n">path_num</span> <span class="k">for</span> <span class="n">subpath</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpaths</span><span class="p">]</span>

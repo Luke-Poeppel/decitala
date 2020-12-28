@@ -175,9 +175,9 @@ conditions, <code class="xref py py-obj docutils literal notranslate"><span clas
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>str</strong> (<em>db_path</em>) – path leading to .db file (made from <a class="reference internal" href="database.html#decitala.database.create_database" title="decitala.database.create_database"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_database</span></code></a>).</p></li>
-<li><p><strong>int</strong> (<em>path_num</em>) – path table number (denoted <cite>Path_i</cite> in the file).</p></li>
-<li><p><strong>int</strong> – path number (enumerated by row in the file).</p></li>
+<li><p><strong>db_path</strong> (<em>str</em>) – path leading to .db file (made from <a class="reference internal" href="database.html#decitala.database.create_database" title="decitala.database.create_database"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_database</span></code></a>).</p></li>
+<li><p><strong>table_num</strong> (<em>int</em>) – path table number (denoted <cite>Path_i</cite> in the file).</p></li>
+<li><p><strong>path_num</strong> (<em>int</em>) – path number (enumerated by row in the file).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -401,7 +401,7 @@ proportion of the gap between them to the total range.</p>
 <dt id="decitala.paths.Path">
 <em class="property">class </em><code class="sig-prename descclassname">decitala.paths.</code><code class="sig-name descname">Path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">subpaths</span><span class="o">=</span><span class="default_value">[]</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#Path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.Path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Concatenation of multiple SubPath objects.</p>
+<p>Concatenation of multiple <a class="reference internal" href="#decitala.paths.SubPath" title="decitala.paths.SubPath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SubPath</span></code></a> objects.</p>
 <dl class="py method">
 <dt id="decitala.paths.Path.fragment_counter">
 <code class="sig-name descname">fragment_counter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/paths.html#Path.fragment_counter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.paths.Path.fragment_counter" title="Permalink to this definition">¶</a></dt>

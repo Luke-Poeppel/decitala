@@ -42,9 +42,9 @@ class SubPath(object):
 	the decitalas within it, and calculates relevant information (e.g. `gap_score`). Under the right 
 	conditions, :obj:`~decitala.paths.SubPath`s compose a full :obj:`decitala.paths.Path` object. 
 
-	:param db_path str: path leading to .db file (made from :obj:`~decitala.database.create_database`).
-	:param table_num int: path table number (denoted `Path_i` in the file).
-	:param path_num int: path number (enumerated by row in the file).
+	:param str db_path: path leading to .db file (made from :obj:`~decitala.database.create_database`).
+	:param int table_num: path table number (denoted `Path_i` in the file).
+	:param int path_num: path number (enumerated by row in the file).
 	:raises `~decitala.paths.PathsException`: when an invalid table/path are provided. 
 
 	>>> livre_dorgue_0_path = "/Users/lukepoeppel/decitala/databases/livre_dorgue_0_new.db"
@@ -303,7 +303,7 @@ class SubPath(object):
 		return 100 - percentage
 
 class Path(object):
-	"""Concatenation of multiple SubPath objects."""
+	"""Concatenation of multiple :obj:`~decitala.paths.SubPath` objects."""
 	def __init__(self, subpaths = []):
 		self.subpaths = subpaths
 		self.subpath_nums = [subpath.path_num for subpath in self.subpaths]

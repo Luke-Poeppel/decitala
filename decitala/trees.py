@@ -735,8 +735,8 @@ def get_by_ql_array(
 	Searches a given ratio and/or difference tree for a given fragment. Supports fragments with grace notes. 
 
 	:param numpy.array ql_array: fragment to be searched.
-	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.
-	:param fragment.FragmentTree difference_tree: tree storing difference representations.
+	:param `~decitala.trees.FragmentTree` ratio_tree: tree storing ratio representations.
+	:param `~decitala.trees.FragmentTree` difference_tree: tree storing difference representations.
 	:param list allowed_modifications: possible ways for a fragment to be modified. 
 									Current possibilities are ``r``, ``rr``, ``d``, ``rd``, ``sr``, and ``rsr``.
 									*NOTE*: the order of ``allowed_modifications`` is the order of the search. 
@@ -811,8 +811,8 @@ def rolling_search(
 
 	:param str filepath: path to file to be searched.
 	:param int part_num: part in the file to be searched (0-indexed).
-	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.
-	:param fragment.FragmentTree difference_tree: tree storing difference representations.
+	:param `~decitala.trees.FragmentTree` ratio_tree: tree storing ratio representations.
+	:param `~decitala.trees.FragmentTree` difference_tree: tree storing difference representations.
 	:param allowed_modifications list: see :func:`decitala.trees.get_by_ql_array`.
 	:param try_contiguous_summation bool: ties together all elements of equal pitch and duration and searches. 
 	:param list windows: possible length of the search frame. 
@@ -922,8 +922,8 @@ def rolling_search_on_array(
 	see documentation for :func:`~decitala.trees.get_by_ql_array`. 
 
 	:param numpy.array ql_array: fragment to be searched.
-	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.
-	:param fragment.FragmentTree difference_tree: tree storing difference representations.
+	:param `~decitala.trees.FragmentTree` ratio_tree: tree storing ratio representations.
+	:param `~decitala.trees.FragmentTree` difference_tree: tree storing difference representations.
 	:param list windows: possible length of the search frame. 
 	:return: list holding fragments in the array present in the trees.
 	:rtype: list

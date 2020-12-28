@@ -893,8 +893,8 @@
 <span class="sd">	Searches a given ratio and/or difference tree for a given fragment. Supports fragments with grace notes. </span>
 
 <span class="sd">	:param numpy.array ql_array: fragment to be searched.</span>
-<span class="sd">	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.</span>
-<span class="sd">	:param fragment.FragmentTree difference_tree: tree storing difference representations.</span>
+<span class="sd">	:param `~decitala.trees.FragmentTree` ratio_tree: tree storing ratio representations.</span>
+<span class="sd">	:param `~decitala.trees.FragmentTree` difference_tree: tree storing difference representations.</span>
 <span class="sd">	:param list allowed_modifications: possible ways for a fragment to be modified. </span>
 <span class="sd">									Current possibilities are ``r``, ``rr``, ``d``, ``rd``, ``sr``, and ``rsr``.</span>
 <span class="sd">									*NOTE*: the order of ``allowed_modifications`` is the order of the search. </span>
@@ -969,8 +969,8 @@
 
 <span class="sd">	:param str filepath: path to file to be searched.</span>
 <span class="sd">	:param int part_num: part in the file to be searched (0-indexed).</span>
-<span class="sd">	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.</span>
-<span class="sd">	:param fragment.FragmentTree difference_tree: tree storing difference representations.</span>
+<span class="sd">	:param `~decitala.trees.FragmentTree` ratio_tree: tree storing ratio representations.</span>
+<span class="sd">	:param `~decitala.trees.FragmentTree` difference_tree: tree storing difference representations.</span>
 <span class="sd">	:param allowed_modifications list: see :func:`decitala.trees.get_by_ql_array`.</span>
 <span class="sd">	:param try_contiguous_summation bool: ties together all elements of equal pitch and duration and searches. </span>
 <span class="sd">	:param list windows: possible length of the search frame. </span>
@@ -1080,8 +1080,8 @@
 <span class="sd">	see documentation for :func:`~decitala.trees.get_by_ql_array`. </span>
 
 <span class="sd">	:param numpy.array ql_array: fragment to be searched.</span>
-<span class="sd">	:param fragment.FragmentTree ratio_tree: tree storing ratio representations.</span>
-<span class="sd">	:param fragment.FragmentTree difference_tree: tree storing difference representations.</span>
+<span class="sd">	:param `~decitala.trees.FragmentTree` ratio_tree: tree storing ratio representations.</span>
+<span class="sd">	:param `~decitala.trees.FragmentTree` difference_tree: tree storing difference representations.</span>
 <span class="sd">	:param list windows: possible length of the search frame. </span>
 <span class="sd">	:return: list holding fragments in the array present in the trees.</span>
 <span class="sd">	:rtype: list</span>

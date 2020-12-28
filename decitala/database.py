@@ -116,7 +116,7 @@ def create_database(
 	The database holds has one page for storing all extracted fragments, their onsets/offsets of occurrence, and their 
 	modification data. 
 
-	NOTE: I suggest setting filter_sub_fragments to True for compositions and False for birdsong transcriptions. 
+	**NOTE**: I suggest setting ``filter_sub_fragments=True`` for compositions and ``filter_sub_fragments=False`` for birdsong transcriptions. 
 
 	:param str db_path: path where the .db file will be written. 
 	:param str filepath: path to score.

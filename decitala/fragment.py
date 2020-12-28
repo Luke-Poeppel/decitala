@@ -262,8 +262,8 @@ class GeneralFragment(object):
 
 	def is_sub_fragment(self, other, try_retrograde=True):
 		"""
-		:param other: a `decitala.fragment.GeneralFragment`, `decitala.fragment.Decitala`, or `decitala.fragment.GreekFoot` object.
-		:param try_retrograde bool: whether to allow searching in retrograde. 
+		:param other: a :obj:`~decitala.fragment.GeneralFragment`, :obj:`~decitala.fragment.Decitala`, or :obj:`~decitala.fragment.GreekFoot` object.
+		:param bool try_retrograde: whether to allow searching in retrograde. 
 		:return: whether or not self is a sub-fragment, meaning its successive_ratio_array exists inorder in the others.
 		:rtype: bool
 		"""
@@ -354,8 +354,8 @@ class GeneralFragment(object):
 		This method returns a new :obj:`~decitala.fragment.GeneralFragment` object with a ql_array 
 		corresponding to the original fragment augmented by a given ratio and difference. 
 
-		:param factor float: the factor by which the fragment will be augmented.
-		:param difference float: the difference by which the GeneralFragment will be augmented. 
+		:param float factor: the factor by which the GeneralFragment will be augmented.
+		:param float difference: the difference by which the GeneralFragment will be augmented. 
 		:rtype: :obj:`~decitala.fragment.GeneralFragment` object. 
 
 		>>> pre_augmentation = GeneralFragment([2.0, 2.0], name="Spondee")
