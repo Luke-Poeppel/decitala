@@ -126,7 +126,7 @@ def create_database(
 	:return: sqlite3 database
 	:rtype: .db file
 	"""
-	assert os.path.isfile(filepath), "The path provided is not a valid file."
+	assert os.path.isfile(filepath), DatabaseException("The path provided is not a valid file.")
 
 	filename = filepath.split('/')[-1]
 	if verbose:
