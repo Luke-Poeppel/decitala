@@ -4,9 +4,13 @@ All important changes to the decitala package will be documented here.
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [v0.2.0] - December 29, 2020 (Kent, CT)
-- decitala.utils now includes ``frame_is_spanned_by_slur`` function.
-- Output of ``trees.rolling_search`` now contains ``is_spanned_by_slur`` for each fragment found. 
-- Database now notes music21 spanners in frames of ``decitala.trees.rolling_search``.
+### Added
+- The decitala.utils module now includes ``frame_is_spanned_by_slur`` function.
+- Output of ``trees.rolling_search`` now includes ``is_spanned_by_slur`` for each fragment found. 
+- Output of ``database.create_database`` now notes which fragments are spanned by a music21.spanner.Slur objects. 
+
+### Fixed
+- The ``database.create_database`` now raises a ``DatabaseException`` when an invalid score path is provided. 
 
 ## [v0.1.1] - December 28, 2020 (Kent, CT)
 - First tagged version.

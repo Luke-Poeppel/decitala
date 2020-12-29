@@ -174,7 +174,6 @@ def create_database(
 		ALL_DATA.extend(data)
 	
 	initial_length = len(ALL_DATA)
-
 	if verbose:
 		logging.info("\n")
 		logging.info("{} fragments extracted".format(initial_length))
@@ -206,13 +205,20 @@ def create_database(
 			logging.info("\n")
 			logging.info("Connected to database at: {}".format(db_path))
 		cur = conn.cursor()
-		cur.execute("CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor INT)")
+		fragment_table_string = "CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Is_Slurred INT)"
+		cur.execute(fragment_table_string)
 
 		for this_partition in partitioned_data:
 			for this_fragment in this_partition:
-				cur.execute("INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4})".format(this_fragment[1][0], this_fragment[1][1], this_fragment[0][0], this_fragment[0][1][0], this_fragment[0][1][1]))
+				fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, {5})".format(this_fragment[1][0], # start offset
+																													this_fragment[1][1], # end offset
+																													this_fragment[0][0], # fragment
+																													this_fragment[0][1][0], # mod type 
+																													this_fragment[0][1][1], # mod factor/difference
+																													int(this_fragment[-1])) # is_slurred
+				cur.execute(fragment_insertion_string)
 
-		for i, this_partition in enumerate(partitioned_data):
+		for i, this_partition in enumerate(partitioned_data):			
 			pareto_optimal_paths = get_pareto_optimal_longest_paths(this_partition)
 			lengths = [len(path) for path in pareto_optimal_paths]
 			longest_path = max(lengths)
