@@ -188,7 +188,8 @@
 	<span class="n">successive_difference_array</span><span class="p">,</span>
 	<span class="n">find_possible_superdivisions</span><span class="p">,</span>
 	<span class="n">contiguous_summation</span><span class="p">,</span>
-	<span class="n">frame_to_ql_array</span>
+	<span class="n">frame_to_ql_array</span><span class="p">,</span>
+	<span class="n">frame_is_spannned_by_slur</span>
 <span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -985,11 +986,11 @@
 <span class="sd">	&gt;&gt;&gt; ex = &#39;/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml&#39;</span>
 <span class="sd">	&gt;&gt;&gt; for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=[&quot;r&quot;], verbose=False)[0:5]:</span>
 <span class="sd">	... 	print(tala_data)</span>
-<span class="sd">	((&lt;fragment.GreekFoot Spondee&gt;, (&#39;r&#39;, 0.125)), (0.0, 0.5))</span>
-<span class="sd">	((&lt;fragment.GreekFoot 5_16&gt;, (&#39;r&#39;, 0.125)), (0.0, 0.625))</span>
-<span class="sd">	((&lt;fragment.GreekFoot Ionic_Major&gt;, (&#39;r&#39;, 0.125)), (0.0, 0.75))</span>
-<span class="sd">	((&lt;fragment.GreekFoot Trochee&gt;, (&#39;r&#39;, 0.125)), (0.25, 0.625))</span>
-<span class="sd">	((&lt;fragment.GreekFoot Dactyl&gt;, (&#39;r&#39;, 0.125)), (0.25, 0.75))</span>
+<span class="sd">	((&lt;fragment.GreekFoot Spondee&gt;, (&#39;r&#39;, 0.125)), (0.0, 0.5), False)</span>
+<span class="sd">	((&lt;fragment.GreekFoot 5_16&gt;, (&#39;r&#39;, 0.125)), (0.0, 0.625), False)</span>
+<span class="sd">	((&lt;fragment.GreekFoot Ionic_Major&gt;, (&#39;r&#39;, 0.125)), (0.0, 0.75), False)</span>
+<span class="sd">	((&lt;fragment.GreekFoot Trochee&gt;, (&#39;r&#39;, 0.125)), (0.25, 0.625), False)</span>
+<span class="sd">	((&lt;fragment.GreekFoot Dactyl&gt;, (&#39;r&#39;, 0.125)), (0.25, 0.75), False)</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">try</span><span class="p">:</span>
 		<span class="k">assert</span> <span class="n">ratio_tree</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span>
@@ -1030,9 +1031,11 @@
 					<span class="n">offset_1</span> <span class="o">=</span> <span class="n">this_frame</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 					<span class="n">offset_2</span> <span class="o">=</span> <span class="n">this_frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
-					<span class="n">fragments_found</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">searched</span><span class="p">,</span> <span class="p">(</span><span class="n">offset_1</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)))</span>
+					<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="n">frame_is_spannned_by_slur</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+					<span class="n">result_normal</span> <span class="o">=</span> <span class="p">(</span><span class="n">searched</span><span class="p">,</span> <span class="p">(</span><span class="n">offset_1</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">),</span> <span class="n">is_spanned_by_slur</span><span class="p">)</span>
+					<span class="n">fragments_found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_normal</span><span class="p">)</span>
 					<span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-						<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">searched</span><span class="p">,</span> <span class="p">(</span><span class="n">offset_1</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)))</span>
+						<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">, </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result_normal</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">result_normal</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">result_normal</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
 
 				<span class="k">if</span> <span class="n">try_contiguous_summation</span><span class="p">:</span>
 					<span class="n">copied_frame</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
@@ -1053,10 +1056,12 @@
 						<span class="n">offset_1</span> <span class="o">=</span> <span class="n">new_frame</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 						<span class="n">offset_2</span> <span class="o">=</span> <span class="n">new_frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
-						<span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">rewritten_search</span><span class="p">,</span> <span class="p">(</span><span class="n">offset_1</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">))</span>		
+						<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="n">frame_is_spannned_by_slur</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+						
+						<span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">rewritten_search</span><span class="p">,</span> <span class="p">(</span><span class="n">offset_1</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">),</span> <span class="n">is_spanned_by_slur</span><span class="p">)</span>		
 						<span class="n">fragments_found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 						<span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-							<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+							<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">, </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
 	
 	<span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fragments_found</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span></div>
 

@@ -288,8 +288,10 @@
 <span class="sd">	:rtype: list</span>
 
 <span class="sd">	&gt;&gt;&gt; tup_lst = [</span>
-<span class="sd">	...     ((&quot;info1&quot;,), (0.0, 2.0)), ((&quot;info2&quot;,), (0.0, 4.0)), ((&quot;info3&quot;,), (2.5, 4.5)), ((&quot;info4&quot;,), (2.0, 5.75)),</span>
-<span class="sd">	...     ((&quot;info5&quot;,), (2.0, 4.0)), ((&quot;info6&quot;,), (6.0, 7.25)), ((&quot;info7&quot;,), (4.0, 5.5))]</span>
+<span class="sd">	...     ((&quot;info1&quot;,), (0.0, 2.0), True), ((&quot;info2&quot;,), (0.0, 4.0), False), ((&quot;info3&quot;,), (2.5, 4.5), False), </span>
+<span class="sd">	...     ((&quot;info4&quot;,), (2.0, 5.75), True), ((&quot;info5&quot;,), (2.0, 4.0), True), ((&quot;info6&quot;,), (6.0, 7.25), False), </span>
+<span class="sd">	...     ((&quot;info7&quot;,), (4.0, 5.5))</span>
+<span class="sd">	... ]</span>
 <span class="sd">	&gt;&gt;&gt; # With only 7 windows, we can extract four possible paths!</span>
 <span class="sd">	&gt;&gt;&gt; for this_path in get_pareto_optimal_longest_paths(tup_lst):</span>
 <span class="sd">	...    path = [x[1] for x in this_path]</span>
@@ -350,7 +352,7 @@
 		<span class="n">new_path</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="k">for</span> <span class="n">this_range</span> <span class="ow">in</span> <span class="n">this_path</span><span class="p">:</span>
 			<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-				<span class="k">if</span> <span class="n">this_range</span> <span class="o">==</span> <span class="n">this_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+				<span class="k">if</span> <span class="n">this_range</span> <span class="o">==</span> <span class="n">this_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
 					<span class="n">new_path</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">this_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">this_range</span><span class="p">])</span>
 					<span class="k">continue</span>
 		<span class="n">stupid_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>

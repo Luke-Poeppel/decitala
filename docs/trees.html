@@ -583,11 +583,11 @@ are the lengths of fragments in the decitala dataset.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ex</span> <span class="o">=</span> <span class="s1">&#39;/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tala_data</span> <span class="ow">in</span> <span class="n">rolling_search</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">,</span> <span class="n">allowed_modifications</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">tala_data</span><span class="p">)</span>
-<span class="go">((&lt;fragment.GreekFoot Spondee&gt;, (&#39;r&#39;, 0.125)), (0.0, 0.5))</span>
-<span class="go">((&lt;fragment.GreekFoot 5_16&gt;, (&#39;r&#39;, 0.125)), (0.0, 0.625))</span>
-<span class="go">((&lt;fragment.GreekFoot Ionic_Major&gt;, (&#39;r&#39;, 0.125)), (0.0, 0.75))</span>
-<span class="go">((&lt;fragment.GreekFoot Trochee&gt;, (&#39;r&#39;, 0.125)), (0.25, 0.625))</span>
-<span class="go">((&lt;fragment.GreekFoot Dactyl&gt;, (&#39;r&#39;, 0.125)), (0.25, 0.75))</span>
+<span class="go">((&lt;fragment.GreekFoot Spondee&gt;, (&#39;r&#39;, 0.125)), (0.0, 0.5), False)</span>
+<span class="go">((&lt;fragment.GreekFoot 5_16&gt;, (&#39;r&#39;, 0.125)), (0.0, 0.625), False)</span>
+<span class="go">((&lt;fragment.GreekFoot Ionic_Major&gt;, (&#39;r&#39;, 0.125)), (0.0, 0.75), False)</span>
+<span class="go">((&lt;fragment.GreekFoot Trochee&gt;, (&#39;r&#39;, 0.125)), (0.25, 0.625), False)</span>
+<span class="go">((&lt;fragment.GreekFoot Dactyl&gt;, (&#39;r&#39;, 0.125)), (0.25, 0.75), False)</span>
 </pre></div>
 </div>
 </dd></dl>
