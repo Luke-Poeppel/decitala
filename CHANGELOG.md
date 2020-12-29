@@ -5,12 +5,12 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.2.0] - December 29, 2020 (Kent, CT)
 ### Added
-- The decitala.utils module now includes ``frame_is_spanned_by_slur`` function.
-- Output of ``trees.rolling_search`` now includes ``is_spanned_by_slur`` for each fragment found. 
-- Output of ``database.create_database`` now notes which fragments are spanned by a music21.spanner.Slur objects. 
+- The ``decitala.utils`` module now includes a ``frame_is_spanned_by_slur`` function.
+- The output of ``trees.rolling_search`` now includes ``is_spanned_by_slur`` for each fragment found. 
+- The output of ``database.create_database`` now shows which fragments are spanned by a music21.spanner.Slur objects. 
 
 ### Fixed
-- The ``database.create_database`` now raises a ``DatabaseException`` when an invalid score path is provided. 
+- The ``database.create_database`` function now raises a ``DatabaseException`` when an invalid score path is provided. 
 
 ## [v0.1.1] - December 28, 2020 (Kent, CT)
 - First tagged version.
