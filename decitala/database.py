@@ -43,7 +43,6 @@ logging.basicConfig(level=logging.INFO)
 
 # Fragments
 here = os.path.abspath(os.path.dirname(__file__))
-
 decitala_path = os.path.dirname(here) + "/Fragments/Decitalas"
 greek_path = os.path.dirname(here) + "/Fragments/Greek_Metrics/XML"
 
@@ -128,26 +127,28 @@ def create_database(
 	"""
 	assert os.path.isfile(filepath), DatabaseException("The path provided is not a valid file.")
 
+	if not(verbose):
+		logging.disable(logging.INFO)
+	
 	filename = filepath.split('/')[-1]
-	if verbose:
-		logging.info("Preparing database...")
-		logging.info("\n")
-		logging.info("File: {}".format(filename))
-		logging.info("Part: {}".format(part_num))
-		logging.info("Fragment types: {}".format(frag_types))
-		logging.info("Representation types: {}".format(rep_types))
-		logging.info("Modifications: {}".format(allowed_modifications))
-		logging.info("Try contiguous summations: {}".format(try_contiguous_summation))
-		logging.info("Filter single anga class fragments: {}".format(filter_found_single_anga_class))
-		logging.info("Filter sub fragments: {}".format(filter_found_sub_fragments))
-		logging.info("Keep grace notes: {}".format(keep_grace_notes))
+
+	logging.info("Preparing database...")
+	logging.info("\n")
+	logging.info("File: {}".format(filename))
+	logging.info("Part: {}".format(part_num))
+	logging.info("Fragment types: {}".format(frag_types))
+	logging.info("Representation types: {}".format(rep_types))
+	logging.info("Modifications: {}".format(allowed_modifications))
+	logging.info("Try contiguous summations: {}".format(try_contiguous_summation))
+	logging.info("Filter single anga class fragments: {}".format(filter_found_single_anga_class))
+	logging.info("Filter sub fragments: {}".format(filter_found_sub_fragments))
+	logging.info("Keep grace notes: {}".format(keep_grace_notes))
 
 	ALL_DATA = []
 
 	for this_frag_type in frag_types:
-		if verbose:
-			logging.info("\n")
-			logging.info("Making fragment tree(s) (and searching) for frag_type: {}".format(this_frag_type))
+		logging.info("\n")
+		logging.info("Making fragment tree(s) (and searching) for frag_type: {}".format(this_frag_type))
 
 		if "ratio" in rep_types:
 			curr_ratio_tree = FragmentTree(frag_type=this_frag_type, rep_type="ratio")
@@ -174,26 +175,24 @@ def create_database(
 		ALL_DATA.extend(data)
 	
 	initial_length = len(ALL_DATA)
-	if verbose:
-		logging.info("\n")
-		logging.info("{} fragments extracted".format(initial_length))
+
+	logging.info("\n")
+	logging.info("{} fragments extracted".format(initial_length))
 
 	if filter_found_single_anga_class:
 		ALL_DATA = filter_single_anga_class_fragments(ALL_DATA)
-		if verbose:
-			logging.info("Removing all single anga class fragments...")
-			logging.info("Removed {0} fragments ({1} remaining)".format(initial_length - len(ALL_DATA), len(ALL_DATA)))
+
+		logging.info("Removing all single anga class fragments...")
+		logging.info("Removed {0} fragments ({1} remaining)".format(initial_length - len(ALL_DATA), len(ALL_DATA)))
 	
 	new_length = len(ALL_DATA)
 
 	if filter_found_sub_fragments:
 		ALL_DATA = filter_sub_fragments(ALL_DATA)
-		if verbose:
-			logging.info("Removing all sub fragments...")
-			logging.info("Removed {0} fragments ({1} remaining)".format(new_length - len(ALL_DATA), len(ALL_DATA)))
+		logging.info("Removing all sub fragments...")
+		logging.info("Removed {0} fragments ({1} remaining)".format(new_length - len(ALL_DATA), len(ALL_DATA)))
 
-	if verbose:
-		logging.info("Calculated break points: {}".format(get_break_points(ALL_DATA)))
+	logging.info("Calculated break points: {}".format(get_break_points(ALL_DATA)))
 
 	all_object = get_object_indices(filepath, part_num)
 	sorted_onset_ranges = sorted(ALL_DATA, key = lambda x: x[1][0])
@@ -201,9 +200,9 @@ def create_database(
 
 	conn = lite.connect(db_path)
 	with conn:
-		if verbose:
-			logging.info("\n")
-			logging.info("Connected to database at: {}".format(db_path))
+		logging.info("\n")
+		logging.info("Connected to database at: {}".format(db_path))
+
 		cur = conn.cursor()
 		fragment_table_string = "CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Is_Slurred INT)"
 		cur.execute(fragment_table_string)
@@ -228,8 +227,8 @@ def create_database(
 			newer = columns_declaration + ', Pitch_Content BLOB'
 
 			cur.execute("CREATE TABLE Paths_{0} ({1})".format(str(i), newer))
-			if verbose:
-				logging.info("Making Paths_{} table".format(i))
+			
+			logging.info("Making Paths_{} table".format(i))
 			
 			for path in pareto_optimal_paths:
 				cur.execute("SELECT * FROM Fragments")
@@ -262,8 +261,7 @@ def create_database(
 					new = "INSERT INTO Paths_{0} VALUES('{1}', {2}, '{3}')".format(str(i), mid, post_nulls, formatted_pitch_content)
 					cur.execute(new)
 		
-		if verbose:
-			logging.info("Done preparing ✔")
+		logging.info("Done preparing ✔")
 
 if __name__ == "__main__":
 	import doctest

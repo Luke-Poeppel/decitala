@@ -179,8 +179,6 @@ def get_pareto_optimal_longest_paths(data, verbose=False):
 
 	for source in sources:
 		print_path_rec(source, [])
-		if verbose:
-			logging.info(new_path)
 
 	flatten = lambda l: [item for sublist in l for item in sublist]
 	flattened = flatten(solutions)

@@ -840,6 +840,9 @@ def rolling_search(
 	except AttributeError:
 		pass
 
+	if not(verbose):
+		logging.disable(logging.INFO)
+
 	depths = []
 	if ratio_tree is not None:
 		depths.append(ratio_tree.depth)
@@ -855,9 +858,8 @@ def rolling_search(
 
 	fragments_found = []
 	for this_win in windows:
-		if verbose:
-			logging.info("\n")
-			logging.info("Searching window of size {}.".format(this_win))
+		logging.info("Searching window of size {}.".format(this_win))
+		
 		frames = roll_window(array = object_list, window_length = this_win)
 		for this_frame in frames:
 			objects = [x[0] for x in this_frame]
@@ -876,8 +878,8 @@ def rolling_search(
 					is_spanned_by_slur = frame_is_spannned_by_slur(this_frame)
 					result_normal = (searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength), is_spanned_by_slur)
 					fragments_found.append(result_normal)
-					if verbose:
-						logging.info("{0}, {1}, {2}".format(result_normal[0], result_normal[1], result_normal[2]))
+
+					logging.info("{0}, {1}, {2}".format(result_normal[0], result_normal[1], result_normal[2]))
 
 				if try_contiguous_summation:
 					copied_frame = copy.copy(this_frame)
@@ -902,8 +904,8 @@ def rolling_search(
 						
 						result = (rewritten_search, (offset_1.offset, offset_2.offset + offset_2.quarterLength), is_spanned_by_slur)		
 						fragments_found.append(result)
-						if verbose:
-							logging.info("{0}, {1}, {2}".format(result[0], result[1], result[2]))
+
+						logging.info("{0}, {1}, {2}".format(result[0], result[1], result[2]))
 	
 	return sorted(fragments_found, key = lambda x: x[1][0])
 

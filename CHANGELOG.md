@@ -5,6 +5,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.2.1] - December 29, 2020 (Kent, CT)
 ### Changed
+- The ``decitala.trees`` and ``decitala.database`` modules now use ``logging.disable`` (removing a number of if statements) for readability. (Also removed logging from ``decitala.pofp``.)
 
 ## [v0.2.0] - December 29, 2020 (Kent, CT)
 ### Added
