@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.utils &mdash; decitala 0.1.1 documentation</title>
+  <title>decitala.utils &mdash; decitala 0.2.0 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.1.1 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.2.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.1.1
+                0.2.0
               </div>
             
           
@@ -172,9 +172,11 @@
 <span class="kn">from</span> <span class="nn">more_itertools</span> <span class="kn">import</span> <span class="n">consecutive_groups</span><span class="p">,</span> <span class="n">windowed</span><span class="p">,</span> <span class="n">powerset</span><span class="p">,</span> <span class="n">groupby_transform</span>
 <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">norm</span>
 
+<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">chord</span>
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">converter</span>
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span>
-<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">chord</span>
+<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">spanner</span>
+<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">stream</span>
 
 <span class="n">carnatic_symbols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
 	<span class="p">[</span><span class="s1">&#39;Druta&#39;</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span>
@@ -771,6 +773,25 @@
 	
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">qls</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])</span></div>
 
+<div class="viewcode-block" id="frame_is_spannned_by_slur"><a class="viewcode-back" href="../../utils.html#decitala.utils.frame_is_spannned_by_slur">[docs]</a><span class="k">def</span> <span class="nf">frame_is_spannned_by_slur</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:param list frame: frame from :obj:`~decitala.utils.get_object_indices`.</span>
+<span class="sd">	:return: whether or not the frame is spanned by a music21.spanner.Slur object.</span>
+<span class="sd">	:rtype: bool</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="kc">False</span>
+
+	<span class="n">first_obj</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">last_obj</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">spanners</span> <span class="o">=</span> <span class="n">first_obj</span><span class="o">.</span><span class="n">getSpannerSites</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">spanners</span><span class="p">:</span>
+		<span class="k">if</span> <span class="s2">&quot;Slur&quot;</span> <span class="ow">in</span> <span class="n">spanners</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">classes</span><span class="p">:</span>
+			<span class="n">slur_spanner</span> <span class="o">=</span> <span class="n">spanners</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">slur_spanner</span><span class="o">.</span><span class="n">isFirst</span><span class="p">(</span><span class="n">first_obj</span><span class="p">)</span> <span class="ow">and</span> <span class="n">slur_spanner</span><span class="o">.</span><span class="n">isLast</span><span class="p">(</span><span class="n">last_obj</span><span class="p">):</span>
+				<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="kc">True</span>
+
+	<span class="k">return</span> <span class="n">is_spanned_by_slur</span></div>
+
 <div class="viewcode-block" id="filter_single_anga_class_fragments"><a class="viewcode-back" href="../../utils.html#decitala.utils.filter_single_anga_class_fragments">[docs]</a><span class="k">def</span> <span class="nf">filter_single_anga_class_fragments</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`</span>
@@ -837,7 +858,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.1.1',
+            VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

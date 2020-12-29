@@ -14,9 +14,11 @@ from itertools import chain, combinations, groupby
 from more_itertools import consecutive_groups, windowed, powerset, groupby_transform
 from scipy.linalg import norm
 
+from music21 import chord
 from music21 import converter
 from music21 import note
-from music21 import chord
+from music21 import spanner
+from music21 import stream
 
 carnatic_symbols = np.array([
 	['Druta', 'o', 0.25],
@@ -612,6 +614,25 @@ def frame_to_ql_array(data):
 		qls.append(this_obj.quarterLength)
 	
 	return np.array([x for x in qls if x != 0])
+
+def frame_is_spannned_by_slur(frame):
+	"""
+	:param list frame: frame from :obj:`~decitala.utils.get_object_indices`.
+	:return: whether or not the frame is spanned by a music21.spanner.Slur object.
+	:rtype: bool
+	"""
+	is_spanned_by_slur = False
+
+	first_obj = frame[0][0]
+	last_obj = frame[-1][0]
+	spanners = first_obj.getSpannerSites()
+	if spanners:
+		if "Slur" in spanners[0].classes:
+			slur_spanner = spanners[0]
+			if slur_spanner.isFirst(first_obj) and slur_spanner.isLast(last_obj):
+				is_spanned_by_slur = True
+
+	return is_spanned_by_slur
 
 def filter_single_anga_class_fragments(data):
 	"""
