@@ -130,8 +130,10 @@ def get_pareto_optimal_longest_paths(data, verbose=False):
 	:rtype: list
 
 	>>> tup_lst = [
-	...     (("info1",), (0.0, 2.0)), (("info2",), (0.0, 4.0)), (("info3",), (2.5, 4.5)), (("info4",), (2.0, 5.75)),
-	...     (("info5",), (2.0, 4.0)), (("info6",), (6.0, 7.25)), (("info7",), (4.0, 5.5))]
+	...     (("info1",), (0.0, 2.0), True), (("info2",), (0.0, 4.0), False), (("info3",), (2.5, 4.5), False), 
+	...     (("info4",), (2.0, 5.75), True), (("info5",), (2.0, 4.0), True), (("info6",), (6.0, 7.25), False), 
+	...     (("info7",), (4.0, 5.5))
+	... ]
 	>>> # With only 7 windows, we can extract four possible paths!
 	>>> for this_path in get_pareto_optimal_longest_paths(tup_lst):
 	...    path = [x[1] for x in this_path]
@@ -192,7 +194,7 @@ def get_pareto_optimal_longest_paths(data, verbose=False):
 		new_path = []
 		for this_range in this_path:
 			for this_data in data:
-				if this_range == this_data[-1]:
+				if this_range == this_data[1]:
 					new_path.append([this_data[0], this_range])
 					continue
 		stupid_out.append(new_path)
