@@ -30,7 +30,8 @@ from .utils import (
 	successive_difference_array,
 	find_possible_superdivisions,
 	contiguous_summation,
-	frame_to_ql_array
+	frame_to_ql_array,
+	frame_is_spannned_by_slur
 )
 
 import logging
@@ -872,9 +873,11 @@ def rolling_search(
 					offset_1 = this_frame[0][0]
 					offset_2 = this_frame[-1][0]
 
-					fragments_found.append((searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
+					is_spanned_by_slur = frame_is_spannned_by_slur(this_frame)
+					result_normal = (searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength), is_spanned_by_slur)
+					fragments_found.append(result_normal)
 					if verbose:
-						logging.info("{0}, {1}".format(searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength)))
+						logging.info("{0}, {1}, {2}".format(result_normal[0], result_normal[1], result_normal[2]))
 
 				if try_contiguous_summation:
 					copied_frame = copy.copy(this_frame)
@@ -895,10 +898,12 @@ def rolling_search(
 						offset_1 = new_frame[0][0]
 						offset_2 = new_frame[-1][0]
 
-						result = (rewritten_search, (offset_1.offset, offset_2.offset + offset_2.quarterLength))		
+						is_spanned_by_slur = frame_is_spannned_by_slur(this_frame)
+						
+						result = (rewritten_search, (offset_1.offset, offset_2.offset + offset_2.quarterLength), is_spanned_by_slur)		
 						fragments_found.append(result)
 						if verbose:
-							logging.info("{0}, {1}".format(result[0], result[1]))
+							logging.info("{0}, {1}, {2}".format(result[0], result[1], result[2]))
 	
 	return sorted(fragments_found, key = lambda x: x[1][0])
 
