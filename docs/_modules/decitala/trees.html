@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.trees &mdash; decitala 0.2.0 documentation</title>
+  <title>decitala.trees &mdash; decitala 0.2.1 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.2.0 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.2.1 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.2.0
+                0.2.1
               </div>
             
           
@@ -998,6 +998,9 @@
 	<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
 		<span class="k">pass</span>
 
+	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">verbose</span><span class="p">):</span>
+		<span class="n">logging</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
 	<span class="n">depths</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">if</span> <span class="n">ratio_tree</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 		<span class="n">depths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio_tree</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
@@ -1013,9 +1016,8 @@
 
 	<span class="n">fragments_found</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">this_win</span> <span class="ow">in</span> <span class="n">windows</span><span class="p">:</span>
-		<span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-			<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-			<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Searching window of size </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">this_win</span><span class="p">))</span>
+		<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Searching window of size </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">this_win</span><span class="p">))</span>
+		
 		<span class="n">frames</span> <span class="o">=</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span> <span class="o">=</span> <span class="n">object_list</span><span class="p">,</span> <span class="n">window_length</span> <span class="o">=</span> <span class="n">this_win</span><span class="p">)</span>
 		<span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
 			<span class="n">objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_frame</span><span class="p">]</span>
@@ -1034,8 +1036,8 @@
 					<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="n">frame_is_spannned_by_slur</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
 					<span class="n">result_normal</span> <span class="o">=</span> <span class="p">(</span><span class="n">searched</span><span class="p">,</span> <span class="p">(</span><span class="n">offset_1</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">),</span> <span class="n">is_spanned_by_slur</span><span class="p">)</span>
 					<span class="n">fragments_found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_normal</span><span class="p">)</span>
-					<span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-						<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">, </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result_normal</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">result_normal</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">result_normal</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+
+					<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">, </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result_normal</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">result_normal</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">result_normal</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
 
 				<span class="k">if</span> <span class="n">try_contiguous_summation</span><span class="p">:</span>
 					<span class="n">copied_frame</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
@@ -1060,8 +1062,8 @@
 						
 						<span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">rewritten_search</span><span class="p">,</span> <span class="p">(</span><span class="n">offset_1</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">),</span> <span class="n">is_spanned_by_slur</span><span class="p">)</span>		
 						<span class="n">fragments_found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-						<span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-							<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">, </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+
+						<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">, </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
 	
 	<span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fragments_found</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span></div>
 
@@ -1153,7 +1155,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.2.0',
+            VERSION:'0.2.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
