@@ -6,16 +6,18 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 if __name__ == "__main__":
-    import doctest
-    from decitala import (
-        fragment,
-        utils,
-        trees,
-        paths,
-        pofp,
-    )
-    doctest.testmod(fragment)
-    doctest.testmod(utils)
-    doctest.testmod(trees)
-    doctest.testmod(paths)
-    doctest.testmod(pofp)
+	import doctest
+	from decitala import (
+		database,
+		fragment,
+		utils,
+		trees,
+		paths,
+		pofp,
+	)
+	doctest.testmod(database)
+	doctest.testmod(fragment)
+	doctest.testmod(utils)
+	doctest.testmod(trees)
+	doctest.testmod(paths)
+	doctest.testmod(pofp)

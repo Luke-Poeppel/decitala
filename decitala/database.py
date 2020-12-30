@@ -223,7 +223,19 @@ def create_database(
 ####################################################################################################
 class DBParser(object):
 	"""
-	Class used for accessing data from the ``Fragments`` page of a database made via :obj:`~decitala.database.create_database`.
+	Class used for parsing data from the ``Fragments`` page of a database made via :obj:`~decitala.database.create_database`.
+
+	>>> example_data = "/Users/lukepoeppel/decitala/tests/static/ex99_data.db"
+	>>> parsed = DBParser(example_data)
+	>>> for x in parsed.spanned_fragments()[0:3]:
+	... 	print(x["fragment"].name)
+	... 	print(x["pitch_content"])
+	Iamb
+	[(80,), (82,)]
+	Iamb
+	[(79,), (81,)]
+	Iamb
+	[(78,), (80,)]
 	"""
 	def __init__(self, db_path):
 		assert os.path.isfile(db_path), DatabaseException("You've provided an invalid file.")
@@ -252,11 +264,11 @@ class DBParser(object):
 				this_fragment = GreekFoot(fragment_name)
 
 			row_data["fragment"] = this_fragment
-			row_data["onset"] = this_row[0]
-			row_data["offset"] = this_row[1]
+			row_data["onset_range"] = (this_row[0], this_row[1])
 			row_data["mod"] = this_row[3]
 			row_data["factor"] = this_row[4]
-			row_data["is_slurred"] = bool(this_row[5])
+			row_data["pitch_content"] = this_row[5]
+			row_data["is_slurred"] = bool(this_row[6])
 
 			data.append(row_data)
 
