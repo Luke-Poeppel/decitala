@@ -3,6 +3,13 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.2.2] - December 29, 2020 (Kent, CT)
+### Added
+
+### Changed
+
+### Removed
+
 ## [v0.2.1] - December 29, 2020 (Kent, CT)
 ### Changed
 - The ``decitala.trees`` and ``decitala.database`` modules now use ``logging.disable`` (removing a number of if statements) for readability. (Also removed logging from ``decitala.pofp``.)
