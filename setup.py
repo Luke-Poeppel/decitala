@@ -13,20 +13,6 @@ from setuptools import setup, find_packages, Command
 with open(os.path.join("decitala", "VERSION")) as version:
 	__version__ = version.readline()
 
-class CleanCommand(Command):
-	"""
-	setuptools doesn't always clean itself up after big changes. This useful function clears all of the 
-	build information/logs. https://stackoverflow.com/questions/3779915/why-does-python-setup-py-sdist-create-unwanted-project-egg-info-in-project-r
-	"""
-	user_options = []
-	def initialize_options(self):
-		self.cwd = None
-	def finalize_options(self):
-		self.cwd = os.getcwd()
-	def run(self):
-		assert os.getcwd() == self.cwd, 'Must be in package root: %s' % self.cwd
-		os.system('rm -vrf ./build ./dist ./*.pyc ./*.tgz ./*.egg-info')
-
 __MODULES__ = [
 	"decitala.cli", 
 	"decitala.database", 
@@ -62,11 +48,12 @@ setup(
 		"collections",
 		"coloredlogs",
 		"itertools",
-		"more-itertools",
 		"jsonpickle",
-		"numpy",
-		"sqlite3",
 		"matplotlib",
+		"more-itertools",
+		"numpy",
+		"pre-commit",
+		"sqlite3",
 		"timeout-decorator"
 	],
 	cmdclass={

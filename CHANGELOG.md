@@ -5,12 +5,14 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.2.2] - December 29, 2020 (Kent, CT)
 ### Added
+- Added a .yaml file for a pre-commit hook that prevents writing to master. (Uses ``pre-commit`` library).
 
 ### Changed
 - Changed the name of ``utils.frame_is_spanned_by_slur`` (fixing a typo). 
 
 ### Removed
 - Removed unnecessary doctest imports from modules. 
+- Removed old cleaning function for ``setup.py``.
 
 ## [v0.2.1] - December 29, 2020 (Kent, CT)
 ### Changed

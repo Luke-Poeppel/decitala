@@ -900,7 +900,7 @@ def rolling_search(
 						offset_1 = new_frame[0][0]
 						offset_2 = new_frame[-1][0]
 
-						is_spanned_by_slur = frame_is_spannned_by_slur(this_frame)
+						is_spanned_by_slur = frame_is_spanned_by_slur(this_frame)
 						
 						result = (rewritten_search, (offset_1.offset, offset_2.offset + offset_2.quarterLength), is_spanned_by_slur)		
 						fragments_found.append(result)
