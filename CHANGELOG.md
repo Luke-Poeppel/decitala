@@ -7,6 +7,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Added
 - Added the ``database.DBParser`` class that allows for easier querying of data from the ``Fragment`` table from ``database.create_database``.
 
+### Removed
+- Helper functions ``database._check_tuple_in_tuple_range`` and ``database._pitch_info_from_onset_range`` are removed due to the above addition. 
+
 ## [v0.2.4] - December 30, 2020 (Kent, CT)
 ### Fixed
 - Bugfix in ``database.create_database`` (related to new rolling search output). 
@@ -24,7 +27,6 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Made the ``utils.find_clusters`` function public. 
 
 ### Removed
-- Helper functions ``database._check_tuple_in_tuple_range`` and ``database._pitch_info_from_onset_range`` are removed due to the above addition. 
 - Removed  ``trees.rolling_search_on_array`` (at least for now) as it doesn't currently match the other search formats.
 - Removed ``utils.contiguous_multiplication``. 
 

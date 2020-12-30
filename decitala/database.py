@@ -262,3 +262,55 @@ def create_database(
 					cur.execute(new)
 		
 		logging.info("Done preparing ✔")
+
+####################################################################################################
+class DBParser(object):
+	"""
+	Class used for accessing data from the ``Fragments`` page of a database made via :obj:`~decitala.database.create_database`.
+	"""
+	def __init__(self, db_path):
+		assert os.path.isfile(db_path), DatabaseException("You've provided an invalid file.")
+
+		self.db_path = db_path
+		filename = self.db_path.split('/')[-1]
+		self.filename = filename
+
+		conn = lite.connect(self.db_path)
+		cur = conn.cursor()
+
+		fragment_path_string = "SELECT * FROM Fragments"
+		cur.execute(fragment_path_string)
+		fragment_rows = cur.fetchall()
+		
+		data = []
+		for this_row in fragment_rows:
+			row_data = dict()
+
+			fragment_str = this_row[2]
+			fragment_name = fragment_str.split()[-1][:-1] # Remove the final `>`.
+			fragment_abbrev = fragment_str[10:12]
+			if fragment_abbrev == "De": # Decitala
+				this_fragment = Decitala(fragment_name)
+			elif fragment_abbrev == "Gr": # GreekFoot
+				this_fragment = GreekFoot(fragment_name)
+
+			row_data["fragment"] = this_fragment
+			row_data["onset"] = this_row[0]
+			row_data["offset"] = this_row[1]
+			row_data["mod"] = this_row[3]
+			row_data["factor"] = this_row[4]
+			row_data["is_slurred"] = bool(this_row[5])
+
+			data.append(row_data)
+
+		self.data = data
+
+	def __repr__(self):
+		return "<database.DBParser {}>".format(self.filename)
+	
+	@property
+	def fragments(self):
+		return [x["fragment"] for x in self.data]
+
+	def spanned_fragments(self):
+		return [x for x in self.data if x["is_slurred"]==True]
