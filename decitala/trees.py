@@ -882,14 +882,13 @@ def rolling_search(
 
 					search_dict["fragment"] = searched[0]
 					search_dict["mod"] = searched[1]
-					search_dict["onset"] = offset_1.offset
-					search_dict["offset"] = offset_2.offset + offset_2.quarterLength
+					search_dict["onset_range"] = (offset_1.offset, offset_2.offset + offset_2.quarterLength)
 					search_dict["is_spanned_by_slur"] = is_spanned_by_slur
 					search_dict["pitch_content"] = pitch_content
 
 					fragments_found.append(search_dict)
 				
-					logging.info("({0}, {1}), ({2}, {3}), {4}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset"], search_dict["offset"], search_dict["is_spanned_by_slur"]))
+					logging.info("({0}, {1}), ({2}), {3}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset_range"], search_dict["is_spanned_by_slur"]))
 
 				if try_contiguous_summation:
 					copied_frame = copy.copy(this_frame)
@@ -916,14 +915,13 @@ def rolling_search(
 
 						cs_search_dict["fragment"] = frag
 						cs_search_dict["mod"] = mod
-						cs_search_dict["onset"] = offset_1
-						cs_search_dict["offset"] = offset_2
+						cs_search_dict["onset_range"] = (offset_1, offset_2)
 						cs_search_dict["is_spanned_by_slur"] = is_spanned_by_slur
 						cs_search_dict["pitch_content"] = cs_pitch_content
 
 						fragments_found.append(cs_search_dict)
 
-						logging.info("({0}, {1}), ({2}, {3}), {4}".format(cs_search_dict["fragment"], cs_search_dict["mod"], cs_search_dict["onset"], cs_search_dict["offset"], cs_search_dict["is_spanned_by_slur"]))
+						logging.info("({0}, {1}), ({2}), {3}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset_range"], search_dict["is_spanned_by_slur"]))
 	
 	return fragments_found
 
