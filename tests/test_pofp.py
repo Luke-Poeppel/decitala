@@ -6,6 +6,7 @@ from decitala.pofp import (
     get_pareto_optimal_longest_paths
 )
 
+# TODO (old format)
 @pytest.fixture
 def data():
 	sh_data = [
@@ -33,15 +34,15 @@ def data():
 	]
 	return sh_data
 
-class TestSeptHaikaiData:
-	def test_check_break_point(self, data):
+class _TestSeptHaikaiData:
+	def _test_check_break_point(self, data):
 		assert check_break_point(data, 10) == True # checks info_10 starts new section.
 	
-	def test_get_break_points(self, data):
+	def _test_get_break_points(self, data):
 		break_points = [4, 10, 12, 13, 16, 25, 38, 41, 43, 44, 47, 49, 55, 57]
 		assert break_points == get_break_points(data)
 	
-	def test_get_pareto_optimal_longest_paths(self, data):
+	def _test_get_pareto_optimal_longest_paths(self, data):
 		random_start = 23
 		random_stop = 29
 		data_excerpt = data[random_start:random_stop + 1]

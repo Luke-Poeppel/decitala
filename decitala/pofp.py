@@ -42,34 +42,29 @@ def check_break_point(data, i):
 	prior to it are less than or equal to :math:`b_i` and :math:`s_i`. If True, this means that 
 	the data at index i is >= all previous.
 
-	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
-	:param int i: index of the data to check. 
-	:return: whether or not the queried index is a break point. 
-	:rtype: bool
+	# :param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
+	# :param int i: index of the data to check. 
+	# :return: whether or not the queried index is a break point. 
+	# :rtype: bool
 
-	>>> tup_lst = [
-	...		(('info1',), (0.0, 2.0)), (('info2',), (0.0, 4.0)), (('info3',), (2.0, 4.0)), (('info4',), (2.0, 5.75)), 
-	... 	(('info5',), (2.5, 4.5)), (('info6',), (4.0, 5.5)), (('info7',), (6.0, 7.25))
-	... ] 
-	>>> for info in tup_lst:
-	... 	print(info)
-	(('info1',), (0.0, 2.0))
-	(('info2',), (0.0, 4.0))
-	(('info3',), (2.0, 4.0))
-	(('info4',), (2.0, 5.75))
-	(('info5',), (2.5, 4.5))
-	(('info6',), (4.0, 5.5))
-	(('info7',), (6.0, 7.25))
-	>>> print(check_break_point(tup_lst, 2))
+	>>> data = [
+	...		{"fragment": "info1", "mod": ("r", 1.0), "onset_range": (0.0, 2.0)},
+	... 	{"fragment": "info2", "mod": ("r", 2.0), "onset_range": (0.0, 4.0)},
+	... 	{"fragment": "info3", "mod": ("d", 0.25), "onset_range": (2.0, 4.0)},
+	... 	{"fragment": "info4", "mod": ("rd", 0.25), "onset_range": (2.0, 5.75)},
+	... 	{"fragment": "info5", "mod": ("r", 3.0), "onset_range": (2.5, 4.5)},
+	... 	{"fragment": "info6", "mod": ("r", 1.0), "onset_range": (4.0, 5.5)},
+	... 	{"fragment": "info7", "mod": ("rd", 0.25), "onset_range": (6.0, 7.25)}
+	... ]
+	>>> print(check_break_point(data, 2))
 	False
-	>>> print(check_break_point(tup_lst, 6))
+	>>> print(check_break_point(data, 6))
 	True
 	"""
-	assert type(i) == int
 	check = []
 	for this_data in data[0:i]:
-		range_data = this_data[1]
-		if data[i][1][0] >= range_data[0] and data[i][1][0] >= range_data[1]:
+		range_data = this_data["onset_range"]
+		if data[i]["onset_range"][0] >= range_data[0] and data[i]["onset_range"][0] >= range_data[1]:
 			check.append(1)
 		else:
 			check.append(0)
@@ -81,15 +76,20 @@ def check_break_point(data, i):
 
 def get_break_points(data):
 	"""
-	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
-	:return: every index in the input at which the data is at most end-overlapping. 
-	:rtype: list
+	# :param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
+	# :return: every index in the input at which the data is at most end-overlapping. 
+	# :rtype: list
 
-	>>> tup_lst = [
-	...		(('info1',), (0.0, 2.0)), (('info2',), (0.0, 4.0)), (('info3',), (2.0, 4.0)), (('info4',), (2.0, 5.75)), 
-	... 	(('info5',), (2.5, 4.5)), (('info6',), (4.0, 5.5)), (('info7',), (6.0, 7.25))
-	... ] 
-	>>> get_break_points(tup_lst)
+	>>> data = [
+	...		{"fragment": "info1", "mod": ("r", 1.0), "onset_range": (0.0, 2.0)},
+	... 	{"fragment": "info2", "mod": ("r", 2.0), "onset_range": (0.0, 4.0)},
+	... 	{"fragment": "info3", "mod": ("d", 0.25), "onset_range": (2.0, 4.0)},
+	... 	{"fragment": "info4", "mod": ("rd", 0.25), "onset_range": (2.0, 5.75)},
+	... 	{"fragment": "info5", "mod": ("r", 3.0), "onset_range": (2.5, 4.5)},
+	... 	{"fragment": "info6", "mod": ("r", 1.0), "onset_range": (4.0, 5.5)},
+	... 	{"fragment": "info7", "mod": ("rd", 0.25), "onset_range": (6.0, 7.25)}
+	... ]
+	>>> get_break_points(data)
 	[6]
 	"""
 	i = 0
@@ -106,14 +106,19 @@ def partition_data_by_break_points(data):
 	"""
 	Partitions the input data according to all calculated breakpoints. 
 
-	>>> tup_lst = [
-	...		(('info1',), (0.0, 2.0)), (('info2',), (0.0, 4.0)), (('info3',), (2.0, 4.0)), (('info4',), (2.0, 5.75)), 
-	... 	(('info5',), (2.5, 4.5)), (('info6',), (4.0, 5.5)), (('info7',), (6.0, 7.25))
-	... ] 
-	>>> for this_partition in partition_data_by_break_points(tup_lst):
+	>>> data = [
+	...		{"fragment": "info1", "mod": ("r", 1.0), "onset_range": (0.0, 2.0)},
+	... 	{"fragment": "info2", "mod": ("r", 2.0), "onset_range": (0.0, 4.0)},
+	... 	{"fragment": "info3", "mod": ("d", 0.25), "onset_range": (2.0, 4.0)},
+	... 	{"fragment": "info4", "mod": ("rd", 0.25), "onset_range": (2.0, 5.75)},
+	... 	{"fragment": "info5", "mod": ("r", 3.0), "onset_range": (2.5, 4.5)},
+	... 	{"fragment": "info6", "mod": ("r", 1.0), "onset_range": (4.0, 5.5)},
+	... 	{"fragment": "info7", "mod": ("rd", 0.25), "onset_range": (6.0, 7.25)}
+	... ]
+	>>> for this_partition in partition_data_by_break_points(data):
 	...    print(this_partition)
-	[(('info1',), (0.0, 2.0)), (('info2',), (0.0, 4.0)), (('info3',), (2.0, 4.0)), (('info4',), (2.0, 5.75)), (('info5',), (2.5, 4.5)), (('info6',), (4.0, 5.5))]
-	[(('info7',), (6.0, 7.25))]
+	[{'fragment': 'info1', 'mod': ('r', 1.0), 'onset_range': (0.0, 2.0)}, {'fragment': 'info2', 'mod': ('r', 2.0), 'onset_range': (0.0, 4.0)}, {'fragment': 'info3', 'mod': ('d', 0.25), 'onset_range': (2.0, 4.0)}, {'fragment': 'info4', 'mod': ('rd', 0.25), 'onset_range': (2.0, 5.75)}, {'fragment': 'info5', 'mod': ('r', 3.0), 'onset_range': (2.5, 4.5)}, {'fragment': 'info6', 'mod': ('r', 1.0), 'onset_range': (4.0, 5.5)}]
+	[{'fragment': 'info7', 'mod': ('rd', 0.25), 'onset_range': (6.0, 7.25)}]
 	"""
 	break_points = get_break_points(data)
 	out = [data[i:j] for i, j in zip([0] + break_points, break_points + [None])]

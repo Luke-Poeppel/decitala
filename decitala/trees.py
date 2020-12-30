@@ -829,11 +829,11 @@ def rolling_search(
 	>>> ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
 	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=["r"], verbose=False)[0:5]:
 	... 	print(tala_data)
-	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.125), 'onset': 0.0, 'offset': 0.5, 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)]}
-	{'fragment': <fragment.GreekFoot Trochee>, 'mod': ('r', 0.125), 'onset': 0.25, 'offset': 0.625, 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,)]}
-	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.0625), 'onset': 0.5, 'offset': 0.75, 'is_spanned_by_slur': False, 'pitch_content': [(78,), (85,)]}
-	{'fragment': <fragment.GreekFoot Iamb>, 'mod': ('r', 0.125), 'onset': 0.625, 'offset': 1.0, 'is_spanned_by_slur': False, 'pitch_content': [(85,), (93,)]}
-	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.125), 'onset': 0.75, 'offset': 1.25, 'is_spanned_by_slur': False, 'pitch_content': [(93,), (91,)]}
+	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)]}
+	{'fragment': <fragment.GreekFoot Trochee>, 'mod': ('r', 0.125), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,)]}
+	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.0625), 'onset_range': (0.5, 0.75), 'is_spanned_by_slur': False, 'pitch_content': [(78,), (85,)]}
+	{'fragment': <fragment.GreekFoot Iamb>, 'mod': ('r', 0.125), 'onset_range': (0.625, 1.0), 'is_spanned_by_slur': False, 'pitch_content': [(85,), (93,)]}
+	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.125), 'onset_range': (0.75, 1.25), 'is_spanned_by_slur': False, 'pitch_content': [(93,), (91,)]}
 	"""
 	try:
 		assert ratio_tree.rep_type == "ratio"
