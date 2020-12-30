@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.database &mdash; decitala 0.2.4 documentation</title>
+  <title>decitala.database &mdash; decitala 0.3.0 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.2.4 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.3.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.2.4
+                0.3.0
               </div>
             
           
@@ -175,21 +175,26 @@
 <span class="kn">import</span> <span class="nn">timeout_decorator</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
 
+<span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">literal_eval</span>
+
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">converter</span>
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">stream</span>
 
+<span class="kn">from</span> <span class="nn">.fragment</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">GeneralFragment</span><span class="p">,</span>
+	<span class="n">Decitala</span><span class="p">,</span>
+	<span class="n">GreekFoot</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">get_object_indices</span><span class="p">,</span>
 	<span class="n">successive_ratio_array</span><span class="p">,</span>
 	<span class="n">filter_single_anga_class_fragments</span><span class="p">,</span>
 	<span class="n">filter_sub_fragments</span>
 <span class="p">)</span>
-
 <span class="kn">from</span> <span class="nn">.trees</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">FragmentTree</span><span class="p">,</span>
 	<span class="n">rolling_search</span>
 <span class="p">)</span>
-
 <span class="kn">from</span> <span class="nn">.pofp</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">get_break_points</span><span class="p">,</span>
 	<span class="n">partition_data_by_break_points</span><span class="p">,</span>
@@ -208,41 +213,6 @@
 <div class="viewcode-block" id="DatabaseException"><a class="viewcode-back" href="../../database.html#decitala.database.DatabaseException">[docs]</a><span class="k">class</span> <span class="nc">DatabaseException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 	<span class="k">pass</span></div>
 
-<span class="k">def</span> <span class="nf">_check_tuple_in_tuple_range</span><span class="p">(</span><span class="n">tup1</span><span class="p">,</span> <span class="n">tup2</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Checks if tuple 1 is contained in tuple 2, e.g. (2, 4) in (1, 5)</span>
-<span class="sd">	&gt;&gt;&gt; _check_tuple_in_tuple_range((2, 4), (1, 5))</span>
-<span class="sd">	True</span>
-<span class="sd">	&gt;&gt;&gt; _check_tuple_in_tuple_range((0.0, 1.5), (0.0, 4.0))</span>
-<span class="sd">	True</span>
-<span class="sd">	&gt;&gt;&gt; _check_tuple_in_tuple_range((2.5, 4.0), (0.0, 4.0))</span>
-<span class="sd">	True</span>
-<span class="sd">	&gt;&gt;&gt; _check_tuple_in_tuple_range((4.0, 4.375), (0.0, 4.0))</span>
-<span class="sd">	False</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">if</span> <span class="n">tup1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">tup2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">tup1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tup2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">tup1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tup2</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-		<span class="k">return</span> <span class="kc">True</span>
-	<span class="k">else</span><span class="p">:</span>
-		<span class="k">return</span> <span class="kc">False</span> 
-
-<span class="k">def</span> <span class="nf">_pitch_info_from_onset_range</span><span class="p">(</span><span class="n">onset_range</span><span class="p">,</span> <span class="n">all_objects_in_part</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Function that takes in onset range and returns the pitch.midi information for that range.</span>
-<span class="sd">	The input ``data`` is that which is returned in rolling_search. </span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">note_data</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="k">for</span> <span class="n">this_object</span> <span class="ow">in</span> <span class="n">all_objects_in_part</span><span class="p">:</span>
-		<span class="k">if</span> <span class="n">_check_tuple_in_tuple_range</span><span class="p">(</span><span class="n">this_object</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">onset_range</span><span class="p">):</span>
-			<span class="n">note_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_object</span><span class="p">)</span>
-	
-	<span class="n">pitches</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pitches</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">note_data</span><span class="p">]</span>
-	<span class="n">midi</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="k">for</span> <span class="n">pitch_info</span> <span class="ow">in</span> <span class="n">pitches</span><span class="p">:</span>
-		<span class="n">midi</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">midi</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pitch_info</span><span class="p">]))</span>
-	
-	<span class="k">return</span> <span class="n">midi</span>
-
-<span class="c1">####################################################################################################</span>
 <div class="viewcode-block" id="create_database"><a class="viewcode-back" href="../../database.html#decitala.database.create_database">[docs]</a><span class="nd">@timeout_decorator</span><span class="o">.</span><span class="n">timeout</span><span class="p">(</span><span class="mi">75</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span>
 		<span class="n">db_path</span><span class="p">,</span>
@@ -362,16 +332,17 @@
 		<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Connected to database at: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">db_path</span><span class="p">))</span>
 
 		<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-		<span class="n">fragment_table_string</span> <span class="o">=</span> <span class="s2">&quot;CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Is_Slurred INT)&quot;</span>
+		<span class="n">fragment_table_string</span> <span class="o">=</span> <span class="s2">&quot;CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Pitch_Content BLOB, Is_Slurred INT)&quot;</span>
 		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">fragment_table_string</span><span class="p">)</span>
 
 		<span class="k">for</span> <span class="n">this_partition</span> <span class="ow">in</span> <span class="n">partitioned_data</span><span class="p">:</span>
 			<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="n">this_partition</span><span class="p">:</span>
-				<span class="n">fragment_insertion_string</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO Fragments VALUES(</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">, &#39;</span><span class="si">{2}</span><span class="s2">&#39;, &#39;</span><span class="si">{3}</span><span class="s2">&#39;, </span><span class="si">{4}</span><span class="s2">, </span><span class="si">{5}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="c1"># start offset</span>
+				<span class="n">fragment_insertion_string</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO Fragments VALUES(</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">, &#39;</span><span class="si">{2}</span><span class="s2">&#39;, &#39;</span><span class="si">{3}</span><span class="s2">&#39;, </span><span class="si">{4}</span><span class="s2">, &#39;</span><span class="si">{5}</span><span class="s2">&#39;, </span><span class="si">{6}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="c1"># start offset</span>
 																													<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="c1"># end offset</span>
 																													<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">],</span> <span class="c1"># fragment</span>
 																													<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="c1"># mod type </span>
 																													<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="c1"># mod factor/difference</span>
+																													<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;pitch_content&quot;</span><span class="p">],</span> <span class="c1"># pitch content</span>
 																													<span class="nb">int</span><span class="p">(</span><span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;is_spanned_by_slur&quot;</span><span class="p">]))</span> <span class="c1"># is_slurred</span>
 				<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">fragment_insertion_string</span><span class="p">)</span>
 
@@ -380,32 +351,20 @@
 			<span class="n">lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">pareto_optimal_paths</span><span class="p">]</span>
 			<span class="n">longest_path</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span>
 
-			<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Onset_Range_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">longest_path</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
-			<span class="n">columns_declaration</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> BLOB&#39;</span> <span class="o">%</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">)</span>
-			<span class="n">newer</span> <span class="o">=</span> <span class="n">columns_declaration</span> <span class="o">+</span> <span class="s1">&#39;, Pitch_Content BLOB&#39;</span>
+			<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Onset_Range_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">longest_path</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+			<span class="n">columns_declaration</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> BLOB&quot;</span> <span class="o">%</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">)</span>
 
-			<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE Paths_</span><span class="si">{0}</span><span class="s2"> (</span><span class="si">{1}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">newer</span><span class="p">))</span>
-			
+			<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE Paths_</span><span class="si">{0}</span><span class="s2"> (</span><span class="si">{1}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">columns_declaration</span><span class="p">))</span>
 			<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Making Paths_</span><span class="si">{}</span><span class="s2"> table&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
 			
 			<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">pareto_optimal_paths</span><span class="p">:</span>
-				<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM Fragments&quot;</span><span class="p">)</span>
-				<span class="n">rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-				<span class="n">pitch_content</span> <span class="o">=</span> <span class="p">[]</span>
-				<span class="k">for</span> <span class="n">this_range</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
-					<span class="n">pitch_data_in_range</span> <span class="o">=</span> <span class="n">_pitch_info_from_onset_range</span><span class="p">(</span><span class="n">this_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">all_object</span><span class="p">)</span>
-					<span class="n">pitch_content</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pitch_data_in_range</span><span class="p">)</span>
-
-				<span class="n">formatted_pitch_content</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">tuple</span><span class="p">([</span><span class="nb">tuple</span><span class="p">(</span><span class="n">sublist</span><span class="p">)</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">pitch_content</span><span class="p">]))</span>
-
-				<span class="c1"># Format the pitch content as one continous string.</span>
 				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">==</span> <span class="n">longest_path</span><span class="p">:</span>
 					<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
 					<span class="k">for</span> <span class="n">this_range</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
-						<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">this_range</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+						<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">this_range</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
 					
 					<span class="n">mid</span> <span class="o">=</span> <span class="s2">&quot;&#39;, &#39;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-					<span class="n">post</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO Paths_</span><span class="si">{0}</span><span class="s2"> VALUES(&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="n">mid</span> <span class="o">+</span> <span class="s2">&quot;&#39;, &#39;</span><span class="si">{0}</span><span class="s2">&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">formatted_pitch_content</span><span class="p">)</span>
+					<span class="n">post</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO Paths_</span><span class="si">{0}</span><span class="s2"> VALUES(&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="o">+</span> <span class="n">mid</span> <span class="o">+</span> <span class="s2">&quot;&#39;)&quot;</span>
 					<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">post</span><span class="p">)</span>
 				<span class="k">else</span><span class="p">:</span>
 					<span class="n">diff</span> <span class="o">=</span> <span class="n">longest_path</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -416,10 +375,74 @@
 					<span class="n">mid</span> <span class="o">=</span> <span class="s2">&quot;&#39;, &#39;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 					<span class="n">nulls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&#39;NULL&#39;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">diff</span>
 					<span class="n">post_nulls</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">nulls</span><span class="p">)</span>
-					<span class="n">new</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO Paths_</span><span class="si">{0}</span><span class="s2"> VALUES(&#39;</span><span class="si">{1}</span><span class="s2">&#39;, </span><span class="si">{2}</span><span class="s2">, &#39;</span><span class="si">{3}</span><span class="s2">&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">mid</span><span class="p">,</span> <span class="n">post_nulls</span><span class="p">,</span> <span class="n">formatted_pitch_content</span><span class="p">)</span>
+					<span class="n">new</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO Paths_</span><span class="si">{0}</span><span class="s2"> VALUES(&#39;</span><span class="si">{1}</span><span class="s2">&#39;, </span><span class="si">{2}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">mid</span><span class="p">,</span> <span class="n">post_nulls</span><span class="p">)</span>
 					<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
 		
 		<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done preparing ✔&quot;</span><span class="p">)</span></div>
+
+<span class="c1">####################################################################################################</span>
+<div class="viewcode-block" id="DBParser"><a class="viewcode-back" href="../../database.html#decitala.database.DBParser">[docs]</a><span class="k">class</span> <span class="nc">DBParser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Class used for parsing data from the ``Fragments`` page of a database made via :obj:`~decitala.database.create_database`.</span>
+
+<span class="sd">	&gt;&gt;&gt; example_data = &quot;/Users/lukepoeppel/decitala/tests/static/ex99_data.db&quot;</span>
+<span class="sd">	&gt;&gt;&gt; parsed = DBParser(example_data)</span>
+<span class="sd">	&gt;&gt;&gt; for x in parsed.spanned_fragments()[0:3]:</span>
+<span class="sd">	... 	print(x[&quot;fragment&quot;].name)</span>
+<span class="sd">	... 	print(x[&quot;pitch_content&quot;])</span>
+<span class="sd">	Iamb</span>
+<span class="sd">	[(80,), (82,)]</span>
+<span class="sd">	Iamb</span>
+<span class="sd">	[(79,), (81,)]</span>
+<span class="sd">	Iamb</span>
+<span class="sd">	[(78,), (80,)]</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_path</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">db_path</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;You&#39;ve provided an invalid file.&quot;</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">db_path</span> <span class="o">=</span> <span class="n">db_path</span>
+		<span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+
+		<span class="n">conn</span> <span class="o">=</span> <span class="n">lite</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span>
+		<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+		<span class="n">fragment_path_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Fragments&quot;</span>
+		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">fragment_path_string</span><span class="p">)</span>
+		<span class="n">fragment_rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+		
+		<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="n">fragment_rows</span><span class="p">:</span>
+			<span class="n">row_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+			<span class="n">fragment_str</span> <span class="o">=</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+			<span class="n">fragment_name</span> <span class="o">=</span> <span class="n">fragment_str</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># Remove the final `&gt;`.</span>
+			<span class="n">fragment_abbrev</span> <span class="o">=</span> <span class="n">fragment_str</span><span class="p">[</span><span class="mi">10</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">fragment_abbrev</span> <span class="o">==</span> <span class="s2">&quot;De&quot;</span><span class="p">:</span> <span class="c1"># Decitala</span>
+				<span class="n">this_fragment</span> <span class="o">=</span> <span class="n">Decitala</span><span class="p">(</span><span class="n">fragment_name</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="n">fragment_abbrev</span> <span class="o">==</span> <span class="s2">&quot;Gr&quot;</span><span class="p">:</span> <span class="c1"># GreekFoot</span>
+				<span class="n">this_fragment</span> <span class="o">=</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="n">fragment_name</span><span class="p">)</span>
+
+			<span class="n">row_data</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_fragment</span>
+			<span class="n">row_data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+			<span class="n">row_data</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+			<span class="n">row_data</span><span class="p">[</span><span class="s2">&quot;factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+			<span class="n">row_data</span><span class="p">[</span><span class="s2">&quot;pitch_content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+			<span class="n">row_data</span><span class="p">[</span><span class="s2">&quot;is_slurred&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+
+			<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_data</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="s2">&quot;&lt;database.DBParser </span><span class="si">{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">fragments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
+
+	<span class="k">def</span> <span class="nf">spanned_fragments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;is_slurred&quot;</span><span class="p">]</span><span class="o">==</span><span class="kc">True</span><span class="p">]</span></div>
 </pre></div>
 
            </div>
@@ -453,7 +476,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.2.4',
+            VERSION:'0.3.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
