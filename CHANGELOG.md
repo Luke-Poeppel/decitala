@@ -4,6 +4,10 @@ All important changes to the decitala package will be documented here.
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [v0.2.3] - December 29, 2020 (Kent, CT)
+### Added 
+- Added a ``utils.frame_to_midi`` option used in rolling search.
+
+
 ### Changed
 - The ``trees.rolling_search`` function now stores pitch content within the fragment objects. 
 
