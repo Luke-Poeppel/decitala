@@ -39,10 +39,10 @@ def liturgie_opening():
 @pytest.fixture
 def decitala_collection():
 	talas = [
-		((Decitala("75_Pratapacekhara"), ('sr', 0.6666666666666666)), (2.0, 6.25)),
-		((Decitala("93_Ragavardhana"), ('rsr', 2.0)), (2.0, 6.75)),
-		((Decitala("Karanayati"), ('r', 1.0)), (0.0, 1.0)),
-		((Decitala("5_Pancama"), ('r', 4.0)), (2.0, 4.0)),
+		{"fragment": Decitala("75_Pratapacekhara"), "mod": ('sr', 0.6666666666666666), "onset_range": (2.0, 6.25)},
+		{"fragment": Decitala("93_Ragavardhana"), "mod": ('rsr', 2.0), "onset_range": (2.0, 6.75)},
+		{"fragment": Decitala("Karanayati"), "mod": ('r', 1.0), "onset_range": (0.0, 1.0)},
+		{"fragment": Decitala("5_Pancama"), "mod": ('r', 4.0), "onset_range": (2.0, 4.0)},
 	]
 	return talas
 

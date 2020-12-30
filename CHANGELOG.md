@@ -6,15 +6,18 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.2.3] - December 30, 2020 (Kent, CT)
 ### Added 
 - Added a ``utils.frame_to_midi`` option used in rolling search.
+- Documentation updates reflecting the new rolling search output. 
 
 ### Changed
 - Output of ``trees.rolling_search`` is now a list of ``dict`` objects. This is better for querying data, adding extra parameters, etc...
 - The ``trees.rolling_search`` function now stores pitch data using the ``utils.frame_to_midi``.
 - Changed the input data parameter of ``utils.frame_to_ql_array`` from ``data`` to ``frame`` (matching the other functions).
+- Made the ``utils.find_clusters`` function public. 
 
 ### Removed
 - Helper functions ``database._check_tuple_in_tuple_range`` and ``database._pitch_info_from_onset_range`` are removed due to the above addition. 
 - Removed  ``trees.rolling_search_on_array`` (at least for now) as it doesn't currently match the other search formats.
+- Removed ``utils.contiguous_multiplication``. 
 
 ## [v0.2.2] - December 29, 2020 (Kent, CT)
 ### Added

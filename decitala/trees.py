@@ -458,7 +458,7 @@ def filter_data(raw_data):
 	:param list raw_data: a list of :class:`~decitala.fragment.Decitala`, :class:`~decitala.fragment.GreekFoot`, or 
 						:class:`~decitala.fragment.GeneralFragment` objects. 
 	:return: a filtered list that removes single-onset fragments and fragments with equivalent 
-			successive difference representations (see :meth:`~decitala.utils.successive_ratio_array`) 
+			successive difference representations (see :obj:`~decitala.utils.successive_ratio_array`) 
 			using the Cauchy-Schwartz inequality.
 	:rtype: list
 	"""
@@ -807,7 +807,7 @@ def rolling_search(
 		verbose=True
 	):
 	"""
-	Rolling search on a music21-readable file on a given part. For search types, see 
+	Rolling rhythmic search on a music21-readable file on a given part. For search types, see 
 	documentation for :func:`~decitala.trees.get_by_ql_array`. The default window lengths 
 	are the lengths of fragments in the decitala dataset.
 
@@ -815,13 +815,13 @@ def rolling_search(
 	:param int part_num: part in the file to be searched (0-indexed).
 	:param `~decitala.trees.FragmentTree` ratio_tree: tree storing ratio representations.
 	:param `~decitala.trees.FragmentTree` difference_tree: tree storing difference representations.
-	:param allowed_modifications list: see :func:`decitala.trees.get_by_ql_array`.
-	:param try_contiguous_summation bool: ties together all elements of equal pitch and duration and searches. 
-	:param list windows: possible length of the search frame. 
-	:param bool allow_unnamed: whether or not to allow unnamed fragments found to be returned.
-	:param verbose bool: whether or not to log results in real time. 
+	:param list allowed_modifications: see :obj:`~decitala.trees.get_by_ql_array`.
+	:param bool try_contiguous_summation: ties together all elements of equal pitch and duration and searches. See :obj:`~decitala.utils.contiguous_summation`.
+	:param list windows: possible lengths of the search frames. 
+	:param bool allow_unnamed: whether or not to include unnamed fragments (in the fragment tree(s)) in the return.
+	:param bool verbose: whether or not to log results in real time. 
 
-	:return: list holding fragments in the array, along with the modification and the offset region in which it occurs. 
+	:return: list holding dictionaries, each of which holds fragment, modifiation, onset-range, and spanning data.
 	:rtype: list
 
 	>>> ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')

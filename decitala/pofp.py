@@ -26,8 +26,8 @@ data collected from rolling search: points at which there exists no overlap. We 
 these regions (if they exist) and generate the longest paths separately. 
 
 Several of the functions below have the parameter ``data``. This parameter is of the form returned 
-by :obj:`decitala.trees.rolling_search` and looks like :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
-for :math:`X_i` the fragment name/modification, :math:`b_i` the start offset and :math:`s_i` the stop offset. 
+by :obj:`~decitala.trees.rolling_search` and corresponds to a list of dictionaries, each holding information
+about the fragment, modification, onset-range, and spanning data. 
 """
 import copy
 import itertools
@@ -38,14 +38,14 @@ logging.basicConfig(level=logging.INFO)
 
 def check_break_point(data, i):
 	"""
-	Helper function for `pofp.get_break_points`. Checks index i of the onset_list that all values 
+	Helper function for :obj:`~decitala.pofp.get_break_points`. Checks index i of the onset_list that all values 
 	prior to it are less than or equal to :math:`b_i` and :math:`s_i`. If True, this means that 
 	the data at index i is >= all previous.
 
-	# :param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
-	# :param int i: index of the data to check. 
-	# :return: whether or not the queried index is a break point. 
-	# :rtype: bool
+	:param list data: data from :obj:`~decitala.trees.rolling_search`.
+	:param int i: index of the data to check. 
+	:return: whether or not the queried index is a break point. 
+	:rtype: bool
 
 	>>> data = [
 	...		{"fragment": "info1", "mod": ("r", 1.0), "onset_range": (0.0, 2.0)},
@@ -76,9 +76,9 @@ def check_break_point(data, i):
 
 def get_break_points(data):
 	"""
-	# :param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
-	# :return: every index in the input at which the data is at most end-overlapping. 
-	# :rtype: list
+	:param list data: data from :obj:`~decitala.trees.rolling_search`.
+	:return: every index in the input at which the data is at most end-overlapping. 
+	:rtype: list
 
 	>>> data = [
 	...		{"fragment": "info1", "mod": ("r", 1.0), "onset_range": (0.0, 2.0)},
@@ -130,7 +130,7 @@ def get_pareto_optimal_longest_paths(data, verbose=False):
 	"""
 	Algorithm courtesy of M. Raynard. 
 
-	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
+	:param list data: data from :obj:`~decitala.trees.rolling_search`.
 	:return: list of lists, each holding a pareto-optimal longest path constructed from the data.
 	:rtype: list
 

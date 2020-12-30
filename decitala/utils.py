@@ -46,22 +46,22 @@ multiplicative_augmentations = [
 
 ####################################################################################################
 # Notational Conversion Functions
-def carnatic_string_to_ql_array(string):
+def carnatic_string_to_ql_array(string_):
 	"""
-	:return: a string of carnatic values converted to a standard ql array. 
+	:param str string_: string of carnatic durations separated by spaces. 
+	:return: input string converted to a quarter length array. 
 	:rtype: numpy.array. 
 	
-	NOTE: The symbols must have spaces between them or there will be conversion issues. 
-
-	>>> carnatic_string_to_ql_array(string = 'oc o | | Sc S o o o')
+	>>> carnatic_string_to_ql_array('oc o | | Sc S o o o')
 	array([0.375, 0.25 , 0.5  , 0.5  , 1.5  , 1.   , 0.25 , 0.25 , 0.25 ])
 	"""
-	split_string = string.split()
+	split_string = string_.split()
 	return np.array([float(this_carnatic_val[2]) for this_token in split_string for this_carnatic_val in carnatic_symbols if (this_carnatic_val[1] == this_token)])
 
 def ql_array_to_carnatic_string(ql_array):
 	"""
-	:return: a list of quarter length values converted to carnatic rhythmic notation.
+	:param iterable ql_array: quarter length array. 
+	:return: quarter length array converted to carnatic notation.
 	:rtype: str
 	
 	>>> ql_array_to_carnatic_string([0.5, 0.25, 0.25, 0.375, 1.0, 1.5, 1.0, 0.5, 1.0])
@@ -74,7 +74,8 @@ def ql_array_to_greek_diacritics(ql_array):
 	Returns the input ``ql_array`` in greek prosodic notation. This notation only allows
 	for two types of rhythmic values (long & short). 
 
-	:return: a list of quarter length values converted to greek prosodic notation.
+	:param iterable ql_array: quarter length array. 
+	:return: quarter length array converted to greek prosodic notation.
 	:rtype: str
 
 	>>> ql_array_to_greek_diacritics(ql_array=[1.0, 0.5, 0.5, 1.0, 1.0, 0.5])
@@ -149,8 +150,7 @@ def successive_ratio_array(fragment):
 
 def successive_difference_array(fragment):
 	"""
-	TODO: just replace the call in fragment.py with np.diff :-) 
-	Returns array defined by the difference of successive elements. By convention, we set the first value to 0.0.
+	Returns the first order difference of ``fragment`` (contiguous differences). 
 
 	:param numpy.array fragment: array defining a rhythmic fragment.
 	:return: array consisting of successive differences of the input elements. 
@@ -175,39 +175,46 @@ def successive_difference_array(fragment):
 
 	return np.array(difference_lst)
 
-def contiguous_multiplication(array):
-	"""
-	Takes the zeroth value in the array and successively multiplies by the next value. As 
-	such, the dimension of the output vector is :math:`n + 1` for :math:`n` the original dimension.
+# def contiguous_multiplication(array):
+# 	"""
+# 	Takes the zeroth value in the array and successively multiplies by the next value. As 
+# 	such, the dimension of the output vector is :math:`n + 1` for :math:`n` the original dimension.
 
-	:param numpy.array fragment: arbitrary array.
-	:return: array consisting of the successive product of the elements in the array.
-	:rtype: numpy.array
+# 	:param numpy.array fragment: arbitrary array.
+# 	:return: array consisting of the successive product of the elements in the array.
+# 	:rtype: numpy.array
 
-	>>> ex = np.array([-1, 0.5, -3])
-	>>> contiguous_multiplication(ex)
-	array([-1. ,  1. ,  0.5, -1.5])
-	"""
-	out = [array[0]]
-	i = 0
-	while i < len(array) - 1:
-		if i == 0:
-			first_elem_squared = array[i]**2
-			out.append(first_elem_squared)
-			out.append(first_elem_squared * array[i + 1])
-		else:
-			out.append(array[i] * array[i + 1])
-		i += 1 
-	return np.array(out)
+# 	>>> ex = np.array([-1, 0.5, -3])
+# 	>>> contiguous_multiplication(ex)
+# 	array([-1. ,  1. ,  0.5, -1.5])
+# 	"""
+# 	out = [array[0]]
+# 	i = 0
+# 	while i < len(array) - 1:
+# 		if i == 0:
+# 			first_elem_squared = array[i]**2
+# 			out.append(first_elem_squared)
+# 			out.append(first_elem_squared * array[i + 1])
+# 		else:
+# 			out.append(array[i] * array[i + 1])
+# 		i += 1 
+# 	return np.array(out)
 
 ####################################################################################################
 # Subdivision
-def _find_clusters(array, data_mode=False):
+def find_clusters(input_, data_mode=False):
 	"""
 	Finds the regions with consecutive equal elements.
 
+	:param iterable input_: either a list/array (representing :obj:`~decitala.fragment.GeneralFragment.ql_array`) 
+							or data from :obj:`~decitala.utils.get_object_indices`.
+	:param bool data_mode: whether or not the input data is a quarter length array or data from 
+							:obj:`~decitala.utils.get_object_indices`.
+	:return: a list of cluster indices; if not in data mode, regions with equal quarter length values;
+			if ``data_mode=True``, then regions where the quarter lengths and pitch content are equal. 
+
 	>>> varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
-	>>> clusters = _find_clusters(varied_ragavardhana)
+	>>> clusters = find_clusters(varied_ragavardhana)
 	>>> clusters
 	[[0, 2], [4, 5], [7, 9]]
 	>>> varied_ragavardhana[clusters[0][0]:clusters[0][1]+1]
@@ -216,8 +223,7 @@ def _find_clusters(array, data_mode=False):
 	array([0.75, 0.75])
 	>>> varied_ragavardhana[clusters[2][0]:clusters[2][1]+1]
 	array([0.25, 0.25, 0.25])
-
-	We can also find clusters of pitch and rhythmic information for data from `utils.get_object_indices`. 
+	>>> # We can also find clusters of pitch and rhythmic information for data from :obj:`~decitala.utils.get_object_indices`. 
 	>>> example_data = [
 	...		(note.Note("F#"), (6.5, 6.75)), 
 	...     (note.Note("G"), (6.75, 7.0)), 
@@ -227,7 +233,7 @@ def _find_clusters(array, data_mode=False):
 	...     (note.Note("G"), (7.75, 8.0)), 
 	...     (note.Note("A-"), (8.0, 8.125)), 
 	... ]
-	>>> _find_clusters(example_data, data_mode=True)
+	>>> find_clusters(example_data, data_mode=True)
 	[[1, 2], [4, 5]]
 	>>> example_data2 = [
 	... 	(chord.Chord(["F#2", "F3"], quarterLength=0.125), (0.0, 0.125)), 
@@ -236,14 +242,14 @@ def _find_clusters(array, data_mode=False):
 	... 	(chord.Chord(["E-3", "D4"], quarterLength=0.125), (0.375, 0.5)), 
 	... 	(chord.Chord(["A2", "A-3"], quarterLength=0.25), (0.5, 0.75)), 
 	... ]
-	>>> _find_clusters(example_data2, data_mode=True)
+	>>> find_clusters(example_data2, data_mode=True)
 	[[0, 2]]
 	"""
 	if not(data_mode):
-		ranges = [list(this_range) for _, this_range in groupby(range(len(array)), lambda i: array[i])]
+		ranges = [list(this_range) for _, this_range in groupby(range(len(input_)), lambda i: input_[i])]
 	else:
-		regions_property = lambda i: (array[i][1][1] - array[i][1][0] and [x.midi for x in array[i][0].pitches])
-		ranges = [list(this_range) for _, this_range in groupby(range(len(array)), regions_property)]
+		regions_property = lambda i: (input_[i][1][1] - input_[i][1][0] and [x.midi for x in input_[i][0].pitches])
+		ranges = [list(this_range) for _, this_range in groupby(range(len(input_)), regions_property)]
 
 	cluster_index_ranges = [[this_range[0], this_range[-1]] for this_range in ranges if len(this_range) > 1]
 
@@ -254,10 +260,10 @@ def _compliment_of_index_ranges(array, clusters):
 	TODO: if the compliment range has only one val, it should just be one val, not two (otherwise can't distinguish). 
 
 	>>> varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
-	>>> _compliment_of_index_ranges(varied_ragavardhana, [_find_clusters(varied_ragavardhana)[0]]) 
+	>>> _compliment_of_index_ranges(varied_ragavardhana, [find_clusters(varied_ragavardhana)[0]]) 
 	[[3, 5]]
 	>>> varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
-	>>> _compliment_of_index_ranges(varied_ragavardhana_2, _find_clusters(varied_ragavardhana_2))
+	>>> _compliment_of_index_ranges(varied_ragavardhana_2, find_clusters(varied_ragavardhana_2))
 	[[3], [6]]
 	>>> 
 	"""
@@ -282,7 +288,7 @@ def _compliment_of_index_ranges(array, clusters):
 def _make_one_superdivision(array, clusters):
 	"""
 	>>> varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
-	>>> c = _find_clusters(varied_ragavardhana_2)
+	>>> c = find_clusters(varied_ragavardhana_2)
 	>>> # one combination of the clusters is [[0, 2], [7, 9]]
 	>>> _make_one_superdivision(varied_ragavardhana_2, [[0, 2], [7, 9]])
 	array([3.  , 0.5 , 0.75, 0.75, 0.5 , 0.75])
@@ -326,7 +332,7 @@ def find_possible_superdivisions(array):
 	[3.   0.5  1.5  0.5  0.75]
 	"""
 	possible_super_divisions = [np.array(array)]
-	clusters = _find_clusters(array)
+	clusters = find_clusters(array)
 	possible_combinations = power_list(clusters)
 	for this_combination in possible_combinations:
 		superdivision = _make_one_superdivision(array, this_combination)
@@ -593,7 +599,7 @@ def contiguous_summation(data):
 
 def frame_to_ql_array(frame):
 	"""
-	:param list frame: frame of data from get_object_indices.
+	:param list frame: frame of data from :obj:`~decitala.utils.get_object_indices`.
 	:return: numpy array holding the associated quarter length of a given window. 
 	:rtype: numpy.array
 
@@ -617,7 +623,7 @@ def frame_to_ql_array(frame):
 
 def frame_to_midi(frame, ignore_graces=True):
 	"""
-	:param list frame: frame of data from get_object_indices.
+	:param list frame: frame of data from :obj:`~decitala.utils.get_object_indices`.
 	:return: numpy array holding the pitches within the frame. 
 	:rtype: numpy.array
 
@@ -669,20 +675,34 @@ def frame_is_spanned_by_slur(frame):
 
 def filter_single_anga_class_fragments(data):
 	"""
-	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
+	:param list data: data from :obj:`~decitala.trees.rolling_search`.
 	:return: data from the input with all single-anga-class talas removed. For information on anga-class, see: 
 			:obj:`decitala.fragment.Decitala.num_anga_classes`.
 	:rtype: list
+
+	>>> from decitala.fragment import GreekFoot
+	>>> data = [
+	... 	{'fragment': GreekFoot("Spondee"), 'mod': ('r', 0.125), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)]},
+	... 	{'fragment': GreekFoot("Trochee"), 'mod': ('r', 0.125), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,)]},
+	... 	{'fragment': GreekFoot("Spondee"), 'mod': ('r', 0.0625), 'onset_range': (0.5, 0.75), 'is_spanned_by_slur': False, 'pitch_content': [(78,), (85,)]},
+	... 	{'fragment': GreekFoot("Iamb"), 'mod': ('r', 0.125), 'onset_range': (0.625, 1.0), 'is_spanned_by_slur': False, 'pitch_content': [(85,), (93,)]},
+	... 	{'fragment': GreekFoot("Spondee"), 'mod': ('r', 0.125), 'onset_range': (0.75, 1.25), 'is_spanned_by_slur': False, 'pitch_content': [(93,), (91,)]}
+	... ]
+	>>> filtered = filter_single_anga_class_fragments(data)
+	>>> for x in filtered:
+	... 	print(x)
+	{'fragment': <fragment.GreekFoot Trochee>, 'mod': ('r', 0.125), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,)]}
+	{'fragment': <fragment.GreekFoot Iamb>, 'mod': ('r', 0.125), 'onset_range': (0.625, 1.0), 'is_spanned_by_slur': False, 'pitch_content': [(85,), (93,)]}
 	"""
-	return list(filter(lambda x: x[0][0].num_anga_classes != 1, data))
+	return list(filter(lambda x: x["fragment"].num_anga_classes != 1, data))
 
 def filter_sub_fragments(data, filter_in_retrograde=True):
 	"""
-	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`
+	:param list data: data from :obj:`~decitala.trees.rolling_search`.
 	:return: data from the input with all sub-talas removed; that is, talas that sit inside of another. 
 	:rtype: list
 	"""
-	just_fragments = list(set([x[0][0] for x in data]))
+	just_fragments = list(set([x["fragment"] for x in data]))
 
 	def _check_all(x):
 		check = False
@@ -695,4 +715,4 @@ def filter_sub_fragments(data, filter_in_retrograde=True):
 		return check
 
 	filtered_names = [x.name for x in just_fragments if not(_check_all(x))]
-	return [x for x in data if x[0][0].name in filtered_names]
+	return [x for x in data if x["fragment"].name in filtered_names]
