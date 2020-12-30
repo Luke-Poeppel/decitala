@@ -6,6 +6,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.2.4] - December 30, 2020 (Kent, CT)
 ### Fixed
 - Bugfix in ``database.create_database`` (related to new rolling search output). 
+- Bugfix in ``pofp.get_pareto_optimal_longest_paths`` (related to new rolling search output).
 
 ## [v0.2.3] - December 30, 2020 (Kent, CT)
 ### Added 

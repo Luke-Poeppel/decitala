@@ -134,13 +134,17 @@ def get_pareto_optimal_longest_paths(data, verbose=False):
 	:return: list of lists, each holding a pareto-optimal longest path constructed from the data.
 	:rtype: list
 
-	>>> tup_lst = [
-	...     (("info1",), (0.0, 2.0), True), (("info2",), (0.0, 4.0), False), (("info3",), (2.5, 4.5), False), 
-	...     (("info4",), (2.0, 5.75), True), (("info5",), (2.0, 4.0), True), (("info6",), (6.0, 7.25), False), 
-	...     (("info7",), (4.0, 5.5))
+	>>> data = [
+	...		{"fragment": "info1", "mod": ("r", 1.0), "onset_range": (0.0, 2.0)},
+	... 	{"fragment": "info2", "mod": ("r", 2.0), "onset_range": (0.0, 4.0)},
+	... 	{"fragment": "info3", "mod": ("d", 0.25), "onset_range": (2.0, 4.0)},
+	... 	{"fragment": "info4", "mod": ("rd", 0.25), "onset_range": (2.0, 5.75)},
+	... 	{"fragment": "info5", "mod": ("r", 3.0), "onset_range": (2.5, 4.5)},
+	... 	{"fragment": "info6", "mod": ("r", 1.0), "onset_range": (4.0, 5.5)},
+	... 	{"fragment": "info7", "mod": ("rd", 0.25), "onset_range": (6.0, 7.25)}
 	... ]
 	>>> # With only 7 windows, we can extract four possible paths!
-	>>> for this_path in get_pareto_optimal_longest_paths(tup_lst):
+	>>> for this_path in get_pareto_optimal_longest_paths(data):
 	...    path = [x[1] for x in this_path]
 	...    print(path)
 	[(0.0, 2.0), (2.0, 4.0), (4.0, 5.5), (6.0, 7.25)]
@@ -148,7 +152,7 @@ def get_pareto_optimal_longest_paths(data, verbose=False):
 	[(0.0, 2.0), (2.5, 4.5), (6.0, 7.25)]
 	[(0.0, 4.0), (4.0, 5.5), (6.0, 7.25)]
 	"""
-	tup_lst = [x[1] for x in data]
+	tup_lst = [x["onset_range"] for x in data]
 	sources = {
 		(a, b)
 		for (a, b) in tup_lst
@@ -197,8 +201,8 @@ def get_pareto_optimal_longest_paths(data, verbose=False):
 		new_path = []
 		for this_range in this_path:
 			for this_data in data:
-				if this_range == this_data[1]:
-					new_path.append([this_data[0], this_range])
+				if this_range == this_data["onset_range"]:
+					new_path.append([this_data["fragment"], this_range])
 					continue
 		stupid_out.append(new_path)
 

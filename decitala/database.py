@@ -195,7 +195,7 @@ def create_database(
 	logging.info("Calculated break points: {}".format(get_break_points(ALL_DATA)))
 
 	all_object = get_object_indices(filepath, part_num)
-	sorted_onset_ranges = sorted(ALL_DATA, key = lambda x: x[1][0])
+	sorted_onset_ranges = sorted(ALL_DATA, key = lambda x: x["onset_range"][0])
 	partitioned_data = partition_data_by_break_points(sorted_onset_ranges)
 
 	conn = lite.connect(db_path)
@@ -209,12 +209,12 @@ def create_database(
 
 		for this_partition in partitioned_data:
 			for this_fragment in this_partition:
-				fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, {5})".format(this_fragment[1][0], # start offset
-																													this_fragment[1][1], # end offset
-																													this_fragment[0][0], # fragment
-																													this_fragment[0][1][0], # mod type 
-																													this_fragment[0][1][1], # mod factor/difference
-																													int(this_fragment[-1])) # is_slurred
+				fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, {5})".format(this_fragment["onset_range"][0], # start offset
+																													this_fragment["onset_range"][1], # end offset
+																													this_fragment["fragment"], # fragment
+																													this_fragment["mod"][0], # mod type 
+																													this_fragment["mod"][1], # mod factor/difference
+																													int(this_fragment["is_spanned_by_slur"])) # is_slurred
 				cur.execute(fragment_insertion_string)
 
 		for i, this_partition in enumerate(partitioned_data):			
