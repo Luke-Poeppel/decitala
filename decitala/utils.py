@@ -615,7 +615,7 @@ def frame_to_ql_array(data):
 	
 	return np.array([x for x in qls if x != 0])
 
-def frame_is_spannned_by_slur(frame):
+def frame_is_spanned_by_slur(frame):
 	"""
 	:param list frame: frame from :obj:`~decitala.utils.get_object_indices`.
 	:return: whether or not the frame is spanned by a music21.spanner.Slur object.

@@ -7,6 +7,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Added
 
 ### Changed
+- Changed the name of ``utils.frame_is_spanned_by_slur`` (fixing a typo). 
 
 ### Removed
 - Removed unnecessary doctest imports from modules. 
