@@ -7,9 +7,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Added 
 - Added a ``utils.frame_to_midi`` option used in rolling search.
 
-
 ### Changed
 - The ``trees.rolling_search`` function now stores pitch content within the fragment objects. 
+- Changed the input data parameter of ``utils.frame_to_ql_array`` from ``data`` to ``frame`` (matching the other functions).
 
 ### Removed
 - Helper functions ``database._check_tuple_in_tuple_range`` and ``database._pitch_info_from_onset_range`` are removed due to the above addition. 

@@ -591,9 +591,9 @@ def contiguous_summation(data):
 		
 	return new_objects
 
-def frame_to_ql_array(data):
+def frame_to_ql_array(frame):
 	"""
-	:param list data: data from get_object_indices
+	:param list frame: frame of data from get_object_indices.
 	:return: numpy array holding the associated quarter length of a given window. 
 	:rtype: numpy.array
 
@@ -610,10 +610,43 @@ def frame_to_ql_array(data):
 	array([0.125, 0.25 , 0.125, 0.125, 0.25 , 0.25 , 0.25 ])
 	"""
 	qls = []
-	for this_obj, this_range in data:
+	for this_obj, this_range in frame:
 		qls.append(this_obj.quarterLength)
 	
 	return np.array([x for x in qls if x != 0])
+
+def frame_to_midi(frame, ignore_graces=True):
+	"""
+	:param list frame: frame of data from get_object_indices.
+	:return: numpy array holding the pitches within the frame. 
+	:rtype: numpy.array
+
+	>>> my_frame = [
+	...     (note.Note("B-", quarterLength=0.125), (4.125, 4.25)), 
+	...		(note.Note("A", quarterLength=0.25), (4.25, 4.5)), 
+	...		(note.Note("B", quarterLength=0.125), (4.5, 4.625)), 
+	...		(note.Note("B-", quarterLength=0.125), (4.625, 4.75)), 
+	...		(note.Note("A", quarterLength=0.25), (4.75, 5.0)), 
+	...		(note.Note("G", quarterLength=0.25), (5.0, 5.25)), 
+	...		(note.Note("G", quarterLength=0.25), (5.25, 5.5)), 
+	...	]
+	>>> frame_to_midi(my_frame)
+	[(70,), (69,), (71,), (70,), (69,), (67,), (67,)]
+	"""
+	# TODO: make midi
+	midi_out = []
+	for this_obj, this_range in frame:
+		if not(ignore_graces): # add everything
+			fpitches = this_obj.pitches
+			midi_out.append(tuple([x.midi for x in fpitches]))
+		else:
+			if this_obj.quarterLength == 0.0:
+				pass
+			else:
+				fpitches = this_obj.pitches
+				midi_out.append(tuple([x.midi for x in fpitches]))
+
+	return midi_out
 
 def frame_is_spanned_by_slur(frame):
 	"""
