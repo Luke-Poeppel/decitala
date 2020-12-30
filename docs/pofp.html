@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pofp.py &mdash; decitala 0.2.3 documentation</title>
+  <title>pofp.py &mdash; decitala 0.2.4 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="decitala 0.2.3 documentation" href="index.html"/>
+    <link rel="top" title="decitala 0.2.4 documentation" href="index.html"/>
         <link rel="next" title="trees.py" href="trees.html"/>
         <link rel="prev" title="paths.py" href="paths.html"/> 
 
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.2.3
+                0.2.4
               </div>
             
           
@@ -276,13 +276,17 @@ the data at index i is &gt;= all previous.</p>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tup_lst</span> <span class="o">=</span> <span class="p">[</span>
-<span class="gp">... </span>    <span class="p">((</span><span class="s2">&quot;info1&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="kc">True</span><span class="p">),</span> <span class="p">((</span><span class="s2">&quot;info2&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">),</span> <span class="kc">False</span><span class="p">),</span> <span class="p">((</span><span class="s2">&quot;info3&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">),</span> <span class="kc">False</span><span class="p">),</span> 
-<span class="gp">... </span>    <span class="p">((</span><span class="s2">&quot;info4&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">),</span> <span class="kc">True</span><span class="p">),</span> <span class="p">((</span><span class="s2">&quot;info5&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">),</span> <span class="kc">True</span><span class="p">),</span> <span class="p">((</span><span class="s2">&quot;info6&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">),</span> <span class="kc">False</span><span class="p">),</span> 
-<span class="gp">... </span>    <span class="p">((</span><span class="s2">&quot;info7&quot;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">))</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>            <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info1&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info2&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info3&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info4&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rd&quot;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info5&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info6&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info7&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rd&quot;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">)}</span>
 <span class="gp">... </span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># With only 7 windows, we can extract four possible paths!</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_path</span> <span class="ow">in</span> <span class="n">get_pareto_optimal_longest_paths</span><span class="p">(</span><span class="n">tup_lst</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_path</span> <span class="ow">in</span> <span class="n">get_pareto_optimal_longest_paths</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 <span class="gp">... </span>   <span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_path</span><span class="p">]</span>
 <span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 <span class="go">[(0.0, 2.0), (2.0, 4.0), (4.0, 5.5), (6.0, 7.25)]</span>
@@ -336,7 +340,7 @@ the data at index i is &gt;= all previous.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.2.3',
+            VERSION:'0.2.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

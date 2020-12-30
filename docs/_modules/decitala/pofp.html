@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.pofp &mdash; decitala 0.2.3 documentation</title>
+  <title>decitala.pofp &mdash; decitala 0.2.4 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.2.3 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.2.4 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.2.3
+                0.2.4
               </div>
             
           
@@ -292,13 +292,17 @@
 <span class="sd">	:return: list of lists, each holding a pareto-optimal longest path constructed from the data.</span>
 <span class="sd">	:rtype: list</span>
 
-<span class="sd">	&gt;&gt;&gt; tup_lst = [</span>
-<span class="sd">	...     ((&quot;info1&quot;,), (0.0, 2.0), True), ((&quot;info2&quot;,), (0.0, 4.0), False), ((&quot;info3&quot;,), (2.5, 4.5), False), </span>
-<span class="sd">	...     ((&quot;info4&quot;,), (2.0, 5.75), True), ((&quot;info5&quot;,), (2.0, 4.0), True), ((&quot;info6&quot;,), (6.0, 7.25), False), </span>
-<span class="sd">	...     ((&quot;info7&quot;,), (4.0, 5.5))</span>
+<span class="sd">	&gt;&gt;&gt; data = [</span>
+<span class="sd">	...		{&quot;fragment&quot;: &quot;info1&quot;, &quot;mod&quot;: (&quot;r&quot;, 1.0), &quot;onset_range&quot;: (0.0, 2.0)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info2&quot;, &quot;mod&quot;: (&quot;r&quot;, 2.0), &quot;onset_range&quot;: (0.0, 4.0)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info3&quot;, &quot;mod&quot;: (&quot;d&quot;, 0.25), &quot;onset_range&quot;: (2.0, 4.0)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info4&quot;, &quot;mod&quot;: (&quot;rd&quot;, 0.25), &quot;onset_range&quot;: (2.0, 5.75)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info5&quot;, &quot;mod&quot;: (&quot;r&quot;, 3.0), &quot;onset_range&quot;: (2.5, 4.5)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info6&quot;, &quot;mod&quot;: (&quot;r&quot;, 1.0), &quot;onset_range&quot;: (4.0, 5.5)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info7&quot;, &quot;mod&quot;: (&quot;rd&quot;, 0.25), &quot;onset_range&quot;: (6.0, 7.25)}</span>
 <span class="sd">	... ]</span>
 <span class="sd">	&gt;&gt;&gt; # With only 7 windows, we can extract four possible paths!</span>
-<span class="sd">	&gt;&gt;&gt; for this_path in get_pareto_optimal_longest_paths(tup_lst):</span>
+<span class="sd">	&gt;&gt;&gt; for this_path in get_pareto_optimal_longest_paths(data):</span>
 <span class="sd">	...    path = [x[1] for x in this_path]</span>
 <span class="sd">	...    print(path)</span>
 <span class="sd">	[(0.0, 2.0), (2.0, 4.0), (4.0, 5.5), (6.0, 7.25)]</span>
@@ -306,7 +310,7 @@
 <span class="sd">	[(0.0, 2.0), (2.5, 4.5), (6.0, 7.25)]</span>
 <span class="sd">	[(0.0, 4.0), (4.0, 5.5), (6.0, 7.25)]</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">tup_lst</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+	<span class="n">tup_lst</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
 	<span class="n">sources</span> <span class="o">=</span> <span class="p">{</span>
 		<span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
 		<span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="n">tup_lst</span>
@@ -355,8 +359,8 @@
 		<span class="n">new_path</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="k">for</span> <span class="n">this_range</span> <span class="ow">in</span> <span class="n">this_path</span><span class="p">:</span>
 			<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-				<span class="k">if</span> <span class="n">this_range</span> <span class="o">==</span> <span class="n">this_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-					<span class="n">new_path</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">this_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">this_range</span><span class="p">])</span>
+				<span class="k">if</span> <span class="n">this_range</span> <span class="o">==</span> <span class="n">this_data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">]:</span>
+					<span class="n">new_path</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">this_data</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">],</span> <span class="n">this_range</span><span class="p">])</span>
 					<span class="k">continue</span>
 		<span class="n">stupid_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
 
@@ -394,7 +398,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.2.3',
+            VERSION:'0.2.4',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
