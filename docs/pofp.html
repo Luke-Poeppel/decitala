@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pofp.py &mdash; decitala 0.2.2 documentation</title>
+  <title>pofp.py &mdash; decitala 0.2.3 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="decitala 0.2.2 documentation" href="index.html"/>
+    <link rel="top" title="decitala 0.2.3 documentation" href="index.html"/>
         <link rel="next" title="trees.py" href="trees.html"/>
         <link rel="prev" title="paths.py" href="paths.html"/> 
 
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.2.2
+                0.2.3
               </div>
             
           
@@ -172,18 +172,18 @@ in size with respect to the input. As such, we use the observation that there of
 data collected from rolling search: points at which there exists no overlap. We divide the data by each of 
 these regions (if they exist) and generate the longest paths separately.</p>
 <p>Several of the functions below have the parameter <code class="docutils literal notranslate"><span class="pre">data</span></code>. This parameter is of the form returned 
-by <a class="reference internal" href="trees.html#decitala.trees.rolling_search" title="decitala.trees.rolling_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.trees.rolling_search</span></code></a> and looks like <span class="math notranslate nohighlight">\([((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]\)</span>
-for <span class="math notranslate nohighlight">\(X_i\)</span> the fragment name/modification, <span class="math notranslate nohighlight">\(b_i\)</span> the start offset and <span class="math notranslate nohighlight">\(s_i\)</span> the stop offset.</p>
+by <a class="reference internal" href="trees.html#decitala.trees.rolling_search" title="decitala.trees.rolling_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_search</span></code></a> and corresponds to a list of dictionaries, each holding information
+about the fragment, modification, onset-range, and spanning data.</p>
 <dl class="py function">
 <dt id="decitala.pofp.check_break_point">
 <code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">check_break_point</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">i</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/pofp.html#check_break_point"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.pofp.check_break_point" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper function for <cite>pofp.get_break_points</cite>. Checks index i of the onset_list that all values 
+<dd><p>Helper function for <a class="reference internal" href="#decitala.pofp.get_break_points" title="decitala.pofp.get_break_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_break_points</span></code></a>. Checks index i of the onset_list that all values 
 prior to it are less than or equal to <span class="math notranslate nohighlight">\(b_i\)</span> and <span class="math notranslate nohighlight">\(s_i\)</span>. If True, this means that 
 the data at index i is &gt;= all previous.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>list</em>) – <span class="math notranslate nohighlight">\([((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]\)</span></p></li>
+<li><p><strong>data</strong> (<em>list</em>) – data from <a class="reference internal" href="trees.html#decitala.trees.rolling_search" title="decitala.trees.rolling_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_search</span></code></a>.</p></li>
 <li><p><strong>i</strong> (<em>int</em>) – index of the data to check.</p></li>
 </ul>
 </dd>
@@ -194,22 +194,18 @@ the data at index i is &gt;= all previous.</p>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tup_lst</span> <span class="o">=</span> <span class="p">[</span>
-<span class="gp">... </span>            <span class="p">((</span><span class="s1">&#39;info1&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info2&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info3&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info4&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">)),</span> 
-<span class="gp">... </span>    <span class="p">((</span><span class="s1">&#39;info5&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info6&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info7&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">))</span>
-<span class="gp">... </span><span class="p">]</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">tup_lst</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
-<span class="go">((&#39;info1&#39;,), (0.0, 2.0))</span>
-<span class="go">((&#39;info2&#39;,), (0.0, 4.0))</span>
-<span class="go">((&#39;info3&#39;,), (2.0, 4.0))</span>
-<span class="go">((&#39;info4&#39;,), (2.0, 5.75))</span>
-<span class="go">((&#39;info5&#39;,), (2.5, 4.5))</span>
-<span class="go">((&#39;info6&#39;,), (4.0, 5.5))</span>
-<span class="go">((&#39;info7&#39;,), (6.0, 7.25))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">check_break_point</span><span class="p">(</span><span class="n">tup_lst</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>            <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info1&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info2&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info3&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info4&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rd&quot;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info5&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info6&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info7&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rd&quot;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">)}</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">check_break_point</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">check_break_point</span><span class="p">(</span><span class="n">tup_lst</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">check_break_point</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 <span class="go">True</span>
 </pre></div>
 </div>
@@ -220,7 +216,7 @@ the data at index i is &gt;= all previous.</p>
 <code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">get_break_points</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/pofp.html#get_break_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.pofp.get_break_points" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – <span class="math notranslate nohighlight">\([((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]\)</span></p>
+<dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – data from <a class="reference internal" href="trees.html#decitala.trees.rolling_search" title="decitala.trees.rolling_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_search</span></code></a>.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>every index in the input at which the data is at most end-overlapping.</p>
@@ -229,11 +225,16 @@ the data at index i is &gt;= all previous.</p>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tup_lst</span> <span class="o">=</span> <span class="p">[</span>
-<span class="gp">... </span>            <span class="p">((</span><span class="s1">&#39;info1&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info2&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info3&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info4&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">)),</span> 
-<span class="gp">... </span>    <span class="p">((</span><span class="s1">&#39;info5&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info6&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info7&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">))</span>
-<span class="gp">... </span><span class="p">]</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">get_break_points</span><span class="p">(</span><span class="n">tup_lst</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>            <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info1&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info2&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info3&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info4&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rd&quot;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info5&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info6&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info7&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rd&quot;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">)}</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 <span class="go">[6]</span>
 </pre></div>
 </div>
@@ -243,14 +244,19 @@ the data at index i is &gt;= all previous.</p>
 <dt id="decitala.pofp.partition_data_by_break_points">
 <code class="sig-prename descclassname">decitala.pofp.</code><code class="sig-name descname">partition_data_by_break_points</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/pofp.html#partition_data_by_break_points"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.pofp.partition_data_by_break_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Partitions the input data according to all calculated breakpoints.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tup_lst</span> <span class="o">=</span> <span class="p">[</span>
-<span class="gp">... </span>            <span class="p">((</span><span class="s1">&#39;info1&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info2&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info3&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info4&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">)),</span> 
-<span class="gp">... </span>    <span class="p">((</span><span class="s1">&#39;info5&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info6&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)),</span> <span class="p">((</span><span class="s1">&#39;info7&#39;</span><span class="p">,),</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">))</span>
-<span class="gp">... </span><span class="p">]</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_partition</span> <span class="ow">in</span> <span class="n">partition_data_by_break_points</span><span class="p">(</span><span class="n">tup_lst</span><span class="p">):</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>            <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info1&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info2&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info3&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info4&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rd&quot;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">5.75</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info5&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info6&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="s2">&quot;info7&quot;</span><span class="p">,</span> <span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;rd&quot;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">)}</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_partition</span> <span class="ow">in</span> <span class="n">partition_data_by_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 <span class="gp">... </span>   <span class="nb">print</span><span class="p">(</span><span class="n">this_partition</span><span class="p">)</span>
-<span class="go">[((&#39;info1&#39;,), (0.0, 2.0)), ((&#39;info2&#39;,), (0.0, 4.0)), ((&#39;info3&#39;,), (2.0, 4.0)), ((&#39;info4&#39;,), (2.0, 5.75)), ((&#39;info5&#39;,), (2.5, 4.5)), ((&#39;info6&#39;,), (4.0, 5.5))]</span>
-<span class="go">[((&#39;info7&#39;,), (6.0, 7.25))]</span>
+<span class="go">[{&#39;fragment&#39;: &#39;info1&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (0.0, 2.0)}, {&#39;fragment&#39;: &#39;info2&#39;, &#39;mod&#39;: (&#39;r&#39;, 2.0), &#39;onset_range&#39;: (0.0, 4.0)}, {&#39;fragment&#39;: &#39;info3&#39;, &#39;mod&#39;: (&#39;d&#39;, 0.25), &#39;onset_range&#39;: (2.0, 4.0)}, {&#39;fragment&#39;: &#39;info4&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (2.0, 5.75)}, {&#39;fragment&#39;: &#39;info5&#39;, &#39;mod&#39;: (&#39;r&#39;, 3.0), &#39;onset_range&#39;: (2.5, 4.5)}, {&#39;fragment&#39;: &#39;info6&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (4.0, 5.5)}]</span>
+<span class="go">[{&#39;fragment&#39;: &#39;info7&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (6.0, 7.25)}]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -261,7 +267,7 @@ the data at index i is &gt;= all previous.</p>
 <dd><p>Algorithm courtesy of M. Raynard.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – <span class="math notranslate nohighlight">\([((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]\)</span></p>
+<dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – data from <a class="reference internal" href="trees.html#decitala.trees.rolling_search" title="decitala.trees.rolling_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_search</span></code></a>.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>list of lists, each holding a pareto-optimal longest path constructed from the data.</p>
@@ -330,7 +336,7 @@ the data at index i is &gt;= all previous.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.2.2',
+            VERSION:'0.2.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

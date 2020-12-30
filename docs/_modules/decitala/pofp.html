@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.pofp &mdash; decitala 0.2.2 documentation</title>
+  <title>decitala.pofp &mdash; decitala 0.2.3 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.2.2 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.2.3 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.2.2
+                0.2.3
               </div>
             
           
@@ -184,8 +184,8 @@
 <span class="sd">these regions (if they exist) and generate the longest paths separately. </span>
 
 <span class="sd">Several of the functions below have the parameter ``data``. This parameter is of the form returned </span>
-<span class="sd">by :obj:`decitala.trees.rolling_search` and looks like :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`</span>
-<span class="sd">for :math:`X_i` the fragment name/modification, :math:`b_i` the start offset and :math:`s_i` the stop offset. </span>
+<span class="sd">by :obj:`~decitala.trees.rolling_search` and corresponds to a list of dictionaries, each holding information</span>
+<span class="sd">about the fragment, modification, onset-range, and spanning data. </span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
@@ -196,38 +196,33 @@
 
 <div class="viewcode-block" id="check_break_point"><a class="viewcode-back" href="../../pofp.html#decitala.pofp.check_break_point">[docs]</a><span class="k">def</span> <span class="nf">check_break_point</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Helper function for `pofp.get_break_points`. Checks index i of the onset_list that all values </span>
+<span class="sd">	Helper function for :obj:`~decitala.pofp.get_break_points`. Checks index i of the onset_list that all values </span>
 <span class="sd">	prior to it are less than or equal to :math:`b_i` and :math:`s_i`. If True, this means that </span>
 <span class="sd">	the data at index i is &gt;= all previous.</span>
 
-<span class="sd">	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`</span>
+<span class="sd">	:param list data: data from :obj:`~decitala.trees.rolling_search`.</span>
 <span class="sd">	:param int i: index of the data to check. </span>
 <span class="sd">	:return: whether or not the queried index is a break point. </span>
 <span class="sd">	:rtype: bool</span>
 
-<span class="sd">	&gt;&gt;&gt; tup_lst = [</span>
-<span class="sd">	...		((&#39;info1&#39;,), (0.0, 2.0)), ((&#39;info2&#39;,), (0.0, 4.0)), ((&#39;info3&#39;,), (2.0, 4.0)), ((&#39;info4&#39;,), (2.0, 5.75)), </span>
-<span class="sd">	... 	((&#39;info5&#39;,), (2.5, 4.5)), ((&#39;info6&#39;,), (4.0, 5.5)), ((&#39;info7&#39;,), (6.0, 7.25))</span>
-<span class="sd">	... ] </span>
-<span class="sd">	&gt;&gt;&gt; for info in tup_lst:</span>
-<span class="sd">	... 	print(info)</span>
-<span class="sd">	((&#39;info1&#39;,), (0.0, 2.0))</span>
-<span class="sd">	((&#39;info2&#39;,), (0.0, 4.0))</span>
-<span class="sd">	((&#39;info3&#39;,), (2.0, 4.0))</span>
-<span class="sd">	((&#39;info4&#39;,), (2.0, 5.75))</span>
-<span class="sd">	((&#39;info5&#39;,), (2.5, 4.5))</span>
-<span class="sd">	((&#39;info6&#39;,), (4.0, 5.5))</span>
-<span class="sd">	((&#39;info7&#39;,), (6.0, 7.25))</span>
-<span class="sd">	&gt;&gt;&gt; print(check_break_point(tup_lst, 2))</span>
+<span class="sd">	&gt;&gt;&gt; data = [</span>
+<span class="sd">	...		{&quot;fragment&quot;: &quot;info1&quot;, &quot;mod&quot;: (&quot;r&quot;, 1.0), &quot;onset_range&quot;: (0.0, 2.0)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info2&quot;, &quot;mod&quot;: (&quot;r&quot;, 2.0), &quot;onset_range&quot;: (0.0, 4.0)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info3&quot;, &quot;mod&quot;: (&quot;d&quot;, 0.25), &quot;onset_range&quot;: (2.0, 4.0)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info4&quot;, &quot;mod&quot;: (&quot;rd&quot;, 0.25), &quot;onset_range&quot;: (2.0, 5.75)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info5&quot;, &quot;mod&quot;: (&quot;r&quot;, 3.0), &quot;onset_range&quot;: (2.5, 4.5)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info6&quot;, &quot;mod&quot;: (&quot;r&quot;, 1.0), &quot;onset_range&quot;: (4.0, 5.5)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info7&quot;, &quot;mod&quot;: (&quot;rd&quot;, 0.25), &quot;onset_range&quot;: (6.0, 7.25)}</span>
+<span class="sd">	... ]</span>
+<span class="sd">	&gt;&gt;&gt; print(check_break_point(data, 2))</span>
 <span class="sd">	False</span>
-<span class="sd">	&gt;&gt;&gt; print(check_break_point(tup_lst, 6))</span>
+<span class="sd">	&gt;&gt;&gt; print(check_break_point(data, 6))</span>
 <span class="sd">	True</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span>
 	<span class="n">check</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">]:</span>
-		<span class="n">range_data</span> <span class="o">=</span> <span class="n">this_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-		<span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">range_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">range_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+		<span class="n">range_data</span> <span class="o">=</span> <span class="n">this_data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">range_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">range_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
 			<span class="n">check</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">check</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -239,15 +234,20 @@
 
 <div class="viewcode-block" id="get_break_points"><a class="viewcode-back" href="../../pofp.html#decitala.pofp.get_break_points">[docs]</a><span class="k">def</span> <span class="nf">get_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`</span>
+<span class="sd">	:param list data: data from :obj:`~decitala.trees.rolling_search`.</span>
 <span class="sd">	:return: every index in the input at which the data is at most end-overlapping. </span>
 <span class="sd">	:rtype: list</span>
 
-<span class="sd">	&gt;&gt;&gt; tup_lst = [</span>
-<span class="sd">	...		((&#39;info1&#39;,), (0.0, 2.0)), ((&#39;info2&#39;,), (0.0, 4.0)), ((&#39;info3&#39;,), (2.0, 4.0)), ((&#39;info4&#39;,), (2.0, 5.75)), </span>
-<span class="sd">	... 	((&#39;info5&#39;,), (2.5, 4.5)), ((&#39;info6&#39;,), (4.0, 5.5)), ((&#39;info7&#39;,), (6.0, 7.25))</span>
-<span class="sd">	... ] </span>
-<span class="sd">	&gt;&gt;&gt; get_break_points(tup_lst)</span>
+<span class="sd">	&gt;&gt;&gt; data = [</span>
+<span class="sd">	...		{&quot;fragment&quot;: &quot;info1&quot;, &quot;mod&quot;: (&quot;r&quot;, 1.0), &quot;onset_range&quot;: (0.0, 2.0)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info2&quot;, &quot;mod&quot;: (&quot;r&quot;, 2.0), &quot;onset_range&quot;: (0.0, 4.0)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info3&quot;, &quot;mod&quot;: (&quot;d&quot;, 0.25), &quot;onset_range&quot;: (2.0, 4.0)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info4&quot;, &quot;mod&quot;: (&quot;rd&quot;, 0.25), &quot;onset_range&quot;: (2.0, 5.75)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info5&quot;, &quot;mod&quot;: (&quot;r&quot;, 3.0), &quot;onset_range&quot;: (2.5, 4.5)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info6&quot;, &quot;mod&quot;: (&quot;r&quot;, 1.0), &quot;onset_range&quot;: (4.0, 5.5)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info7&quot;, &quot;mod&quot;: (&quot;rd&quot;, 0.25), &quot;onset_range&quot;: (6.0, 7.25)}</span>
+<span class="sd">	... ]</span>
+<span class="sd">	&gt;&gt;&gt; get_break_points(data)</span>
 <span class="sd">	[6]</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
@@ -264,14 +264,19 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Partitions the input data according to all calculated breakpoints. </span>
 
-<span class="sd">	&gt;&gt;&gt; tup_lst = [</span>
-<span class="sd">	...		((&#39;info1&#39;,), (0.0, 2.0)), ((&#39;info2&#39;,), (0.0, 4.0)), ((&#39;info3&#39;,), (2.0, 4.0)), ((&#39;info4&#39;,), (2.0, 5.75)), </span>
-<span class="sd">	... 	((&#39;info5&#39;,), (2.5, 4.5)), ((&#39;info6&#39;,), (4.0, 5.5)), ((&#39;info7&#39;,), (6.0, 7.25))</span>
-<span class="sd">	... ] </span>
-<span class="sd">	&gt;&gt;&gt; for this_partition in partition_data_by_break_points(tup_lst):</span>
+<span class="sd">	&gt;&gt;&gt; data = [</span>
+<span class="sd">	...		{&quot;fragment&quot;: &quot;info1&quot;, &quot;mod&quot;: (&quot;r&quot;, 1.0), &quot;onset_range&quot;: (0.0, 2.0)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info2&quot;, &quot;mod&quot;: (&quot;r&quot;, 2.0), &quot;onset_range&quot;: (0.0, 4.0)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info3&quot;, &quot;mod&quot;: (&quot;d&quot;, 0.25), &quot;onset_range&quot;: (2.0, 4.0)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info4&quot;, &quot;mod&quot;: (&quot;rd&quot;, 0.25), &quot;onset_range&quot;: (2.0, 5.75)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info5&quot;, &quot;mod&quot;: (&quot;r&quot;, 3.0), &quot;onset_range&quot;: (2.5, 4.5)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info6&quot;, &quot;mod&quot;: (&quot;r&quot;, 1.0), &quot;onset_range&quot;: (4.0, 5.5)},</span>
+<span class="sd">	... 	{&quot;fragment&quot;: &quot;info7&quot;, &quot;mod&quot;: (&quot;rd&quot;, 0.25), &quot;onset_range&quot;: (6.0, 7.25)}</span>
+<span class="sd">	... ]</span>
+<span class="sd">	&gt;&gt;&gt; for this_partition in partition_data_by_break_points(data):</span>
 <span class="sd">	...    print(this_partition)</span>
-<span class="sd">	[((&#39;info1&#39;,), (0.0, 2.0)), ((&#39;info2&#39;,), (0.0, 4.0)), ((&#39;info3&#39;,), (2.0, 4.0)), ((&#39;info4&#39;,), (2.0, 5.75)), ((&#39;info5&#39;,), (2.5, 4.5)), ((&#39;info6&#39;,), (4.0, 5.5))]</span>
-<span class="sd">	[((&#39;info7&#39;,), (6.0, 7.25))]</span>
+<span class="sd">	[{&#39;fragment&#39;: &#39;info1&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (0.0, 2.0)}, {&#39;fragment&#39;: &#39;info2&#39;, &#39;mod&#39;: (&#39;r&#39;, 2.0), &#39;onset_range&#39;: (0.0, 4.0)}, {&#39;fragment&#39;: &#39;info3&#39;, &#39;mod&#39;: (&#39;d&#39;, 0.25), &#39;onset_range&#39;: (2.0, 4.0)}, {&#39;fragment&#39;: &#39;info4&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (2.0, 5.75)}, {&#39;fragment&#39;: &#39;info5&#39;, &#39;mod&#39;: (&#39;r&#39;, 3.0), &#39;onset_range&#39;: (2.5, 4.5)}, {&#39;fragment&#39;: &#39;info6&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (4.0, 5.5)}]</span>
+<span class="sd">	[{&#39;fragment&#39;: &#39;info7&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (6.0, 7.25)}]</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">break_points</span> <span class="o">=</span> <span class="n">get_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 	<span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">break_points</span><span class="p">,</span> <span class="n">break_points</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">])]</span>
@@ -283,7 +288,7 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Algorithm courtesy of M. Raynard. </span>
 
-<span class="sd">	:param list data: :math:`[((X_1,), (b_1, s_1)), ((X_2,), (b_2, s_2)), ...]`</span>
+<span class="sd">	:param list data: data from :obj:`~decitala.trees.rolling_search`.</span>
 <span class="sd">	:return: list of lists, each holding a pareto-optimal longest path constructed from the data.</span>
 <span class="sd">	:rtype: list</span>
 
@@ -389,7 +394,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.2.2',
+            VERSION:'0.2.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
