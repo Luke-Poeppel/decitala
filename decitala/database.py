@@ -20,18 +20,21 @@ import uuid
 from music21 import converter
 from music21 import stream
 
+from .fragment import (
+	GeneralFragment,
+	Decitala,
+	GreekFoot
+)
 from .utils import (
 	get_object_indices,
 	successive_ratio_array,
 	filter_single_anga_class_fragments,
 	filter_sub_fragments
 )
-
 from .trees import (
 	FragmentTree,
 	rolling_search
 )
-
 from .pofp import (
 	get_break_points,
 	partition_data_by_break_points,
@@ -50,41 +53,6 @@ greek_path = os.path.dirname(here) + "/Fragments/Greek_Metrics/XML"
 class DatabaseException(Exception):
 	pass
 
-def _check_tuple_in_tuple_range(tup1, tup2):
-	"""
-	Checks if tuple 1 is contained in tuple 2, e.g. (2, 4) in (1, 5)
-	>>> _check_tuple_in_tuple_range((2, 4), (1, 5))
-	True
-	>>> _check_tuple_in_tuple_range((0.0, 1.5), (0.0, 4.0))
-	True
-	>>> _check_tuple_in_tuple_range((2.5, 4.0), (0.0, 4.0))
-	True
-	>>> _check_tuple_in_tuple_range((4.0, 4.375), (0.0, 4.0))
-	False
-	"""
-	if tup1[0] >= tup2[0] and tup1[0] <= tup2[1] and tup1[1] <= tup2[1]:
-		return True
-	else:
-		return False 
-
-def _pitch_info_from_onset_range(onset_range, all_objects_in_part):
-	"""
-	Function that takes in onset range and returns the pitch.midi information for that range.
-	The input ``data`` is that which is returned in rolling_search. 
-	"""
-	note_data = []
-	for this_object in all_objects_in_part:
-		if _check_tuple_in_tuple_range(this_object[1], onset_range):
-			note_data.append(this_object)
-	
-	pitches = [n[0].pitches for n in note_data]
-	midi = []
-	for pitch_info in pitches:
-		midi.append(tuple([x.midi for x in pitch_info]))
-	
-	return midi
-
-####################################################################################################
 @timeout_decorator.timeout(75)
 def create_database(
 		db_path,
@@ -204,16 +172,17 @@ def create_database(
 		logging.info("Connected to database at: {}".format(db_path))
 
 		cur = conn.cursor()
-		fragment_table_string = "CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Is_Slurred INT)"
+		fragment_table_string = "CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Pitch_Content BLOB, Is_Slurred INT)"
 		cur.execute(fragment_table_string)
 
 		for this_partition in partitioned_data:
 			for this_fragment in this_partition:
-				fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, {5})".format(this_fragment["onset_range"][0], # start offset
+				fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, '{5}', {6})".format(this_fragment["onset_range"][0], # start offset
 																													this_fragment["onset_range"][1], # end offset
 																													this_fragment["fragment"], # fragment
 																													this_fragment["mod"][0], # mod type 
 																													this_fragment["mod"][1], # mod factor/difference
+																													this_fragment["pitch_content"], # pitch content
 																													int(this_fragment["is_spanned_by_slur"])) # is_slurred
 				cur.execute(fragment_insertion_string)
 
@@ -222,32 +191,20 @@ def create_database(
 			lengths = [len(path) for path in pareto_optimal_paths]
 			longest_path = max(lengths)
 
-			columns = ['Onset_Range_{}'.format(i) for i in range(1, longest_path + 1)]
-			columns_declaration = ', '.join('%s BLOB' % c for c in columns)
-			newer = columns_declaration + ', Pitch_Content BLOB'
+			columns = ["Onset_Range_{}".format(i) for i in range(1, longest_path + 1)]
+			columns_declaration = ", ".join("%s BLOB" % c for c in columns)
 
-			cur.execute("CREATE TABLE Paths_{0} ({1})".format(str(i), newer))
-			
+			cur.execute("CREATE TABLE Paths_{0} ({1})".format(str(i), columns_declaration))
 			logging.info("Making Paths_{} table".format(i))
 			
 			for path in pareto_optimal_paths:
-				cur.execute("SELECT * FROM Fragments")
-				rows = cur.fetchall()
-				pitch_content = []
-				for this_range in path:
-					pitch_data_in_range = _pitch_info_from_onset_range(this_range[1], all_object)
-					pitch_content.append(pitch_data_in_range)
-
-				formatted_pitch_content = str(tuple([tuple(sublist) for sublist in pitch_content]))
-
-				# Format the pitch content as one continous string.
 				if len(path) == longest_path:
 					data = []
 					for this_range in path:
-						data.append('{0}'.format(this_range[-1]))
+						data.append("{0}".format(this_range[-1]))
 					
 					mid = "', '".join(data)
-					post = "INSERT INTO Paths_{0} VALUES('".format(str(i)) + mid + "', '{0}')".format(formatted_pitch_content)
+					post = "INSERT INTO Paths_{0} VALUES('".format(str(i)) + mid + "')"
 					cur.execute(post)
 				else:
 					diff = longest_path - len(path)
@@ -258,7 +215,7 @@ def create_database(
 					mid = "', '".join(data)
 					nulls = ["'NULL'"] * diff
 					post_nulls = ", ".join(nulls)
-					new = "INSERT INTO Paths_{0} VALUES('{1}', {2}, '{3}')".format(str(i), mid, post_nulls, formatted_pitch_content)
+					new = "INSERT INTO Paths_{0} VALUES('{1}', {2})".format(str(i), mid, post_nulls)
 					cur.execute(new)
 		
 		logging.info("Done preparing ✔")

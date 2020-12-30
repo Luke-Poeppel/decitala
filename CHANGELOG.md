@@ -7,6 +7,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Added
 - Added the ``database.DBParser`` class that allows for easier querying of data from the ``Fragment`` table from ``database.create_database``.
 
+### Changed
+- The pitch information from rolling search is now stored in the Fragments table (made in ``database.create_database``).
+
 ### Removed
 - Helper functions ``database._check_tuple_in_tuple_range`` and ``database._pitch_info_from_onset_range`` are removed due to the above addition. 
 
