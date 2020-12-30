@@ -17,6 +17,8 @@ import sqlite3 as lite
 import timeout_decorator
 import uuid
 
+from ast import literal_eval
+
 from music21 import converter
 from music21 import stream
 
@@ -267,7 +269,7 @@ class DBParser(object):
 			row_data["onset_range"] = (this_row[0], this_row[1])
 			row_data["mod"] = this_row[3]
 			row_data["factor"] = this_row[4]
-			row_data["pitch_content"] = this_row[5]
+			row_data["pitch_content"] = literal_eval(this_row[5])
 			row_data["is_slurred"] = bool(this_row[6])
 
 			data.append(row_data)
