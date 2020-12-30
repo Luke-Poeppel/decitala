@@ -9,6 +9,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Changed
 
 ### Removed
+- Removed unnecessary doctest imports from modules. 
 
 ## [v0.2.1] - December 29, 2020 (Kent, CT)
 ### Changed
@@ -18,7 +19,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Added
 - The ``decitala.utils`` module now includes a ``frame_is_spanned_by_slur`` function.
 - The output of ``trees.rolling_search`` now includes ``is_spanned_by_slur`` for each fragment found. 
-- The output of ``database.create_database`` now shows which fragments are spanned by a music21.spanner.Slur objects. 
+- The output of ``database.create_database`` now shows which fragments are spanned by music21.spanner.Slur objects.
 
 ### Fixed
 - The ``database.create_database`` function now raises a ``DatabaseException`` when an invalid score path is provided. 

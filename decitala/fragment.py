@@ -598,7 +598,3 @@ class GreekFoot(GeneralFragment):
 	def greek_string(self):
 		"""See docstring of :obj:`decitala.utils.ql_array_to_greek_diacritics`."""
 		return ql_array_to_greek_diacritics(self.ql_array())
-
-if __name__ == '__main__':
-	import doctest
-	doctest.testmod()

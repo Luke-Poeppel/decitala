@@ -445,7 +445,3 @@ def get_full_model3_path(db_path, first_path_weights = [0.7, 0.3], rest_weights 
 			i += 1
 
 	return subpaths	
-
-if __name__ == '__main__':
-	import doctest
-	doctest.testmod()

@@ -262,7 +262,3 @@ def create_database(
 					cur.execute(new)
 		
 		logging.info("Done preparing ✔")
-
-if __name__ == "__main__":
-	import doctest
-	doctest.testmod()

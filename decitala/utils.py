@@ -663,7 +663,3 @@ def filter_sub_fragments(data, filter_in_retrograde=True):
 
 	filtered_names = [x.name for x in just_fragments if not(_check_all(x))]
 	return [x for x in data if x[0][0].name in filtered_names]
-
-if __name__ == '__main__':
-	import doctest
-	doctest.testmod()

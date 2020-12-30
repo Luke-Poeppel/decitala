@@ -198,7 +198,3 @@ def get_pareto_optimal_longest_paths(data, verbose=False):
 		stupid_out.append(new_path)
 
 	return stupid_out
-	
-if __name__ == '__main__':
-	import doctest
-	doctest.testmod()

@@ -960,7 +960,3 @@ def rolling_search_on_array(
 				fragments_found.append(searched)
 
 	return fragments_found
-
-if __name__ == '__main__':
-	import doctest
-	doctest.testmod()
