@@ -31,7 +31,8 @@ from .utils import (
 	find_possible_superdivisions,
 	contiguous_summation,
 	frame_to_ql_array,
-	frame_is_spanned_by_slur
+	frame_is_spanned_by_slur,
+	frame_to_midi
 )
 
 import logging
@@ -828,11 +829,11 @@ def rolling_search(
 	>>> ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
 	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=["r"], verbose=False)[0:5]:
 	... 	print(tala_data)
-	((<fragment.GreekFoot Spondee>, ('r', 0.125)), (0.0, 0.5), False)
-	((<fragment.GreekFoot 5_16>, ('r', 0.125)), (0.0, 0.625), False)
-	((<fragment.GreekFoot Ionic_Major>, ('r', 0.125)), (0.0, 0.75), False)
-	((<fragment.GreekFoot Trochee>, ('r', 0.125)), (0.25, 0.625), False)
-	((<fragment.GreekFoot Dactyl>, ('r', 0.125)), (0.25, 0.75), False)
+	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.125), 'onset': 0.0, 'offset': 0.5, 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)]}
+	{'fragment': <fragment.GreekFoot Trochee>, 'mod': ('r', 0.125), 'onset': 0.25, 'offset': 0.625, 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,)]}
+	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.0625), 'onset': 0.5, 'offset': 0.75, 'is_spanned_by_slur': False, 'pitch_content': [(78,), (85,)]}
+	{'fragment': <fragment.GreekFoot Iamb>, 'mod': ('r', 0.125), 'onset': 0.625, 'offset': 1.0, 'is_spanned_by_slur': False, 'pitch_content': [(85,), (93,)]}
+	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.125), 'onset': 0.75, 'offset': 1.25, 'is_spanned_by_slur': False, 'pitch_content': [(93,), (91,)]}
 	"""
 	try:
 		assert ratio_tree.rep_type == "ratio"
@@ -872,14 +873,23 @@ def rolling_search(
 
 				searched = get_by_ql_array(ql_array, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
 				if searched is not None:
+					search_dict = dict()
+
 					offset_1 = this_frame[0][0]
 					offset_2 = this_frame[-1][0]
-
 					is_spanned_by_slur = frame_is_spanned_by_slur(this_frame)
-					result_normal = (searched, (offset_1.offset, offset_2.offset + offset_2.quarterLength), is_spanned_by_slur)
-					fragments_found.append(result_normal)
+					pitch_content = frame_to_midi(this_frame)
 
-					logging.info("{0}, {1}, {2}".format(result_normal[0], result_normal[1], result_normal[2]))
+					search_dict["fragment"] = searched[0]
+					search_dict["mod"] = searched[1]
+					search_dict["onset"] = offset_1.offset
+					search_dict["offset"] = offset_2.offset + offset_2.quarterLength
+					search_dict["is_spanned_by_slur"] = is_spanned_by_slur
+					search_dict["pitch_content"] = pitch_content
+
+					fragments_found.append(search_dict)
+				
+					logging.info("({0}, {1}), ({2}, {3}), {4}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset"], search_dict["offset"], search_dict["is_spanned_by_slur"]))
 
 				if try_contiguous_summation:
 					copied_frame = copy.copy(this_frame)
@@ -895,19 +905,27 @@ def rolling_search(
 						rewritten_search[1][0] = rewritten_search[1][0] + "-cs"
 						frag = rewritten_search[0]
 						mod = rewritten_search[1]
-						rewritten_search = (frag, tuple(mod))
 
-						offset_1 = new_frame[0][0]
-						offset_2 = new_frame[-1][0]
+						cs_search_dict = dict()
+						
+						offset_1 = new_frame[0][0].offset
+						offset_2 = new_frame[-1][0].offset + new_frame[-1][0].quarterLength
 
 						is_spanned_by_slur = frame_is_spanned_by_slur(this_frame)
-						
-						result = (rewritten_search, (offset_1.offset, offset_2.offset + offset_2.quarterLength), is_spanned_by_slur)		
-						fragments_found.append(result)
+						cs_pitch_content = frame_to_midi(this_frame)
 
-						logging.info("{0}, {1}, {2}".format(result[0], result[1], result[2]))
+						cs_search_dict["fragment"] = frag
+						cs_search_dict["mod"] = mod
+						cs_search_dict["onset"] = offset_1
+						cs_search_dict["offset"] = offset_2
+						cs_search_dict["is_spanned_by_slur"] = is_spanned_by_slur
+						cs_search_dict["pitch_content"] = cs_pitch_content
+
+						fragments_found.append(cs_search_dict)
+
+						logging.info("({0}, {1}), ({2}, {3}), {4}".format(cs_search_dict["fragment"], cs_search_dict["mod"], cs_search_dict["onset"], cs_search_dict["offset"], cs_search_dict["is_spanned_by_slur"]))
 	
-	return sorted(fragments_found, key = lambda x: x[1][0])
+	return fragments_found
 
 def rolling_search_on_array(
 		ql_array, 
