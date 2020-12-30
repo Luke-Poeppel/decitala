@@ -3,6 +3,10 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.3.0] - XXXXXXX
+### Added
+- Added the ``database.DBParser`` class that allows for easier querying of data from the ``Fragment`` table from ``database.create_database``.
+
 ## [v0.2.4] - December 30, 2020 (Kent, CT)
 ### Fixed
 - Bugfix in ``database.create_database`` (related to new rolling search output). 
