@@ -14,6 +14,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ### Removed
 - Helper functions ``database._check_tuple_in_tuple_range`` and ``database._pitch_info_from_onset_range`` are removed due to the above addition. 
+- Removed  ``trees.rolling_search_on_array`` (at least for now) as it doesn't currently match the other search formats.
 
 ## [v0.2.2] - December 29, 2020 (Kent, CT)
 ### Added

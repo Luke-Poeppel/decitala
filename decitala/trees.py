@@ -925,54 +925,54 @@ def rolling_search(
 	
 	return fragments_found
 
-def rolling_search_on_array(
-		ql_array, 
-		ratio_tree=None, 
-		difference_tree=None,
-		allowed_modifications=[
-			"r", 
-			"rr", 
-			"d", 
-			"rd", 
-			"sr",
-			"rsr"
-		],
-		windows=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19],
-		allow_unnamed=False,
-	):
-	"""
-	Rolling search on an array (useful for quick checks in a score). For search types, 
-	see documentation for :func:`~decitala.trees.get_by_ql_array`. 
+# def rolling_search_on_array(
+# 		ql_array, 
+# 		ratio_tree=None, 
+# 		difference_tree=None,
+# 		allowed_modifications=[
+# 			"r", 
+# 			"rr", 
+# 			"d", 
+# 			"rd", 
+# 			"sr",
+# 			"rsr"
+# 		],
+# 		windows=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19],
+# 		allow_unnamed=False,
+# 	):
+# 	"""
+# 	Rolling search on an array (useful for quick checks in a score). For search types, 
+# 	see documentation for :func:`~decitala.trees.get_by_ql_array`. 
 
-	:param numpy.array ql_array: fragment to be searched.
-	:param `~decitala.trees.FragmentTree` ratio_tree: tree storing ratio representations.
-	:param `~decitala.trees.FragmentTree` difference_tree: tree storing difference representations.
-	:param list windows: possible length of the search frame. 
-	:return: list holding fragments in the array present in the trees.
-	:rtype: list
+# 	:param numpy.array ql_array: fragment to be searched.
+# 	:param `~decitala.trees.FragmentTree` ratio_tree: tree storing ratio representations.
+# 	:param `~decitala.trees.FragmentTree` difference_tree: tree storing difference representations.
+# 	:param list windows: possible length of the search frame. 
+# 	:return: list holding fragments in the array present in the trees.
+# 	:rtype: list
 
-	>>> greek_ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
-	>>> greek_difference_tree = FragmentTree(frag_type='greek_foot', rep_type='difference')
-	>>> example_fragment = np.array([0.25, 0.5, 0.25, 0.5])
-	>>> for x in rolling_search_on_array(ql_array=example_fragment, ratio_tree=greek_ratio_tree, difference_tree=greek_difference_tree):
-	...     print(x)
-	(<fragment.GreekFoot Iamb>, ('r', 0.25))
-	(<fragment.GreekFoot Trochee>, ('r', 0.25))
-	(<fragment.GreekFoot Iamb>, ('r', 0.25))
-	(<fragment.GreekFoot Amphibrach>, ('r', 0.25))
-	(<fragment.GreekFoot Amphimacer>, ('r', 0.25))
-	"""
-	assert ratio_tree.rep_type == "ratio"
-	assert difference_tree.rep_type == "difference"
+# 	>>> greek_ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
+# 	>>> greek_difference_tree = FragmentTree(frag_type='greek_foot', rep_type='difference')
+# 	>>> example_fragment = np.array([0.25, 0.5, 0.25, 0.5])
+# 	>>> for x in rolling_search_on_array(ql_array=example_fragment, ratio_tree=greek_ratio_tree, difference_tree=greek_difference_tree):
+# 	...     print(x)
+# 	(<fragment.GreekFoot Iamb>, ('r', 0.25))
+# 	(<fragment.GreekFoot Trochee>, ('r', 0.25))
+# 	(<fragment.GreekFoot Iamb>, ('r', 0.25))
+# 	(<fragment.GreekFoot Amphibrach>, ('r', 0.25))
+# 	(<fragment.GreekFoot Amphimacer>, ('r', 0.25))
+# 	"""
+# 	assert ratio_tree.rep_type == "ratio"
+# 	assert difference_tree.rep_type == "difference"
 
-	fragments_found = []
-	max_window_size = min(windows, key = lambda x: abs(x - len(ql_array)))
-	max_index = windows.index(max_window_size)
-	windows = windows[0:max_index + 1]
-	for this_window in windows:
-		for this_frame in roll_window(array = ql_array, window_length = this_window):
-			searched = get_by_ql_array(this_frame, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
-			if searched is not None:
-				fragments_found.append(searched)
+# 	fragments_found = []
+# 	max_window_size = min(windows, key = lambda x: abs(x - len(ql_array)))
+# 	max_index = windows.index(max_window_size)
+# 	windows = windows[0:max_index + 1]
+# 	for this_window in windows:
+# 		for this_frame in roll_window(array = ql_array, window_length = this_window):
+# 			searched = get_by_ql_array(this_frame, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)
+# 			if searched is not None:
+# 				fragments_found.append(searched)
 
-	return fragments_found
+# 	return fragments_found
