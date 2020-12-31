@@ -3,6 +3,10 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.3.2] - December 31, 2020 (Kent, CT)
+### Fixed
+- Bugfix in ``utils.frame_is_spanned_by_slur``.
+
 ## [v0.3.1] - December 31, 2020 (Kent, CT)
 ### Added
 - Documentation page for ``vis.create_tree_diagram`` (Fragment Tree visualization using Treant.js.)
