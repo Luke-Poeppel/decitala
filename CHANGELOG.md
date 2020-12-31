@@ -6,6 +6,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.3.2] - December 31, 2020 (Kent, CT)
 ### Fixed
 - Bugfix in ``utils.frame_is_spanned_by_slur``.
+- Removed old tree diagram information from cli. 
 
 ## [v0.3.1] - December 31, 2020 (Kent, CT)
 ### Added

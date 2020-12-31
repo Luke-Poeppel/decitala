@@ -13,7 +13,6 @@ import pathlib
 from progress.bar import Bar
 
 from decitala import __version__
-from .vis import make_tree_diagram
 from .trees import FragmentTree
 from .database import create_database
 
@@ -50,12 +49,3 @@ def make_db(filepath, part, fragtype, mods, verbose):
 		allowed_modifications=mods,
 		verbose=verbose,
 	)
-	
-# @decitala.command()
-# @click.option("--data", default="", help="Path to database of rhythmic fragments.")
-# @click.option("--frag_type", default="", help="Type of fragment; either `decitala` or `greek_foot`.")
-# @click.option("--rep_type", default="", help="Representation of fragment; `ratio` or `difference`.")
-# @click.option("--destination", default="", help="Destination of tree diagram.")
-# def draw_tree(data, destination, frag_type, rep_type):
-# 	fragment_tree = FragmentTree(data, frag_type, rep_type)
-# 	make_tree_diagram(fragment_tree, destination)
