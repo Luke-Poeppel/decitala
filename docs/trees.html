@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>trees.py &mdash; decitala 0.3.0 documentation</title>
+  <title>trees.py &mdash; decitala 0.3.1 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="decitala 0.3.0 documentation" href="index.html"/>
+    <link rel="top" title="decitala 0.3.1 documentation" href="index.html"/>
         <link rel="next" title="utils.py" href="utils.html"/>
         <link rel="prev" title="pofp.py" href="pofp.html"/> 
 
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.3.0
+                0.3.1
               </div>
             
           
@@ -93,6 +93,7 @@
 <li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp.py</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">trees.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vis.html">vis.py</a></li>
 </ul>
 
             
@@ -584,10 +585,10 @@ are the lengths of fragments in the decitala dataset.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tala_data</span> <span class="ow">in</span> <span class="n">rolling_search</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">,</span> <span class="n">allowed_modifications</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">tala_data</span><span class="p">)</span>
 <span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Spondee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)]}</span>
+<span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot 5_16&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,), (78,)]}</span>
+<span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Ionic_Major&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.75), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,), (78,), (85,)]}</span>
 <span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Trochee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,)]}</span>
-<span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Spondee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.0625), &#39;onset_range&#39;: (0.5, 0.75), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(78,), (85,)]}</span>
-<span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Iamb&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.625, 1.0), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(85,), (93,)]}</span>
-<span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Spondee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.75, 1.25), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(93,), (91,)]}</span>
+<span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Dactyl&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.25, 0.75), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,), (85,)]}</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -635,7 +636,7 @@ are the lengths of fragments in the decitala dataset.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.3.0',
+            VERSION:'0.3.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

@@ -24,6 +24,7 @@ pipeline used in this package is Search → Path Finding (Database Creation) →
    pofp 
    trees
    utils
+   vis
 
 Indices and tables
 ==================

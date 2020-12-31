@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.trees &mdash; decitala 0.3.0 documentation</title>
+  <title>decitala.trees &mdash; decitala 0.3.1 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.3.0 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.3.1 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.3.0
+                0.3.1
               </div>
             
           
@@ -92,6 +92,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../pofp.html">pofp.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../trees.html">trees.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../vis.html">vis.py</a></li>
 </ul>
 
             
@@ -988,10 +989,10 @@
 <span class="sd">	&gt;&gt;&gt; for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=[&quot;r&quot;], verbose=False)[0:5]:</span>
 <span class="sd">	... 	print(tala_data)</span>
 <span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Spondee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)]}</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot 5_16&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,), (78,)]}</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Ionic_Major&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.75), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,), (78,), (85,)]}</span>
 <span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Trochee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,)]}</span>
-<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Spondee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.0625), &#39;onset_range&#39;: (0.5, 0.75), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(78,), (85,)]}</span>
-<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Iamb&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.625, 1.0), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(85,), (93,)]}</span>
-<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Spondee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.75, 1.25), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(93,), (91,)]}</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Dactyl&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.25, 0.75), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,), (85,)]}</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">try</span><span class="p">:</span>
 		<span class="k">assert</span> <span class="n">ratio_tree</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span>
@@ -1081,7 +1082,7 @@
 
 						<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;(</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">), (</span><span class="si">{2}</span><span class="s2">), </span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">],</span> <span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">],</span> <span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">],</span> <span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;is_spanned_by_slur&quot;</span><span class="p">]))</span>
 	
-	<span class="k">return</span> <span class="n">fragments_found</span></div>
+	<span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fragments_found</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span></div>
 
 <span class="c1"># def rolling_search_on_array(</span>
 <span class="c1"># 		ql_array, </span>
@@ -1167,7 +1168,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.3.0',
+            VERSION:'0.3.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

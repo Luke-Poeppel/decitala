@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Python Module Index &mdash; decitala 0.3.1 documentation</title>
+  <title>vis.py &mdash; decitala 0.3.1 documentation</title>
   
 
   
@@ -34,9 +34,7 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="decitala 0.3.1 documentation" href="index.html"/>
- 
-
-
+        <link rel="prev" title="utils.py" href="utils.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -87,14 +85,14 @@
             
             
                 <p class="caption"><span class="caption-text">Modules</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="paths.html">paths.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trees.html">trees.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vis.html">vis.py</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">vis.py</a></li>
 </ul>
 
             
@@ -139,12 +137,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Python Module Index</li>
+      <li>vis.py</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
+            <a href="_sources/vis.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -156,64 +156,43 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
+  <div class="section" id="module-decitala.vis">
+<span id="vis-py"></span><h1>vis.py<a class="headerlink" href="#module-decitala.vis" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="decitala.vis.create_tree_diagram">
+<code class="sig-prename descclassname">decitala.vis.</code><code class="sig-name descname">create_tree_diagram</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">FragmentTree</span></em>, <em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/vis.html#create_tree_diagram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.vis.create_tree_diagram" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates a visualization of a given <a class="reference internal" href="trees.html#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FragmentTree</span></code></a> 
+using the Treant.js library.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>FragmentTree</strong> (<a class="reference internal" href="trees.html#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><em>FragmentTree</em></a>) – A Fragment tree</p></li>
+<li><p><strong>path</strong> (<em>str</em>) – path to the folder where the visualization will be stored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>folder at the provided path containing an index.html file which has a visualization of the provided <a class="reference internal" href="trees.html#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FragmentTree</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
 
-   <h1>Python Module Index</h1>
-
-   <div class="modindex-jumpbox">
-   <a href="#cap-d"><strong>d</strong></a>
-   </div>
-
-   <table class="indextable modindextable">
-     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
-     <tr class="cap" id="cap-d"><td></td><td>
-       <strong>d</strong></td><td></td></tr>
-     <tr>
-       <td><img src="_static/minus.png" class="toggler"
-              id="toggle-1" style="display: none" alt="-" /></td>
-       <td>
-       <code class="xref">decitala</code></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="database.html#module-decitala.database"><code class="xref">decitala.database</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="fragment.html#module-decitala.fragment"><code class="xref">decitala.fragment</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="paths.html#module-decitala.paths"><code class="xref">decitala.paths</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="pofp.html#module-decitala.pofp"><code class="xref">decitala.pofp</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="trees.html#module-decitala.trees"><code class="xref">decitala.trees</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="utils.html#module-decitala.utils"><code class="xref">decitala.utils</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="vis.html#module-decitala.vis"><code class="xref">decitala.vis</code></a></td><td>
-       <em></em></td></tr>
-   </table>
+<div class="figure align-default" id="id1">
+<a class="reference internal image-reference" href="_images/Prosodic_Tree.png"><img alt="map to buried treasure" src="_images/Prosodic_Tree.png" style="width: 1403.0px; height: 388.0px;" /></a>
+<p class="caption"><span class="caption-text">The Fragment Tree of Greek Prosodic Feet</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+</div>
 
 
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="utils.html" class="btn btn-neutral" title="utils.py" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

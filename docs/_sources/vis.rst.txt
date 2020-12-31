@@ -1,0 +1,13 @@
+======
+vis.py
+======
+.. automodule:: decitala.vis
+   :members:
+   :member-order: bysource
+   :show-inheritance:
+
+.. figure:: ./_static/Prosodic_Tree.png
+   :scale: 50 %
+   :alt: map to buried treasure
+
+   The Fragment Tree of Greek Prosodic Feet
