@@ -38,7 +38,7 @@ def cli(verbose, name):
 @click.option("--fragtype", default=["decitala"])
 @click.option("--mods", default=["ratio", "retrograde"], help="Allowed modifications of fragments in the database.")
 @click.option("--verbose", default=True)
-def make_db(filepath, part, fragtype, mods, verbose):
+def create_db(filepath, part, fragtype, mods, verbose):
 	"""Creates a database in your home directory."""
 	filename = filepath.split('/')[-1][:-4]
 	create_database(
