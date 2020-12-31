@@ -677,7 +677,7 @@ def filter_single_anga_class_fragments(data):
 	"""
 	:param list data: data from :obj:`~decitala.trees.rolling_search`.
 	:return: data from the input with all single-anga-class talas removed. For information on anga-class, see: 
-			:obj:`decitala.fragment.Decitala.num_anga_classes`.
+			:obj:`~decitala.fragment.Decitala.num_anga_classes`.
 	:rtype: list
 
 	>>> from decitala.fragment import GreekFoot

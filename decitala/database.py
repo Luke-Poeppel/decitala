@@ -96,6 +96,9 @@ def create_database(
 	:rtype: .db file
 	"""
 	assert os.path.isfile(filepath), DatabaseException("The path provided is not a valid file.")
+	if os.path.isfile(db_path):
+		logging.info("That database already exists ✔")
+		return
 
 	if not(verbose):
 		logging.disable(logging.INFO)

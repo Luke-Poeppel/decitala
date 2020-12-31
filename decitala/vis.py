@@ -29,8 +29,15 @@ FONTSIZE_TITLE = 14
 FONTSIZE_LABEL = 14
 
 ####################################################################################################
-def make_tree_diagram(FragmentTree, path):
-	"""Powered by Treant."""
+def create_tree_diagram(FragmentTree, path):
+	"""
+	This function creates a visualization of a given :obj:`~decitala.trees.FragmentTree` 
+	using the Treant.js library.
+
+	:param `~decitala.trees.FragmentTree` FragmentTree: A Fragment tree
+	:param str path: path to the folder where the visualization will be stored.
+	:return: folder at the provided path containing an index.html file which has a visualization of the provided :obj:`~decitala.trees.FragmentTree`.
+	"""
 	stupid_tree = NaryTree()
 	if FragmentTree.rep_type == "ratio":
 		root = NaryTree().Node(value = 1.0, name = None)
