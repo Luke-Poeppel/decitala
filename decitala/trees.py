@@ -830,10 +830,10 @@ def rolling_search(
 	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=["r"], verbose=False)[0:5]:
 	... 	print(tala_data)
 	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)]}
+	{'fragment': <fragment.GreekFoot 5_16>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,), (78,)]}
+	{'fragment': <fragment.GreekFoot Ionic_Major>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.75), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,), (78,), (85,)]}
 	{'fragment': <fragment.GreekFoot Trochee>, 'mod': ('r', 0.125), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,)]}
-	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.0625), 'onset_range': (0.5, 0.75), 'is_spanned_by_slur': False, 'pitch_content': [(78,), (85,)]}
-	{'fragment': <fragment.GreekFoot Iamb>, 'mod': ('r', 0.125), 'onset_range': (0.625, 1.0), 'is_spanned_by_slur': False, 'pitch_content': [(85,), (93,)]}
-	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.125), 'onset_range': (0.75, 1.25), 'is_spanned_by_slur': False, 'pitch_content': [(93,), (91,)]}
+	{'fragment': <fragment.GreekFoot Dactyl>, 'mod': ('r', 0.125), 'onset_range': (0.25, 0.75), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,), (85,)]}
 	"""
 	try:
 		assert ratio_tree.rep_type == "ratio"
