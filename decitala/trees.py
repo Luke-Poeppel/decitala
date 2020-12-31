@@ -923,7 +923,7 @@ def rolling_search(
 
 						logging.info("({0}, {1}), ({2}), {3}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset_range"], search_dict["is_spanned_by_slur"]))
 	
-	return fragments_found
+	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
 
 # def rolling_search_on_array(
 # 		ql_array, 
