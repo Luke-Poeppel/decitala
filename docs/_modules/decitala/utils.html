@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.utils &mdash; decitala 0.3.1 documentation</title>
+  <title>decitala.utils &mdash; decitala 0.3.2 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.3.1 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.3.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.3.1
+                0.3.2
               </div>
             
           
@@ -178,6 +178,28 @@
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span>
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">spanner</span>
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">stream</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+	<span class="s2">&quot;carnatic_string_to_ql_array&quot;</span><span class="p">,</span>		<span class="c1"># Notation</span>
+	<span class="s2">&quot;ql_array_to_carnatic_string&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;ql_array_to_greek_diacritics&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;augment&quot;</span><span class="p">,</span>							<span class="c1"># Rhythm helpers</span>
+	<span class="s2">&quot;successive_ratio_array&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;successive_difference_array&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;get_added_values&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;find_clusters&quot;</span><span class="p">,</span> 					<span class="c1"># Misc.</span>
+	<span class="s2">&quot;find_possible_superdivisions&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;roll_window&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;power_list&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;cauchy_schwartz&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;get_object_indices&quot;</span><span class="p">,</span>				<span class="c1"># Score helpers</span>
+	<span class="s2">&quot;contiguous_summation&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;frame_to_ql_array&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;frame_to_midi&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;frame_is_spanned_by_slur&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;filter_single_anga_class_fragments&quot;</span><span class="p">,</span> <span class="c1"># Data helpers</span>
+	<span class="s2">&quot;filter_sub_fragments&quot;</span>
+<span class="p">]</span>
 
 <span class="n">carnatic_symbols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
 	<span class="p">[</span><span class="s1">&#39;Druta&#39;</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span>
@@ -359,6 +381,91 @@
 <span class="c1"># 		i += 1 </span>
 <span class="c1"># 	return np.array(out)</span>
 
+<span class="c1"># La Valeur Ajoutee</span>
+<span class="k">def</span> <span class="nf">get_added_values</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">,</span> <span class="n">print_type</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Given a quarter length list, returns all indices and types of added values found, according to </span>
+<span class="sd">	the examples dicussed in Technique de Mon Langage Musical (1944). </span>
+
+<span class="sd">	&gt;&gt;&gt; get_added_values([0.25, 0.5, 0.5, 0.75, 0.25])</span>
+<span class="sd">	[(0, &#39;du Note&#39;), (4, &#39;du Note&#39;)]</span>
+<span class="sd">	&gt;&gt;&gt; get_added_values([0.5, 0.25, 0.5, 0.25, 1.0])</span>
+<span class="sd">	[(1, &#39;du Note&#39;), (3, &#39;du Note&#39;)]</span>
+<span class="sd">	&gt;&gt;&gt; get_added_values([0.75, 0.75, 0.75, 0.25, 0.5])</span>
+<span class="sd">	[(3, &#39;du Note&#39;)]</span>
+<span class="sd">	&gt;&gt;&gt; get_added_values([0.75, 0.75, 0.75, 0.75, 0.25, 0.25])</span>
+
+<span class="sd">	&gt;&gt;&gt; get_added_values([0.5, 0.25, 0.5, 0.75, 1.25, 1.5])</span>
+<span class="sd">	[(1, &#39;du Note&#39;), (3, &#39;du Point&#39;), (4, &#39;du Tie&#39;)]</span>
+
+<span class="sd">	&gt;&gt;&gt; l = [1.0, 0.5, 0.25, 1.0, 0.5, 0.75, 0.5]</span>
+<span class="sd">	&gt;&gt;&gt; get_added_values(l)</span>
+<span class="sd">	[(2, &#39;du Note&#39;), (5, &#39;du Point&#39;)]</span>
+
+<span class="sd">	?????</span>
+<span class="sd">	&gt;&gt;&gt; get_added_values([0.5, 0.5, 0.75, 1.25, 0.75])</span>
+<span class="sd">	[(2, &#39;du Point&#39;), (3, &#39;du Tie&#39;)]</span>
+
+<span class="sd">	&gt;&gt;&gt; get_added_values([1.0, 0.25, 0.5], print_type = False)</span>
+<span class="sd">	[1]</span>
+
+<span class="sd">	&gt;&gt;&gt; get_added_values([0.25, 0.25, 0.75, 2.0])</span>
+<span class="sd">	[(2, &#39;du Point&#39;)]</span>
+<span class="sd">	&gt;&gt;&gt; get_added_values([0.5, 0.25, 0.75, 0.25, 0.5])</span>
+<span class="sd">	[(1, &#39;du Note&#39;), (2, &#39;du Point&#39;), (3, &#39;du Note&#39;)]</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;List must be of length 3 or greater.&#39;</span><span class="p">)</span>
+
+	<span class="n">addedVals</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">if</span> <span class="n">ql_lst</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.25</span> <span class="ow">and</span> <span class="n">ql_lst</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.25</span><span class="p">:</span>
+		<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;du Note&#39;</span><span class="p">))</span>
+	<span class="k">if</span> <span class="n">ql_lst</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.25</span> <span class="ow">and</span> <span class="n">ql_lst</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.25</span><span class="p">:</span>
+		<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;du Note&#39;</span><span class="p">))</span>
+	<span class="k">if</span> <span class="n">ql_lst</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.75</span> <span class="ow">and</span> <span class="n">ql_lst</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">%</span> <span class="mf">0.5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;du Point&#39;</span><span class="p">))</span>
+
+	<span class="k">for</span> <span class="n">currIndex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+		<span class="n">prevVal</span> <span class="o">=</span> <span class="n">ql_lst</span><span class="p">[</span><span class="n">currIndex</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+		<span class="n">currVal</span> <span class="o">=</span> <span class="n">ql_lst</span><span class="p">[</span><span class="n">currIndex</span><span class="p">]</span>
+		<span class="n">nextVal</span> <span class="o">=</span> <span class="n">ql_lst</span><span class="p">[</span><span class="n">currIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+		<span class="n">x</span> <span class="o">=</span> <span class="n">currVal</span> <span class="o">-</span> <span class="mf">0.25</span>
+		<span class="k">if</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">is_integer</span><span class="p">():</span>
+			<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">currIndex</span><span class="p">,</span> <span class="s1">&#39;du Tie&#39;</span><span class="p">))</span>
+
+		<span class="k">if</span> <span class="n">currVal</span> <span class="o">==</span> <span class="mf">0.25</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">prevVal</span> <span class="o">!=</span> <span class="n">currVal</span> <span class="o">!=</span> <span class="n">nextVal</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">prevVal</span> <span class="o">%</span> <span class="mf">0.5</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">nextVal</span> <span class="o">%</span> <span class="mf">0.5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">currIndex</span><span class="p">,</span> <span class="s1">&#39;du Note&#39;</span><span class="p">))</span>
+				<span class="k">elif</span> <span class="n">prevVal</span> <span class="o">%</span> <span class="mf">0.75</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">currIndex</span><span class="p">,</span> <span class="s1">&#39;du Note&#39;</span><span class="p">))</span>
+				<span class="k">elif</span> <span class="n">nextVal</span> <span class="o">%</span> <span class="mf">0.75</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">currIndex</span><span class="p">,</span> <span class="s1">&#39;du Note&#39;</span><span class="p">))</span>
+		<span class="k">elif</span> <span class="n">currVal</span> <span class="o">==</span> <span class="mf">0.75</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">prevVal</span> <span class="o">%</span> <span class="mf">0.5</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">nextVal</span> <span class="o">%</span> <span class="mf">0.5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">currIndex</span><span class="p">,</span> <span class="s1">&#39;du Point&#39;</span><span class="p">))</span>
+			<span class="k">elif</span> <span class="n">prevVal</span> <span class="o">&lt;</span> <span class="n">currVal</span> <span class="ow">and</span> <span class="n">nextVal</span> <span class="o">&gt;</span> <span class="n">currVal</span><span class="p">:</span>
+				<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">currIndex</span><span class="p">,</span> <span class="s1">&#39;du Point&#39;</span><span class="p">))</span>
+			<span class="k">elif</span> <span class="n">prevVal</span> <span class="o">==</span> <span class="mf">0.25</span><span class="p">:</span>
+				<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">currIndex</span><span class="p">,</span> <span class="s1">&#39;du Point&#39;</span><span class="p">))</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">addedVals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">return</span> <span class="kc">None</span>
+
+	<span class="k">if</span> <span class="n">print_type</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+		<span class="k">return</span> <span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">addedVals</span><span class="p">]</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">addedVals</span>
+
+<span class="c1">#NOTE: Double check this works.</span>
+<span class="k">def</span> <span class="nf">removeAddedValuesFromList</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+	<span class="n">added_val_indices</span> <span class="o">=</span> <span class="n">get_added_values</span><span class="p">(</span><span class="n">ql_lst</span><span class="o">=</span><span class="n">lst</span><span class="p">,</span> <span class="n">print_type</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">added_val_indices</span><span class="p">:</span>
+		<span class="k">del</span> <span class="n">lst</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+	<span class="k">return</span> <span class="n">lst</span>
+
 <span class="c1">####################################################################################################</span>
 <span class="c1"># Subdivision</span>
 <div class="viewcode-block" id="find_clusters"><a class="viewcode-back" href="../../utils.html#decitala.utils.find_clusters">[docs]</a><span class="k">def</span> <span class="nf">find_clusters</span><span class="p">(</span><span class="n">input_</span><span class="p">,</span> <span class="n">data_mode</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -500,92 +607,6 @@
 	<span class="k">return</span> <span class="n">possible_super_divisions</span></div>
 
 <span class="c1">####################################################################################################</span>
-<span class="c1"># La Valeur Ajoutee</span>
-<span class="k">def</span> <span class="nf">get_added_values</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">,</span> <span class="n">print_type</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Given a quarter length list, returns all indices and types of added values found, according to </span>
-<span class="sd">	the examples dicussed in Technique de Mon Langage Musical (1944). </span>
-
-<span class="sd">	&gt;&gt;&gt; get_added_values([0.25, 0.5, 0.5, 0.75, 0.25])</span>
-<span class="sd">	[(0, &#39;du Note&#39;), (4, &#39;du Note&#39;)]</span>
-<span class="sd">	&gt;&gt;&gt; get_added_values([0.5, 0.25, 0.5, 0.25, 1.0])</span>
-<span class="sd">	[(1, &#39;du Note&#39;), (3, &#39;du Note&#39;)]</span>
-<span class="sd">	&gt;&gt;&gt; get_added_values([0.75, 0.75, 0.75, 0.25, 0.5])</span>
-<span class="sd">	[(3, &#39;du Note&#39;)]</span>
-<span class="sd">	&gt;&gt;&gt; get_added_values([0.75, 0.75, 0.75, 0.75, 0.25, 0.25])</span>
-
-<span class="sd">	&gt;&gt;&gt; get_added_values([0.5, 0.25, 0.5, 0.75, 1.25, 1.5])</span>
-<span class="sd">	[(1, &#39;du Note&#39;), (3, &#39;du Point&#39;), (4, &#39;du Tie&#39;)]</span>
-
-<span class="sd">	&gt;&gt;&gt; l = [1.0, 0.5, 0.25, 1.0, 0.5, 0.75, 0.5]</span>
-<span class="sd">	&gt;&gt;&gt; get_added_values(l)</span>
-<span class="sd">	[(2, &#39;du Note&#39;), (5, &#39;du Point&#39;)]</span>
-
-<span class="sd">	?????</span>
-<span class="sd">	&gt;&gt;&gt; get_added_values([0.5, 0.5, 0.75, 1.25, 0.75])</span>
-<span class="sd">	[(2, &#39;du Point&#39;), (3, &#39;du Tie&#39;)]</span>
-
-<span class="sd">	&gt;&gt;&gt; get_added_values([1.0, 0.25, 0.5], print_type = False)</span>
-<span class="sd">	[1]</span>
-
-<span class="sd">	&gt;&gt;&gt; get_added_values([0.25, 0.25, 0.75, 2.0])</span>
-<span class="sd">	[(2, &#39;du Point&#39;)]</span>
-<span class="sd">	&gt;&gt;&gt; get_added_values([0.5, 0.25, 0.75, 0.25, 0.5])</span>
-<span class="sd">	[(1, &#39;du Note&#39;), (2, &#39;du Point&#39;), (3, &#39;du Note&#39;)]</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-		<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;List must be of length 3 or greater.&#39;</span><span class="p">)</span>
-
-	<span class="n">addedVals</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="k">if</span> <span class="n">ql_lst</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.25</span> <span class="ow">and</span> <span class="n">ql_lst</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.25</span><span class="p">:</span>
-		<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;du Note&#39;</span><span class="p">))</span>
-	<span class="k">if</span> <span class="n">ql_lst</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.25</span> <span class="ow">and</span> <span class="n">ql_lst</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.25</span><span class="p">:</span>
-		<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;du Note&#39;</span><span class="p">))</span>
-	<span class="k">if</span> <span class="n">ql_lst</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.75</span> <span class="ow">and</span> <span class="n">ql_lst</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">%</span> <span class="mf">0.5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-		<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;du Point&#39;</span><span class="p">))</span>
-
-	<span class="k">for</span> <span class="n">currIndex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-		<span class="n">prevVal</span> <span class="o">=</span> <span class="n">ql_lst</span><span class="p">[</span><span class="n">currIndex</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-		<span class="n">currVal</span> <span class="o">=</span> <span class="n">ql_lst</span><span class="p">[</span><span class="n">currIndex</span><span class="p">]</span>
-		<span class="n">nextVal</span> <span class="o">=</span> <span class="n">ql_lst</span><span class="p">[</span><span class="n">currIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-
-		<span class="n">x</span> <span class="o">=</span> <span class="n">currVal</span> <span class="o">-</span> <span class="mf">0.25</span>
-		<span class="k">if</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">is_integer</span><span class="p">():</span>
-			<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">currIndex</span><span class="p">,</span> <span class="s1">&#39;du Tie&#39;</span><span class="p">))</span>
-
-		<span class="k">if</span> <span class="n">currVal</span> <span class="o">==</span> <span class="mf">0.25</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">prevVal</span> <span class="o">!=</span> <span class="n">currVal</span> <span class="o">!=</span> <span class="n">nextVal</span><span class="p">:</span>
-				<span class="k">if</span> <span class="n">prevVal</span> <span class="o">%</span> <span class="mf">0.5</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">nextVal</span> <span class="o">%</span> <span class="mf">0.5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-					<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">currIndex</span><span class="p">,</span> <span class="s1">&#39;du Note&#39;</span><span class="p">))</span>
-				<span class="k">elif</span> <span class="n">prevVal</span> <span class="o">%</span> <span class="mf">0.75</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-					<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">currIndex</span><span class="p">,</span> <span class="s1">&#39;du Note&#39;</span><span class="p">))</span>
-				<span class="k">elif</span> <span class="n">nextVal</span> <span class="o">%</span> <span class="mf">0.75</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-					<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">currIndex</span><span class="p">,</span> <span class="s1">&#39;du Note&#39;</span><span class="p">))</span>
-		<span class="k">elif</span> <span class="n">currVal</span> <span class="o">==</span> <span class="mf">0.75</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">prevVal</span> <span class="o">%</span> <span class="mf">0.5</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">nextVal</span> <span class="o">%</span> <span class="mf">0.5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-				<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">currIndex</span><span class="p">,</span> <span class="s1">&#39;du Point&#39;</span><span class="p">))</span>
-			<span class="k">elif</span> <span class="n">prevVal</span> <span class="o">&lt;</span> <span class="n">currVal</span> <span class="ow">and</span> <span class="n">nextVal</span> <span class="o">&gt;</span> <span class="n">currVal</span><span class="p">:</span>
-				<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">currIndex</span><span class="p">,</span> <span class="s1">&#39;du Point&#39;</span><span class="p">))</span>
-			<span class="k">elif</span> <span class="n">prevVal</span> <span class="o">==</span> <span class="mf">0.25</span><span class="p">:</span>
-				<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">currIndex</span><span class="p">,</span> <span class="s1">&#39;du Point&#39;</span><span class="p">))</span>
-
-	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">addedVals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-		<span class="k">return</span> <span class="kc">None</span>
-
-	<span class="k">if</span> <span class="n">print_type</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-		<span class="k">return</span> <span class="p">[</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">addedVals</span><span class="p">]</span>
-	<span class="k">else</span><span class="p">:</span>
-		<span class="k">return</span> <span class="n">addedVals</span>
-
-<span class="c1">#NOTE: Double check this works.</span>
-<span class="k">def</span> <span class="nf">removeAddedValuesFromList</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
-	<span class="n">added_val_indices</span> <span class="o">=</span> <span class="n">get_added_values</span><span class="p">(</span><span class="n">ql_lst</span><span class="o">=</span><span class="n">lst</span><span class="p">,</span> <span class="n">print_type</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">added_val_indices</span><span class="p">:</span>
-		<span class="k">del</span> <span class="n">lst</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-
-	<span class="k">return</span> <span class="n">lst</span>
-
-<span class="c1">####################################################################################################</span>
 <span class="c1"># Windowing</span>
 <div class="viewcode-block" id="roll_window"><a class="viewcode-back" href="../../utils.html#decitala.utils.roll_window">[docs]</a><span class="k">def</span> <span class="nf">roll_window</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">window_length</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -630,39 +651,6 @@
 	<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span>
 	<span class="n">power_list</span> <span class="o">=</span> <span class="n">powerset</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 	<span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">power_list</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span></div>
-
-<span class="c1">####################################################################################################</span>
-<span class="c1"># Math helpers</span>
-<span class="k">def</span> <span class="nf">cauchy_schwartz</span><span class="p">(</span><span class="n">vector1</span><span class="p">,</span> <span class="n">vector2</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Tests the Cauchy-Schwartz inequality on two vectors. Namely, if the absolute value of </span>
-<span class="sd">	the dot product of the two vectors is less than the product of the norms, the vectors are </span>
-<span class="sd">	linearly independant (and the function returns True); if they are equal, they are dependant </span>
-<span class="sd">	(and the function returns False). </span>
-
-<span class="sd">	Linear Independence:</span>
-<span class="sd">	&gt;&gt;&gt; li_vec1 = np.array([0.375, 1.0, 0.25])</span>
-<span class="sd">	&gt;&gt;&gt; li_vec2 = np.array([1.0, 0.0, 0.5])</span>
-<span class="sd">	&gt;&gt;&gt; cauchy_schwartz(li_vec1, li_vec2)</span>
-<span class="sd">	True</span>
-
-<span class="sd">	&gt;&gt;&gt; cauchy_schwartz(np.array([0.75, 0.5]), np.array([1.5, 1.0]))</span>
-<span class="sd">	False</span>
-
-<span class="sd">	Linear Dependance:</span>
-<span class="sd">	&gt;&gt;&gt; ld_vec1 = np.array([1.0, 2.0, 4.0, 8.0])</span>
-<span class="sd">	&gt;&gt;&gt; ld_vec2 = np.array([0.5, 1.0, 2.0, 4.0])</span>
-<span class="sd">	&gt;&gt;&gt; cauchy_schwartz(ld_vec1, ld_vec2)</span>
-<span class="sd">	False</span>
-
-<span class="sd">	Equal:</span>
-<span class="sd">	&gt;&gt;&gt; e_vec1 = np.array([0.25, 0.25, 0.25, 0.25])</span>
-<span class="sd">	&gt;&gt;&gt; e_vec2 = np.array([0.25, 0.25, 0.25, 0.25])</span>
-<span class="sd">	&gt;&gt;&gt; cauchy_schwartz(e_vec1, e_vec2)</span>
-<span class="sd">	False</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector2</span><span class="p">)</span>
-	<span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">vector1</span><span class="p">,</span> <span class="n">vector2</span><span class="p">))</span> <span class="o">&lt;</span>  <span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">vector1</span><span class="p">)</span> <span class="o">*</span> <span class="n">norm</span><span class="p">(</span><span class="n">vector2</span><span class="p">))</span>
 
 <span class="c1">####################################################################################################</span>
 <span class="c1"># Score helpers</span>
@@ -825,10 +813,10 @@
 	<span class="n">last_obj</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 	<span class="n">spanners</span> <span class="o">=</span> <span class="n">first_obj</span><span class="o">.</span><span class="n">getSpannerSites</span><span class="p">()</span>
 	<span class="k">if</span> <span class="n">spanners</span><span class="p">:</span>
-		<span class="k">if</span> <span class="s2">&quot;Slur&quot;</span> <span class="ow">in</span> <span class="n">spanners</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">classes</span><span class="p">:</span>
-			<span class="n">slur_spanner</span> <span class="o">=</span> <span class="n">spanners</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-			<span class="k">if</span> <span class="n">slur_spanner</span><span class="o">.</span><span class="n">isFirst</span><span class="p">(</span><span class="n">first_obj</span><span class="p">)</span> <span class="ow">and</span> <span class="n">slur_spanner</span><span class="o">.</span><span class="n">isLast</span><span class="p">(</span><span class="n">last_obj</span><span class="p">):</span>
-				<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="kc">True</span>
+		<span class="k">for</span> <span class="n">this_spanner</span> <span class="ow">in</span> <span class="n">spanners</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">this_spanner</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;Slur&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">this_spanner</span><span class="o">.</span><span class="n">isFirst</span><span class="p">(</span><span class="n">first_obj</span><span class="p">)</span> <span class="ow">and</span> <span class="n">this_spanner</span><span class="o">.</span><span class="n">isLast</span><span class="p">(</span><span class="n">last_obj</span><span class="p">):</span>
+					<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="kc">True</span>
 
 	<span class="k">return</span> <span class="n">is_spanned_by_slur</span></div>
 
@@ -875,6 +863,39 @@
 
 	<span class="n">filtered_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">just_fragments</span> <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">_check_all</span><span class="p">(</span><span class="n">x</span><span class="p">))]</span>
 	<span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">filtered_names</span><span class="p">]</span></div>
+
+<span class="c1">####################################################################################################</span>
+<span class="c1"># Math helpers</span>
+<span class="k">def</span> <span class="nf">cauchy_schwartz</span><span class="p">(</span><span class="n">vector1</span><span class="p">,</span> <span class="n">vector2</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Tests the Cauchy-Schwartz inequality on two vectors. Namely, if the absolute value of </span>
+<span class="sd">	the dot product of the two vectors is less than the product of the norms, the vectors are </span>
+<span class="sd">	linearly independant (and the function returns True); if they are equal, they are dependant </span>
+<span class="sd">	(and the function returns False). </span>
+
+<span class="sd">	Linear Independence:</span>
+<span class="sd">	&gt;&gt;&gt; li_vec1 = np.array([0.375, 1.0, 0.25])</span>
+<span class="sd">	&gt;&gt;&gt; li_vec2 = np.array([1.0, 0.0, 0.5])</span>
+<span class="sd">	&gt;&gt;&gt; cauchy_schwartz(li_vec1, li_vec2)</span>
+<span class="sd">	True</span>
+
+<span class="sd">	&gt;&gt;&gt; cauchy_schwartz(np.array([0.75, 0.5]), np.array([1.5, 1.0]))</span>
+<span class="sd">	False</span>
+
+<span class="sd">	Linear Dependance:</span>
+<span class="sd">	&gt;&gt;&gt; ld_vec1 = np.array([1.0, 2.0, 4.0, 8.0])</span>
+<span class="sd">	&gt;&gt;&gt; ld_vec2 = np.array([0.5, 1.0, 2.0, 4.0])</span>
+<span class="sd">	&gt;&gt;&gt; cauchy_schwartz(ld_vec1, ld_vec2)</span>
+<span class="sd">	False</span>
+
+<span class="sd">	Equal:</span>
+<span class="sd">	&gt;&gt;&gt; e_vec1 = np.array([0.25, 0.25, 0.25, 0.25])</span>
+<span class="sd">	&gt;&gt;&gt; e_vec2 = np.array([0.25, 0.25, 0.25, 0.25])</span>
+<span class="sd">	&gt;&gt;&gt; cauchy_schwartz(e_vec1, e_vec2)</span>
+<span class="sd">	False</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector2</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">vector1</span><span class="p">,</span> <span class="n">vector2</span><span class="p">))</span> <span class="o">&lt;</span>  <span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">vector1</span><span class="p">)</span> <span class="o">*</span> <span class="n">norm</span><span class="p">(</span><span class="n">vector2</span><span class="p">))</span>
 </pre></div>
 
            </div>
@@ -908,7 +929,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.3.1',
+            VERSION:'0.3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

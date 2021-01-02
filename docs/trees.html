@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>trees.py &mdash; decitala 0.3.1 documentation</title>
+  <title>trees.py &mdash; decitala 0.3.2 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="decitala 0.3.1 documentation" href="index.html"/>
+    <link rel="top" title="decitala 0.3.2 documentation" href="index.html"/>
         <link rel="next" title="utils.py" href="utils.html"/>
         <link rel="prev" title="pofp.py" href="pofp.html"/> 
 
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.3.1
+                0.3.2
               </div>
             
           
@@ -204,25 +204,7 @@ efficiently search for such modification.</p>
 </tr>
 </tbody>
 </table>
-<span class="target" id="module-decitala.trees"></span><dl class="py exception">
-<dt id="decitala.trees.TreeException">
-<em class="property">exception </em><code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">TreeException</code><a class="reference internal" href="_modules/decitala/trees.html#TreeException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.trees.TreeException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-</dd></dl>
-
-<dl class="py exception">
-<dt id="decitala.trees.FragmentTreeException">
-<em class="property">exception </em><code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">FragmentTreeException</code><a class="reference internal" href="_modules/decitala/trees.html#FragmentTreeException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.trees.FragmentTreeException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#decitala.trees.TreeException" title="decitala.trees.TreeException"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.trees.TreeException</span></code></a></p>
-</dd></dl>
-
-<dl class="py exception">
-<dt id="decitala.trees.SearchException">
-<em class="property">exception </em><code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">SearchException</code><a class="reference internal" href="_modules/decitala/trees.html#SearchException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.trees.SearchException" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-</dd></dl>
-
-<dl class="py class">
+<span class="target" id="module-decitala.trees"></span><dl class="py class">
 <dt id="decitala.trees.NaryTree">
 <em class="property">class </em><code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">NaryTree</code><a class="reference internal" href="_modules/decitala/trees.html#NaryTree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.trees.NaryTree" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -427,7 +409,7 @@ length <span class="math notranslate nohighlight">\(n\)</span>.</p>
 <dd class="field-even"><p>either the name of the final node or, if <code class="docutils literal notranslate"><span class="pre">allow_unnamed=True</span></code>, possibly <code class="docutils literal notranslate"><span class="pre">path_from_root</span></code>.</p>
 </dd>
 <dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#decitala.trees.TreeException" title="decitala.trees.TreeException"><strong>TreeException</strong></a> – when an invalid path or representation type is provided.</p>
+<dd class="field-odd"><p><strong>TreeException</strong> – when an invalid path or representation type is provided.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -448,26 +430,6 @@ for a node for which the input is linearly dependent.</p>
 
 </dd></dl>
 
-<dl class="py function">
-<dt id="decitala.trees.filter_data">
-<code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">filter_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">raw_data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/trees.html#filter_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.trees.filter_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is used in the instantiation of the <a class="reference internal" href="#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><code class="xref py py-class docutils literal notranslate"><span class="pre">FragmentTree</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>raw_data</strong> (<em>list</em>) – a list of <a class="reference internal" href="fragment.html#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decitala</span></code></a>, <a class="reference internal" href="fragment.html#decitala.fragment.GreekFoot" title="decitala.fragment.GreekFoot"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreekFoot</span></code></a>, or 
-<a class="reference internal" href="fragment.html#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralFragment</span></code></a> objects.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a filtered list that removes single-onset fragments and fragments with equivalent 
-successive difference representations (see <a class="reference internal" href="utils.html#decitala.utils.successive_ratio_array" title="decitala.utils.successive_ratio_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">successive_ratio_array</span></code></a>) 
-using the Cauchy-Schwartz inequality.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py class">
 <dt id="decitala.trees.FragmentTree">
 <em class="property">class </em><code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">FragmentTree</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">frag_type</span><span class="o">=</span><span class="default_value">'general_fragment'</span></em>, <em class="sig-param"><span class="n">rep_type</span><span class="o">=</span><span class="default_value">'ratio'</span></em>, <em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/trees.html#FragmentTree"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.trees.FragmentTree" title="Permalink to this definition">¶</a></dt>
@@ -485,7 +447,7 @@ Otherwise creates <a class="reference internal" href="fragment.html#decitala.fra
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="#decitala.trees.FragmentTreeException" title="decitala.trees.FragmentTreeException"><strong>FragmentTreeException</strong></a> – when an invalid path or representation type is provided.</p>
+<dd class="field-even"><p><strong>FragmentTreeException</strong> – when an invalid path or representation type is provided.</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
@@ -523,6 +485,26 @@ Otherwise creates <a class="reference internal" href="fragment.html#decitala.fra
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.trees.filter_data">
+<code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">filter_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">raw_data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/trees.html#filter_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.trees.filter_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used in the instantiation of the <a class="reference internal" href="#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><code class="xref py py-class docutils literal notranslate"><span class="pre">FragmentTree</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>raw_data</strong> (<em>list</em>) – a list of <a class="reference internal" href="fragment.html#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decitala</span></code></a>, <a class="reference internal" href="fragment.html#decitala.fragment.GreekFoot" title="decitala.fragment.GreekFoot"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreekFoot</span></code></a>, or 
+<a class="reference internal" href="fragment.html#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralFragment</span></code></a> objects.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a filtered list that removes single-onset fragments and fragments with equivalent 
+successive difference representations (see <a class="reference internal" href="utils.html#decitala.utils.successive_ratio_array" title="decitala.utils.successive_ratio_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">successive_ratio_array</span></code></a>) 
+using the Cauchy-Schwartz inequality.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -636,7 +618,7 @@ are the lengths of fragments in the decitala dataset.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.3.1',
+            VERSION:'0.3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

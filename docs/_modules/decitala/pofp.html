@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.pofp &mdash; decitala 0.3.1 documentation</title>
+  <title>decitala.pofp &mdash; decitala 0.3.2 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.3.1 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.3.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.3.1
+                0.3.2
               </div>
             
           
@@ -194,6 +194,13 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+	<span class="s2">&quot;check_break_point&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;get_break_points&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;partition_data_by_break_points&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;get_pareto_optimal_longest_paths&quot;</span>
+<span class="p">]</span>
 
 <div class="viewcode-block" id="check_break_point"><a class="viewcode-back" href="../../pofp.html#decitala.pofp.check_break_point">[docs]</a><span class="k">def</span> <span class="nf">check_break_point</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -399,7 +406,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.3.1',
+            VERSION:'0.3.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

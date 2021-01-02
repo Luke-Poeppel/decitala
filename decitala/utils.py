@@ -27,7 +27,7 @@ __all__ = [
 	"augment",							# Rhythm helpers
 	"successive_ratio_array",
 	"successive_difference_array",
-	"get_added_values"
+	"get_added_values",
 	"find_clusters", 					# Misc.
 	"find_possible_superdivisions",
 	"roll_window",
