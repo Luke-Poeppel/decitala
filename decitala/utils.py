@@ -21,25 +21,26 @@ from music21 import spanner
 from music21 import stream
 
 __all__ = [
-	"carnatic_string_to_ql_array",		# Notation
+	"carnatic_string_to_ql_array", # Notation
 	"ql_array_to_carnatic_string",
 	"ql_array_to_greek_diacritics",
-	"augment",							# Rhythm helpers
+	"augment", # Rhythm helpers
 	"successive_ratio_array",
 	"successive_difference_array",
 	"get_added_values",
-	"find_clusters", 					# Misc.
+	"find_clusters", # Misc.
 	"find_possible_superdivisions",
 	"roll_window",
 	"power_list",
 	"cauchy_schwartz",
-	"get_object_indices",				# Score helpers
+	"get_object_indices", # Score helpers
 	"contiguous_summation",
 	"frame_to_ql_array",
 	"frame_to_midi",
 	"frame_is_spanned_by_slur",
 	"filter_single_anga_class_fragments", # Data helpers
-	"filter_sub_fragments"
+	"filter_sub_fragments",
+	"pitch_content_to_contour" # Pitch Content
 ]
 
 carnatic_symbols = np.array([
@@ -704,6 +705,36 @@ def filter_sub_fragments(data, filter_in_retrograde=True):
 
 	filtered_names = [x.name for x in just_fragments if not(_check_all(x))]
 	return [x for x in data if x["fragment"].name in filtered_names]
+
+####################################################################################################
+# Pitch Contour
+def pitch_content_to_contour(pitch_content, as_str=False):
+	"""
+	This function calculates the pitch contour information from data out of rolling_search. 
+	This function assumes the data is monophonic! 
+
+	:param list pitch_content: pitch content from the output of rolling_search."
+	
+	>>> pc = [(80,), (91,), (78,), (85,)]
+	>>> pitch_content_to_contour(pc)
+	array([1, 3, 0, 2])
+	"""
+	to_mono = [x[0] for x in pitch_content]
+	seg_vals = copy.copy(to_mono)
+	value_dict = dict()
+
+	for i, this_val in zip(range(0, len(sorted(set(seg_vals)))), sorted(set(seg_vals))):
+		value_dict[this_val] = str(i)
+
+	for i, this_val in enumerate(seg_vals):
+		for this_key in value_dict:
+			if this_val == this_key:
+				seg_vals[i] = value_dict[this_key]
+
+	if not(as_str):
+		return np.array([int(val) for val in seg_vals])
+	else:
+		return '<' + ' '.join([str(int(val)) for val in seg_vals]) + '>'
 
 ####################################################################################################
 # Math helpers
