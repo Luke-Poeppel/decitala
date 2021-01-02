@@ -36,7 +36,8 @@ from .utils import (
 )
 from .trees import (
 	FragmentTree,
-	rolling_search
+	rolling_search,
+	filter_data
 )
 from .pofp import (
 	get_break_points,
@@ -152,12 +153,15 @@ def create_database(
 		)
 
 		ALL_DATA.extend(data)
-	
-	initial_length = len(ALL_DATA)
 
+	initial_length = len(ALL_DATA)
 	logging.info("\n")
 	logging.info("{} fragments extracted".format(initial_length))
 
+	# ALL_DATA = filter_data(ALL_DATA)
+	# logging.info("Removing cross-corpus duplicates and LD fragments...")
+	# logging.info("Removed {0} fragments ({1} remaining)".format(initial_length - len(ALL_DATA), len(ALL_DATA)))
+	
 	if filter_found_single_anga_class:
 		ALL_DATA = filter_single_anga_class_fragments(ALL_DATA)
 
@@ -194,7 +198,7 @@ def create_database(
 																													this_fragment["mod"][0], # mod type 
 																													this_fragment["mod"][1], # mod factor/difference
 																													this_fragment["pitch_content"], # pitch content
-																													pitch_content_to_contour(this_fragment["pitch_content"]), # pitch contour 
+																													list(pitch_content_to_contour(this_fragment["pitch_content"])), # pitch contour 
 																													int(this_fragment["is_spanned_by_slur"])) # is_slurred
 				cur.execute(fragment_insertion_string)
 
