@@ -31,7 +31,8 @@ from .utils import (
 	get_object_indices,
 	successive_ratio_array,
 	filter_single_anga_class_fragments,
-	filter_sub_fragments
+	filter_sub_fragments,
+	pitch_content_to_contour
 )
 from .trees import (
 	FragmentTree,
@@ -182,17 +183,18 @@ def create_database(
 		logging.info("Connected to database at: {}".format(db_path))
 
 		cur = conn.cursor()
-		fragment_table_string = "CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Pitch_Content BLOB, Is_Slurred INT)"
+		fragment_table_string = "CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Pitch_Content BLOB, Pitch_Contour BLOB, Is_Slurred INT)"
 		cur.execute(fragment_table_string)
 
 		for this_partition in partitioned_data:
 			for this_fragment in this_partition:
-				fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, '{5}', {6})".format(this_fragment["onset_range"][0], # start offset
+				fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, '{5}', '{6}', {7})".format(this_fragment["onset_range"][0], # start offset
 																													this_fragment["onset_range"][1], # end offset
 																													this_fragment["fragment"], # fragment
 																													this_fragment["mod"][0], # mod type 
 																													this_fragment["mod"][1], # mod factor/difference
 																													this_fragment["pitch_content"], # pitch content
+																													pitch_content_to_contour(this_fragment["pitch_content"]), # pitch contour 
 																													int(this_fragment["is_spanned_by_slur"])) # is_slurred
 				cur.execute(fragment_insertion_string)
 
