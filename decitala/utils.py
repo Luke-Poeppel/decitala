@@ -737,76 +737,82 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 	else:
 		return '<' + ' '.join([str(int(val)) for val in seg_vals]) + '>'
 
-def find_all_contour_maxima(contour):
+def find_all_contour_extrema(contour, mode="max"):
 	"""
 	Finds the maxima of the contour using the definition of Morris. First, the initial
 	and final tones of the contour are maxima, and if the second is >= to the first and third
 	in a rolling window of size 3, it is also a maxima. 
 
 	:param np.array contour: contour input
-	:return: maxima of the contour, as defined by Morris. 
+	:param str mode: either "max" which returns the maximal elements or "min" which returns the minimal. 
+	:return: indices of the maxima of the contour, as defined by Morris. 
 	:rtype: set
 
-	>>> contour = np.array([1, 3, 0, 2])
-	>>> find_all_contour_maxima(contour)
-	{1, 2, 3}
+	>>> contour = np.array([1, 3, 1, 2, 0, 1, 4])
+	>>> find_all_contour_extrema(contour, mode="max")
+	{0, 1, 3, 6}
+	>>> find_all_contour_extrema(contour, mode="min")
+	{0, 2, 4, 6}
 	"""
 	if len(contour) == 2:
-		return set(contour)
+		return {0, 1}
 
-	contour_maxima = set()
-	contour_maxima.add(contour[0])
-	contour_maxima.add(contour[-1])
-	for this_window in roll_window(contour, 3):
+	contour_extrema = set()
+	contour_extrema.add(0)
+	contour_extrema.add(len(contour) - 1)
+
+	for i, this_window in enumerate(roll_window(contour, 3)):
 		middle_val = this_window[1]
-		if middle_val >= this_window[0] and middle_val >= this_window[2]:
-			contour_maxima.add(middle_val)
-		else:
-			pass
-
-	return contour_maxima
-
-def find_all_contour_minima(contour):
-	"""
-	Finds the minima of the contour using the definition of Morris. First, the initial
-	and final tones of the contour are maxima, and if the second is <= to the first and third
-	in a rolling window of size 3, it is also a minima. 
-
-	:param np.array contour: contour input
-	:return: minima of the contour, as defined by Morris. 
-	:rtype: set
-
-	>>> contour = np.array([1, 3, 0, 2])
-	>>> find_all_contour_minima(contour)
-	{0, 1, 2}
-	"""
-	if len(contour) == 2:
-		return set(contour)
-
-	contour_maxima = set()
-	contour_maxima.add(contour[0])
-	contour_maxima.add(contour[-1])
-	for this_window in roll_window(contour, 3):
-		middle_val = this_window[1]
-		if middle_val <= this_window[0] and middle_val <= this_window[2]:
-			contour_maxima.add(middle_val)
-		else:
-			pass
-
-	return contour_maxima
+		if mode == "max":
+			if middle_val >= this_window[0] and middle_val >= this_window[2]:
+				contour_extrema.add(i+1)
+		elif mode == "min":
+			if middle_val <= this_window[0] and middle_val <= this_window[2]:
+				contour_extrema.add(i+1)
+	
+	return contour_extrema
 
 def contour_to_prime_contour(contour, as_str=False):
 	"""
-	Implementation of Morris' 1993 Contour-Reduction algorithm. 
+	Implementation of Morris' 1993 Contour-Reduction algorithm. "The algorithm prunes pitches
+	from a contour until it is reduced to a prime."
 
-	:return: tuple of the form ([prime_form, depth])
+	:param np.array contour: contour input
+	:return: tuple holding the prime form and depth. 
+	:rtype: tuple.
 
 	# Examples from Schultz
-	# >>> contour = np.array([1, 3, 1, 2, 0, 1, 4])
-	# >>> contour_to_prime_contour(contour)
+	contour = np.array([1, 3, 1, 2, 0, 1, 4])
+	contour_to_prime_contour(contour)
+
+	contour_2 = [0, 4, 3, 2, 5, 5, 1]
+	[0, 2, 1]
+
 	# (array([1, 0, 2]), 3)
 	"""
-	pass
+	prime_contour = copy.copy(list(contour))
+	depth = 0
+	max_list = find_all_contour_extrema(prime_contour, mode="max")
+	min_list = find_all_contour_extrema(prime_contour, mode="min")
+
+	combined = max_list.union(min_list)
+	full_range = set(list(range(0, len(contour))))
+	diff = full_range.difference(combined)
+
+	for index in diff:
+		prime_contour.pop(index)
+	
+	depth += 1
+
+	#newmax = find_all_contour_extrema(max_list, mode="max")
+	#newmin = find_all_contour_extrema(min_list, mode="min")
+
+	#print(max_list, min_list)
+	newmax = find_all_contour_extrema(max_list, mode="max")
+	#print(newmax)
+
+#contour = np.array([1, 3, 1, 2, 0, 1, 4])
+#print(contour_to_prime_contour(contour))
 
 ####################################################################################################
 # Math helpers
