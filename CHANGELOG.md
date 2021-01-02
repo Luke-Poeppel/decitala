@@ -3,6 +3,10 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.4.0] - January 2, 2020 (Kent, CT)
+### Added
+- Contour and Prime Contour (using Morris' 1993 algorithm) implemented; now are columns in the table.
+
 ## [v0.3.2] - January 1, 2020 (Kent, CT)
 ### Added
 - ``__all__`` for each module for ease-of-import. 
