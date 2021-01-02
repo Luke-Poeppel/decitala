@@ -46,6 +46,11 @@ from .pofp import (
 import logging
 logging.basicConfig(level=logging.INFO)
 
+__all__ = [
+	"create_database",
+	"DBParser"
+]
+
 # Fragments
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/Fragments/Decitalas"
