@@ -1,19 +1,27 @@
 import numpy as np
+import os
 import pytest
 
 from music21 import chord
+from music21 import converter
 
 from decitala.utils import (
 	contiguous_summation,
 	frame_to_ql_array,
 	filter_single_anga_class_fragments,
-	filter_sub_fragments
+	filter_sub_fragments,
+	roll_window,
+	get_object_indices,
+	frame_is_spanned_by_slur
 )
 
 from decitala.fragment import (
 	Decitala
 )
 
+here = os.path.abspath(os.path.dirname(__file__))
+
+# Frame data
 @pytest.fixture
 def gc2_example_data():
 	data = [
@@ -36,6 +44,7 @@ def liturgie_opening():
 	]
 	return data
 
+# Fragment data
 @pytest.fixture
 def decitala_collection():
 	talas = [
@@ -45,6 +54,13 @@ def decitala_collection():
 		{"fragment": Decitala("5_Pancama"), "mod": ('r', 4.0), "onset_range": (2.0, 4.0)},
 	]
 	return talas
+
+# Score data
+@pytest.fixture
+def example_transcriptions():
+	fp1 = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
+	fp2 = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_2.xml"
+	return fp1, fp2
 
 def test_contiguous_summation_same_chord(gc2_example_data):
 	res = contiguous_summation(gc2_example_data)
@@ -74,3 +90,18 @@ def test_single_anga_class_and_subtala_filtering(decitala_collection):
 
 	filter_b = filter_sub_fragments(filter_a)
 	assert len(filter_b) == 1
+
+def test_frame_is_spanned_by_slur():
+	example_transcription_1 = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
+	example_transcription_2 = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_2.xml"
+	num_slurs = 0
+	all_objects = get_object_indices(example_transcription_2, 0)
+	for this_window_size in [2, 3, 4]:
+		for this_frame in roll_window(all_objects, this_window_size):
+			# print(this_frame)
+			check = frame_is_spanned_by_slur(this_frame)
+			if check == True:
+				num_slurs += 1
+	return num_slurs
+
+# print(test_frame_is_spanned_by_slur())
