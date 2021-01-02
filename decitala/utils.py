@@ -40,7 +40,8 @@ __all__ = [
 	"frame_is_spanned_by_slur",
 	"filter_single_anga_class_fragments", # Data helpers
 	"filter_sub_fragments",
-	"pitch_content_to_contour" # Pitch Content
+	"pitch_content_to_contour", # Pitch Content
+	"find_all_contour_maxima"
 ]
 
 carnatic_symbols = np.array([
@@ -735,6 +736,51 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 		return np.array([int(val) for val in seg_vals])
 	else:
 		return '<' + ' '.join([str(int(val)) for val in seg_vals]) + '>'
+
+def find_all_contour_maxima(contour):
+	"""
+	Finds the minima of the contour using the definition of Morris. First, the initial
+	and final tones of the contour are maxima, and if the second is >= to the first and third
+	in a rolling window of size 3, it is also a maxima. 
+
+	:param np.array contour: contour input
+	:return: maxima of the contour, as defined by Morris. 
+	:rtype: set
+
+	>>> contour = np.array([1, 3, 0, 2])
+	>>> _find_all_contour_maxima(contour)
+	{1, 2, 3}
+	"""
+	if len(contour) == 2:
+		return set(contour)
+
+	contour_maxima = set()
+	contour_maxima.add(contour[0])
+	contour_maxima.add(contour[-1])
+	for this_window in roll_window(contour, 3):
+		middle_val = this_window[1]
+		if middle_val >= this_window[0] and middle_val >= this_window[2]:
+			contour_maxima.add(middle_val)
+		else:
+			pass
+
+	return contour_maxima
+
+def _find_all_contour_minima(contour):
+	pass
+
+def contour_to_prime_contour(contour, as_str=False):
+	"""
+	Implementation of Morris' 1993 Contour-Reduction algorithm. 
+
+	:return: tuple of the form ([prime_form, depth])
+
+	# Examples from Schultz
+	# >>> contour = np.array([1, 3, 1, 2, 0, 1, 4])
+	# >>> contour_to_prime_contour(contour)
+	# (array([1, 0, 2]), 3)
+	"""
+	pass
 
 ####################################################################################################
 # Math helpers
