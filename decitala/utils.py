@@ -654,10 +654,10 @@ def frame_is_spanned_by_slur(frame):
 	last_obj = frame[-1][0]
 	spanners = first_obj.getSpannerSites()
 	if spanners:
-		if "Slur" in spanners[0].classes:
-			slur_spanner = spanners[0]
-			if slur_spanner.isFirst(first_obj) and slur_spanner.isLast(last_obj):
-				is_spanned_by_slur = True
+		for this_spanner in spanners:
+			if type(this_spanner).__name__ == "Slur":
+				if this_spanner.isFirst(first_obj) and this_spanner.isLast(last_obj):
+					is_spanned_by_slur = True
 
 	return is_spanned_by_slur
 

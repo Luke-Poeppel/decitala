@@ -9,7 +9,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Documentation for CLI (version getter and ``cli.create_db``).
 
 ### Fixed
-- Bugfix in ``utils.frame_is_spanned_by_slur``.
+- Bugfix in ``utils.frame_is_spanned_by_slur``. Previously didn't take into account the fact that a range may have multiple overlapping spanners. 
 - Removed old tree diagram information from cli. 
 
 ## [v0.3.1] - December 31, 2020 (Kent, CT)
