@@ -20,6 +20,28 @@ from music21 import note
 from music21 import spanner
 from music21 import stream
 
+__all__ = [
+	"carnatic_string_to_ql_array",		# Notation
+	"ql_array_to_carnatic_string",
+	"ql_array_to_greek_diacritics",
+	"augment",							# Rhythm helpers
+	"successive_ratio_array",
+	"successive_difference_array",
+	"get_added_values"
+	"find_clusters", 					# Misc.
+	"find_possible_superdivisions",
+	"roll_window",
+	"power_list",
+	"cauchy_schwartz",
+	"get_object_indices",				# Score helpers
+	"contiguous_summation",
+	"frame_to_ql_array",
+	"frame_to_midi",
+	"frame_is_spanned_by_slur",
+	"filter_single_anga_class_fragments", # Data helpers
+	"filter_sub_fragments"
+]
+
 carnatic_symbols = np.array([
 	['Druta', 'o', 0.25],
 	['Druta-Virama', 'oc', 0.375],
@@ -200,6 +222,91 @@ def successive_difference_array(fragment):
 # 		i += 1 
 # 	return np.array(out)
 
+# La Valeur Ajoutee
+def get_added_values(ql_lst, print_type = True):
+	"""
+	Given a quarter length list, returns all indices and types of added values found, according to 
+	the examples dicussed in Technique de Mon Langage Musical (1944). 
+
+	>>> get_added_values([0.25, 0.5, 0.5, 0.75, 0.25])
+	[(0, 'du Note'), (4, 'du Note')]
+	>>> get_added_values([0.5, 0.25, 0.5, 0.25, 1.0])
+	[(1, 'du Note'), (3, 'du Note')]
+	>>> get_added_values([0.75, 0.75, 0.75, 0.25, 0.5])
+	[(3, 'du Note')]
+	>>> get_added_values([0.75, 0.75, 0.75, 0.75, 0.25, 0.25])
+
+	>>> get_added_values([0.5, 0.25, 0.5, 0.75, 1.25, 1.5])
+	[(1, 'du Note'), (3, 'du Point'), (4, 'du Tie')]
+
+	>>> l = [1.0, 0.5, 0.25, 1.0, 0.5, 0.75, 0.5]
+	>>> get_added_values(l)
+	[(2, 'du Note'), (5, 'du Point')]
+
+	?????
+	>>> get_added_values([0.5, 0.5, 0.75, 1.25, 0.75])
+	[(2, 'du Point'), (3, 'du Tie')]
+
+	>>> get_added_values([1.0, 0.25, 0.5], print_type = False)
+	[1]
+
+	>>> get_added_values([0.25, 0.25, 0.75, 2.0])
+	[(2, 'du Point')]
+	>>> get_added_values([0.5, 0.25, 0.75, 0.25, 0.5])
+	[(1, 'du Note'), (2, 'du Point'), (3, 'du Note')]
+	"""
+	if len(ql_lst) < 3:
+		raise Exception('List must be of length 3 or greater.')
+
+	addedVals = []
+	if ql_lst[0] == 0.25 and ql_lst[1] != 0.25:
+		addedVals.append((0, 'du Note'))
+	if ql_lst[-1] == 0.25 and ql_lst[-2] != 0.25:
+		addedVals.append((len(ql_lst) - 1, 'du Note'))
+	if ql_lst[-1] == 0.75 and ql_lst[-2] % 0.5 == 0:
+		addedVals.append((len(ql_lst) - 1, 'du Point'))
+
+	for currIndex in range(1, len(ql_lst) - 1):
+		prevVal = ql_lst[currIndex - 1]
+		currVal = ql_lst[currIndex]
+		nextVal = ql_lst[currIndex + 1]
+
+		x = currVal - 0.25
+		if x >= 1.0 and x.is_integer():
+			addedVals.append((currIndex, 'du Tie'))
+
+		if currVal == 0.25:
+			if prevVal != currVal != nextVal:
+				if prevVal % 0.5 == 0 and nextVal % 0.5 == 0:
+					addedVals.append((currIndex, 'du Note'))
+				elif prevVal % 0.75 == 0:
+					addedVals.append((currIndex, 'du Note'))
+				elif nextVal % 0.75 == 0:
+					addedVals.append((currIndex, 'du Note'))
+		elif currVal == 0.75:
+			if prevVal % 0.5 == 0 and nextVal % 0.5 == 0:
+				addedVals.append((currIndex, 'du Point'))
+			elif prevVal < currVal and nextVal > currVal:
+				addedVals.append((currIndex, 'du Point'))
+			elif prevVal == 0.25:
+				addedVals.append((currIndex, 'du Point'))
+
+	if len(addedVals) == 0:
+		return None
+
+	if print_type == False:
+		return [a[0] for a in addedVals]
+	else:
+		return addedVals
+
+#NOTE: Double check this works.
+def removeAddedValuesFromList(lst):
+	added_val_indices = get_added_values(ql_lst=lst, print_type=False)
+	for i in added_val_indices:
+		del lst[i]
+
+	return lst
+
 ####################################################################################################
 # Subdivision
 def find_clusters(input_, data_mode=False):
@@ -341,92 +448,6 @@ def find_possible_superdivisions(array):
 	return possible_super_divisions
 
 ####################################################################################################
-# La Valeur Ajoutee
-def get_added_values(ql_lst, print_type = True):
-	"""
-	Given a quarter length list, returns all indices and types of added values found, according to 
-	the examples dicussed in Technique de Mon Langage Musical (1944). 
-
-	>>> get_added_values([0.25, 0.5, 0.5, 0.75, 0.25])
-	[(0, 'du Note'), (4, 'du Note')]
-	>>> get_added_values([0.5, 0.25, 0.5, 0.25, 1.0])
-	[(1, 'du Note'), (3, 'du Note')]
-	>>> get_added_values([0.75, 0.75, 0.75, 0.25, 0.5])
-	[(3, 'du Note')]
-	>>> get_added_values([0.75, 0.75, 0.75, 0.75, 0.25, 0.25])
-
-	>>> get_added_values([0.5, 0.25, 0.5, 0.75, 1.25, 1.5])
-	[(1, 'du Note'), (3, 'du Point'), (4, 'du Tie')]
-
-	>>> l = [1.0, 0.5, 0.25, 1.0, 0.5, 0.75, 0.5]
-	>>> get_added_values(l)
-	[(2, 'du Note'), (5, 'du Point')]
-
-	?????
-	>>> get_added_values([0.5, 0.5, 0.75, 1.25, 0.75])
-	[(2, 'du Point'), (3, 'du Tie')]
-
-	>>> get_added_values([1.0, 0.25, 0.5], print_type = False)
-	[1]
-
-	>>> get_added_values([0.25, 0.25, 0.75, 2.0])
-	[(2, 'du Point')]
-	>>> get_added_values([0.5, 0.25, 0.75, 0.25, 0.5])
-	[(1, 'du Note'), (2, 'du Point'), (3, 'du Note')]
-	"""
-	if len(ql_lst) < 3:
-		raise Exception('List must be of length 3 or greater.')
-
-	addedVals = []
-	if ql_lst[0] == 0.25 and ql_lst[1] != 0.25:
-		addedVals.append((0, 'du Note'))
-	if ql_lst[-1] == 0.25 and ql_lst[-2] != 0.25:
-		addedVals.append((len(ql_lst) - 1, 'du Note'))
-	if ql_lst[-1] == 0.75 and ql_lst[-2] % 0.5 == 0:
-		addedVals.append((len(ql_lst) - 1, 'du Point'))
-
-	for currIndex in range(1, len(ql_lst) - 1):
-		prevVal = ql_lst[currIndex - 1]
-		currVal = ql_lst[currIndex]
-		nextVal = ql_lst[currIndex + 1]
-
-		x = currVal - 0.25
-		if x >= 1.0 and x.is_integer():
-			addedVals.append((currIndex, 'du Tie'))
-
-		if currVal == 0.25:
-			if prevVal != currVal != nextVal:
-				if prevVal % 0.5 == 0 and nextVal % 0.5 == 0:
-					addedVals.append((currIndex, 'du Note'))
-				elif prevVal % 0.75 == 0:
-					addedVals.append((currIndex, 'du Note'))
-				elif nextVal % 0.75 == 0:
-					addedVals.append((currIndex, 'du Note'))
-		elif currVal == 0.75:
-			if prevVal % 0.5 == 0 and nextVal % 0.5 == 0:
-				addedVals.append((currIndex, 'du Point'))
-			elif prevVal < currVal and nextVal > currVal:
-				addedVals.append((currIndex, 'du Point'))
-			elif prevVal == 0.25:
-				addedVals.append((currIndex, 'du Point'))
-
-	if len(addedVals) == 0:
-		return None
-
-	if print_type == False:
-		return [a[0] for a in addedVals]
-	else:
-		return addedVals
-
-#NOTE: Double check this works.
-def removeAddedValuesFromList(lst):
-	added_val_indices = get_added_values(ql_lst=lst, print_type=False)
-	for i in added_val_indices:
-		del lst[i]
-
-	return lst
-
-####################################################################################################
 # Windowing
 def roll_window(array, window_length):
 	"""
@@ -471,39 +492,6 @@ def power_list(data):
 	assert type(data) == list
 	power_list = powerset(data)
 	return [x for x in power_list if len(x) != 0]
-
-####################################################################################################
-# Math helpers
-def cauchy_schwartz(vector1, vector2):
-	"""
-	Tests the Cauchy-Schwartz inequality on two vectors. Namely, if the absolute value of 
-	the dot product of the two vectors is less than the product of the norms, the vectors are 
-	linearly independant (and the function returns True); if they are equal, they are dependant 
-	(and the function returns False). 
-
-	Linear Independence:
-	>>> li_vec1 = np.array([0.375, 1.0, 0.25])
-	>>> li_vec2 = np.array([1.0, 0.0, 0.5])
-	>>> cauchy_schwartz(li_vec1, li_vec2)
-	True
-
-	>>> cauchy_schwartz(np.array([0.75, 0.5]), np.array([1.5, 1.0]))
-	False
-
-	Linear Dependance:
-	>>> ld_vec1 = np.array([1.0, 2.0, 4.0, 8.0])
-	>>> ld_vec2 = np.array([0.5, 1.0, 2.0, 4.0])
-	>>> cauchy_schwartz(ld_vec1, ld_vec2)
-	False
-
-	Equal:
-	>>> e_vec1 = np.array([0.25, 0.25, 0.25, 0.25])
-	>>> e_vec2 = np.array([0.25, 0.25, 0.25, 0.25])
-	>>> cauchy_schwartz(e_vec1, e_vec2)
-	False
-	"""
-	assert len(vector1) == len(vector2)
-	return abs(np.dot(vector1, vector2)) <  (norm(vector1) * norm(vector2))
 
 ####################################################################################################
 # Score helpers
@@ -716,3 +704,36 @@ def filter_sub_fragments(data, filter_in_retrograde=True):
 
 	filtered_names = [x.name for x in just_fragments if not(_check_all(x))]
 	return [x for x in data if x["fragment"].name in filtered_names]
+
+####################################################################################################
+# Math helpers
+def cauchy_schwartz(vector1, vector2):
+	"""
+	Tests the Cauchy-Schwartz inequality on two vectors. Namely, if the absolute value of 
+	the dot product of the two vectors is less than the product of the norms, the vectors are 
+	linearly independant (and the function returns True); if they are equal, they are dependant 
+	(and the function returns False). 
+
+	Linear Independence:
+	>>> li_vec1 = np.array([0.375, 1.0, 0.25])
+	>>> li_vec2 = np.array([1.0, 0.0, 0.5])
+	>>> cauchy_schwartz(li_vec1, li_vec2)
+	True
+
+	>>> cauchy_schwartz(np.array([0.75, 0.5]), np.array([1.5, 1.0]))
+	False
+
+	Linear Dependance:
+	>>> ld_vec1 = np.array([1.0, 2.0, 4.0, 8.0])
+	>>> ld_vec2 = np.array([0.5, 1.0, 2.0, 4.0])
+	>>> cauchy_schwartz(ld_vec1, ld_vec2)
+	False
+
+	Equal:
+	>>> e_vec1 = np.array([0.25, 0.25, 0.25, 0.25])
+	>>> e_vec2 = np.array([0.25, 0.25, 0.25, 0.25])
+	>>> cauchy_schwartz(e_vec1, e_vec2)
+	False
+	"""
+	assert len(vector1) == len(vector2)
+	return abs(np.dot(vector1, vector2)) <  (norm(vector1) * norm(vector2))
