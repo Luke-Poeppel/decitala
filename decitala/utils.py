@@ -739,7 +739,7 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 
 def find_all_contour_maxima(contour):
 	"""
-	Finds the minima of the contour using the definition of Morris. First, the initial
+	Finds the maxima of the contour using the definition of Morris. First, the initial
 	and final tones of the contour are maxima, and if the second is >= to the first and third
 	in a rolling window of size 3, it is also a maxima. 
 
@@ -748,7 +748,7 @@ def find_all_contour_maxima(contour):
 	:rtype: set
 
 	>>> contour = np.array([1, 3, 0, 2])
-	>>> _find_all_contour_maxima(contour)
+	>>> find_all_contour_maxima(contour)
 	{1, 2, 3}
 	"""
 	if len(contour) == 2:
@@ -766,8 +766,34 @@ def find_all_contour_maxima(contour):
 
 	return contour_maxima
 
-def _find_all_contour_minima(contour):
-	pass
+def find_all_contour_minima(contour):
+	"""
+	Finds the minima of the contour using the definition of Morris. First, the initial
+	and final tones of the contour are maxima, and if the second is <= to the first and third
+	in a rolling window of size 3, it is also a minima. 
+
+	:param np.array contour: contour input
+	:return: minima of the contour, as defined by Morris. 
+	:rtype: set
+
+	>>> contour = np.array([1, 3, 0, 2])
+	>>> find_all_contour_minima(contour)
+	{0, 1, 2}
+	"""
+	if len(contour) == 2:
+		return set(contour)
+
+	contour_maxima = set()
+	contour_maxima.add(contour[0])
+	contour_maxima.add(contour[-1])
+	for this_window in roll_window(contour, 3):
+		middle_val = this_window[1]
+		if middle_val <= this_window[0] and middle_val <= this_window[2]:
+			contour_maxima.add(middle_val)
+		else:
+			pass
+
+	return contour_maxima
 
 def contour_to_prime_contour(contour, as_str=False):
 	"""
