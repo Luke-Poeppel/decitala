@@ -29,6 +29,12 @@ from .utils import (
 	successive_difference_array,
 )
 
+__all__ = [
+	"GeneralFragment",
+	"Decitala",
+	"GreekFoot"
+]
+
 # Fragments
 here = os.path.abspath(os.path.dirname(__file__))
 
