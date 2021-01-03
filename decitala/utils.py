@@ -451,11 +451,13 @@ def find_possible_superdivisions(array):
 
 ####################################################################################################
 # Windowing
-def roll_window(array, window_length):
+def roll_window(array, window_length, fn=None):
 	"""
 	Takes in a list and returns a numpy vstack holding rolling windows of length ``window_length``.
 
 	:param numpy.array array: an iterable
+	:param int window_length: size of the window
+	:param lambda fn: function evaluating a bool. 
 	:return: rolling windows of array, each of length `window_length`. 
 	:rtype: numpy.vstack
 
@@ -466,7 +468,20 @@ def roll_window(array, window_length):
 	('Monteverdi', 'Messiaen', 'Mahler')
 	('Messiaen', 'Mahler', 'MacDowell')
 	('Mahler', 'MacDowell', 'Massenet')
+	>>> # This function also allows the use of a function input for filtering. 
+	>>> # Say we wanted to iterate over the elements of the following collection that have 
+	>>> # 1s in the set. 
+	>>> cseg_data = [[0, {1, -1}], [4, {1}], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
+	>>> fn = lambda x: 1 in x[1]
+	>>> for this_frame in roll_window(cseg_data, 3, fn):
+	... 	print(this_frame)
+	([0, {1, -1}], [4, {1}], [5, {1}])
+	([4, {1}], [5, {1}], [5, {1}])
+	([5, {1}], [5, {1}], [1, {1, -1}])
 	"""
+	if fn is not None:
+		array = [x for x in array if fn(x)==True]
+
 	assert type(window_length) == int
 	windows = list(windowed(seq=array, n=window_length, step=1))
 	return windows
@@ -737,42 +752,226 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 	else:
 		return '<' + ' '.join([str(int(val)) for val in seg_vals]) + '>'
 
-def find_all_contour_extrema(contour, mode="max"):
+# def is_extremum(contour, i, mode, after_first_iteration=False):
+# 	"""
+# 	Function for finding extrema in pitch contours using Morris' definitions. 
+
+# 	:param np.array contour: contour input
+# 	:param int i: index to check. 
+# 	:param str mode: either "max" which returns the maximal elements or "min" which returns the minimal. 
+# 	:return: whether the value of the contour at the given index is a minimum or 
+# 	maximum, as defined by Morris. 
+# 	:rtype: bool
+
+# 	>>> contour = [0, 4, 3, 2, 5, 5, 1]
+# 	>>> is_extremum(contour, 1, "max")
+# 	True
+# 	>>> is_extremum(contour, 2, "max")
+# 	False
+# 	>>> is_extremum(contour, 3, "min")
+# 	True
+# 	>>> is_extremum(contour, 5, "min")
+# 	False
+# 	>>> # Data form for after first iteration: 
+# 	>>> data = [[0, {1, -1}], [4, {1}], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
+# 	>>> for i in range(len(data)):
+# 	... 	print(is_extremum(data, i, "max", after_first_iteration=True))
+# 	True
+# 	False
+# 	False
+# 	True
+# 	True
+# 	False
+
+
+# 	# >>> data = [[0, {1, -1}], [4, {1}], [5, {1}], [5, {1}], [1, {1, -1}]]
+# 	# >>> is_extremum(data, 1, "max", after_first_iteration=True)
+# 	False
+# 	"""
+# 	if i == 0:
+# 		return True
+# 	elif i == len(contour) - 1:
+# 		return True
+# 	else:
+# 		if not(after_first_iteration):
+# 			fn = None
+# 		else:
+# 			if mode == "max":
+# 				fn = lambda x: 1 in x[1]
+# 			else:	
+# 				fn = lambda x: -1 in x[1]
+
+# 		for j, this_window in enumerate(roll_window(contour, 3, fn)):
+# 			pass
+			#print(j)
+			#print(this_window)
+			# if j == i:
+			# 	print(this_window)
+			# 	middle_val = this_window[1]
+			# 	if mode == "max":
+			# 		if middle_val >= this_window[0] and middle_val >= this_window[2]:
+			# 			return True
+			# 		else:
+			# 			return False
+			# 	elif mode == "min":
+			# 		if middle_val <= this_window[0] and middle_val <= this_window[2]:
+			# 			return True
+			# 		else:
+			# 			return False
+			# else:
+			# 	print('not hit')
+
+# def new_test(contour):
+
+
+# print(is_extremum(data, 4, "min", after_first_iteration=True))
+#for i in range(len(data)):
+	#print(is_extremum(data, i, "max", after_first_iteration=True))
+
+# Iteratin should happen below...
+
+#############################################################################
+#############################################################################
+def has_extremum(window, mode):
 	"""
-	Finds the maxima of the contour using the definition of Morris. First, the initial
-	and final tones of the contour are maxima, and if the second is >= to the first and third
-	in a rolling window of size 3, it is also a maxima. 
-
-	:param np.array contour: contour input
-	:param str mode: either "max" which returns the maximal elements or "min" which returns the minimal. 
-	:return: indices of the maxima of the contour, as defined by Morris. 
-	:rtype: set
-
-	>>> contour = np.array([1, 3, 1, 2, 0, 1, 4])
-	>>> find_all_contour_extrema(contour, mode="max")
-	{0, 1, 3, 6}
-	>>> find_all_contour_extrema(contour, mode="min")
-	{0, 2, 4, 6}
+	>>> min_check = ([0, {1, -1}], [2, {-1}], [1, {1, -1}])
+	>>> has_extremum(min_check, "min")
+	False
+	>>> has_extremum(min_check, "max")
+	True
 	"""
-	if len(contour) == 2:
-		return {0, 1}
+	assert len(window) == 3
+	middle_val = window[1][0]
+	if mode == "max":
+		if middle_val >= window[0][0] and middle_val >= window[2][0]:
+			return True
+		else:
+			return False
+	elif mode == "min":
+		if middle_val <= window[0][0] and middle_val <= window[2][0]:
+			return True
+		else:
+			return False
 
-	contour_extrema = set()
-	contour_extrema.add(0)
-	contour_extrema.add(len(contour) - 1)
+# initial data
+data = [[0, {1, -1}], [4, {1}], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
+print(data)
 
-	for i, this_window in enumerate(roll_window(contour, 3)):
-		middle_val = this_window[1]
-		if mode == "max":
-			if middle_val >= this_window[0] and middle_val >= this_window[2]:
-				contour_extrema.add(i+1)
-		elif mode == "min":
-			if middle_val <= this_window[0] and middle_val <= this_window[2]:
-				contour_extrema.add(i+1)
-	
-	return contour_extrema
+fnmax = lambda x: 1 in x[1]
+fnmin = lambda x: -1 in x[1]
+
+for i, this_window in enumerate(roll_window(data, 3, fnmax)):
+	elem_set = this_window[1][1]
+	if has_extremum(this_window, "max"):#, after_first_iteration=True):
+		pass
+	else:
+		elem_set.remove(1)
+
+new = [x for x in data if len(x[1]) != 0]
+print(new)
+
+for i, this_window in enumerate(roll_window(new, 3, fnmin)):
+	print(this_window)
+	elem_set = this_window[1][1]
+	if has_extremum(this_window, "min"):#, after_first_iteration=True):
+ 		print('hi')	
+	else:
+		elem_set.remove(-1)
+
+newest = [x for x in new if len(x[1]) != 0]
+print(newest)
+
+ranges = [list(this_range) for _, this_range in groupby(range(len(newest)), lambda i: (newest[i][0], newest[i][1]))]
+print(ranges)
+# remove all clusters 
+
+out = []
+for this_cluster in ranges:
+	out.append(newest[this_cluster[0]])
+
+print(out)
+
+#############################################################################
+#############################################################################
+
+
+
+
+
+# 2nd+ iteration, remove empty sets and duplicates (with find_clusters)
+
+# while some (any) sets are empty, keep going.
+# no sets empty -> done.
 
 def contour_to_prime_contour(contour, as_str=False):
+	"""
+	Implementation of Morris' 1993 Contour-Reduction algorithm. "The algorithm prunes pitches
+	from a contour until it is reduced to a prime." The loop runs until all elements
+	are flagged as maxima or minima. 
+
+	:param np.array contour: contour input
+	:return: tuple holding the prime form and depth. 
+	:rtype: tuple.
+	"""
+	# Loop runs until all are stemmed, i.e. until all have non-empty sets. 
+	depth = 0
+	all_contours = []
+	contour_1 = []
+	for i, this_val in enumerate(contour):
+		extremum_data = set()
+		if is_extremum(contour, i, "max"):
+			extremum_data.add(1)
+		if is_extremum(contour, i, "min"):
+			extremum_data.add(-1)
+	
+		contour_1.append([this_val, extremum_data])
+	
+	all_contours.append(contour_1)
+	depth += 1
+
+	latest = [x for x in contour_1 if len(x[1]) != 0]
+	print(latest)
+
+	next_contour = []
+	for i, this_val in enumerate(latest):
+		extremum_data = set()
+		if is_extremum(latest, i, mode="max", after_first_iteration=True):
+			extremum_data.add(1)
+		if is_extremum(latest, i, mode="min", after_first_iteration=True):
+			extremum_data.add(-1)
+		
+		next_contour.append([this_val[0], extremum_data])
+	
+	latest_2 = [x for x in next_contour if len(x[1]) != 0]
+	print(latest_2)
+
+
+
+
+
+
+	#while any([len(c) == 0 for c in all_contours[-1]]):
+	 	# if depth == 0:
+
+			
+	# 	else:
+	# 		latest = [x for x in contours[-1] if len(x) != 0] 
+	# 		for i, this_val in enumerate(latest):
+	# 			extremum_data = set()
+	# 			if is_extremum(latest, i, mode="max", after_first_iteration=True):
+	# 				extremum_data.add(1)
+	# 			if is_extremum(new2, i, mode="min", after_first_iteration=True):
+	# 				extremum_data.add(-1)
+				
+	# 			all_contours.append([this_val[0], extremum_data])
+	# 		depth += 1
+
+	# return (all_contours[-1], depth)
+
+c = [0, 4, 3, 2, 5, 5, 1]
+# print(contour_to_prime_contour(c))
+
+def contour_to_prime_contour_old(contour, as_str=False):
 	"""
 	Implementation of Morris' 1993 Contour-Reduction algorithm. "The algorithm prunes pitches
 	from a contour until it is reduced to a prime."

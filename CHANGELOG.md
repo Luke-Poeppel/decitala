@@ -7,7 +7,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Added
 - Added ``utils.pitch_content_to_contour``. 
 - Added Pitch_Contour column in the Fragment database. 
-- Prime Contour (using Morris' 1993 algorithm) implemented; now are columns in the table.
+- Prime Contour (using Morris' 1993 algorithm) implemented; now are columns in the table. 
 
 ## [v0.3.2] - January 1, 2020 (Kent, CT)
 ### Added
