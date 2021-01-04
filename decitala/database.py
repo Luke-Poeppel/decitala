@@ -13,7 +13,7 @@ Tools for creating sqlite3 databases of extracted rhythmic data from Messiaen's 
 import click
 import numpy as np
 import os
-import pandas
+import pandas as pd
 import sqlite3 as lite
 import timeout_decorator
 import uuid
