@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>utils.py &mdash; decitala 0.3.2 documentation</title>
+  <title>utils.py &mdash; decitala 0.4.0 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="decitala 0.3.2 documentation" href="index.html"/>
+    <link rel="top" title="decitala 0.4.0 documentation" href="index.html"/>
         <link rel="next" title="vis.py" href="vis.html"/>
         <link rel="prev" title="trees.py" href="trees.html"/> 
 
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.3.2
+                0.4.0
               </div>
             
           
@@ -372,11 +372,15 @@ of tala components tends to be even.</p>
 
 <dl class="py function">
 <dt id="decitala.utils.roll_window">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">roll_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array</span></em>, <em class="sig-param"><span class="n">window_length</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/utils.html#roll_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.roll_window" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">roll_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array</span></em>, <em class="sig-param"><span class="n">window_length</span></em>, <em class="sig-param"><span class="n">fn</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/utils.html#roll_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.roll_window" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes in a list and returns a numpy vstack holding rolling windows of length <code class="docutils literal notranslate"><span class="pre">window_length</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>array</strong> (<em>numpy.array</em>) – an iterable</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>array</strong> (<em>numpy.array</em>) – an iterable</p></li>
+<li><p><strong>window_length</strong> (<em>int</em>) – size of the window</p></li>
+<li><p><strong>fn</strong> (<em>lambda</em>) – function evaluating a bool.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>rolling windows of array, each of length <cite>window_length</cite>.</p>
@@ -392,6 +396,16 @@ of tala components tends to be even.</p>
 <span class="go">(&#39;Monteverdi&#39;, &#39;Messiaen&#39;, &#39;Mahler&#39;)</span>
 <span class="go">(&#39;Messiaen&#39;, &#39;Mahler&#39;, &#39;MacDowell&#39;)</span>
 <span class="go">(&#39;Mahler&#39;, &#39;MacDowell&#39;, &#39;Massenet&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This function also allows the use of a function input for filtering. </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Say we wanted to iterate over the elements of the following collection that have </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># 1s in the set. </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cseg_data</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">}]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">cseg_data</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+<span class="go">([0, {1, -1}], [4, {1}], [5, {1}])</span>
+<span class="go">([4, {1}], [5, {1}], [5, {1}])</span>
+<span class="go">([5, {1}], [5, {1}], [1, {1, -1}])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -602,6 +616,23 @@ rhythmic material are contiguously equal and sums these regions.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt id="decitala.utils.pitch_content_to_contour">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">pitch_content_to_contour</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pitch_content</span></em>, <em class="sig-param"><span class="n">as_str</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/utils.html#pitch_content_to_contour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.pitch_content_to_contour" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculates the pitch contour information from data out of rolling_search. 
+This function assumes the data is monophonic!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pitch_content</strong> (<em>list</em>) – pitch content from the output of rolling_search.”</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pc</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">80</span><span class="p">,),</span> <span class="p">(</span><span class="mi">91</span><span class="p">,),</span> <span class="p">(</span><span class="mi">78</span><span class="p">,),</span> <span class="p">(</span><span class="mi">85</span><span class="p">,)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">pc</span><span class="p">)</span>
+<span class="go">array([1, 3, 0, 2])</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </div>
 
 
@@ -645,7 +676,7 @@ rhythmic material are contiguously equal and sums these regions.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.3.2',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

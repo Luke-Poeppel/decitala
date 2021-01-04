@@ -41,7 +41,6 @@ __all__ = [
 	"filter_single_anga_class_fragments", # Data helpers
 	"filter_sub_fragments",
 	"pitch_content_to_contour", # Pitch Content
-	"find_all_contour_maxima"
 ]
 
 carnatic_symbols = np.array([
@@ -755,12 +754,12 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 	else:
 		return "<" + " ".join([str(int(val)) for val in seg_vals]) + ">"
 
-def has_extremum(window, mode):
+def _has_extremum(window, mode):
 	"""
 	>>> min_check = ([0, {1, -1}], [2, {-1}], [1, {1, -1}])
-	>>> has_extremum(min_check, "min")
+	>>> _has_extremum(min_check, "min")
 	False
-	>>> has_extremum(min_check, "max")
+	>>> _has_extremum(min_check, "max")
 	True
 	"""
 	assert len(window) == 3
@@ -776,12 +775,12 @@ def has_extremum(window, mode):
 		else:
 			return False
 
-def initial_extremas(contour):
+def _initial_extremas(contour):
 	"""
 	First iteration, get extrema. 
 
 	>>> contour = [0, 4, 3, 2, 5, 5, 1]
-	>>> initial_extremas(contour)
+	>>> _initial_extremas(contour)
 	[[0, {1, -1}], [4, {1}], [3, set()], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
 	"""
 	out = [[contour[0], {-1, 1}]]
@@ -799,15 +798,15 @@ def initial_extremas(contour):
 
 	return out
 
-def make_level(contour):
+def _make_level(contour):
 	"""
 	Runs one iteration of the reduction.
 
 	>>> data = [[1, {1, -1}], [3, {1}], [1, set()], [2, set()], [0, {-1}], [1, set()], [4, {1, -1}]]
-	>>> new = make_level(data)
+	>>> new = _make_level(data)
 	>>> new
 	[[1, {1, -1}], [3, set()], [1, set()], [2, set()], [0, {-1}], [1, set()], [4, {1, -1}]]
-	>>> make_level(new) == new
+	>>> _make_level(new) == new
 	True
 	>>> # remove clusters
 	>>> initial_extremas = [[0, {1, -1}], [4, {1}], [3, set()], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
@@ -822,7 +821,7 @@ def make_level(contour):
 		elif None in this_window:
 			continue
 		else:
-			if has_extremum(this_window, "max"):
+			if _has_extremum(this_window, "max"):
 				pass
 			else:
 				elem_set.remove(1)
@@ -834,7 +833,7 @@ def make_level(contour):
 		elif None in this_window:
 			continue
 		else:
-			if has_extremum(this_window, "min"):
+			if _has_extremum(this_window, "min"):
 				pass
 			else:
 				elem_set.remove(-1)
@@ -857,6 +856,8 @@ def contour_to_prime_contour(contour, include_depth=False):
 	from a contour until it is reduced to a prime." The loop runs until all elements
 	are flagged as maxima or minima. 
 
+	:param np.array contour: contour input
+
 	>>> contour_a = [0, 4, 3, 2, 5, 5, 1]
 	>>> contour_to_prime_contour(contour_a, include_depth=False)
 	array([0, 2, 1])
@@ -865,7 +866,7 @@ def contour_to_prime_contour(contour, include_depth=False):
 	array([1, 0, 2])
 	"""
 	depth = 0
-	prime_contour = initial_extremas(contour)
+	prime_contour = _initial_extremas(contour)
 	if all([len(x[1]) != 0 for x in prime_contour]):
 		if not(include_depth):
 			return pitch_content_to_contour(prime_contour)
@@ -874,9 +875,9 @@ def contour_to_prime_contour(contour, include_depth=False):
 
 	still_unflagged_values = True
 	while still_unflagged_values == True:
-		make_level(prime_contour)
+		_make_level(prime_contour)
 		depth += 1
-		if make_level(prime_contour[:]) == prime_contour: # Check next iteration...
+		if _make_level(prime_contour[:]) == prime_contour: # Check next iteration...
 			still_unflagged_values = False
 		else:
 			continue

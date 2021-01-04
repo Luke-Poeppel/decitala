@@ -3,7 +3,7 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.4.0] - January 2, 2020 (Kent, CT)
+## [v0.4.0] - January 4, 2020 (Kent, CT)
 ### Added
 - Added ``utils.pitch_content_to_contour``. 
 - Implementation of Morris' 1993 pitch contour reduction algorithm. ``utils.contour_to_prime_contour``. 

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.utils &mdash; decitala 0.3.2 documentation</title>
+  <title>decitala.utils &mdash; decitala 0.4.0 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.3.2 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.4.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.3.2
+                0.4.0
               </div>
             
           
@@ -180,25 +180,26 @@
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">stream</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-	<span class="s2">&quot;carnatic_string_to_ql_array&quot;</span><span class="p">,</span>		<span class="c1"># Notation</span>
+	<span class="s2">&quot;carnatic_string_to_ql_array&quot;</span><span class="p">,</span> <span class="c1"># Notation</span>
 	<span class="s2">&quot;ql_array_to_carnatic_string&quot;</span><span class="p">,</span>
 	<span class="s2">&quot;ql_array_to_greek_diacritics&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;augment&quot;</span><span class="p">,</span>							<span class="c1"># Rhythm helpers</span>
+	<span class="s2">&quot;augment&quot;</span><span class="p">,</span> <span class="c1"># Rhythm helpers</span>
 	<span class="s2">&quot;successive_ratio_array&quot;</span><span class="p">,</span>
 	<span class="s2">&quot;successive_difference_array&quot;</span><span class="p">,</span>
 	<span class="s2">&quot;get_added_values&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;find_clusters&quot;</span><span class="p">,</span> 					<span class="c1"># Misc.</span>
+	<span class="s2">&quot;find_clusters&quot;</span><span class="p">,</span> <span class="c1"># Misc.</span>
 	<span class="s2">&quot;find_possible_superdivisions&quot;</span><span class="p">,</span>
 	<span class="s2">&quot;roll_window&quot;</span><span class="p">,</span>
 	<span class="s2">&quot;power_list&quot;</span><span class="p">,</span>
 	<span class="s2">&quot;cauchy_schwartz&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;get_object_indices&quot;</span><span class="p">,</span>				<span class="c1"># Score helpers</span>
+	<span class="s2">&quot;get_object_indices&quot;</span><span class="p">,</span> <span class="c1"># Score helpers</span>
 	<span class="s2">&quot;contiguous_summation&quot;</span><span class="p">,</span>
 	<span class="s2">&quot;frame_to_ql_array&quot;</span><span class="p">,</span>
 	<span class="s2">&quot;frame_to_midi&quot;</span><span class="p">,</span>
 	<span class="s2">&quot;frame_is_spanned_by_slur&quot;</span><span class="p">,</span>
 	<span class="s2">&quot;filter_single_anga_class_fragments&quot;</span><span class="p">,</span> <span class="c1"># Data helpers</span>
-	<span class="s2">&quot;filter_sub_fragments&quot;</span>
+	<span class="s2">&quot;filter_sub_fragments&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;pitch_content_to_contour&quot;</span><span class="p">,</span> <span class="c1"># Pitch Content</span>
 <span class="p">]</span>
 
 <span class="n">carnatic_symbols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
@@ -608,11 +609,13 @@
 
 <span class="c1">####################################################################################################</span>
 <span class="c1"># Windowing</span>
-<div class="viewcode-block" id="roll_window"><a class="viewcode-back" href="../../utils.html#decitala.utils.roll_window">[docs]</a><span class="k">def</span> <span class="nf">roll_window</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">window_length</span><span class="p">):</span>
+<div class="viewcode-block" id="roll_window"><a class="viewcode-back" href="../../utils.html#decitala.utils.roll_window">[docs]</a><span class="k">def</span> <span class="nf">roll_window</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">window_length</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Takes in a list and returns a numpy vstack holding rolling windows of length ``window_length``.</span>
 
 <span class="sd">	:param numpy.array array: an iterable</span>
+<span class="sd">	:param int window_length: size of the window</span>
+<span class="sd">	:param lambda fn: function evaluating a bool. </span>
 <span class="sd">	:return: rolling windows of array, each of length `window_length`. </span>
 <span class="sd">	:rtype: numpy.vstack</span>
 
@@ -623,7 +626,20 @@
 <span class="sd">	(&#39;Monteverdi&#39;, &#39;Messiaen&#39;, &#39;Mahler&#39;)</span>
 <span class="sd">	(&#39;Messiaen&#39;, &#39;Mahler&#39;, &#39;MacDowell&#39;)</span>
 <span class="sd">	(&#39;Mahler&#39;, &#39;MacDowell&#39;, &#39;Massenet&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; # This function also allows the use of a function input for filtering. </span>
+<span class="sd">	&gt;&gt;&gt; # Say we wanted to iterate over the elements of the following collection that have </span>
+<span class="sd">	&gt;&gt;&gt; # 1s in the set. </span>
+<span class="sd">	&gt;&gt;&gt; cseg_data = [[0, {1, -1}], [4, {1}], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]</span>
+<span class="sd">	&gt;&gt;&gt; fn = lambda x: 1 in x[1]</span>
+<span class="sd">	&gt;&gt;&gt; for this_frame in roll_window(cseg_data, 3, fn):</span>
+<span class="sd">	... 	print(this_frame)</span>
+<span class="sd">	([0, {1, -1}], [4, {1}], [5, {1}])</span>
+<span class="sd">	([4, {1}], [5, {1}], [5, {1}])</span>
+<span class="sd">	([5, {1}], [5, {1}], [1, {1, -1}])</span>
 <span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">array</span> <span class="k">if</span> <span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">==</span><span class="kc">True</span><span class="p">]</span>
+
 	<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">window_length</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span>
 	<span class="n">windows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">windowed</span><span class="p">(</span><span class="n">seq</span><span class="o">=</span><span class="n">array</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">window_length</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 	<span class="k">return</span> <span class="n">windows</span></div>
@@ -865,6 +881,175 @@
 	<span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">filtered_names</span><span class="p">]</span></div>
 
 <span class="c1">####################################################################################################</span>
+<span class="c1"># Pitch Contour</span>
+<div class="viewcode-block" id="pitch_content_to_contour"><a class="viewcode-back" href="../../utils.html#decitala.utils.pitch_content_to_contour">[docs]</a><span class="k">def</span> <span class="nf">pitch_content_to_contour</span><span class="p">(</span><span class="n">pitch_content</span><span class="p">,</span> <span class="n">as_str</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This function calculates the pitch contour information from data out of rolling_search. </span>
+<span class="sd">	This function assumes the data is monophonic! </span>
+
+<span class="sd">	:param list pitch_content: pitch content from the output of rolling_search.&quot;</span>
+<span class="sd">	</span>
+<span class="sd">	&gt;&gt;&gt; pc = [(80,), (91,), (78,), (85,)]</span>
+<span class="sd">	&gt;&gt;&gt; pitch_content_to_contour(pc)</span>
+<span class="sd">	array([1, 3, 0, 2])</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">pitch_content</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">:</span>
+		<span class="n">to_mono</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pitch_content</span><span class="p">]</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">to_mono</span> <span class="o">=</span> <span class="n">pitch_content</span>
+	<span class="n">seg_vals</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">to_mono</span><span class="p">)</span>
+	<span class="n">value_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">seg_vals</span><span class="p">)))),</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">seg_vals</span><span class="p">))):</span>
+		<span class="n">value_dict</span><span class="p">[</span><span class="n">this_val</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">seg_vals</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">this_key</span> <span class="ow">in</span> <span class="n">value_dict</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">this_val</span> <span class="o">==</span> <span class="n">this_key</span><span class="p">:</span>
+				<span class="n">seg_vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_dict</span><span class="p">[</span><span class="n">this_key</span><span class="p">]</span>
+
+	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">as_str</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">seg_vals</span><span class="p">])</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s2">&quot;&lt;&quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">seg_vals</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;&gt;&quot;</span></div>
+
+<span class="k">def</span> <span class="nf">_has_extremum</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	&gt;&gt;&gt; min_check = ([0, {1, -1}], [2, {-1}], [1, {1, -1}])</span>
+<span class="sd">	&gt;&gt;&gt; _has_extremum(min_check, &quot;min&quot;)</span>
+<span class="sd">	False</span>
+<span class="sd">	&gt;&gt;&gt; _has_extremum(min_check, &quot;max&quot;)</span>
+<span class="sd">	True</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">window</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+	<span class="n">middle_val</span> <span class="o">=</span> <span class="n">window</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">middle_val</span> <span class="o">&gt;=</span> <span class="n">window</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">middle_val</span> <span class="o">&gt;=</span> <span class="n">window</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+	<span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">middle_val</span> <span class="o">&lt;=</span> <span class="n">window</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">middle_val</span> <span class="o">&lt;=</span> <span class="n">window</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+
+<span class="k">def</span> <span class="nf">_initial_extremas</span><span class="p">(</span><span class="n">contour</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	First iteration, get extrema. </span>
+
+<span class="sd">	&gt;&gt;&gt; contour = [0, 4, 3, 2, 5, 5, 1]</span>
+<span class="sd">	&gt;&gt;&gt; _initial_extremas(contour)</span>
+<span class="sd">	[[0, {1, -1}], [4, {1}], [3, set()], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">out</span> <span class="o">=</span> <span class="p">[[</span><span class="n">contour</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">}]]</span>
+	<span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+		<span class="n">elem_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+		<span class="n">middle_val</span> <span class="o">=</span> <span class="n">this_frame</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">if</span> <span class="n">middle_val</span> <span class="o">&gt;=</span> <span class="n">this_frame</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">middle_val</span> <span class="o">&gt;=</span> <span class="n">this_frame</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+			<span class="n">elem_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">middle_val</span> <span class="o">&lt;=</span> <span class="n">this_frame</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">middle_val</span> <span class="o">&lt;=</span> <span class="n">this_frame</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+			<span class="n">elem_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+	
+		<span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">middle_val</span><span class="p">,</span> <span class="n">elem_set</span><span class="p">])</span>
+	
+	<span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">contour</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">}])</span>
+
+	<span class="k">return</span> <span class="n">out</span>
+
+<span class="k">def</span> <span class="nf">_make_level</span><span class="p">(</span><span class="n">contour</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Runs one iteration of the reduction.</span>
+
+<span class="sd">	&gt;&gt;&gt; data = [[1, {1, -1}], [3, {1}], [1, set()], [2, set()], [0, {-1}], [1, set()], [4, {1, -1}]]</span>
+<span class="sd">	&gt;&gt;&gt; new = _make_level(data)</span>
+<span class="sd">	&gt;&gt;&gt; new</span>
+<span class="sd">	[[1, {1, -1}], [3, set()], [1, set()], [2, set()], [0, {-1}], [1, set()], [4, {1, -1}]]</span>
+<span class="sd">	&gt;&gt;&gt; _make_level(new) == new</span>
+<span class="sd">	True</span>
+<span class="sd">	&gt;&gt;&gt; # remove clusters</span>
+<span class="sd">	&gt;&gt;&gt; initial_extremas = [[0, {1, -1}], [4, {1}], [3, set()], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">fnmax</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+	<span class="n">fnmin</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_window</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">roll_window</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">fnmax</span><span class="p">)):</span>
+		<span class="n">elem_set</span> <span class="o">=</span> <span class="n">this_window</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elem_set</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="k">continue</span>
+		<span class="k">elif</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">this_window</span><span class="p">:</span>
+			<span class="k">continue</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">_has_extremum</span><span class="p">(</span><span class="n">this_window</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">):</span>
+				<span class="k">pass</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">elem_set</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_window</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">roll_window</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">fnmin</span><span class="p">)):</span>
+		<span class="n">elem_set</span> <span class="o">=</span> <span class="n">this_window</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elem_set</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="k">continue</span>
+		<span class="k">elif</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">this_window</span><span class="p">:</span>
+			<span class="k">continue</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">_has_extremum</span><span class="p">(</span><span class="n">this_window</span><span class="p">,</span> <span class="s2">&quot;min&quot;</span><span class="p">):</span>
+				<span class="k">pass</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">elem_set</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="n">ranges</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">this_range</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">this_range</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">contour</span><span class="p">)),</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="p">(</span><span class="n">contour</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">contour</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]))]</span>
+	<span class="n">del_clusters</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">this_cluster</span> <span class="ow">in</span> <span class="n">ranges</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">this_cluster</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="n">del_clusters</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">this_cluster</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">del_clusters</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">del_clusters</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+			<span class="k">del</span> <span class="n">contour</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+	
+	<span class="k">return</span> <span class="n">contour</span>
+
+<span class="k">def</span> <span class="nf">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="n">include_depth</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Implementation of Morris&#39; 1993 Contour-Reduction algorithm. &quot;The algorithm prunes pitches</span>
+<span class="sd">	from a contour until it is reduced to a prime.&quot; The loop runs until all elements</span>
+<span class="sd">	are flagged as maxima or minima. </span>
+
+<span class="sd">	:param np.array contour: contour input</span>
+
+<span class="sd">	&gt;&gt;&gt; contour_a = [0, 4, 3, 2, 5, 5, 1]</span>
+<span class="sd">	&gt;&gt;&gt; contour_to_prime_contour(contour_a, include_depth=False)</span>
+<span class="sd">	array([0, 2, 1])</span>
+<span class="sd">	&gt;&gt;&gt; contour_b = [1, 3, 1, 2, 0, 1, 4]</span>
+<span class="sd">	&gt;&gt;&gt; contour_to_prime_contour(contour_b, include_depth=False)</span>
+<span class="sd">	array([1, 0, 2])</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">depth</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">prime_contour</span> <span class="o">=</span> <span class="n">_initial_extremas</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">prime_contour</span><span class="p">]):</span>
+		<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">include_depth</span><span class="p">):</span>
+			<span class="k">return</span> <span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">prime_contour</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">(</span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">prime_contour</span><span class="p">),</span> <span class="n">depth</span><span class="p">)</span>
+
+	<span class="n">still_unflagged_values</span> <span class="o">=</span> <span class="kc">True</span>
+	<span class="k">while</span> <span class="n">still_unflagged_values</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+		<span class="n">_make_level</span><span class="p">(</span><span class="n">prime_contour</span><span class="p">)</span>
+		<span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="k">if</span> <span class="n">_make_level</span><span class="p">(</span><span class="n">prime_contour</span><span class="p">[:])</span> <span class="o">==</span> <span class="n">prime_contour</span><span class="p">:</span> <span class="c1"># Check next iteration...</span>
+			<span class="n">still_unflagged_values</span> <span class="o">=</span> <span class="kc">False</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">continue</span>
+	
+	<span class="n">prime_contour</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">prime_contour</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+	<span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>
+	
+	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">include_depth</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">prime_contour</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="p">(</span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">prime_contour</span><span class="p">),</span> <span class="n">depth</span><span class="p">)</span>
+
+<span class="c1">####################################################################################################</span>
 <span class="c1"># Math helpers</span>
 <span class="k">def</span> <span class="nf">cauchy_schwartz</span><span class="p">(</span><span class="n">vector1</span><span class="p">,</span> <span class="n">vector2</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -929,7 +1114,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.3.2',
+            VERSION:'0.4.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
