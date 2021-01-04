@@ -851,23 +851,26 @@ def make_level(contour):
 	
 	return contour
 
-def contour_to_prime_contour(contour):
+def contour_to_prime_contour(contour, include_depth=False):
 	"""
 	Implementation of Morris' 1993 Contour-Reduction algorithm. "The algorithm prunes pitches
 	from a contour until it is reduced to a prime." The loop runs until all elements
 	are flagged as maxima or minima. 
 
 	>>> contour_a = [0, 4, 3, 2, 5, 5, 1]
-	>>> contour_to_prime_contour(contour_a)
-	(array([0, 2, 1]), 2)
+	>>> contour_to_prime_contour(contour_a, include_depth=False)
+	array([0, 2, 1])
 	>>> contour_b = [1, 3, 1, 2, 0, 1, 4]
-	>>> contour_to_prime_contour(contour_b)
-	(array([1, 0, 2]), 3)
+	>>> contour_to_prime_contour(contour_b, include_depth=False)
+	array([1, 0, 2])
 	"""
 	depth = 0
 	prime_contour = initial_extremas(contour)
 	if all([len(x[1]) != 0 for x in prime_contour]):
-		return (pitch_content_to_contour(prime_contour), depth)
+		if not(include_depth):
+			return pitch_content_to_contour(prime_contour)
+		else:
+			return (pitch_content_to_contour(prime_contour), depth)
 
 	still_unflagged_values = True
 	while still_unflagged_values == True:
@@ -880,7 +883,11 @@ def contour_to_prime_contour(contour):
 	
 	prime_contour = [x[0] for x in prime_contour if len(x[1]) != 0]
 	depth += 1
-	return (pitch_content_to_contour(prime_contour), depth)
+	
+	if not(include_depth):
+		return pitch_content_to_contour(prime_contour)
+	else:
+		return (pitch_content_to_contour(prime_contour), depth)
 
 ####################################################################################################
 # Math helpers
