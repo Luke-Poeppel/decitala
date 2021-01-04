@@ -735,7 +735,10 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 	>>> pitch_content_to_contour(pc)
 	array([1, 3, 0, 2])
 	"""
-	to_mono = [x[0] for x in pitch_content]
+	if type(pitch_content[0]) == tuple:
+		to_mono = [x[0] for x in pitch_content]
+	else:
+		to_mono = pitch_content
 	seg_vals = copy.copy(to_mono)
 	value_dict = dict()
 
@@ -796,6 +799,58 @@ def initial_extremas(contour):
 
 	return out
 
+def make_level(contour):
+	"""
+	Runs one iteration of the reduction.
+
+	>>> data = [[1, {1, -1}], [3, {1}], [1, set()], [2, set()], [0, {-1}], [1, set()], [4, {1, -1}]]
+	>>> new = make_level(data)
+	>>> new
+	[[1, {1, -1}], [3, set()], [1, set()], [2, set()], [0, {-1}], [1, set()], [4, {1, -1}]]
+	>>> make_level(new) == new
+	True
+	>>> # remove clusters
+	>>> initial_extremas = [[0, {1, -1}], [4, {1}], [3, set()], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
+	"""
+	fnmax = lambda x: 1 in x[1]
+	fnmin = lambda x: -1 in x[1]
+
+	for i, this_window in enumerate(roll_window(contour, 3, fnmax)):
+		elem_set = this_window[1][1]
+		if len(elem_set) == 0:
+			continue
+		elif None in this_window:
+			continue
+		else:
+			if has_extremum(this_window, "max"):
+				pass
+			else:
+				elem_set.remove(1)
+
+	for i, this_window in enumerate(roll_window(contour, 3, fnmin)):
+		elem_set = this_window[1][1]
+		if len(elem_set) == 0:
+			continue
+		elif None in this_window:
+			continue
+		else:
+			if has_extremum(this_window, "min"):
+				pass
+			else:
+				elem_set.remove(-1)
+
+	ranges = [list(this_range) for _, this_range in groupby(range(len(contour)), lambda i: (contour[i][0], contour[i][1]))]
+	del_clusters = []
+	for this_cluster in ranges:
+		if len(this_cluster) > 1:
+			del_clusters.extend(this_cluster[1:])
+
+	if len(del_clusters) != 0:
+		for index in sorted(del_clusters, reverse=True):
+			del contour[index]
+	
+	return contour
+
 def contour_to_prime_contour(contour):
 	"""
 	Implementation of Morris' 1993 Contour-Reduction algorithm. "The algorithm prunes pitches
@@ -804,45 +859,28 @@ def contour_to_prime_contour(contour):
 
 	>>> contour_a = [0, 4, 3, 2, 5, 5, 1]
 	>>> contour_to_prime_contour(contour_a)
-	([0, 5, 1], 2)
+	(array([0, 2, 1]), 2)
+	>>> contour_b = [1, 3, 1, 2, 0, 1, 4]
+	>>> contour_to_prime_contour(contour_b)
+	(array([1, 0, 2]), 3)
 	"""
 	depth = 0
-	
 	prime_contour = initial_extremas(contour)
-	depth += 1
-	
-	fnmax = lambda x: 1 in x[1]
-	fnmin = lambda x: -1 in x[1]
+	if all([len(x[1]) != 0 for x in prime_contour]):
+		return (pitch_content_to_contour(prime_contour), depth)
 
-	while any([len(x[1]) == 0 for x in prime_contour]):
+	still_unflagged_values = True
+	while still_unflagged_values == True:
+		make_level(prime_contour)
 		depth += 1
-		for i, this_window in enumerate(roll_window(prime_contour, 3, fnmax)):
-			elem_set = this_window[1][1]
-			if has_extremum(this_window, "max"):
-				pass
-			else:
-				elem_set.remove(1)
-
-		for i, this_window in enumerate(roll_window(prime_contour, 3, fnmin)):
-			elem_set = this_window[1][1]
-			if has_extremum(this_window, "min"):
-				pass
-			else:
-				elem_set.remove(-1)
-		
-		prime_contour = [x for x in prime_contour if len(x[1]) != 0]
-		ranges = [list(this_range) for _, this_range in groupby(range(len(prime_contour)), lambda i: (prime_contour[i][0], prime_contour[i][1]))]
-		out = []
-		for this_cluster in ranges:
-			out.append(prime_contour[this_cluster[0]])
-		
-		prime_contour = out
-
-	prime_contour = [x[0] for x in prime_contour]
-	return (prime_contour, depth)
-
-contour = [0, 4, 3, 2, 5, 5, 1]
-print(contour_to_prime_contour(contour))
+		if make_level(prime_contour[:]) == prime_contour: # Check next iteration...
+			still_unflagged_values = False
+		else:
+			continue
+	
+	prime_contour = [x[0] for x in prime_contour if len(x[1]) != 0]
+	depth += 1
+	return (pitch_content_to_contour(prime_contour), depth)
 
 ####################################################################################################
 # Math helpers

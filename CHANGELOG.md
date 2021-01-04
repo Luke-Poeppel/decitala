@@ -6,8 +6,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.4.0] - January 2, 2020 (Kent, CT)
 ### Added
 - Added ``utils.pitch_content_to_contour``. 
-- Added Pitch_Contour column in the Fragment database. 
-- Prime Contour (using Morris' 1993 algorithm) implemented; now are columns in the db tables.
+- Implementation of Morris' 1993 pitch contour reduction algorithm. ``utils.contour_to_prime_contour``. 
+- Added ``Pitch_Contour`` column in the Fragment database. 
 
 ### Changed
 - The ``utils.roll_window`` function now allows for a ``fn`` input (allows for rolling window over parts of list, as defined by a lambda expression). 
