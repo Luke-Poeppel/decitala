@@ -52,6 +52,7 @@ setup(
 		"matplotlib",
 		"more-itertools",
 		"numpy",
+		"pandas",
 		"pre-commit",
 		"sqlite3",
 		"timeout-decorator"

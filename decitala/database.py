@@ -13,6 +13,7 @@ Tools for creating sqlite3 databases of extracted rhythmic data from Messiaen's 
 import click
 import numpy as np
 import os
+import pandas
 import sqlite3 as lite
 import timeout_decorator
 import uuid
@@ -265,6 +266,7 @@ class DBParser(object):
 		self.filename = filename
 
 		conn = lite.connect(self.db_path)
+		self.conn = conn
 		cur = conn.cursor()
 
 		fragment_path_string = "SELECT * FROM Fragments"
@@ -303,3 +305,10 @@ class DBParser(object):
 
 	def spanned_fragments(self):
 		return [x for x in self.data if x["is_slurred"]==True]
+
+	def show_fragments_table(self):
+		"""
+		Displays the Fragments table of the database using pandas. 
+		"""
+		data = pd.read_sql_query("SELECT * FROM Fragments", self.conn)
+		return data

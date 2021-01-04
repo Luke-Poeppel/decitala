@@ -5,6 +5,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.4.2] - January 4, 2020 (Kent, CT)
 ### Added
+- Added fragment table visualization (``DBParser.show_fragments_table``) using pandas. 
 
 ### Fixed
 
