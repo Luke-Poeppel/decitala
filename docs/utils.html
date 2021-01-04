@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>utils.py &mdash; decitala 0.4.0 documentation</title>
+  <title>utils.py &mdash; decitala 0.4.1 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="decitala 0.4.0 documentation" href="index.html"/>
+    <link rel="top" title="decitala 0.4.1 documentation" href="index.html"/>
         <link rel="next" title="vis.py" href="vis.html"/>
         <link rel="prev" title="trees.py" href="trees.html"/> 
 
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.4.0
+                0.4.1
               </div>
             
           
@@ -629,6 +629,9 @@ This function assumes the data is monophonic!</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pc</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">80</span><span class="p">,),</span> <span class="p">(</span><span class="mi">91</span><span class="p">,),</span> <span class="p">(</span><span class="mi">78</span><span class="p">,),</span> <span class="p">(</span><span class="mi">85</span><span class="p">,)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">pc</span><span class="p">)</span>
 <span class="go">array([1, 3, 0, 2])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pc2</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">80</span><span class="p">,),</span> <span class="p">(</span><span class="mi">84</span><span class="p">,),</span> <span class="p">(</span><span class="mi">84</span><span class="p">,)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">pc2</span><span class="p">)</span>
+<span class="go">array([0, 1, 1])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -676,7 +679,7 @@ This function assumes the data is monophonic!</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.4.0',
+            VERSION:'0.4.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
