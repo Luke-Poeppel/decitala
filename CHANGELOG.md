@@ -5,7 +5,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.4.1] - January 4, 2020 (Kent, CT)
 ### Fixed
-- Bugfixes for prime pitch contour calculation.
+- Bugfix for prime pitch contour calculation (cseg doesn't work on extrema data).
+- Bugfix in database creation (missing comma). 
 
 ## [v0.4.0] - January 4, 2020 (Kent, CT)
 ### Added

@@ -733,6 +733,9 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 	>>> pc = [(80,), (91,), (78,), (85,)]
 	>>> pitch_content_to_contour(pc)
 	array([1, 3, 0, 2])
+	>>> pc2 = [(80,), (84,), (84,)]
+	>>> pitch_content_to_contour(pc2)
+	array([0, 1, 1])
 	"""
 	if type(pitch_content[0]) == tuple:
 		to_mono = [x[0] for x in pitch_content]
@@ -858,20 +861,32 @@ def contour_to_prime_contour(contour, include_depth=False):
 
 	:param np.array contour: contour input
 
-	>>> contour_a = [0, 4, 3, 2, 5, 5, 1]
-	>>> contour_to_prime_contour(contour_a, include_depth=False)
-	array([0, 2, 1])
-	>>> contour_b = [1, 3, 1, 2, 0, 1, 4]
+	>>> contour_a = [0, 1]
+	>>> contour_to_prime_contour(contour_a)
+	array([0, 1])
+	>>> contour_b = [0, 4, 3, 2, 5, 5, 1]
 	>>> contour_to_prime_contour(contour_b, include_depth=False)
+	array([0, 2, 1])
+	>>> contour_c = [1, 3, 1, 2, 0, 1, 4]
+	>>> contour_to_prime_contour(contour_c, include_depth=False)
 	array([1, 0, 2])
+	>>> contour_d = [0, 1, 1]
+	>>> contour_to_prime_contour(contour_d, include_depth=False)
+	array([0, 1, 1])
 	"""
+	if len(contour) <= 2:
+		if not(include_depth):
+			return pitch_content_to_contour(contour)
+		else:
+			return (pitch_content_to_contour(contour), depth)
+
 	depth = 0
 	prime_contour = _initial_extremas(contour)
 	if all([len(x[1]) != 0 for x in prime_contour]):
 		if not(include_depth):
-			return pitch_content_to_contour(prime_contour)
+			return pitch_content_to_contour(contour)
 		else:
-			return (pitch_content_to_contour(prime_contour), depth)
+			return (pitch_content_to_contour(contour), depth)
 
 	still_unflagged_values = True
 	while still_unflagged_values == True:

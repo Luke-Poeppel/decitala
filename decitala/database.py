@@ -195,7 +195,7 @@ def create_database(
 			for this_fragment in this_partition:
 				contour = list(pitch_content_to_contour(this_fragment["pitch_content"]))
 				prime_contour = list(contour_to_prime_contour(contour, include_depth=False))
-				fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, '{5}', '{6}', '{7}' {8})".format(this_fragment["onset_range"][0], # start offset
+				fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, '{5}', '{6}', '{7}', {8})".format(this_fragment["onset_range"][0], # start offset
 																													this_fragment["onset_range"][1], # end offset
 																													this_fragment["fragment"], # fragment
 																													this_fragment["mod"][0], # mod type 
