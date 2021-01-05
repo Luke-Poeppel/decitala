@@ -40,7 +40,8 @@ var chart_config = {
 
 new Treant(chart_config);
 
-html2canvas(document.body).then(function(canvas) {
-  // document.body.appendChild(canvas);
-  saveAs(canvas.toDataURL(), 'tree-diagram.png');
-});
+// Uncomment to use save. 
+// html2canvas(document.body).then(function(canvas) {
+//   // document.body.appendChild(canvas);
+//   saveAs(canvas.toDataURL(), 'tree-diagram.png');
+// });

@@ -667,23 +667,21 @@ class FragmentTree(NaryTree):
 		(2) the FileSaver requires the image to go to downloads, so that is where it is read from. 
 		"""
 		warnings.warn("Function still in development...")
-
 		#dirpath = tempfile.mkdtemp()
 		#shutil.rmtree(dirpath)
 
 		path = str(Path.home()) + "/{}".format(uuid.uuid4().hex)
 		create_tree_diagram(self, path)
-		
 		browser = webbrowser.get("chrome")
 		browser.open_new_tab("file://" + path + "/index.html")
 
-		downloads_path = str(Path.home() / "Downloads/*")
-		all_downloads = glob.glob(downloads_path)
-		latest_image = max(all_downloads, key = os.path.getctime)
+		# downloads_path = str(Path.home() / "Downloads/*")
+		# all_downloads = glob.glob(downloads_path)
+		# latest_image = max(all_downloads, key = os.path.getctime)
 		
-		img = mpimg.imread(latest_image)
-		plt.imshow(img)
-		plt.show()
+		# img = mpimg.imread(latest_image)
+		# plt.imshow(img)
+		# plt.show()
 
 ####################################################################################################
 # Search

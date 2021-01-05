@@ -12,6 +12,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Fragments table from ``database.create_database`` has just the name in the fragment column (full repr removed). 
 
 ### Fixed
+- Bug in path modeling. 
 
 ## [v0.4.1] - January 4, 2020 (Kent, CT)
 ### Fixed
