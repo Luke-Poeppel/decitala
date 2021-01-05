@@ -4,6 +4,7 @@ import pytest
 
 from music21 import chord
 from music21 import converter
+from music21 import note
 
 from decitala.utils import (
 	contiguous_summation,
@@ -12,7 +13,8 @@ from decitala.utils import (
 	filter_sub_fragments,
 	roll_window,
 	get_object_indices,
-	frame_is_spanned_by_slur
+	frame_is_spanned_by_slur,
+	frame_to_ql_array
 )
 
 from decitala.fragment import (
@@ -61,6 +63,16 @@ def example_transcriptions():
 	fp1 = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
 	fp2 = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_2.xml"
 	return fp1, fp2
+
+@pytest.fixture
+def example_frame():
+	frame = (
+		(note.Note("C#"), (3.625, 3.625)), 
+		(note.Note("E"), (3.625, 3.875)), 
+		(note.Note("E"), (3.875, 4.0)), 
+		(note.Note("F#"), (4.0, 4.25))
+	)
+	return frame
 
 def test_contiguous_summation_same_chord(gc2_example_data):
 	res = contiguous_summation(gc2_example_data)

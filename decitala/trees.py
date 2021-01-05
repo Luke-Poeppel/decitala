@@ -896,7 +896,8 @@ def rolling_search(
 		depths.append(difference_tree.depth)
 
 	object_list = get_object_indices(filepath = filepath, part_num = part_num)
-	
+	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
+
 	max_window_size = min(max(depths), len(object_list))
 	closest_window = min(windows, key=lambda x: abs(x - max_window_size))
 	index_of_closest = windows.index(closest_window)
@@ -932,7 +933,6 @@ def rolling_search(
 					search_dict["pitch_content"] = pitch_content
 
 					fragments_found.append(search_dict)
-				
 					logging.info("({0}, {1}), ({2}), {3}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset_range"], search_dict["is_spanned_by_slur"]))
 
 				if try_contiguous_summation:

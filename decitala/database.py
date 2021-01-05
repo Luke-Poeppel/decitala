@@ -163,7 +163,7 @@ def create_database(
 	# ALL_DATA = filter_data(ALL_DATA)
 	# logging.info("Removing cross-corpus duplicates and LD fragments...")
 	# logging.info("Removed {0} fragments ({1} remaining)".format(initial_length - len(ALL_DATA), len(ALL_DATA)))
-	
+	############ Filters ############
 	if filter_found_single_anga_class:
 		ALL_DATA = filter_single_anga_class_fragments(ALL_DATA)
 
@@ -176,6 +176,7 @@ def create_database(
 		ALL_DATA = filter_sub_fragments(ALL_DATA)
 		logging.info("Removing all sub fragments...")
 		logging.info("Removed {0} fragments ({1} remaining)".format(new_length - len(ALL_DATA), len(ALL_DATA)))
+	#################################
 
 	logging.info("Calculated break points: {}".format(get_break_points(ALL_DATA)))
 
@@ -192,20 +193,19 @@ def create_database(
 		fragment_table_string = "CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Pitch_Content BLOB, Pitch_Contour BLOB, Prime_Contour BLOB, Is_Slurred INT)"
 		cur.execute(fragment_table_string)
 
-		for this_partition in partitioned_data:
-			for this_fragment in this_partition:
-				contour = list(pitch_content_to_contour(this_fragment["pitch_content"]))
-				prime_contour = list(contour_to_prime_contour(contour, include_depth=False))
-				fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, '{5}', '{6}', '{7}', {8})".format(this_fragment["onset_range"][0], # start offset
-																													this_fragment["onset_range"][1], # end offset
-																													this_fragment["fragment"].name, # fragment
-																													this_fragment["mod"][0], # mod type 
-																													this_fragment["mod"][1], # mod factor/difference
-																													this_fragment["pitch_content"], # pitch content
-																													contour, # pitch contour 
-																													prime_contour, # prime contour
-																													int(this_fragment["is_spanned_by_slur"])) # is_slurred
-				cur.execute(fragment_insertion_string)
+		for this_fragment in sorted_onset_ranges:
+			contour = list(pitch_content_to_contour(this_fragment["pitch_content"]))
+			prime_contour = list(contour_to_prime_contour(contour, include_depth=False))
+			fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, '{5}', '{6}', '{7}', {8})".format(this_fragment["onset_range"][0], # start offset
+																												this_fragment["onset_range"][1], # end offset
+																												this_fragment["fragment"].name, # fragment
+																												this_fragment["mod"][0], # mod type 
+																												this_fragment["mod"][1], # mod factor/difference
+																												this_fragment["pitch_content"], # pitch content
+																												contour, # pitch contour 
+																												prime_contour, # prime contour
+																												int(this_fragment["is_spanned_by_slur"])) # is_slurred
+			cur.execute(fragment_insertion_string)
 
 		for i, this_partition in enumerate(partitioned_data):			
 			pareto_optimal_paths = get_pareto_optimal_longest_paths(this_partition)

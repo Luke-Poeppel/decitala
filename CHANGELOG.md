@@ -13,7 +13,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Most of the paths module has migrated to the ``DBParser`` class in database.py. The model is still in paths.py. 
 
 ### Fixed
-- Duplicates in database creation.
+- The rolling search code now has a line that filters out all grace notes. This was causing the duplicates in the database creation. 
 - Bug in path modeling. 
 
 ## [v0.4.1] - January 4, 2020 (Kent, CT)
