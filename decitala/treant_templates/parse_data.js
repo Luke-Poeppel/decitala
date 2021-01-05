@@ -16,6 +16,10 @@ function removeProps(obj,keys){
   }
 
 require("./Treant.min.js"); 
+const html2canvas = require("./html2canvas.min.js");
+
+// import html2canvas from "html2canvas";
+// require("./jquery.min.js");
 
 var tree_data = require("./tree.json");
 var tree = JSON.parse(tree_data);
@@ -37,3 +41,24 @@ var chart_config = {
 }
 
 new Treant(chart_config);
+
+// $('#mytree').html2canvas({
+//   onrendered : function(canvas) {
+//   var img = canvas.toDataURL();
+//   console.log(img)
+//   // // img now contains an IMG URL, you can do various things with it, but most simply:
+//   //     $('<img>',{src:img}).appendTo($('body'));
+//           }
+//       });
+
+html2canvas(document.body).then(function(canvas) {
+  document.body.appendChild(canvas);
+});
+
+// html2canvas(document.body).then(function(canvas) {
+//   // Export the canvas to its data URI representation
+//   var base64image = canvas.toDataURL("image/png");
+
+//   // Open the image in a new window
+//   window.open(base64image , "_blank");
+// });
