@@ -5,15 +5,16 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.4.2] - January 4, 2020 (Kent, CT)
 ### Added
-- Added fragment table visualization (``DBParser.show_fragments_table``) using pandas (wrapper for pd.read_sql_query). Also added ``show_slurred_fragments`` method for visualizing that subset of the data. 
+- Added fragment table visualization (``DBParser.show_fragments_table``) using pandas (wrapper for pd.read_sql_query). Also added a few other sub-displays (like ``show_slurred_fragments``). 
 - Added preliminary native visualization of the FragmentTrees using FileSaver.js. Can be called with ``FragmentTree.show()``. 
+- Added ``model.py`` file (in development).
 
 ### Changed
 - Fragments table from ``database.create_database`` has just the name in the fragment column (full repr removed). 
 - Most of the paths module has migrated to the ``DBParser`` class in database.py. The model is still in paths.py. 
 
 ### Fixed
-- The rolling search code now has a line that filters out all grace notes. This was causing the duplicates in the database creation. 
+- The rolling search code now has a line that filters out all grace notes. This was causing the duplicates in the database creation.
 - Bug in path modeling. 
 
 ## [v0.4.1] - January 4, 2020 (Kent, CT)
