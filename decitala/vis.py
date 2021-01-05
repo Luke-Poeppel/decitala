@@ -16,13 +16,16 @@ import shutil
 
 from collections import Counter
 
-from .trees import (
-	NaryTree,
-	FragmentTree
-)
+from Naked.toolshed.shell import execute_js
+
+from . import trees # To avoid circular dependency. 
 
 import logging
 logging.basicConfig(level=logging.INFO)
+
+__all__ = [
+	"create_tree_diagram"
+]
 
 FONTNAME = 'Times'
 FONTSIZE_TITLE = 14
@@ -38,17 +41,17 @@ def create_tree_diagram(FragmentTree, path):
 	:param str path: path to the folder where the visualization will be stored.
 	:return: folder at the provided path containing an index.html file which has a visualization of the provided :obj:`~decitala.trees.FragmentTree`.
 	"""
-	if os.path.isdir(path):
-		logging.info("A FragmentTree diagram already exists at that location ✔")
-		return
-	stupid_tree = NaryTree()
+	# if os.path.isdir(path):
+	# 	logging.info("A FragmentTree diagram already exists at that location ✔")
+	# 	return
+	stupid_tree = trees.NaryTree()
 	if FragmentTree.rep_type == "ratio":
-		root = NaryTree().Node(value = 1.0, name = None)
+		root = trees.NaryTree().Node(value = 1.0, name = None)
 		for this_fragment in FragmentTree.sorted_data:
 			fragment_list = this_fragment.successive_ratio_array().tolist()
 			root.add_path_of_children(fragment_list, this_fragment.name)
 	else:
-		root = NaryTree().Node(value = 0.0, name = None)
+		root = trees.NaryTree().Node(value = 0.0, name = None)
 		for this_fragment in FragmentTree.sorted_data:
 			fragment_list = this_fragment.successive_difference_array().tolist()
 			root.add_path_of_children(fragment_list, this_fragment.name)
