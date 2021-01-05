@@ -41,9 +41,9 @@ def create_tree_diagram(FragmentTree, path):
 	:param str path: path to the folder where the visualization will be stored.
 	:return: folder at the provided path containing an index.html file which has a visualization of the provided :obj:`~decitala.trees.FragmentTree`.
 	"""
-	# if os.path.isdir(path):
-	# 	logging.info("A FragmentTree diagram already exists at that location ✔")
-	# 	return
+	if os.path.isdir(path):
+		logging.info("A FragmentTree diagram already exists at that location ✔")
+		return
 	stupid_tree = trees.NaryTree()
 	if FragmentTree.rep_type == "ratio":
 		root = trees.NaryTree().Node(value = 1.0, name = None)

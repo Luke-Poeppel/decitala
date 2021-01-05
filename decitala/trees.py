@@ -18,6 +18,8 @@ import pytest
 import re
 import shutil
 import tempfile
+import uuid
+import warnings
 import webbrowser
 
 from collections import deque
@@ -664,9 +666,10 @@ class FragmentTree(NaryTree):
 		Notes: (1) this is still in development, so the exported image may not look great (yet) and
 		(2) the FileSaver requires the image to go to downloads, so that is where it is read from. 
 		"""
+		warnings.warn("Function still in development...")
+
 		#dirpath = tempfile.mkdtemp()
 		#shutil.rmtree(dirpath)
-		import uuid
 
 		path = str(Path.home()) + "/{}".format(uuid.uuid4().hex)
 		create_tree_diagram(self, path)
