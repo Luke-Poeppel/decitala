@@ -7,6 +7,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Added
 - Added fragment table visualization (``DBParser.show_fragments_table``) using pandas (wrapper for pd.read_sql_query). 
 
+### Changed
+- Fragments table from ``database.create_database`` has just the name in the fragment column (full repr removed). 
+
 ### Fixed
 
 ## [v0.4.1] - January 4, 2020 (Kent, CT)

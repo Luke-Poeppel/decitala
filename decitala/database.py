@@ -198,7 +198,7 @@ def create_database(
 				prime_contour = list(contour_to_prime_contour(contour, include_depth=False))
 				fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, '{5}', '{6}', '{7}', {8})".format(this_fragment["onset_range"][0], # start offset
 																													this_fragment["onset_range"][1], # end offset
-																													this_fragment["fragment"], # fragment
+																													this_fragment["fragment"].name, # fragment
 																													this_fragment["mod"][0], # mod type 
 																													this_fragment["mod"][1], # mod factor/difference
 																													this_fragment["pitch_content"], # pitch content
@@ -278,12 +278,10 @@ class DBParser(object):
 			row_data = dict()
 
 			fragment_str = this_row[2]
-			fragment_name = fragment_str.split()[-1][:-1] # Remove the final `>`.
-			fragment_abbrev = fragment_str[10:12]
-			if fragment_abbrev == "De": # Decitala
-				this_fragment = Decitala(fragment_name)
-			elif fragment_abbrev == "Gr": # GreekFoot
-				this_fragment = GreekFoot(fragment_name)
+			if fragment_str[0].isdigit():
+				this_fragment = Decitala(fragment_str)
+			else:
+				this_fragment = GreekFoot(fragment_str)
 
 			row_data["fragment"] = this_fragment
 			row_data["onset_range"] = (this_row[0], this_row[1])
@@ -306,9 +304,17 @@ class DBParser(object):
 	def spanned_fragments(self):
 		return [x for x in self.data if x["is_slurred"]==True]
 
+	# Useful visualizations for jupyter.
 	def show_fragments_table(self):
 		"""
 		Displays the Fragments table of the database using pandas. 
 		"""
 		data = pd.read_sql_query("SELECT * FROM Fragments", self.conn)
+		return data
+	
+	def show_spanned_fragments(self):
+		"""
+		Displays the Fragments table of the database using pandas. 
+		"""
+		data = pd.read_sql_query("SELECT * FROM Fragments WHERE Is_Slurred = 1", self.conn)
 		return data
