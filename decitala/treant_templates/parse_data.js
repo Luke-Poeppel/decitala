@@ -19,9 +19,6 @@ require("./Treant.min.js");
 const html2canvas = require("./html2canvas.min.js");
 const saveAs = require("./FileSaver.min.js");
 
-// import html2canvas from "html2canvas";
-// require("./jquery.min.js");
-
 var tree_data = require("./tree.json");
 var tree = JSON.parse(tree_data);
 
