@@ -32,6 +32,10 @@ from decitala.fragment import (
 	GreekFoot
 )
 
+from decitala.database import (
+	DBParser
+)
+
 ############### EXCEPTIONS ###############
 class PathsException(Exception):
 	pass

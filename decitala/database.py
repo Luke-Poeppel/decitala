@@ -318,3 +318,13 @@ class DBParser(object):
 		"""
 		data = pd.read_sql_query("SELECT * FROM Fragments WHERE Is_Slurred = 1", self.conn)
 		return data
+
+	def show_paths_table(self, i):
+		data = pd.read_sql_query("SELECT * FROM Paths_{}".format(i), self.conn)
+		return data
+
+	def show_subpath(self, table_num, path_num):
+		QUERY_STRING = "SELECT * FROM PATHS_{0} WHERE rowid = {1}".format(table_num, path_num)
+		data = pd.read_sql_query(QUERY_STRING, self.conn)
+
+		return data

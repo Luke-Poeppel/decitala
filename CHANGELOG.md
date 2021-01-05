@@ -10,8 +10,10 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ### Changed
 - Fragments table from ``database.create_database`` has just the name in the fragment column (full repr removed). 
+- Most of the paths module has migrated to the ``DBParser`` class in database.py. The model is still in paths.py. 
 
 ### Fixed
+- Duplicates in database creation.
 - Bug in path modeling. 
 
 ## [v0.4.1] - January 4, 2020 (Kent, CT)
