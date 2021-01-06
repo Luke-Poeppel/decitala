@@ -46,6 +46,9 @@ from .pofp import (
 	partition_data_by_break_points,
 	get_pareto_optimal_longest_paths
 )
+from .model import (
+	model_in
+)
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -209,42 +212,45 @@ def create_database(
 
 		for i, this_partition in enumerate(partitioned_data):			
 			pareto_optimal_paths = get_pareto_optimal_longest_paths(this_partition)
-			lengths = [len(path) for path in pareto_optimal_paths]
-			longest_path = max(lengths)
+			longest_path = max([len(path) for path in pareto_optimal_paths])
 
 			columns = ["Onset_Range_{}".format(i) for i in range(1, longest_path + 1)]
-			columns_declaration = ", ".join("%s BLOB" % c for c in columns)
+			columns_declaration = ", ".join("%s BLOB" % c for c in columns) + ", Model REAL"
 
 			cur.execute("CREATE TABLE Paths_{0} ({1})".format(str(i), columns_declaration))
 			logging.info("Making Paths_{} table".format(i))
-			
 			for path in pareto_optimal_paths:
+				intra_model_val = model_in(path)
+				print(intra_model_val)
 				if len(path) == longest_path:
 					data = []
 					for this_range in path:
 						data.append("{0}".format(this_range[-1]))
-					
 					mid = "', '".join(data)
-					post = "INSERT INTO Paths_{0} VALUES('".format(str(i)) + mid + "')"
+					post = "INSERT INTO Paths_{0} VALUES('".format(str(i)) + mid + "', {})".format(intra_model_val)
 					cur.execute(post)
-				else:
-					diff = longest_path - len(path)
-					data = []
-					for this_range in path:
-						data.append('{0}'.format(this_range[-1]))
+			# 	else:
+			# 		diff = longest_path - len(path)
+			# 		data = []
+			# 		for this_range in path:
+			# 			data.append('{0}'.format(this_range[-1]))
 					
-					mid = "', '".join(data)
-					nulls = ["'NULL'"] * diff
-					post_nulls = ", ".join(nulls)
-					new = "INSERT INTO Paths_{0} VALUES('{1}', {2})".format(str(i), mid, post_nulls)
-					cur.execute(new)
+			# 		mid = "', '".join(data)
+			# 		nulls = ["'NULL'"] * diff
+			# 		post_nulls = ", ".join(nulls)
+			# 		new = "INSERT INTO Paths_{0} VALUES('{1}', {2})".format(str(i), mid, post_nulls)
+			# 		cur.execute(new)
+		
+		"""
+		The partitions still have the fragment data! 
+		"""
 		
 		logging.info("Done preparing ✔")
 
 ####################################################################################################
 class DBParser(object):
 	"""
-	Class used for parsing data from the ``Fragments`` page of a database made via :obj:`~decitala.database.create_database`.
+	Class used for parsing the database made in :obj:`~decitala.database.create_database`.
 
 	>>> example_data = "/Users/lukepoeppel/decitala/tests/static/ex99_data.db"
 	>>> parsed = DBParser(example_data)
@@ -261,13 +267,13 @@ class DBParser(object):
 	def __init__(self, db_path):
 		assert os.path.isfile(db_path), DatabaseException("You've provided an invalid file.")
 
-		self.db_path = db_path
-		filename = self.db_path.split('/')[-1]
-		self.filename = filename
-
-		conn = lite.connect(self.db_path)
-		self.conn = conn
+		filename = db_path.split('/')[-1]
+		conn = lite.connect(db_path)
 		cur = conn.cursor()
+
+		self.db_path = db_path
+		self.filename = filename
+		self.conn = conn
 
 		fragment_path_string = "SELECT * FROM Fragments"
 		cur.execute(fragment_path_string)
@@ -319,12 +325,39 @@ class DBParser(object):
 		data = pd.read_sql_query("SELECT * FROM Fragments WHERE Is_Slurred = 1", self.conn)
 		return data
 
+	######## Paths Calculations
 	def show_paths_table(self, i):
 		data = pd.read_sql_query("SELECT * FROM Paths_{}".format(i), self.conn)
 		return data
 
-	def show_subpath(self, table_num, path_num):
+	def get_subpath(self, table_num, path_num):
 		QUERY_STRING = "SELECT * FROM PATHS_{0} WHERE rowid = {1}".format(table_num, path_num)
 		data = pd.read_sql_query(QUERY_STRING, self.conn)
 
 		return data
+
+	def num_path_tables(self):
+		QUERY_STRING = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table'"
+		data = pd.read_sql_query(QUERY_STRING, self.conn)
+		num_path_tables = data["COUNT(*)"].iloc[0] - 1
+
+		return num_path_tables
+	
+	def num_rows_in_table(self, table):
+		QUERY_STRING = "SELECT COUNT(*) FROM {}".format(table)
+		data = pd.read_sql_query(QUERY_STRING, self.conn)
+		num_rows = data["COUNT(*)"].iloc[0]
+		return num_rows
+
+	def get_paths_data(self):
+		data = []
+		for i in range(0, self.num_path_tables()):
+			curr_table = "Paths_{}".format(i)
+			data.append([i, self.num_rows_in_table(curr_table)])
+		return data
+
+	def subpath_fragments(self, table_num, path_num):
+		data = self.get_subpath(table_num, path_num)
+		fragments = []
+		
+

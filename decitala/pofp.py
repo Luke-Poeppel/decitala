@@ -209,7 +209,7 @@ def get_pareto_optimal_longest_paths(data, verbose=False):
 		for this_range in this_path:
 			for this_data in data:
 				if this_range == this_data["onset_range"]:
-					new_path.append([this_data["fragment"], this_range])
+					new_path.append([this_data, this_range])
 					continue
 		stupid_out.append(new_path)
 
