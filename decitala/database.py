@@ -215,28 +215,31 @@ def create_database(
 			longest_path = max([len(path) for path in pareto_optimal_paths])
 
 			columns = ["Onset_Range_{}".format(i) for i in range(1, longest_path + 1)]
-			columns_declaration = ", ".join("%s BLOB" % c for c in columns) + ", Model REAL"
+			columns_declaration = ", ".join("%s INTEGER" % c for c in columns)
 
 			cur.execute("CREATE TABLE Paths_{0} ({1})".format(str(i), columns_declaration))
 			logging.info("Making Paths_{} table".format(i))
+			
+			FRAGMENT_TABLE_STRING = "SELECT * FROM Fragments"
+			cur.execute(FRAGMENT_TABLE_STRING)
+			fragment_rows = cur.fetchall()
 			for path in pareto_optimal_paths:
-				intra_model_val = model_in(path)
-				data = ["{0}".format(this_range[-1]) for this_range in path]
-				sep = "', '".join(data)
-				
+				fragment_row_ids = []
+				for this_fragment_data in path:
+					data = this_fragment_data[0]
+					for j, this_row in enumerate(fragment_rows):
+						if (this_row[2] == data["fragment"].name) and (this_row[0] == data["onset_range"][0]) and (this_row[1] == data["onset_range"][1]):
+							fragment_row_ids.append(j + 1)
+
 				if len(path) == longest_path:
-					longest_paths_insertion_string = "INSERT INTO Paths_{0} VALUES('{1}', {2})".format(str(i), sep, intra_model_val)
+					longest_paths_insertion_string = "INSERT INTO Paths_{0} VALUES({1})".format(str(i), ", ".join([str(x) for x in fragment_row_ids]))
 					cur.execute(longest_paths_insertion_string)
 				else:
 					diff = longest_path - len(path)
 					nulls = ["'NULL'"] * diff
 					formatted_nuls = ", ".join(nulls)
-					shorter_paths_insertion_string = "INSERT INTO Paths_{0} VALUES('{1}', {2}, {3})".format(str(i), sep, formatted_nuls, intra_model_val)
+					shorter_paths_insertion_string = "INSERT INTO Paths_{0} VALUES({1}, {2})".format(str(i), ", ".join([str(x) for x in fragment_row_ids]), formatted_nuls)
 					cur.execute(shorter_paths_insertion_string)
-		
-		"""
-		The partitions still have the fragment data! 
-		"""
 		
 		logging.info("Done preparing ✔")
 
@@ -272,7 +275,7 @@ class DBParser(object):
 		cur.execute(fragment_path_string)
 		fragment_rows = cur.fetchall()
 		
-		data = []
+		fragment_data = []
 		for this_row in fragment_rows:
 			row_data = dict()
 
@@ -289,19 +292,19 @@ class DBParser(object):
 			row_data["pitch_content"] = literal_eval(this_row[5])
 			row_data["is_slurred"] = bool(this_row[6])
 
-			data.append(row_data)
+			fragment_data.append(row_data)
 
-		self.data = data
+		self.fragment_data = fragment_data
 
 	def __repr__(self):
 		return "<database.DBParser {}>".format(self.filename)
 	
 	@property
 	def fragments(self):
-		return [x["fragment"] for x in self.data]
+		return [x["fragment"] for x in self.fragment_data]
 
 	def spanned_fragments(self):
-		return [x for x in self.data if x["is_slurred"]==True]
+		return [x for x in self.fragment_data if x["is_slurred"]==True]
 
 	# Useful visualizations for jupyter.
 	def show_fragments_table(self):
@@ -318,15 +321,9 @@ class DBParser(object):
 		data = pd.read_sql_query("SELECT * FROM Fragments WHERE Is_Slurred = 1", self.conn)
 		return data
 
-	######## Paths Calculations
+	######## Paths Metadata ########
 	def show_paths_table(self, i):
 		data = pd.read_sql_query("SELECT * FROM Paths_{}".format(i), self.conn)
-		return data
-
-	def get_subpath(self, table_num, path_num):
-		QUERY_STRING = "SELECT * FROM PATHS_{0} WHERE rowid = {1}".format(table_num, path_num)
-		data = pd.read_sql_query(QUERY_STRING, self.conn)
-
 		return data
 
 	def num_path_tables(self):
@@ -343,14 +340,24 @@ class DBParser(object):
 		return num_rows
 
 	def get_paths_data(self):
+		"""Returns a list of lists holding the number of paths for a given table."""
 		data = []
 		for i in range(0, self.num_path_tables()):
 			curr_table = "Paths_{}".format(i)
 			data.append([i, self.num_rows_in_table(curr_table)])
 		return data
 
+	######## Paths Individual ########
+	def get_subpath(self, table_num, path_num):
+		QUERY_STRING = "SELECT * FROM PATHS_{0} WHERE rowid = {1}".format(table_num, path_num)
+		data = pd.read_sql_query(QUERY_STRING, self.conn)
+
+		return data
+
 	def subpath_fragments(self, table_num, path_num):
 		data = self.get_subpath(table_num, path_num)
-		fragments = []
+		for x in data:
+			print(x)
 		
-
+	# def get_num_onsets_data_from_paths(self):
+	# 	pass
