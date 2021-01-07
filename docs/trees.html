@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>trees.py &mdash; decitala 0.4.1 documentation</title>
+  <title>trees.py &mdash; decitala 0.4.2 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="decitala 0.4.1 documentation" href="index.html"/>
+    <link rel="top" title="decitala 0.4.2 documentation" href="index.html"/>
         <link rel="next" title="utils.py" href="utils.html"/>
         <link rel="prev" title="pofp.py" href="pofp.html"/> 
 
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.4.1
+                0.4.2
               </div>
             
           
@@ -89,7 +89,6 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="paths.html">paths.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp.py</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">trees.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils.py</a></li>
@@ -485,6 +484,15 @@ Otherwise creates <a class="reference internal" href="fragment.html#decitala.fra
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="decitala.trees.FragmentTree.show">
+<code class="sig-name descname">show</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/trees.html#FragmentTree.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.trees.FragmentTree.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>The vis module uses the Treant.js library to create a tree diagram. We then use 
+html2canvas.js and FileSaver.js to render the image and display it with matplotlib. 
+Notes: (1) this is still in development, so the exported image may not look great (yet) and
+(2) the FileSaver requires the image to go to downloads, so that is where it is read from.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
@@ -618,7 +626,7 @@ are the lengths of fragments in the decitala dataset.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.4.1',
+            VERSION:'0.4.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

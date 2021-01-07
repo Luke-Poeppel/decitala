@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.trees &mdash; decitala 0.4.1 documentation</title>
+  <title>decitala.trees &mdash; decitala 0.4.2 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.4.1 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.4.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.4.1
+                0.4.2
               </div>
             
           
@@ -88,7 +88,6 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../database.html">database.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fragment.html">fragment.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../paths.html">paths.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../pofp.html">pofp.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../trees.html">trees.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils.py</a></li>
@@ -166,14 +165,23 @@
 <span class="c1"># Location: Kent, 2020 / Frankfurt, 2020</span>
 <span class="c1">####################################################################################################</span>
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">glob</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">jsonpickle</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.image</span> <span class="k">as</span> <span class="nn">mpimg</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">webbrowser</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">.fragment</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">Decitala</span><span class="p">,</span>
@@ -192,6 +200,10 @@
 	<span class="n">frame_to_ql_array</span><span class="p">,</span>
 	<span class="n">frame_is_spanned_by_slur</span><span class="p">,</span>
 	<span class="n">frame_to_midi</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.vis</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">create_tree_diagram</span>
 <span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -803,7 +815,31 @@
 					<span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 					<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">as_quarter_lengths</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
 
-		<span class="k">return</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="n">rep_type</span><span class="p">)</span></div></div>
+		<span class="k">return</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="n">rep_type</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FragmentTree.show"><a class="viewcode-back" href="../../trees.html#decitala.trees.FragmentTree.show">[docs]</a>	<span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		The vis module uses the Treant.js library to create a tree diagram. We then use </span>
+<span class="sd">		html2canvas.js and FileSaver.js to render the image and display it with matplotlib. </span>
+<span class="sd">		Notes: (1) this is still in development, so the exported image may not look great (yet) and</span>
+<span class="sd">		(2) the FileSaver requires the image to go to downloads, so that is where it is read from. </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Function still in development...&quot;</span><span class="p">)</span>
+		<span class="c1">#dirpath = tempfile.mkdtemp()</span>
+		<span class="c1">#shutil.rmtree(dirpath)</span>
+
+		<span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">)</span>
+		<span class="n">create_tree_diagram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+		<span class="n">browser</span> <span class="o">=</span> <span class="n">webbrowser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chrome&quot;</span><span class="p">)</span>
+		<span class="n">browser</span><span class="o">.</span><span class="n">open_new_tab</span><span class="p">(</span><span class="s2">&quot;file://&quot;</span> <span class="o">+</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/index.html&quot;</span><span class="p">)</span></div></div>
+
+		<span class="c1"># downloads_path = str(Path.home() / &quot;Downloads/*&quot;)</span>
+		<span class="c1"># all_downloads = glob.glob(downloads_path)</span>
+		<span class="c1"># latest_image = max(all_downloads, key = os.path.getctime)</span>
+		
+		<span class="c1"># img = mpimg.imread(latest_image)</span>
+		<span class="c1"># plt.imshow(img)</span>
+		<span class="c1"># plt.show()</span>
 
 <span class="c1">####################################################################################################</span>
 <span class="c1"># Search</span>
@@ -1018,7 +1054,8 @@
 		<span class="n">depths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">difference_tree</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
 
 	<span class="n">object_list</span> <span class="o">=</span> <span class="n">get_object_indices</span><span class="p">(</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">part_num</span> <span class="o">=</span> <span class="n">part_num</span><span class="p">)</span>
-	
+	<span class="n">object_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">object_list</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+
 	<span class="n">max_window_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">depths</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">object_list</span><span class="p">))</span>
 	<span class="n">closest_window</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">windows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">max_window_size</span><span class="p">))</span>
 	<span class="n">index_of_closest</span> <span class="o">=</span> <span class="n">windows</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">closest_window</span><span class="p">)</span>
@@ -1054,7 +1091,6 @@
 					<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;pitch_content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pitch_content</span>
 
 					<span class="n">fragments_found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">search_dict</span><span class="p">)</span>
-				
 					<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;(</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">), (</span><span class="si">{2}</span><span class="s2">), </span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">],</span> <span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">],</span> <span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">],</span> <span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;is_spanned_by_slur&quot;</span><span class="p">]))</span>
 
 				<span class="k">if</span> <span class="n">try_contiguous_summation</span><span class="p">:</span>
@@ -1176,7 +1212,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.4.1',
+            VERSION:'0.4.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

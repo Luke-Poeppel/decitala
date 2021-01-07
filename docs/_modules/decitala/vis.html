@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.vis &mdash; decitala 0.4.1 documentation</title>
+  <title>decitala.vis &mdash; decitala 0.4.2 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.4.1 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.4.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.4.1
+                0.4.2
               </div>
             
           
@@ -88,7 +88,6 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../database.html">database.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fragment.html">fragment.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../paths.html">paths.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../pofp.html">pofp.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../trees.html">trees.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils.py</a></li>
@@ -175,13 +174,16 @@
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 
-<span class="kn">from</span> <span class="nn">.trees</span> <span class="kn">import</span> <span class="p">(</span>
-	<span class="n">NaryTree</span><span class="p">,</span>
-	<span class="n">FragmentTree</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">Naked.toolshed.shell</span> <span class="kn">import</span> <span class="n">execute_js</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">trees</span> <span class="c1"># To avoid circular dependency. </span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+	<span class="s2">&quot;create_tree_diagram&quot;</span>
+<span class="p">]</span>
 
 <span class="n">FONTNAME</span> <span class="o">=</span> <span class="s1">&#39;Times&#39;</span>
 <span class="n">FONTSIZE_TITLE</span> <span class="o">=</span> <span class="mi">14</span>
@@ -197,14 +199,17 @@
 <span class="sd">	:param str path: path to the folder where the visualization will be stored.</span>
 <span class="sd">	:return: folder at the provided path containing an index.html file which has a visualization of the provided :obj:`~decitala.trees.FragmentTree`.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">stupid_tree</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+		<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;A FragmentTree diagram already exists at that location ✔&quot;</span><span class="p">)</span>
+		<span class="k">return</span>
+	<span class="n">stupid_tree</span> <span class="o">=</span> <span class="n">trees</span><span class="o">.</span><span class="n">NaryTree</span><span class="p">()</span>
 	<span class="k">if</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
-		<span class="n">root</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+		<span class="n">root</span> <span class="o">=</span> <span class="n">trees</span><span class="o">.</span><span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
 		<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">sorted_data</span><span class="p">:</span>
 			<span class="n">fragment_list</span> <span class="o">=</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">successive_ratio_array</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 			<span class="n">root</span><span class="o">.</span><span class="n">add_path_of_children</span><span class="p">(</span><span class="n">fragment_list</span><span class="p">,</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="n">root</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+		<span class="n">root</span> <span class="o">=</span> <span class="n">trees</span><span class="o">.</span><span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
 		<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">sorted_data</span><span class="p">:</span>
 			<span class="n">fragment_list</span> <span class="o">=</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">successive_difference_array</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 			<span class="n">root</span><span class="o">.</span><span class="n">add_path_of_children</span><span class="p">(</span><span class="n">fragment_list</span><span class="p">,</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -268,7 +273,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.4.1',
+            VERSION:'0.4.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

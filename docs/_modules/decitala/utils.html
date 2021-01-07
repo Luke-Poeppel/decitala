@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.utils &mdash; decitala 0.4.1 documentation</title>
+  <title>decitala.utils &mdash; decitala 0.4.2 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.4.1 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.4.2 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.4.1
+                0.4.2
               </div>
             
           
@@ -88,7 +88,6 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../database.html">database.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fragment.html">fragment.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../paths.html">paths.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../pofp.html">pofp.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../trees.html">trees.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils.py</a></li>
@@ -200,6 +199,7 @@
 	<span class="s2">&quot;filter_single_anga_class_fragments&quot;</span><span class="p">,</span> <span class="c1"># Data helpers</span>
 	<span class="s2">&quot;filter_sub_fragments&quot;</span><span class="p">,</span>
 	<span class="s2">&quot;pitch_content_to_contour&quot;</span><span class="p">,</span> <span class="c1"># Pitch Content</span>
+	<span class="s2">&quot;contour_to_prime_contour&quot;</span>
 <span class="p">]</span>
 
 <span class="n">carnatic_symbols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
@@ -1012,7 +1012,7 @@
 	
 	<span class="k">return</span> <span class="n">contour</span>
 
-<span class="k">def</span> <span class="nf">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="n">include_depth</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="contour_to_prime_contour"><a class="viewcode-back" href="../../utils.html#decitala.utils.contour_to_prime_contour">[docs]</a><span class="k">def</span> <span class="nf">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="n">include_depth</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Implementation of Morris&#39; 1993 Contour-Reduction algorithm. &quot;The algorithm prunes pitches</span>
 <span class="sd">	from a contour until it is reduced to a prime.&quot; The loop runs until all elements</span>
@@ -1062,7 +1062,7 @@
 	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">include_depth</span><span class="p">):</span>
 		<span class="k">return</span> <span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">prime_contour</span><span class="p">)</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="k">return</span> <span class="p">(</span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">prime_contour</span><span class="p">),</span> <span class="n">depth</span><span class="p">)</span>
+		<span class="k">return</span> <span class="p">(</span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">prime_contour</span><span class="p">),</span> <span class="n">depth</span><span class="p">)</span></div>
 
 <span class="c1">####################################################################################################</span>
 <span class="c1"># Math helpers</span>
@@ -1129,7 +1129,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.4.1',
+            VERSION:'0.4.2',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
