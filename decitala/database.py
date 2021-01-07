@@ -46,9 +46,6 @@ from .pofp import (
 	partition_data_by_break_points,
 	get_pareto_optimal_longest_paths
 )
-from .model import (
-	model_in
-)
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -282,8 +279,6 @@ class DBParser(object):
 	90.47619047619048
 	>>> parsed.get_subpath_model(1, 121)
 	75.52305665349144
-	>>> for x in parsed.get_highest_modeled_subpath(1):
-	... 	print(x)
 	"""
 	def __init__(self, db_path):
 		assert os.path.isfile(db_path), DatabaseException("You've provided an invalid file.")

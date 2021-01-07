@@ -12,12 +12,10 @@ if __name__ == "__main__":
 		fragment,
 		utils,
 		trees,
-		paths,
 		pofp,
 	)
 	doctest.testmod(database)
 	doctest.testmod(fragment)
 	doctest.testmod(utils)
 	doctest.testmod(trees)
-	doctest.testmod(paths)
 	doctest.testmod(pofp)
