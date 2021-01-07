@@ -127,10 +127,9 @@ def create_database(
 	logging.info("Try contiguous summations: {}".format(try_contiguous_summation))
 	logging.info("Filter single anga class fragments: {}".format(filter_found_single_anga_class))
 	logging.info("Filter sub fragments: {}".format(filter_found_sub_fragments))
-	logging.info("Keep grace notes: {}".format(keep_grace_notes))
+	# logging.info("Keep grace notes: {}".format(keep_grace_notes))
 
 	ALL_DATA = []
-
 	for this_frag_type in frag_types:
 		logging.info("\n")
 		logging.info("Making fragment tree(s) (and searching) for frag_type: {}".format(this_frag_type))
@@ -163,9 +162,8 @@ def create_database(
 	logging.info("\n")
 	logging.info("{} fragments extracted".format(initial_length))
 
-	# ALL_DATA = filter_data(ALL_DATA)
-	# logging.info("Removing cross-corpus duplicates and LD fragments...")
-	# logging.info("Removed {0} fragments ({1} remaining)".format(initial_length - len(ALL_DATA), len(ALL_DATA)))
+	# logging.info("Removing cross-corpus duplicates...")
+	
 	############ Filters ############
 	if filter_found_single_anga_class:
 		ALL_DATA = filter_single_anga_class_fragments(ALL_DATA)
@@ -193,9 +191,10 @@ def create_database(
 		logging.info("Connected to database at: {}".format(db_path))
 
 		cur = conn.cursor()
+		
+		###### Creating Fragments Table ######
 		fragment_table_string = "CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Pitch_Content BLOB, Pitch_Contour BLOB, Prime_Contour BLOB, Is_Slurred INT)"
 		cur.execute(fragment_table_string)
-
 		for this_fragment in sorted_onset_ranges:
 			contour = list(pitch_content_to_contour(this_fragment["pitch_content"]))
 			prime_contour = list(contour_to_prime_contour(contour, include_depth=False))
@@ -210,6 +209,7 @@ def create_database(
 																												int(this_fragment["is_spanned_by_slur"])) # is_slurred
 			cur.execute(fragment_insertion_string)
 
+		###### Creating Paths Table ######
 		for i, this_partition in enumerate(partitioned_data):			
 			pareto_optimal_paths = get_pareto_optimal_longest_paths(this_partition)
 			longest_path = max([len(path) for path in pareto_optimal_paths])
@@ -221,25 +221,18 @@ def create_database(
 			logging.info("Making Paths_{} table".format(i))
 			for path in pareto_optimal_paths:
 				intra_model_val = model_in(path)
-				print(intra_model_val)
+				data = ["{0}".format(this_range[-1]) for this_range in path]
+				sep = "', '".join(data)
+				
 				if len(path) == longest_path:
-					data = []
-					for this_range in path:
-						data.append("{0}".format(this_range[-1]))
-					mid = "', '".join(data)
-					post = "INSERT INTO Paths_{0} VALUES('".format(str(i)) + mid + "', {})".format(intra_model_val)
-					cur.execute(post)
-			# 	else:
-			# 		diff = longest_path - len(path)
-			# 		data = []
-			# 		for this_range in path:
-			# 			data.append('{0}'.format(this_range[-1]))
-					
-			# 		mid = "', '".join(data)
-			# 		nulls = ["'NULL'"] * diff
-			# 		post_nulls = ", ".join(nulls)
-			# 		new = "INSERT INTO Paths_{0} VALUES('{1}', {2})".format(str(i), mid, post_nulls)
-			# 		cur.execute(new)
+					longest_paths_insertion_string = "INSERT INTO Paths_{0} VALUES('{1}', {2})".format(str(i), sep, intra_model_val)
+					cur.execute(longest_paths_insertion_string)
+				else:
+					diff = longest_path - len(path)
+					nulls = ["'NULL'"] * diff
+					formatted_nuls = ", ".join(nulls)
+					shorter_paths_insertion_string = "INSERT INTO Paths_{0} VALUES('{1}', {2}, {3})".format(str(i), sep, formatted_nuls, intra_model_val)
+					cur.execute(shorter_paths_insertion_string)
 		
 		"""
 		The partitions still have the fragment data! 

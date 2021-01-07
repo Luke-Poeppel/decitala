@@ -3,7 +3,7 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.4.2] - January 5, 2020 (Kent, CT)
+## [v0.4.2] - January 6, 2020 (Kent, CT)
 ### Added
 - Added fragment table visualization (``DBParser.show_fragments_table``) using pandas (wrapper for pd.read_sql_query). Also added a few other sub-displays (like ``show_slurred_fragments``). 
 - Added preliminary native visualization of the FragmentTrees using FileSaver.js. Can be called with ``FragmentTree.show()``. 
@@ -13,11 +13,11 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Fragments table from ``database.create_database`` has just the name in the fragment column (full repr removed). 
 - Most of the paths module has migrated to the ``DBParser`` class in database.py. 
 - Output of ``get_pareto_optimal_longest_paths`` now includes all data, not just the fragment. 
-- Cleaned up the path code in ``create_database``.
+- Greatly cleaned up the path code in ``create_database``.
 
 ### Fixed
 - The rolling search code now has a line that filters out all grace notes. This was causing the duplicates in the database creation.
-- Bug in path modeling. 
+- Minor documentation fixes (typos and old parameters).
 
 ## [v0.4.1] - January 4, 2020 (Kent, CT)
 ### Fixed

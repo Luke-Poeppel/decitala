@@ -41,6 +41,7 @@ __all__ = [
 	"filter_single_anga_class_fragments", # Data helpers
 	"filter_sub_fragments",
 	"pitch_content_to_contour", # Pitch Content
+	"contour_to_prime_contour"
 ]
 
 carnatic_symbols = np.array([
