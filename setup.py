@@ -17,7 +17,6 @@ __MODULES__ = [
 	"decitala.cli", 
 	"decitala.database", 
 	"decitala.fragment", 
-	"decitala.paths",
 	"decitala.pofp",
 	"decitala.trees", 
 	"decitala.utils", 

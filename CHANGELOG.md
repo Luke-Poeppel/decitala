@@ -6,20 +6,22 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.4.2] - January 7, 2020 (Kent, CT)
 ### Added
 - Added fragment table visualization (``DBParser.show_fragments_table``) using pandas (wrapper for pd.read_sql_query). Also added a few other sub-displays (like ``show_slurred_fragments``). 
-- Added preliminary native visualization of the FragmentTrees using FileSaver.js. Can be called with ``FragmentTree.show()``. 
-- Added ``model.py`` file (in development).
+- Added preliminary native FragmentTree visualization. Can be called with ``FragmentTree.show()``. 
+- Implemented first path processing/modeling methods for the ``database.DBParser`` class. Most of the ``paths.py`` code has moved there. 
 
 ### Changed
-- Fragments table from ``database.create_database`` has just the name in the fragment column (full repr removed). 
-- Most of the paths module has migrated to the ``DBParser`` class in database.py. 
+- Fragments table from ``database.create_database`` has the name in the fragment column instead of full repr. 
 - Output of ``get_pareto_optimal_longest_paths`` now includes all data, not just the fragment. 
-- Greatly cleaned up the path code in ``create_database``.
-- The Paths tables in the database now store the row number in the ``onset_range`` columns. That notation was kind of silly anyway and now we can deal with the duplicates due to contiguous summation. 
+- Cleaned up the path code in ``database.create_database``.
+- The Paths tables in the database now store the row number in the ``onset_range`` columns. 
 - The Path tables are no longer 0-indexed. 
 
 ### Fixed
 - The rolling search code now has a line that filters out all grace notes. This was causing the duplicates in the database creation.
 - Minor documentation fixes (typos and old parameters).
+
+### Removed
+- The ``paths.py`` file has been removed as all of its functionality has migrated to ``database.DBParser``.
 
 ## [v0.4.1] - January 4, 2020 (Kent, CT)
 ### Fixed
