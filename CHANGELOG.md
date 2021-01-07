@@ -7,6 +7,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Removed
 - Removed all inheritence from ``object`` in classes (python3 classes are new-style). 
 
+### Fixed
+- Minor documentation errors.
+
 ## [v0.4.2] - January 7, 2020 (Kent, CT)
 ### Added
 - Added fragment table visualization (``DBParser.show_fragments_table``) using pandas (wrapper for pd.read_sql_query). Also added a few other sub-displays (like ``show_slurred_fragments``). 

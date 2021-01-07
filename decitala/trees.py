@@ -527,7 +527,7 @@ class FragmentTree(NaryTree):
 	"""
 	NaryTree that holds multiplicative or additive representations of a rhythmic dataset. 
 
-	:param str data: path to folder of music21-readable files.
+	:param str data: either a frag_type/rep_type combo, a path to folder of music21-readable files, or a list of fragments.  
 	:param str frag_type: determines the class defining the set of fragments. 
 					If the ``frag_type=='decitala'``, creates :class:`~decitala.fragment.Decitala` objects;
 					if ``frag_type=='greek_foot'``, creates :class:`~decitala.fragment.GreekFoot`.
