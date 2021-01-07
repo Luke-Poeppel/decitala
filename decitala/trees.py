@@ -74,7 +74,7 @@ class SearchException(Exception):
 	pass
 
 ####################################################################################################
-class NaryTree(object):
+class NaryTree:
 	"""
 	A single-rooted nary tree for ratio and difference representations of rhythmic fragments. Nodes are 
 	hashed by their value and are stored in a set. For demonstration, we will create the following tree: 
@@ -163,7 +163,7 @@ class NaryTree(object):
 	>>> TestTree.serialize()
 	'{"root": {"value": 1.0, "name": null, "parent": null, "children": [{"value": 0.5, "name": null, "parent": null, "children": [{"value": 0.5, "name": null, "parent": null, "children": [{"value": 1.0, "name": "D", "parent": null, "children": []}]}, {"value": 3.0, "name": "B", "parent": null, "children": []}]}, {"value": 1.0, "name": null, "parent": null, "children": [{"value": 2.0, "name": "C", "parent": null, "children": [{"value": 1.0, "name": "Test Overwrite", "parent": null, "children": []}]}]}, {"value": 3.0, "name": "A", "parent": null, "children": []}, {"value": 4.0, "name": null, "parent": null, "children": [{"value": 1.0, "name": null, "parent": null, "children": [{"value": 0.5, "name": null, "parent": null, "children": [{"value": 2.0, "name": "Full Path", "parent": null, "children": []}]}]}]}]}}'
 	"""
-	class Node(object):
+	class Node:
 		"""
 		A Node object stores an item and references its parent and children. In an Nary tree, a parent
 		may have any arbitrary number of children, but each child has only 1 parent. 

@@ -241,7 +241,7 @@ def create_database(
 		logging.info("Done preparing ✔")
 
 ####################################################################################################
-class DBParser(object):
+class DBParser:
 	"""
 	Class used for parsing the database made in :obj:`~decitala.database.create_database`.
 

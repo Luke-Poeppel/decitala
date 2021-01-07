@@ -54,7 +54,7 @@ class DecitalaException(FragmentException):
 class GreekFootException(FragmentException):
 	pass
 
-class GeneralFragment(object):
+class GeneralFragment:
 	"""
 	Class representing a generic rhythmic fragment. The user must provide either a path to a music21 readable
 	file or an array of quarter length values. 
