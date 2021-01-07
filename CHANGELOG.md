@@ -15,6 +15,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Output of ``get_pareto_optimal_longest_paths`` now includes all data, not just the fragment. 
 - Greatly cleaned up the path code in ``create_database``.
 - The Paths tables in the database now store the row number in the ``onset_range`` columns. That notation was kind of silly anyway and now we can deal with the duplicates due to contiguous summation. 
+- The Path tables are no longer 0-indexed. 
 
 ### Fixed
 - The rolling search code now has a line that filters out all grace notes. This was causing the duplicates in the database creation.

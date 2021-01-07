@@ -10,7 +10,6 @@
 """
 Tools for creating sqlite3 databases of extracted rhythmic data from Messiaen's music.  
 """
-import click
 import numpy as np
 import os
 import pandas as pd
@@ -19,6 +18,7 @@ import timeout_decorator
 import uuid
 
 from ast import literal_eval
+from scipy import stats
 
 from music21 import converter
 from music21 import stream
@@ -217,8 +217,8 @@ def create_database(
 			columns = ["Onset_Range_{}".format(i) for i in range(1, longest_path + 1)]
 			columns_declaration = ", ".join("%s INTEGER" % c for c in columns)
 
-			cur.execute("CREATE TABLE Paths_{0} ({1})".format(str(i), columns_declaration))
-			logging.info("Making Paths_{} table".format(i))
+			cur.execute("CREATE TABLE Paths_{0} ({1})".format(str(i+1), columns_declaration))
+			logging.info("Making Paths_{} table".format(i+1))
 			
 			FRAGMENT_TABLE_STRING = "SELECT * FROM Fragments"
 			cur.execute(FRAGMENT_TABLE_STRING)
@@ -232,13 +232,13 @@ def create_database(
 							fragment_row_ids.append(j + 1)
 
 				if len(path) == longest_path:
-					longest_paths_insertion_string = "INSERT INTO Paths_{0} VALUES({1})".format(str(i), ", ".join([str(x) for x in fragment_row_ids]))
+					longest_paths_insertion_string = "INSERT INTO Paths_{0} VALUES({1})".format(str(i+1), ", ".join([str(x) for x in fragment_row_ids]))
 					cur.execute(longest_paths_insertion_string)
 				else:
 					diff = longest_path - len(path)
 					nulls = ["'NULL'"] * diff
 					formatted_nuls = ", ".join(nulls)
-					shorter_paths_insertion_string = "INSERT INTO Paths_{0} VALUES({1}, {2})".format(str(i), ", ".join([str(x) for x in fragment_row_ids]), formatted_nuls)
+					shorter_paths_insertion_string = "INSERT INTO Paths_{0} VALUES({1}, {2})".format(str(i+1), ", ".join([str(x) for x in fragment_row_ids]), formatted_nuls)
 					cur.execute(shorter_paths_insertion_string)
 		
 		logging.info("Done preparing ✔")
@@ -250,15 +250,40 @@ class DBParser(object):
 
 	>>> example_data = "/Users/lukepoeppel/decitala/tests/static/ex99_data.db"
 	>>> parsed = DBParser(example_data)
-	>>> for x in parsed.spanned_fragments()[0:3]:
-	... 	print(x["fragment"].name)
-	... 	print(x["pitch_content"])
-	Iamb
-	[(80,), (82,)]
-	Iamb
-	[(79,), (81,)]
-	Iamb
-	[(78,), (80,)]
+	>>> parsed
+	<database.DBParser ex99_data.db>
+	>>> for spanned_fragment in parsed.spanned_fragments():
+	... 	print(spanned_fragment["fragment"])
+	<fragment.GreekFoot Iamb>
+	<fragment.GreekFoot Iamb>
+	<fragment.GreekFoot Iamb>
+	<fragment.GreekFoot Iamb>
+	<fragment.GreekFoot Iamb>
+	<fragment.GreekFoot Iamb>
+	>>> parsed.num_rows_in_table("Fragments")
+	33
+	>>> parsed.num_path_tables()
+	1
+	>>> parsed.get_subpath(1, 121)
+	[1, 10, 19, 24, 29, 33]
+	>>> for x in parsed.subpath_data(1, 121):
+	... 	print(x)
+	{'db_row_index': 1, 'fragment': <fragment.GreekFoot Peon_IV>, 'onset_range': (0.125, 0.75), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(83,), (83,), (83,), (82,)], 'is_slurred': False}
+	{'db_row_index': 10, 'fragment': <fragment.GreekFoot Amphibrach>, 'onset_range': (0.75, 1.25), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(80,), (82,), (79,)], 'is_slurred': False}
+	{'db_row_index': 19, 'fragment': <fragment.GreekFoot Iamb>, 'onset_range': (1.5, 1.875), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(78,), (80,)], 'is_slurred': True}
+	{'db_row_index': 24, 'fragment': <fragment.GreekFoot Iamb>, 'onset_range': (1.875, 2.25), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(77,), (79,)], 'is_slurred': True}
+	{'db_row_index': 29, 'fragment': <fragment.GreekFoot Iamb>, 'onset_range': (2.25, 2.625), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(77,), (79,)], 'is_slurred': True}
+	{'db_row_index': 33, 'fragment': <fragment.GreekFoot Iamb>, 'onset_range': (2.625, 3.0), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(77,), (79,)], 'is_slurred': True}
+	>>> parsed.table_onsets_percentile(1)[0:5]
+	[2.2857142857142856, 2.5, 2.3333333333333335, 2.5, 2.5]
+	>>> parsed.get_subpath_onset_percentile(1, 121)
+	40.63241106719368
+	>>> parsed.get_subpath_gap_score(1, 121)
+	90.47619047619048
+	>>> parsed.get_subpath_model(1, 121)
+	75.52305665349144
+	>>> for x in parsed.get_highest_modeled_subpath(1):
+	... 	print(x)
 	"""
 	def __init__(self, db_path):
 		assert os.path.isfile(db_path), DatabaseException("You've provided an invalid file.")
@@ -276,7 +301,7 @@ class DBParser(object):
 		fragment_rows = cur.fetchall()
 		
 		fragment_data = []
-		for this_row in fragment_rows:
+		for i, this_row in enumerate(fragment_rows):
 			row_data = dict()
 
 			fragment_str = this_row[2]
@@ -285,13 +310,14 @@ class DBParser(object):
 			else:
 				this_fragment = GreekFoot(fragment_str)
 
+			row_data["db_row_index"] = i+1
 			row_data["fragment"] = this_fragment
 			row_data["onset_range"] = (this_row[0], this_row[1])
 			row_data["mod"] = this_row[3]
 			row_data["factor"] = this_row[4]
 			row_data["pitch_content"] = literal_eval(this_row[5])
-			row_data["is_slurred"] = bool(this_row[6])
-
+			row_data["is_slurred"] = bool(int(this_row[8]))
+			
 			fragment_data.append(row_data)
 
 		self.fragment_data = fragment_data
@@ -306,58 +332,128 @@ class DBParser(object):
 	def spanned_fragments(self):
 		return [x for x in self.fragment_data if x["is_slurred"]==True]
 
-	# Useful visualizations for jupyter.
 	def show_fragments_table(self):
-		"""
-		Displays the Fragments table of the database using pandas. 
-		"""
+		"""Displays the Fragments table of the db."""
 		data = pd.read_sql_query("SELECT * FROM Fragments", self.conn)
 		return data
 	
 	def show_spanned_fragments(self):
-		"""
-		Displays the Fragments table of the database using pandas. 
-		"""
+		"""Displays a subset (spanned fragments) of the Fragments table of the db."""
 		data = pd.read_sql_query("SELECT * FROM Fragments WHERE Is_Slurred = 1", self.conn)
 		return data
 
-	######## Paths Metadata ########
-	def show_paths_table(self, i):
-		data = pd.read_sql_query("SELECT * FROM Paths_{}".format(i), self.conn)
+	def show_path_table(self, table_num):
+		"""Displays Path number i."""
+		data = pd.read_sql_query("SELECT * FROM Paths_{}".format(table_num), self.conn)
 		return data
 
-	def num_path_tables(self):
-		QUERY_STRING = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table'"
+	def show_path(self, table_num, path_num):
+		QUERY_STRING = "SELECT * FROM Paths_{0} WHERE rowid = {1}".format(table_num, path_num)
 		data = pd.read_sql_query(QUERY_STRING, self.conn)
-		num_path_tables = data["COUNT(*)"].iloc[0] - 1
 
-		return num_path_tables
-	
+		return data
+
 	def num_rows_in_table(self, table):
+		"""Returns the number of rows in a given table."""
 		QUERY_STRING = "SELECT COUNT(*) FROM {}".format(table)
 		data = pd.read_sql_query(QUERY_STRING, self.conn)
 		num_rows = data["COUNT(*)"].iloc[0]
 		return num_rows
 
-	def get_paths_data(self):
-		"""Returns a list of lists holding the number of paths for a given table."""
-		data = []
-		for i in range(0, self.num_path_tables()):
-			curr_table = "Paths_{}".format(i)
-			data.append([i, self.num_rows_in_table(curr_table)])
-		return data
+	######## Paths Metadata ########
+	def num_path_tables(self):
+		"""Returns the number of Path tables in the db."""
+		QUERY_STRING = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table'"
+		data = pd.read_sql_query(QUERY_STRING, self.conn)
+		num_path_tables = data["COUNT(*)"].iloc[0] - 1
+
+		return num_path_tables
 
 	######## Paths Individual ########
 	def get_subpath(self, table_num, path_num):
-		QUERY_STRING = "SELECT * FROM PATHS_{0} WHERE rowid = {1}".format(table_num, path_num)
+		QUERY_STRING = "SELECT * FROM Paths_{0} WHERE rowid = {1}".format(table_num, path_num)
 		data = pd.read_sql_query(QUERY_STRING, self.conn)
-
-		return data
-
-	def subpath_fragments(self, table_num, path_num):
-		data = self.get_subpath(table_num, path_num)
-		for x in data:
-			print(x)
+		as_ints = data.stack().tolist()
 		
-	# def get_num_onsets_data_from_paths(self):
-	# 	pass
+		return [x for x in as_ints if x != "NULL"]
+
+	def subpath_data(self, table_num, path_num):
+		subpath_data = self.get_subpath(table_num, path_num)
+		
+		fragment_data = []
+		for this_row_id in subpath_data:
+			for this_data in self.fragment_data:
+				if this_data["db_row_index"] == this_row_id:
+					fragment_data.append(this_data)
+
+		return fragment_data
+	
+	def table_onsets_percentile(self, table_num):
+		num_rows = self.num_rows_in_table("Paths_{}".format(table_num))
+		averages = []
+		for i in range(1, num_rows+1):
+			subpath_fragments = [x["fragment"].num_onsets for x in self.subpath_data(table_num, i)]
+			averages.append(np.mean(subpath_fragments))
+		
+		return averages
+		
+	def get_subpath_onset_percentile(self, table_num, path_num):
+		subpath_data = self.subpath_data(table_num, path_num)
+		subpath_average_onsets = np.mean([x["fragment"].num_onsets for x in subpath_data])
+		percentile = stats.percentileofscore(self.table_onsets_percentile(table_num), subpath_average_onsets)
+
+		return percentile
+
+	def get_subpath_gap_score(self, table_num, path_num):
+		gaps = []
+		total_range = []
+		subpath_data = self.subpath_data(table_num, path_num)
+		
+		# just use np.diff?
+		i = 0
+		while i < len(subpath_data) - 1:
+			curr_data = subpath_data[i]
+			next_data= subpath_data[i + 1]
+			
+			gap = next_data["onset_range"][0] - curr_data["onset_range"][1]
+			gaps.append(gap)
+			total_range.append(curr_data["onset_range"][1] - curr_data["onset_range"][0])
+			if i == len(subpath_data) - 2:
+				total_range.append(next_data["onset_range"][1] - next_data["onset_range"][0])
+			i += 1
+		
+		gaps = sum(gaps)
+		total_range = sum(total_range)
+
+		if len(subpath_data) == 1:
+			percentage_gap_pre = 0
+		else:
+			percentage_gap_pre = (gaps / total_range) * 100
+		
+		percentage_gap = 100.0 - percentage_gap_pre
+		return percentage_gap
+
+	def get_subpath_model(self, table_num, path_num, weights=[0.7, 0.3]):
+		"""Returns the value of the model for a given subpath."""
+		gap_score = self.get_subpath_gap_score(table_num, path_num)
+		onset_score = self.get_subpath_onset_percentile(table_num, path_num)
+		scores = [gap_score, onset_score]
+
+		model = 0
+		for weight, score in zip(weights, scores):
+			model += weight * score
+		
+		return model
+
+	def get_highest_modeled_subpath(self, table_num):
+		num_rows = self.num_rows_in_table("Paths_{}".format(table_num))
+		highest_subpath = None
+		highest_model_val = 0
+		for i in range(1, num_rows + 1):
+			model_val = self.get_subpath_model(table_num, i)
+			print(model_val)
+			if model_val > highest_model_val:
+				model_val = highest_model_val
+				highest_subpath = i
+
+		return self.subpath_data(table_num, highest_subpath)
