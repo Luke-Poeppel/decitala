@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>database.py &mdash; decitala 0.4.2 documentation</title>
+  <title>database.py &mdash; decitala 0.4.3 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="decitala 0.4.2 documentation" href="index.html"/>
+    <link rel="top" title="decitala 0.4.3 documentation" href="index.html"/>
         <link rel="next" title="fragment.py" href="fragment.html"/>
         <link rel="prev" title="Decitala Documentation" href="index.html"/> 
 
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.4.2
+                0.4.3
               </div>
             
           
@@ -189,42 +189,17 @@ modification data.</p>
 <em class="property">class </em><code class="sig-prename descclassname">decitala.database.</code><code class="sig-name descname">DBParser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">db_path</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/database.html#DBParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.database.DBParser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class used for parsing the database made in <a class="reference internal" href="#decitala.database.create_database" title="decitala.database.create_database"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_database</span></code></a>.</p>
+<p>[(1, 23, [xxxx]), (2, 343, [1234123])]</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">example_data</span> <span class="o">=</span> <span class="s2">&quot;/Users/lukepoeppel/decitala/tests/static/ex99_data.db&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span> <span class="o">=</span> <span class="n">DBParser</span><span class="p">(</span><span class="n">example_data</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span>
 <span class="go">&lt;database.DBParser ex99_data.db&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">spanned_fragment</span> <span class="ow">in</span> <span class="n">parsed</span><span class="o">.</span><span class="n">spanned_fragments</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">spanned_fragment</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">])</span>
-<span class="go">&lt;fragment.GreekFoot Iamb&gt;</span>
-<span class="go">&lt;fragment.GreekFoot Iamb&gt;</span>
-<span class="go">&lt;fragment.GreekFoot Iamb&gt;</span>
-<span class="go">&lt;fragment.GreekFoot Iamb&gt;</span>
-<span class="go">&lt;fragment.GreekFoot Iamb&gt;</span>
-<span class="go">&lt;fragment.GreekFoot Iamb&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span><span class="o">.</span><span class="n">num_rows_in_table</span><span class="p">(</span><span class="s2">&quot;Fragments&quot;</span><span class="p">)</span>
-<span class="go">33</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span><span class="o">.</span><span class="n">num_path_tables</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span><span class="o">.</span><span class="n">num_subpath_tables</span>
 <span class="go">1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span><span class="o">.</span><span class="n">get_subpath</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">121</span><span class="p">)</span>
-<span class="go">[1, 10, 19, 24, 29, 33]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">parsed</span><span class="o">.</span><span class="n">subpath_data</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">121</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">{&#39;db_row_index&#39;: 1, &#39;fragment&#39;: &lt;fragment.GreekFoot Peon_IV&gt;, &#39;onset_range&#39;: (0.125, 0.75), &#39;mod&#39;: &#39;r&#39;, &#39;factor&#39;: 0.125, &#39;pitch_content&#39;: [(83,), (83,), (83,), (82,)], &#39;is_slurred&#39;: False}</span>
-<span class="go">{&#39;db_row_index&#39;: 10, &#39;fragment&#39;: &lt;fragment.GreekFoot Amphibrach&gt;, &#39;onset_range&#39;: (0.75, 1.25), &#39;mod&#39;: &#39;r&#39;, &#39;factor&#39;: 0.125, &#39;pitch_content&#39;: [(80,), (82,), (79,)], &#39;is_slurred&#39;: False}</span>
-<span class="go">{&#39;db_row_index&#39;: 19, &#39;fragment&#39;: &lt;fragment.GreekFoot Iamb&gt;, &#39;onset_range&#39;: (1.5, 1.875), &#39;mod&#39;: &#39;r&#39;, &#39;factor&#39;: 0.125, &#39;pitch_content&#39;: [(78,), (80,)], &#39;is_slurred&#39;: True}</span>
-<span class="go">{&#39;db_row_index&#39;: 24, &#39;fragment&#39;: &lt;fragment.GreekFoot Iamb&gt;, &#39;onset_range&#39;: (1.875, 2.25), &#39;mod&#39;: &#39;r&#39;, &#39;factor&#39;: 0.125, &#39;pitch_content&#39;: [(77,), (79,)], &#39;is_slurred&#39;: True}</span>
-<span class="go">{&#39;db_row_index&#39;: 29, &#39;fragment&#39;: &lt;fragment.GreekFoot Iamb&gt;, &#39;onset_range&#39;: (2.25, 2.625), &#39;mod&#39;: &#39;r&#39;, &#39;factor&#39;: 0.125, &#39;pitch_content&#39;: [(77,), (79,)], &#39;is_slurred&#39;: True}</span>
-<span class="go">{&#39;db_row_index&#39;: 33, &#39;fragment&#39;: &lt;fragment.GreekFoot Iamb&gt;, &#39;onset_range&#39;: (2.625, 3.0), &#39;mod&#39;: &#39;r&#39;, &#39;factor&#39;: 0.125, &#39;pitch_content&#39;: [(77,), (79,)], &#39;is_slurred&#39;: True}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span><span class="o">.</span><span class="n">table_onsets_percentile</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
-<span class="go">[2.2857142857142856, 2.5, 2.3333333333333335, 2.5, 2.5]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span><span class="o">.</span><span class="n">get_subpath_onset_percentile</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">121</span><span class="p">)</span>
-<span class="go">40.63241106719368</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span><span class="o">.</span><span class="n">get_subpath_gap_score</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">121</span><span class="p">)</span>
-<span class="go">90.47619047619048</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">parsed</span><span class="o">.</span><span class="n">get_subpath_model</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">121</span><span class="p">)</span>
-<span class="go">75.52305665349144</span>
 </pre></div>
 </div>
+<p>parsed.metadata
+# [(1, )]</p>
 <dl class="py method">
 <dt id="decitala.database.DBParser.show_fragments_table">
 <code class="sig-name descname">show_fragments_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/database.html#DBParser.show_fragments_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.database.DBParser.show_fragments_table" title="Permalink to this definition">¶</a></dt>
@@ -241,18 +216,6 @@ modification data.</p>
 <dt id="decitala.database.DBParser.show_path_table">
 <code class="sig-name descname">show_path_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">table_num</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/database.html#DBParser.show_path_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.database.DBParser.show_path_table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Displays Path number i.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.database.DBParser.num_rows_in_table">
-<code class="sig-name descname">num_rows_in_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">table</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/database.html#DBParser.num_rows_in_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.database.DBParser.num_rows_in_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of rows in a given table.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.database.DBParser.num_path_tables">
-<code class="sig-name descname">num_path_tables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/database.html#DBParser.num_path_tables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.database.DBParser.num_path_tables" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of Path tables in the db.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -306,7 +269,7 @@ modification data.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.4.2',
+            VERSION:'0.4.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

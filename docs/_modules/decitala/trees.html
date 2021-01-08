@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.trees &mdash; decitala 0.4.2 documentation</title>
+  <title>decitala.trees &mdash; decitala 0.4.3 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.4.2 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.4.3 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.4.2
+                0.4.3
               </div>
             
           
@@ -232,7 +232,7 @@
 	<span class="k">pass</span>
 
 <span class="c1">####################################################################################################</span>
-<div class="viewcode-block" id="NaryTree"><a class="viewcode-back" href="../../trees.html#decitala.trees.NaryTree">[docs]</a><span class="k">class</span> <span class="nc">NaryTree</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="NaryTree"><a class="viewcode-back" href="../../trees.html#decitala.trees.NaryTree">[docs]</a><span class="k">class</span> <span class="nc">NaryTree</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	A single-rooted nary tree for ratio and difference representations of rhythmic fragments. Nodes are </span>
 <span class="sd">	hashed by their value and are stored in a set. For demonstration, we will create the following tree: </span>
@@ -321,7 +321,7 @@
 <span class="sd">	&gt;&gt;&gt; TestTree.serialize()</span>
 <span class="sd">	&#39;{&quot;root&quot;: {&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: &quot;D&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}, {&quot;value&quot;: 3.0, &quot;name&quot;: &quot;B&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}, {&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 2.0, &quot;name&quot;: &quot;C&quot;, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: &quot;Test Overwrite&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}]}, {&quot;value&quot;: 3.0, &quot;name&quot;: &quot;A&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}, {&quot;value&quot;: 4.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 2.0, &quot;name&quot;: &quot;Full Path&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}]}]}]}}&#39;</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="NaryTree.Node"><a class="viewcode-back" href="../../trees.html#decitala.trees.NaryTree.Node">[docs]</a>	<span class="k">class</span> <span class="nc">Node</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="NaryTree.Node"><a class="viewcode-back" href="../../trees.html#decitala.trees.NaryTree.Node">[docs]</a>	<span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		A Node object stores an item and references its parent and children. In an Nary tree, a parent</span>
 <span class="sd">		may have any arbitrary number of children, but each child has only 1 parent. </span>
@@ -685,7 +685,7 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	NaryTree that holds multiplicative or additive representations of a rhythmic dataset. </span>
 
-<span class="sd">	:param str data: path to folder of music21-readable files.</span>
+<span class="sd">	:param str data: either a frag_type/rep_type combo, a path to folder of music21-readable files, or a list of fragments.  </span>
 <span class="sd">	:param str frag_type: determines the class defining the set of fragments. </span>
 <span class="sd">					If the ``frag_type==&#39;decitala&#39;``, creates :class:`~decitala.fragment.Decitala` objects;</span>
 <span class="sd">					if ``frag_type==&#39;greek_foot&#39;``, creates :class:`~decitala.fragment.GreekFoot`.</span>
@@ -1212,7 +1212,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.4.2',
+            VERSION:'0.4.3',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
