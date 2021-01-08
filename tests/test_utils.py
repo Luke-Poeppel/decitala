@@ -14,7 +14,8 @@ from decitala.utils import (
 	roll_window,
 	get_object_indices,
 	frame_is_spanned_by_slur,
-	frame_to_ql_array
+	frame_to_ql_array,
+	contour_to_prime_contour
 )
 
 from decitala.fragment import (
@@ -126,3 +127,11 @@ def test_frame_is_spanned_by_slur_b(example_transcriptions):
 				num_slurs += 1
 	
 	assert num_slurs == 3
+
+# Examples from the Schultz article.
+def test_prime_contour():
+	contour_1 = [2, 4, 1, 5, 0, 6, 3]
+	contour_2 = [2, 1, 3, 0]
+
+	assert np.array_equal(contour_to_prime_contour(contour_1), np.array([2, 4, 1, 5, 0, 6, 3]))
+	assert np.array_equal(contour_to_prime_contour(contour_2), np.array([2, 1, 3, 0]))
