@@ -874,11 +874,11 @@ def rolling_search(
 	>>> ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
 	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=["r"], verbose=False)[0:5]:
 	... 	print(tala_data)
-	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)]}
-	{'fragment': <fragment.GreekFoot 5_16>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,), (78,)]}
-	{'fragment': <fragment.GreekFoot Ionic_Major>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.75), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,), (78,), (85,)]}
-	{'fragment': <fragment.GreekFoot Trochee>, 'mod': ('r', 0.125), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,)]}
-	{'fragment': <fragment.GreekFoot Dactyl>, 'mod': ('r', 0.125), 'onset_range': (0.25, 0.75), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,), (85,)]}
+	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], 'id': 1}
+	{'fragment': <fragment.GreekFoot 5_16>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,), (78,)], 'id': 27}
+	{'fragment': <fragment.GreekFoot Ionic_Major>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.75), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,), (78,), (85,)], 'id': 50}
+	{'fragment': <fragment.GreekFoot Trochee>, 'mod': ('r', 0.125), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,)], 'id': 2}
+	{'fragment': <fragment.GreekFoot Dactyl>, 'mod': ('r', 0.125), 'onset_range': (0.25, 0.75), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,), (85,)], 'id': 28}
 	"""
 	try:
 		assert ratio_tree.rep_type == "ratio"
@@ -903,6 +903,7 @@ def rolling_search(
 	index_of_closest = windows.index(closest_window)
 	windows = windows[0:index_of_closest+1]
 
+	fragment_id = 0
 	fragments_found = []
 	for this_win in windows:
 		logging.info("Searching window of size {}.".format(this_win))
@@ -921,6 +922,8 @@ def rolling_search(
 				if searched is not None:
 					search_dict = dict()
 
+					fragment_id += 1
+
 					offset_1 = this_frame[0][0]
 					offset_2 = this_frame[-1][0]
 					is_spanned_by_slur = frame_is_spanned_by_slur(this_frame)
@@ -931,6 +934,7 @@ def rolling_search(
 					search_dict["onset_range"] = (offset_1.offset, offset_2.offset + offset_2.quarterLength)
 					search_dict["is_spanned_by_slur"] = is_spanned_by_slur
 					search_dict["pitch_content"] = pitch_content
+					search_dict["id"] = fragment_id
 
 					fragments_found.append(search_dict)
 					logging.info("({0}, {1}), ({2}), {3}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset_range"], search_dict["is_spanned_by_slur"]))
@@ -951,6 +955,8 @@ def rolling_search(
 						mod = rewritten_search[1]
 
 						cs_search_dict = dict()
+
+						fragment_id += 1
 						
 						offset_1 = new_frame[0][0].offset
 						offset_2 = new_frame[-1][0].offset + new_frame[-1][0].quarterLength
@@ -963,6 +969,7 @@ def rolling_search(
 						cs_search_dict["onset_range"] = (offset_1, offset_2)
 						cs_search_dict["is_spanned_by_slur"] = is_spanned_by_slur
 						cs_search_dict["pitch_content"] = cs_pitch_content
+						cs_search_dict["id"] = fragment_id
 
 						fragments_found.append(cs_search_dict)
 
