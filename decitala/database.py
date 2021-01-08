@@ -15,6 +15,7 @@ import os
 import pandas as pd
 import sqlite3 as lite
 import timeout_decorator
+import timeit
 import uuid
 
 from ast import literal_eval
@@ -241,44 +242,52 @@ def create_database(
 		logging.info("Done preparing ✔")
 
 ####################################################################################################
+# Helper functions
+def _num_subpath_tables(conn):
+	"""
+	Returns the number of Path tables in a database db.
+
+	>>> example_data = "/Users/lukepoeppel/decitala/tests/static/ex99_data.db"
+	>>> conn = lite.connect(example_data)
+	>>> _num_subpath_tables(conn)
+	1
+	"""
+	QUERY_STRING = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table'"
+	data = pd.read_sql_query(QUERY_STRING, conn)
+	num_path_tables = data["COUNT(*)"].iloc[0] - 1
+
+	return num_path_tables
+
+def _num_rows_in_table(table, conn):
+	"""
+	Returns the number of rows in a given table.
+	
+	>>> example_data = "/Users/lukepoeppel/decitala/tests/static/ex99_data.db"
+	>>> conn = lite.connect(example_data)
+	>>> _num_rows_in_table("Paths_1", conn)
+	1265
+	"""
+	QUERY_STRING = "SELECT COUNT(*) FROM {}".format(table)
+	data = pd.read_sql_query(QUERY_STRING, conn)
+	num_rows = data["COUNT(*)"].iloc[0]
+	
+	return num_rows
+
 class DBParser:
 	"""
 	Class used for parsing the database made in :obj:`~decitala.database.create_database`.
+
+	[(1, 23, [xxxx]), (2, 343, [1234123])]
 
 	>>> example_data = "/Users/lukepoeppel/decitala/tests/static/ex99_data.db"
 	>>> parsed = DBParser(example_data)
 	>>> parsed
 	<database.DBParser ex99_data.db>
-	>>> for spanned_fragment in parsed.spanned_fragments():
-	... 	print(spanned_fragment["fragment"])
-	<fragment.GreekFoot Iamb>
-	<fragment.GreekFoot Iamb>
-	<fragment.GreekFoot Iamb>
-	<fragment.GreekFoot Iamb>
-	<fragment.GreekFoot Iamb>
-	<fragment.GreekFoot Iamb>
-	>>> parsed.num_rows_in_table("Fragments")
-	33
-	>>> parsed.num_path_tables()
+	>>> parsed.num_subpath_tables
 	1
-	>>> parsed.get_subpath(1, 121)
-	[1, 10, 19, 24, 29, 33]
-	>>> for x in parsed.subpath_data(1, 121):
-	... 	print(x)
-	{'db_row_index': 1, 'fragment': <fragment.GreekFoot Peon_IV>, 'onset_range': (0.125, 0.75), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(83,), (83,), (83,), (82,)], 'is_slurred': False}
-	{'db_row_index': 10, 'fragment': <fragment.GreekFoot Amphibrach>, 'onset_range': (0.75, 1.25), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(80,), (82,), (79,)], 'is_slurred': False}
-	{'db_row_index': 19, 'fragment': <fragment.GreekFoot Iamb>, 'onset_range': (1.5, 1.875), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(78,), (80,)], 'is_slurred': True}
-	{'db_row_index': 24, 'fragment': <fragment.GreekFoot Iamb>, 'onset_range': (1.875, 2.25), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(77,), (79,)], 'is_slurred': True}
-	{'db_row_index': 29, 'fragment': <fragment.GreekFoot Iamb>, 'onset_range': (2.25, 2.625), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(77,), (79,)], 'is_slurred': True}
-	{'db_row_index': 33, 'fragment': <fragment.GreekFoot Iamb>, 'onset_range': (2.625, 3.0), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(77,), (79,)], 'is_slurred': True}
-	>>> parsed.table_onsets_percentile(1)[0:5]
-	[2.2857142857142856, 2.5, 2.3333333333333335, 2.5, 2.5]
-	>>> parsed.get_subpath_onset_percentile(1, 121)
-	40.63241106719368
-	>>> parsed.get_subpath_gap_score(1, 121)
-	90.47619047619048
-	>>> parsed.get_subpath_model(1, 121)
-	75.52305665349144
+	
+	parsed.metadata
+	# [(1, )]
 	"""
 	def __init__(self, db_path):
 		assert os.path.isfile(db_path), DatabaseException("You've provided an invalid file.")
@@ -294,7 +303,6 @@ class DBParser:
 		fragment_path_string = "SELECT * FROM Fragments"
 		cur.execute(fragment_path_string)
 		fragment_rows = cur.fetchall()
-		
 		fragment_data = []
 		for i, this_row in enumerate(fragment_rows):
 			row_data = dict()
@@ -317,9 +325,18 @@ class DBParser:
 
 		self.fragment_data = fragment_data
 
+		self.num_subpath_tables = _num_subpath_tables(self.conn)
+		metadata = []
+		for i in range(1, self.num_subpath_tables + 1):
+			num_rows = _num_rows_in_table("Paths_{}".format(i), self.conn)
+			onset_data = self.table_onsets_percentile(i)
+			metadata.append([i, num_rows, onset_data])
+
+		self.metadata = metadata
+
 	def __repr__(self):
 		return "<database.DBParser {}>".format(self.filename)
-	
+
 	@property
 	def fragments(self):
 		return [x["fragment"] for x in self.fragment_data]
@@ -348,22 +365,6 @@ class DBParser:
 
 		return data
 
-	def num_rows_in_table(self, table):
-		"""Returns the number of rows in a given table."""
-		QUERY_STRING = "SELECT COUNT(*) FROM {}".format(table)
-		data = pd.read_sql_query(QUERY_STRING, self.conn)
-		num_rows = data["COUNT(*)"].iloc[0]
-		return num_rows
-
-	######## Paths Metadata ########
-	def num_path_tables(self):
-		"""Returns the number of Path tables in the db."""
-		QUERY_STRING = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table'"
-		data = pd.read_sql_query(QUERY_STRING, self.conn)
-		num_path_tables = data["COUNT(*)"].iloc[0] - 1
-
-		return num_path_tables
-
 	######## Paths Individual ########
 	def get_subpath(self, table_num, path_num):
 		QUERY_STRING = "SELECT * FROM Paths_{0} WHERE rowid = {1}".format(table_num, path_num)
@@ -384,7 +385,7 @@ class DBParser:
 		return fragment_data
 	
 	def table_onsets_percentile(self, table_num):
-		num_rows = self.num_rows_in_table("Paths_{}".format(table_num))
+		num_rows = _num_rows_in_table("Paths_{}".format(table_num), self.conn)
 		averages = []
 		for i in range(1, num_rows+1):
 			subpath_fragments = [x["fragment"].num_onsets for x in self.subpath_data(table_num, i)]
@@ -395,7 +396,9 @@ class DBParser:
 	def get_subpath_onset_percentile(self, table_num, path_num):
 		subpath_data = self.subpath_data(table_num, path_num)
 		subpath_average_onsets = np.mean([x["fragment"].num_onsets for x in subpath_data])
-		percentile = stats.percentileofscore(self.table_onsets_percentile(table_num), subpath_average_onsets)
+		
+		onset_data = [x[1] for x in self.metadata if x[0] == table_num]
+		percentile = stats.percentileofscore(onset_data, subpath_average_onsets)
 
 		return percentile
 
@@ -429,7 +432,7 @@ class DBParser:
 		return percentage_gap
 
 	def get_subpath_model(self, table_num, path_num, weights=[0.7, 0.3]):
-		"""Returns the value of the model for a given subpath."""
+		"""Returns the value of the model for a given subpath."""		
 		gap_score = self.get_subpath_gap_score(table_num, path_num)
 		onset_score = self.get_subpath_onset_percentile(table_num, path_num)
 		scores = [gap_score, onset_score]
@@ -440,8 +443,8 @@ class DBParser:
 		
 		return model
 
-	def get_highest_modeled_subpath(self, table_num):
-		num_rows = self.num_rows_in_table("Paths_{}".format(table_num))
+	def get_highest_modeled_subpath(self, table_num):		
+		num_rows = _num_rows_in_table("Paths_{}".format(table_num), self.conn)
 		highest_subpath = None
 		highest_model_val = 0
 		for i in range(1, num_rows + 1):
