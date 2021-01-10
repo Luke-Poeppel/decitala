@@ -235,8 +235,10 @@ def create_database(
 				else:
 					diff = longest_path - len(path)
 					nulls = ["'NULL'"] * diff
-					formatted_nuls = ", ".join(nulls)
-					shorter_paths_insertion_string = "INSERT INTO Paths_{0} VALUES({1}, {2})".format(str(i+1), ", ".join([str(x) for x in fragment_row_ids]), formatted_nuls)
+					combined = [str(x) for x in fragment_row_ids] + nulls					
+					shorter_paths_values_string = ", ".join(combined)
+
+					shorter_paths_insertion_string = "INSERT INTO Paths_{0} VALUES({1})".format(str(i+1), shorter_paths_values_string)
 					cur.execute(shorter_paths_insertion_string)
 		
 		logging.info("Done preparing ✔")
@@ -277,17 +279,12 @@ class DBParser:
 	"""
 	Class used for parsing the database made in :obj:`~decitala.database.create_database`.
 
-	[(1, 23, [xxxx]), (2, 343, [1234123])]
-
 	>>> example_data = "/Users/lukepoeppel/decitala/tests/static/ex99_data.db"
 	>>> parsed = DBParser(example_data)
 	>>> parsed
 	<database.DBParser ex99_data.db>
 	>>> parsed.num_subpath_tables
 	1
-	
-	parsed.metadata
-	# [(1, )]
 	"""
 	def __init__(self, db_path):
 		assert os.path.isfile(db_path), DatabaseException("You've provided an invalid file.")
@@ -449,7 +446,6 @@ class DBParser:
 		highest_model_val = 0
 		for i in range(1, num_rows + 1):
 			model_val = self.get_subpath_model(table_num, i)
-			print(model_val)
 			if model_val > highest_model_val:
 				model_val = highest_model_val
 				highest_subpath = i

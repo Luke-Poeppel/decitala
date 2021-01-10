@@ -5,6 +5,10 @@ from decitala.pofp import (
     get_break_points,
     get_pareto_optimal_longest_paths
 )
+from decitala.fragment import (
+	GeneralFragment,
+	GreekFoot
+)
 
 # TODO (old format)
 @pytest.fixture
