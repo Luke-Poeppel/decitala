@@ -4,7 +4,7 @@
 # Purpose:  M. Raynards technique for solving the non-overlapping onset ranges problem using 
 #           Pareto optimal frontiers of sequences.
 # 
-# Author:   Luke Poeppel, M. Raynard.
+# Author:   Luke Poeppel
 #
 # Location: Kent, CT 2020
 ####################################################################################################
@@ -32,6 +32,11 @@ about the fragment, modification, onset-range, and spanning data.
 import copy
 import itertools
 import pytest
+
+from .fragment import (
+	GeneralFragment,
+	GreekFoot
+)
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -133,76 +138,104 @@ def partition_data_by_break_points(data):
 	return out
 
 ####################################################################################################
-def get_pareto_optimal_longest_paths(data, verbose=False):
+def _min_successor_to_elem(elem, all_min_successors):
 	"""
-	Algorithm courtesy of M. Raynard. 
-
-	:param list data: data from :obj:`~decitala.trees.rolling_search`.
-	:return: list of lists, each holding a pareto-optimal longest path constructed from the data.
-	:rtype: list
-
-	>>> data = [
-	...		{"fragment": "info1", "mod": ("r", 1.0), "onset_range": (0.0, 2.0)},
-	... 	{"fragment": "info2", "mod": ("r", 2.0), "onset_range": (0.0, 4.0)},
-	... 	{"fragment": "info3", "mod": ("d", 0.25), "onset_range": (2.0, 4.0)},
-	... 	{"fragment": "info4", "mod": ("rd", 0.25), "onset_range": (2.0, 5.75)},
-	... 	{"fragment": "info5", "mod": ("r", 3.0), "onset_range": (2.5, 4.5)},
-	... 	{"fragment": "info6", "mod": ("r", 1.0), "onset_range": (4.0, 5.5)},
-	... 	{"fragment": "info7", "mod": ("rd", 0.25), "onset_range": (6.0, 7.25)}
+	>>> all_min_successors = [
+	...		[{'fragment': 'info1', 'mod': ('r', 1.0), 'onset_range': (0.0, 2.0), 'id': 1}, {'fragment': 'info3', 'mod': ('d', 0.25), 'onset_range': (2.0, 4.0), 'id': 3}], 
+	... 	[{'fragment': 'info2', 'mod': ('r', 2.0), 'onset_range': (0.0, 4.0), 'id': 2}, {'fragment': 'info6', 'mod': ('r', 1.0), 'onset_range': (4.0, 5.5), 'id': 6}], 
+	... 	[{'fragment': 'info3', 'mod': ('d', 0.25), 'onset_range': (2.0, 4.0), 'id': 3}, {'fragment': 'info6', 'mod': ('r', 1.0), 'onset_range': (4.0, 5.5), 'id': 6}], 
+	... 	[{'fragment': 'info4', 'mod': ('rd', 0.25), 'onset_range': (2.0, 5.75), 'id': 4}, {'fragment': 'info7', 'mod': ('rd', 0.25), 'onset_range': (6.0, 7.25), 'id': 7}], 
+	... 	[{'fragment': 'info5', 'mod': ('r', 3.0), 'onset_range': (2.5, 4.5), 'id': 5}, {'fragment': 'info7', 'mod': ('rd', 0.25), 'onset_range': (6.0, 7.25), 'id': 7}], 
+	... 	[{'fragment': 'info6', 'mod': ('r', 1.0), 'onset_range': (4.0, 5.5), 'id': 6}, {'fragment': 'info7', 'mod': ('rd', 0.25), 'onset_range': (6.0, 7.25), 'id': 7}]
 	... ]
-	>>> # With only 7 windows, we can extract four possible paths!
-	>>> for this_path in get_pareto_optimal_longest_paths(data):
-	...    path = [x[1] for x in this_path]
-	...    print(path)
+	>>> elem = all_min_successors[2][0]
+	>>> elem
+	{'fragment': 'info3', 'mod': ('d', 0.25), 'onset_range': (2.0, 4.0), 'id': 3}
+	>>> _min_successor_to_elem(elem, all_min_successors)
+	{'fragment': 'info6', 'mod': ('r', 1.0), 'onset_range': (4.0, 5.5), 'id': 6}
+	"""
+	for data in all_min_successors:
+		if data[0]["id"] == elem["id"]:
+			return data[1]
+
+def get_pareto_optimal_longest_paths(data):
+	"""
+	>>> data_1 = [
+	... 	{"fragment": "info1", "mod": ("r", 1.0), "onset_range": (0.0, 2.0), "id":1},
+	... 	{"fragment": "info2", "mod": ("r", 2.0), "onset_range": (0.0, 4.0), "id":2},
+	... 	{"fragment": "info3", "mod": ("d", 0.25), "onset_range": (2.0, 4.0), "id":3},
+	... 	{"fragment": "info4", "mod": ("rd", 0.25), "onset_range": (2.0, 5.75), "id":4},
+	... 	{"fragment": "info5", "mod": ("r", 3.0), "onset_range": (2.5, 4.5), "id":5},
+	... 	{"fragment": "info6", "mod": ("r", 1.0), "onset_range": (4.0, 5.5), "id":6},
+	... 	{"fragment": "info7", "mod": ("rd", 0.25), "onset_range": (6.0, 7.25), "id":7}
+	... ]
+	>>> for path in get_pareto_optimal_longest_paths(data_1):
+	... 	onset_ranges = [x["onset_range"] for x in path]
+	... 	print(onset_ranges)
 	[(0.0, 2.0), (2.0, 4.0), (4.0, 5.5), (6.0, 7.25)]
 	[(0.0, 2.0), (2.0, 5.75), (6.0, 7.25)]
 	[(0.0, 2.0), (2.5, 4.5), (6.0, 7.25)]
 	[(0.0, 4.0), (4.0, 5.5), (6.0, 7.25)]
+	>>> data_2 = [
+	... 	{'fragment': GreekFoot("Spondee"), 'mod': ('r', 0.125), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], "id":1},
+	... 	{'fragment': GeneralFragment([0.25, 0.25], name="cs-test1"), 'mod': ('cs', 2.0), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], "id":2},
+	... 	{'fragment': GreekFoot("Trochee"), 'mod': ('r', 0.125), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,)], "id":3},
+	... 	{'fragment': GeneralFragment([0.25, 0.125], name="cs-test2"), 'mod': ('cs', 2.0), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], "id":4},
+	... 	{'fragment': GreekFoot("Dactyl"), 'mod': ('r', 0.125), 'onset_range': (0.5, 1.0), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,), (85,)], "id":5}
+	... ]
+	>>> for path in get_pareto_optimal_longest_paths(data_2):
+	... 	for fragment in path:
+	... 		print(fragment)
+	... 	print("-----")
+	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], 'id': 1}
+	{'fragment': <fragment.GreekFoot Dactyl>, 'mod': ('r', 0.125), 'onset_range': (0.5, 1.0), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,), (85,)], 'id': 5}
+	-----
+	{'fragment': <fragment.GeneralFragment cs-test1: [0.25 0.25]>, 'mod': ('cs', 2.0), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], 'id': 2}
+	{'fragment': <fragment.GreekFoot Dactyl>, 'mod': ('r', 0.125), 'onset_range': (0.5, 1.0), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,), (85,)], 'id': 5}
+	-----
+	{'fragment': <fragment.GreekFoot Trochee>, 'mod': ('r', 0.125), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,)], 'id': 3}
+	-----
+	{'fragment': <fragment.GeneralFragment cs-test2: [0.25  0.125]>, 'mod': ('cs', 2.0), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], 'id': 4}
+	-----
 	"""
-	tup_lst = [x["onset_range"] for x in data]
-	sources = {
-		(a, b)
-		for (a, b) in tup_lst
-		if not any(d <= a for (c, d) in tup_lst)
-	} 
+	sources = [x for x in data if not any(y["onset_range"][1] <= x["onset_range"][0] for y in data)]
+	sinks = [x for x in data if not any(x["onset_range"][1] <= y["onset_range"][0] for y in data)]
+	
+	all_ids = [x["id"] for x in data]
+	sink_ids = [x["id"] for x in sinks]
+	remaining = set(all_ids) - set(sink_ids)
+	filtered_data = [x for x in data if x["id"] in remaining]	
 
-	sinks = {
-		(a, b)
-		for (a, b) in tup_lst
-		if not any(b <= c for (c, d) in tup_lst)
-	}
+	min_successors = []
+	for x in filtered_data:
+		candidates = [y for y in data if y["onset_range"][0] >= x["onset_range"][1]]# and y["onset_range"] != x["onset_range"]]
+		min_successor = min(candidates, key=lambda x: x["onset_range"][0])
+		min_successors.append([x, min_successor])
 
-	min_successor = {
-		(a, b): min(d for c, d in tup_lst if c >= b)
-		for (a, b) in set(tup_lst) - sinks
-	}
+	successors = []
+	for x in data:
+		successor = [y for y in data if x["onset_range"][1] <= y["onset_range"][0] <= y["onset_range"][1] and y["onset_range"][0] < _min_successor_to_elem(x, min_successors)["onset_range"][1]]
+		successors.append([x, successor])
 
-	successors = {
-		(a, b): [
-			(c, d)
-			for (c, d) in tup_lst
-			if b <= c <= d and c < min_successor[(a, b)]
-		] for (a, b) in tup_lst
-	}
-
-	solutions = []
 	def print_path_rec(node, path):
 		if node in sinks:
 			solutions.append([path + [node]])
 		else:
-			for successor in successors[node]:
+			for successor in _min_successor_to_elem(node, successors):
 				print_path_rec(successor, path + [node])
 
+	solutions = []
 	for source in sources:
 		print_path_rec(source, [])
 
 	flatten = lambda l: [item for sublist in l for item in sublist]
 	flattened = flatten(solutions)
 
-	flattened.sort()
+	return flattened
+
+	# flattened.sort()
 	pareto_optimal_paths = list(flattened for flattened, _ in itertools.groupby(flattened))
 
-	#temporary (stupid) solution
 	stupid_out = []
 	for this_path in pareto_optimal_paths:
 		new_path = []
