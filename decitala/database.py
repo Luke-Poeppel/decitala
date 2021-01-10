@@ -13,7 +13,7 @@ Tools for creating sqlite3 databases of extracted rhythmic data from Messiaen's 
 import numpy as np
 import os
 import pandas as pd
-import sqlite3 as lite
+import sqlite3
 import timeout_decorator
 import timeit
 import uuid
@@ -183,7 +183,7 @@ def create_database(
 	sorted_onset_ranges = sorted(ALL_DATA, key = lambda x: x["onset_range"][0])
 	partitioned_data = partition_data_by_break_points(sorted_onset_ranges)
 
-	conn = lite.connect(db_path)
+	conn = sqlite3.connect(db_path)
 	with conn:
 		logging.info("\n")
 		logging.info("Connected to database at: {}".format(db_path))
@@ -250,7 +250,7 @@ def _num_subpath_tables(conn):
 	Returns the number of Path tables in a database db.
 
 	>>> example_data = "/Users/lukepoeppel/decitala/tests/static/ex99_data.db"
-	>>> conn = lite.connect(example_data)
+	>>> conn = sqlite3.connect(example_data)
 	>>> _num_subpath_tables(conn)
 	1
 	"""
@@ -265,7 +265,7 @@ def _num_rows_in_table(table, conn):
 	Returns the number of rows in a given table.
 	
 	>>> example_data = "/Users/lukepoeppel/decitala/tests/static/ex99_data.db"
-	>>> conn = lite.connect(example_data)
+	>>> conn = sqlite3.connect(example_data)
 	>>> _num_rows_in_table("Paths_1", conn)
 	1265
 	"""
@@ -290,7 +290,7 @@ class DBParser:
 		assert os.path.isfile(db_path), DatabaseException("You've provided an invalid file.")
 
 		filename = db_path.split('/')[-1]
-		conn = lite.connect(db_path)
+		conn = sqlite3.connect(db_path)
 		cur = conn.cursor()
 
 		self.db_path = db_path
@@ -451,3 +451,18 @@ class DBParser:
 				highest_subpath = i
 
 		return self.subpath_data(table_num, highest_subpath)
+
+####################################################################################################
+# Fragment Databases
+"""
+The following function is used to create the databases for fragment querying. 
+"""
+def create_fragment_database(verbose=True):
+	if not(verbose):
+		logging.disable(logging.INFO)
+	
+	conn = sqlite3.connect(db_path)
+
+
+
+
