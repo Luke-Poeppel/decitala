@@ -45,16 +45,16 @@ setup(
 		"ast",
 		"click",
 		"collections",
-		"coloredlogs",
 		"itertools",
 		"jsonpickle",
 		"matplotlib",
 		"more-itertools",
 		"numpy",
 		"pandas",
+		"progress",
 		"pre-commit",
 		"sqlite3",
-		"timeout-decorator"
+		"timeout-decorator",
 	],
 	cmdclass={
 		'clean': CleanCommand,

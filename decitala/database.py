@@ -19,9 +19,12 @@ import timeit
 import uuid
 
 from ast import literal_eval
+from progress.bar import Bar
+from progress.spinner import Spinner
 from scipy import stats
 
 from music21 import converter
+from music21 import note
 from music21 import stream
 
 from .fragment import (
@@ -32,6 +35,7 @@ from .fragment import (
 from .utils import (
 	get_object_indices,
 	successive_ratio_array,
+	successive_difference_array,
 	filter_single_anga_class_fragments,
 	filter_sub_fragments,
 	pitch_content_to_contour,
@@ -53,7 +57,8 @@ logging.basicConfig(level=logging.INFO)
 
 __all__ = [
 	"create_database",
-	"DBParser"
+	"DBParser",
+	"create_fragment_database"
 ]
 
 # Fragments
@@ -455,14 +460,90 @@ class DBParser:
 ####################################################################################################
 # Fragment Databases
 """
-The following function is used to create the databases for fragment querying. 
+The following function is used to create the databases for fragment querying.
 """
+def make_table(data, table_name, conn):
+	table_string = "CREATE TABLE {} (Name BLOB, QL_Array BLOB, R_Equivalents BLOB, D_Equivalents BLOB)".format(table_name)
+	conn.cursor().execute(table_string)
+
+	with Bar("Making {} Table...".format(table_name), max=len(data)) as bar:
+		for this_fragment_data in data:
+			name = this_fragment_data[0]
+			ql_array = this_fragment_data[1]
+			r_equivalents = this_fragment_data[2]
+			d_equivalents = this_fragment_data[3]
+			fragment_insertion_string = "INSERT INTO {0} VALUES('{1}', ?, ?, ?)".format(table_name, name)
+			conn.cursor().execute(fragment_insertion_string, (str(ql_array), str(r_equivalents), str(d_equivalents)))
+			bar.next()
+
+def track_equivalents(dataset_a, dataset_b, other_frag_type):
+	size_a = len(dataset_a)
+	size_b = len(dataset_b)
+	
+	i = 0
+	while i < size_a:
+		curr_data = dataset_a[i]
+		curr_ql_array = curr_data[1]
+		curr_rarray = successive_ratio_array(curr_ql_array)
+		curr_darray = successive_difference_array(curr_ql_array)
+		j = 0
+		while j < size_b:
+			if i == j:
+				pass
+			else:
+				other_iter_fragment = dataset_b[j]
+				other_rarray = successive_ratio_array(other_iter_fragment[1])
+				other_darray = successive_difference_array(other_iter_fragment[1])
+				if np.array_equal(curr_rarray, other_rarray):
+					curr_data[2].append((other_frag_type, other_iter_fragment[0]))
+				if np.array_equal(curr_darray, other_darray):
+					curr_data[3].append((other_frag_type, other_iter_fragment[0]))
+			j += 1
+		i += 1
+	return dataset_a
+
 def create_fragment_database(verbose=True):
+	"""Counts: 130 Decitalas, 26 Greek Metrics."""
 	if not(verbose):
 		logging.disable(logging.INFO)
 	
+	db_path = os.path.dirname(here) + "/databases/fragment_database.db"
+	
+	decitala_initial_data = []
+	with Bar("Getting initial decitala data...", max=130) as bar:
+		for this_file in os.listdir(decitala_path):
+			filename = this_file[:-4]
+			converted = converter.parse("/".join([decitala_path, this_file]))
+			ql_array = [this_note.quarterLength for this_note in converted.flat.getElementsByClass(note.Note)]
+			decitala_initial_data.append([filename, ql_array, [], []])
+			bar.next()
+	
+	greek_metric_initial_data = []
+
+	with Bar("Getting initial greek metric data...", max=26) as bar:
+		for this_file in os.listdir(greek_path):
+			filename = this_file[:-4]
+			converted = converter.parse("/".join([greek_path, this_file]))
+			ql_array = [this_note.quarterLength for this_note in converted.flat.getElementsByClass(note.Note)]
+			greek_metric_initial_data.append([filename, ql_array, [], []])
+			bar.next()
+	
+	logging.info("Removing intra-level decitala equivalents...")
+	decitala_intra_equivalents = track_equivalents(decitala_initial_data, decitala_initial_data, other_frag_type="decitala") # track intra-level equivalents
+	logging.info("Removing cross-level decitala equivalents...")
+	decitala_cross_equivalents = track_equivalents(decitala_intra_equivalents, greek_metric_initial_data, other_frag_type="greek_foot") # track cross-level equivalents
+
+	logging.info("Removing intra-level greek metric equivalents...")
+	greek_intra_equivalents = track_equivalents(greek_metric_initial_data, greek_metric_initial_data, other_frag_type="greek_foot")
+	logging.info("Removing cross-level greek metric equivalents...")
+	greek_cross_equivalents = track_equivalents(greek_intra_equivalents, decitala_initial_data, other_frag_type="greek_foot")
+
+	logging.info("Creating the fragments table...")
 	conn = sqlite3.connect(db_path)
+	
+	make_table(decitala_cross_equivalents, "Decitalas", conn)
+	make_table(greek_cross_equivalents, "Greek_Metrics", conn)
+	
+	logging.info("Done preparing ✔")
 
-
-
-
+	conn.commit()
