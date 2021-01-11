@@ -498,10 +498,22 @@ def track_equivalents(dataset_a, dataset_b, other_frag_type):
 					curr_data[2].append((other_frag_type, other_iter_fragment[0]))
 				if np.array_equal(curr_darray, other_darray):
 					curr_data[3].append((other_frag_type, other_iter_fragment[0]))
+			
+			# iterate through and add the 1/0 equivs. 
+			
 			j += 1
 		i += 1
 	return dataset_a
 
+# TODO: make R_Keep and D_Keep columns;
+# if in R_Keep and R_Equiivalents are not empty, 
+# set curr to 1 and all R_Equivalents to 0.
+# Then for making ratio tree of, say, talas
+# SELECT * FROM Decitalas WHERE R_Keep = 1
+# Because of the level of abstraction of FragmentTree,
+# you still want to calculate the reps each time. 
+
+# TODO: also should potentially add .xml to name... 
 def create_fragment_database(verbose=True):
 	"""Counts: 130 Decitalas, 26 Greek Metrics."""
 	if not(verbose):
@@ -520,6 +532,11 @@ def create_fragment_database(verbose=True):
 	
 	greek_metric_initial_data = []
 
+	logging.info("Removing intra-level decitala equivalents...")
+	decitala_intra_equivalents = track_equivalents(decitala_initial_data, decitala_initial_data, other_frag_type="decitala") # track intra-level equivalents
+	logging.info("Removing cross-level decitala equivalents...")
+	decitala_cross_equivalents = track_equivalents(decitala_intra_equivalents, greek_metric_initial_data, other_frag_type="greek_foot") # track cross-level equivalents
+
 	with Bar("Getting initial greek metric data...", max=26) as bar:
 		for this_file in os.listdir(greek_path):
 			filename = this_file[:-4]
@@ -528,11 +545,6 @@ def create_fragment_database(verbose=True):
 			greek_metric_initial_data.append([filename, ql_array, [], []])
 			bar.next()
 	
-	logging.info("Removing intra-level decitala equivalents...")
-	decitala_intra_equivalents = track_equivalents(decitala_initial_data, decitala_initial_data, other_frag_type="decitala") # track intra-level equivalents
-	logging.info("Removing cross-level decitala equivalents...")
-	decitala_cross_equivalents = track_equivalents(decitala_intra_equivalents, greek_metric_initial_data, other_frag_type="greek_foot") # track cross-level equivalents
-
 	logging.info("Removing intra-level greek metric equivalents...")
 	greek_intra_equivalents = track_equivalents(greek_metric_initial_data, greek_metric_initial_data, other_frag_type="greek_foot")
 	logging.info("Removing cross-level greek metric equivalents...")

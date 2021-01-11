@@ -15,6 +15,7 @@ import jsonpickle
 import numpy as np
 import os
 import re
+import sqlite3
 
 from music21 import converter
 from music21 import note
@@ -40,6 +41,8 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 decitala_path = os.path.dirname(here) + "/Fragments/Decitalas"
 greek_path = os.path.dirname(here) + "/Fragments/Greek_Metrics/XML"
+
+fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
 
 # ID's of decitalas with "subtalas"
 subdecitala_array = np.array([26, 38, 55, 65, 68])
@@ -386,7 +389,7 @@ class Decitala(GeneralFragment):
 	Class defining a Decitala object. The class currently reads from the `Fragments/Decitala`
 	folder which contains XML files for each fragment. 
 
-	:param str name: Name of the decitala, as is transliterated in the Lavignac, 1921. 
+	:param str name: Name of the decitala, as is transliterated in the Lavignac (1921). 
 	:raises `~decitala.fragment.DecitalaException`: when there is an issue with the name.
 		
 	>>> ragavardhana = Decitala('Ragavardhana')
@@ -436,12 +439,24 @@ class Decitala(GeneralFragment):
 	True
 	"""
 	def __init__(self, name, **kwargs):
+		conn = sqlite3.connect(fragment_db)
+		cur = conn.cursor()
+		
+		decitala_table_string = "SELECT * FROM Decitalas"
+		cur.execute(decitala_table_string)
+		decitala_rows = cur.fetchall()
+		
 		matches = []
-		for this_file in os.listdir(decitala_path):
-			x = re.search(name, this_file)
+		row_num = 0
+		for i, this_data in enumerate(decitala_rows):
+			x = re.search(name, this_data[0])
 			if bool(x):
-				matches.append(this_file)
-
+				matches.append(this_data)
+				row_num = i
+		
+		# probably better to get match+match num in tuples (in case > 1).
+		matches = [x[0] + ".xml" for x in matches]
+		
 		if len(matches) == 0:
 			raise DecitalaException("No matches were found for name {}.".format(name))
 		
@@ -535,7 +550,10 @@ class Decitala(GeneralFragment):
 		:rtype: int
 		"""
 		return (self.ql_duration / 0.5)
-	
+
+	def equivalent_fragment(self, rep_type):
+		pass
+
 ####################################################################################################
 class GreekFoot(GeneralFragment):
 	"""
