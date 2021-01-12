@@ -586,12 +586,22 @@ class GreekFoot(GeneralFragment):
 	[2. 1. 2.]
 	"""
 	def __init__(self, name, **kwargs):
+		conn = sqlite3.connect(fragment_db)
+		self.conn = conn
+		cur = self.conn.cursor()
+		
+		greek_metric_table_string = "SELECT * FROM Greek_Metrics"
+		cur.execute(greek_metric_table_string)
+		greek_metric_rows = cur.fetchall()
+		
 		matches = []
-		for this_file in os.listdir(greek_path):
-			x = re.search(name, this_file)
+		for this_row in greek_metric_rows:
+			x = re.search(name, this_row[0])
 			if bool(x):
-				matches.append(this_file)
-
+				matches.append(this_row[0])
+		
+		matches = [x + ".xml" for x in matches]
+		
 		if len(matches) == 0:
 			raise DecitalaException("No matches were found for name {}.".format(name))
 		

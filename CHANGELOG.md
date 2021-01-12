@@ -8,7 +8,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added a ``create_fragment_database`` function in ``database.py`` that holds name/ql data & ratio/difference equivalents in the decitala and greek metric databases (including equivalents _across_ databases). This data is available in ``fragment_database.db`` in the databases directory. 
 
 ### Changed
-- Decitala initialization relies on SQL database instead of ``os.listdir``.
+- Decitala and Greek Metric instantiation now relies on SQL database instead of ``os.listdir``.
 
 ## [v0.4.4] - January 10, 2020 (Kent, CT)
 ### Added
