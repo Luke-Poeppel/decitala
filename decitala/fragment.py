@@ -17,6 +17,8 @@ import os
 import re
 import sqlite3
 
+from ast import literal_eval
+
 from music21 import converter
 from music21 import note
 from music21 import stream
@@ -551,8 +553,31 @@ class Decitala(GeneralFragment):
 		"""
 		return (self.ql_duration / 0.5)
 
-	def equivalent_fragment(self, rep_type):
-		pass
+	def equivalents(self, rep_type="ratio"):
+		"""
+		>>> fragment = Decitala("Tritiya")
+		>>> fragment.equivalents(rep_type="ratio")
+		[<fragment.Decitala 95_Anlarakrida>]
+		>>> fragment.equivalents(rep_type="difference")
+		[<fragment.Decitala 76_Jhampa>, <fragment.Decitala 95_Anlarakrida>]
+		"""
+		assert rep_type.lower() in ["ratio", "difference"], DecitalaException("The only possible rep_types are `ratio` and `difference`")
+		
+		cur = self.conn.cursor()
+		row_string = "SELECT * FROM Decitalas WHERE Name = '{}'".format(self.name)
+		cur.execute(row_string)
+		row_data = cur.fetchall()
+
+		if rep_type == "ratio":
+			r_equivalents = literal_eval(row_data[0][2])
+			if r_equivalents:
+				fragments = [Decitala(x[1]) if x[0] == "decitala" else GreekFoot(x[1]) for x in r_equivalents]
+				return fragments
+		if rep_type == "difference":
+			d_equivalents = literal_eval(row_data[0][3])
+			if d_equivalents:
+				fragments = [Decitala(x[1]) if x[0] == "decitala" else GreekFoot(x[1]) for x in d_equivalents]
+				return fragments
 
 ####################################################################################################
 class GreekFoot(GeneralFragment):
@@ -634,3 +659,27 @@ class GreekFoot(GeneralFragment):
 	def greek_string(self):
 		"""See docstring of :obj:`decitala.utils.ql_array_to_greek_diacritics`."""
 		return ql_array_to_greek_diacritics(self.ql_array())
+
+	def equivalents(self, rep_type="ratio"):
+		"""
+		>>> fragment = GreekFoot("Ionic_Minor")
+		>>> fragment.equivalents(rep_type="ratio")
+		[<fragment.Decitala 9_Ratilila>, <fragment.Decitala 32_Kudukka>, <fragment.Decitala 36_Tribhangi>, <fragment.Decitala 49_Crikirti>]
+		"""
+		assert rep_type.lower() in ["ratio", "difference"], DecitalaException("The only possible rep_types are `ratio` and `difference`")
+		
+		cur = self.conn.cursor()
+		row_string = "SELECT * FROM Greek_Metrics WHERE Name = '{}'".format(self.name)
+		cur.execute(row_string)
+		row_data = cur.fetchall()
+
+		if rep_type == "ratio":
+			r_equivalents = literal_eval(row_data[0][2])
+			if r_equivalents:
+				fragments = [GreekFoot(x[1]) if x[0] == "greek_foot" else Decitala(x[1]) for x in r_equivalents]
+				return fragments
+		if rep_type == "difference":
+			d_equivalents = literal_eval(row_data[0][3])
+			if d_equivalents:
+				fragments = [GreekFoot(x[1]) if x[0] == "greek_foot" else Decitala(x[1]) for x in d_equivalents]
+				return fragments

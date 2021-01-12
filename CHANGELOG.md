@@ -6,6 +6,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.5.0] - January 12, 2020 (Kent, CT)
 ### Added
 - Added a ``create_fragment_database`` function in ``database.py`` that holds name/ql data & ratio/difference equivalents in the decitala and greek metric databases (including equivalents _across_ databases). This data is available in ``fragment_database.db`` in the databases directory. 
+- Decitala and GreekFoot objects now have an ``equivalents`` method that return equivalents (based on the ``rep_type``) in the fragment corpus.
 
 ### Changed
 - Decitala and Greek Metric instantiation now relies on SQL database instead of ``os.listdir``.
