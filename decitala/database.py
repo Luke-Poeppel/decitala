@@ -528,8 +528,8 @@ def create_fragment_database(verbose=True):
 	if not(verbose):
 		logging.disable(logging.INFO)
 	
-	db_path = os.path.dirname(here) + "/databases/tempdirectory/{}.db".format(uuid.uuid4().hex)
-	#db_path = os.path.dirname(here) + "/databases/fragment_database.db"
+	# db_path = os.path.dirname(here) + "/databases/tempdirectory/{}.db".format(uuid.uuid4().hex)
+	db_path = os.path.dirname(here) + "/databases/fragment_database.db"
 	
 	decitala_initial_data = []
 	with Bar("Getting initial decitala data...", max=130) as bar:
@@ -575,7 +575,7 @@ def create_fragment_database(verbose=True):
 	logging.info("Tracking intra-level greek metric equivalents...")
 	greek_intra_equivalents = track_equivalents(greek_metric_initial_data, greek_metric_initial_data, other_frag_type="greek_foot")
 	logging.info("Tracking cross-level greek metric equivalents...")
-	greek_cross_equivalents = track_equivalents(greek_intra_equivalents, decitala_initial_data, other_frag_type="greek_foot")
+	greek_cross_equivalents = track_equivalents(greek_intra_equivalents, decitala_initial_data, other_frag_type="decitala")
 
 	# Getting `keep` data. 
 	logging.info("\n")
