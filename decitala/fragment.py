@@ -38,7 +38,6 @@ __all__ = [
 
 # Fragments
 here = os.path.abspath(os.path.dirname(__file__))
-
 decitala_path = os.path.dirname(here) + "/Fragments/Decitalas"
 greek_path = os.path.dirname(here) + "/Fragments/Greek_Metrics/XML"
 
@@ -440,22 +439,20 @@ class Decitala(GeneralFragment):
 	"""
 	def __init__(self, name, **kwargs):
 		conn = sqlite3.connect(fragment_db)
-		cur = conn.cursor()
+		self.conn = conn
+		cur = self.conn.cursor()
 		
 		decitala_table_string = "SELECT * FROM Decitalas"
 		cur.execute(decitala_table_string)
 		decitala_rows = cur.fetchall()
 		
 		matches = []
-		row_num = 0
-		for i, this_data in enumerate(decitala_rows):
-			x = re.search(name, this_data[0])
+		for this_row in decitala_rows:
+			x = re.search(name, this_row[0])
 			if bool(x):
-				matches.append(this_data)
-				row_num = i
+				matches.append(this_row[0])
 		
-		# probably better to get match+match num in tuples (in case > 1).
-		matches = [x[0] + ".xml" for x in matches]
+		matches = [x + ".xml" for x in matches]
 		
 		if len(matches) == 0:
 			raise DecitalaException("No matches were found for name {}.".format(name))
@@ -524,20 +521,23 @@ class Decitala(GeneralFragment):
 		"""
 		assert type(input_id) == int
 		if input_id > 121 or input_id < 1:
-			raise DecitalaException('Input must be between 1 and 120!')
-		
-		if input_id in subdecitala_array:
-			raise DecitalaException('There are multiple talas with this ID. Please consult the Lavignac (1921).')
+			raise DecitalaException("Input must be between 1 and 120.")
+		elif input_id in subdecitala_array:
+			raise DecitalaException("There are multiple talas with this ID. Please consult the Lavignac (1921).")
 
-		for thisFile in os.listdir(decitala_path):
-			x = re.search(r'\d+', thisFile)
-			try:
-				if int(x.group(0)) == input_id:
-					span_end = x.span()[1] + 1
-					return Decitala(name=thisFile[span_end:])
-			except AttributeError:
-				pass
-	
+		conn = sqlite3.connect(fragment_db)
+		cur = conn.cursor()
+		decitala_table_string = "SELECT * FROM Decitalas"
+		cur.execute(decitala_table_string)
+		decitala_rows = cur.fetchall()
+
+		for this_row in decitala_rows:
+			name = this_row[0]
+			split = name.split("_")
+			id_num = int(split[0])
+			if id_num == input_id:
+				return Decitala(name=name)
+
 	@property
 	def carnatic_string(self):
 		"""See docstring of :obj:`decitala.utils.ql_array_to_carnatic_string`."""
