@@ -17,6 +17,7 @@ import os
 import pytest
 import re
 import shutil
+import sqlite3
 import tempfile
 import uuid
 import warnings
@@ -62,6 +63,8 @@ __all__ = [
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/Fragments/Decitalas"
 greek_path = os.path.dirname(here) + "/Fragments/Greek_Metrics/XML"
+
+fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
 
 ############### EXCEPTIONS ###############
 class TreeException(Exception):
@@ -564,45 +567,59 @@ class FragmentTree(NaryTree):
 		self.rep_type = rep_type.lower()
 		self.name = name
 
-		raw_data = []
-		if (frag_type == "decitala" or frag_type == "greek_foot"):
+		filtered_data = []
+		if frag_type == "decitala" or frag_type == "greek_foot":
 			if data is None:
+				conn = sqlite3.connect(fragment_db)
+				cur = conn.cursor()
 				if self.frag_type == "decitala":
-					for this_file in os.listdir(decitala_path):
-						x = re.search(r'\d+', this_file)
-						try:
-							span_end = x.span()[1] + 1
-							raw_data.append(Decitala(name=this_file[span_end:]))
-						except AttributeError: # Is this ok...?
-							pass
-					self.raw_data = raw_data
+					if self.rep_type == "ratio":
+						decitala_table_string = "SELECT * FROM Decitalas WHERE R_Keep = 1"
+					elif self.rep_type == "difference":
+						decitala_table_string = "SELECT * FROM Decitalas WHERE D_Keep = 1"
+
+					cur.execute(decitala_table_string)
+					decitala_rows = cur.fetchall()
+					
+					for this_row in decitala_rows:
+						name = this_row[0]
+						filtered_data.append(Decitala(name=name))
+					self.filtered_data = filtered_data
 
 				if self.frag_type == "greek_foot":
-					for this_file in os.listdir(greek_path):
-						raw_data.append(GreekFoot(this_file[:-4]))
-					self.raw_data = raw_data
+					if self.rep_type == "ratio":
+						greek_metric_table_string = "SELECT * FROM Greek_Metrics WHERE R_Keep = 1"
+					elif self.rep_type == "difference":
+						greek_metric_table_string = "SELECT * FROM Greek_Metrics WHERE D_Keep = 1"
+					
+					cur.execute(greek_metric_table_string)
+					greek_metric_rows = cur.fetchall()
+					
+					for this_row in greek_metric_rows:
+						name = this_row[0]
+						filtered_data.append(GreekFoot(name=name))
 
+					self.filtered_data = filtered_data
 			else:
 				raise FragmentTreeException("To use the {} frag_type, you may not provide data.".format(frag_type))
 		else:
 			if isinstance(data, str):
 				assert os.path.isdir(data), FragmentTreeException("Invalid path provided.")
+				new_data = []
 				for this_file in os.listdir(self.data):
-					raw_data.append(GeneralFragment(this_file))
-				self.raw_data = raw_data
+					new_data.append(GeneralFragment(data=this_file))
+
+				self.filtered_data = filter_data(new_data)
 
 			if isinstance(data, list):
 				assert all(type(x).__name__ in ["GeneralFragment", "Decitala", "GreekFoot"] for x in data), FragmentTreeException("The elements of data must be GeneralFragment, Decitala, or GreekFoot objects.")
-				self.raw_data = data
-		
+				self.filtered_data = filter_data(data)
+
 		super().__init__()
-
-		self.filtered_data = filter_data(self.raw_data)
-		self.raw_data = None # Free up memory
-
+		
 		self.depth = max([len(x.ql_array()) for x in self.filtered_data])
 		self.sorted_data = sorted(self.filtered_data, key = lambda x: len(x.ql_array()))
-		self.filtered_data = None # Free up memory
+		# self.filtered_data = None # Free up memory
 
 		if self.rep_type == "ratio":
 			root_node = NaryTree().Node(value = 1.0, name = 'ROOT')

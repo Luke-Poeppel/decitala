@@ -9,6 +9,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ### Changed
 - Decitala and Greek Metric instantiation now relies on SQL database instead of ``os.listdir``.
+- FragmentTree instantiation now relies on SQL database instead of os.listdir. 
 
 ## [v0.4.4] - January 10, 2020 (Kent, CT)
 ### Added
