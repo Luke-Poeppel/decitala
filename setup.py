@@ -56,9 +56,6 @@ setup(
 		"sqlite3",
 		"timeout-decorator",
 	],
-	cmdclass={
-		'clean': CleanCommand,
-	},
 	entry_points={
 		"console_scripts": [
 			"decitala = decitala.cli:decitala"
