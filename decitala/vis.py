@@ -16,8 +16,6 @@ import shutil
 
 from collections import Counter
 
-from Naked.toolshed.shell import execute_js
-
 from . import trees # To avoid circular dependency. 
 
 import logging
