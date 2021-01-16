@@ -43,8 +43,6 @@ setup(
 	include_package_data=True,
 	install_requires=[
 		"click",
-		"collections",
-		"itertools",
 		"jsonpickle",
 		"matplotlib",
 		"more-itertools",
@@ -53,7 +51,6 @@ setup(
 		"progress",
 		"pytest",
 		"pre-commit",
-		"sqlite3",
 		"timeout-decorator",
 	],
 	entry_points={
