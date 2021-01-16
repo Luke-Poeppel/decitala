@@ -51,6 +51,7 @@ setup(
 		"numpy",
 		"pandas",
 		"progress",
+		"pytest",
 		"pre-commit",
 		"sqlite3",
 		"timeout-decorator",
