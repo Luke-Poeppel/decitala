@@ -50,8 +50,9 @@ setup(
 		"numpy",
 		"pandas",
 		"progress",
-		"pytest",
 		"pre-commit",
+		"pytest",
+		"scipy",
 		"timeout-decorator",
 	],
 	entry_points={
