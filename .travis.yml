@@ -1,8 +1,10 @@
 language: python
 
 python:
- - "3.7"
+  - "3.7"
 
 install: pip install -e .
 
-script: pytest
+script: 
+  - pytest
+  - python3 tests/doctest_runner.py
