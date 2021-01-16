@@ -521,7 +521,7 @@ def get_object_indices(filepath, part_num):
 	part = score.parts[part_num]
 	data_out = []
 	stripped = part.stripTies(retainContainers = True)
-	for this_obj in stripped.recurse().iter.notesAndRests:
+	for this_obj in stripped.recurse().stream().iter.notesAndRests:
 		data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
 
 	return data_out
