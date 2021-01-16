@@ -47,7 +47,7 @@ setup(
 		"matplotlib",
 		"more-itertools",
 		"music21",
-		"numpy",
+		"numpy>=1.16.5",
 		"pandas",
 		"progress",
 		"pre-commit",
