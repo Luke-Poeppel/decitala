@@ -61,7 +61,3 @@ def test_all_greek_foot_names():
 		new_name = random.choice(funcs)(this_file)
 		this_greek_foot = GreekFoot(new_name)
 		assert this_greek_foot.full_path == greek_path + "/" + this_file
-
-# print(Decitala("Gaja"))
-# print(Decitala("Jaya"))
-# print(Decitala("Jaya.xml"))

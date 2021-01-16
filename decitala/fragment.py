@@ -450,7 +450,7 @@ class Decitala(GeneralFragment):
 		
 		matches = []
 		for this_row in decitala_rows:
-			x = re.search(name, this_row[0])
+			x = re.search(name, this_row[0] + ".xml")
 			if bool(x):
 				matches.append(this_row[0])
 		
@@ -621,7 +621,7 @@ class GreekFoot(GeneralFragment):
 		
 		matches = []
 		for this_row in greek_metric_rows:
-			x = re.search(name, this_row[0])
+			x = re.search(name, this_row[0] + ".xml")
 			if bool(x):
 				matches.append(this_row[0])
 		
