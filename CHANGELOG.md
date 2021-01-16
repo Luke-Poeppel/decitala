@@ -13,6 +13,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Decitala and Greek Metric instantiation now relies on SQL database instead of ``os.listdir``.
 - TODO: FragmentTree default input is now a list. To create from a ``frag_type``, use the class method ``FragmentTree.from_frag_type``. 
 - FragmentTree instantiation now relies on SQL database instead of os.listdir.
+- No doctests rely on absolute paths anymore. 
 
 ## [v0.4.4] - January 10, 2020 (Kent, CT)
 ### Added

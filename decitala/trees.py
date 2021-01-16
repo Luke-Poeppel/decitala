@@ -888,14 +888,14 @@ def rolling_search(
 
 	>>> ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
 	>>> difference_tree = FragmentTree(frag_type='greek_foot', rep_type='difference')
-	>>> ex = '/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml'
+	>>> ex = "./tests/static/Shuffled_Transcription_1.xml"
 	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=["r"], verbose=False)[0:5]:
 	... 	print(tala_data)
-	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], 'id': 1}
-	{'fragment': <fragment.GreekFoot 5_16>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,), (78,)], 'id': 27}
-	{'fragment': <fragment.GreekFoot Ionic_Major>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.75), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,), (78,), (85,)], 'id': 50}
-	{'fragment': <fragment.GreekFoot Trochee>, 'mod': ('r', 0.125), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,)], 'id': 2}
-	{'fragment': <fragment.GreekFoot Dactyl>, 'mod': ('r', 0.125), 'onset_range': (0.25, 0.75), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,), (85,)], 'id': 28}
+	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.0625), 'onset_range': (0.0, 0.25), 'is_spanned_by_slur': False, 'pitch_content': [(76,), (89,)], 'id': 1}
+	{'fragment': <fragment.GreekFoot Peon_IV>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.625), 'is_spanned_by_slur': True, 'pitch_content': [(76,), (89,), (78,), (61,)], 'id': 19}
+	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.0625), 'onset_range': (0.125, 0.375), 'is_spanned_by_slur': False, 'pitch_content': [(89,), (78,)], 'id': 2}
+	{'fragment': <fragment.GreekFoot Anapest>, 'mod': ('r', 0.125), 'onset_range': (0.125, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(89,), (78,), (61,)], 'id': 13}
+	{'fragment': <fragment.GreekFoot Iamb>, 'mod': ('r', 0.125), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(78,), (61,)], 'id': 3}
 	"""
 	try:
 		assert ratio_tree.rep_type == "ratio"

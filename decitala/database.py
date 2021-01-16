@@ -81,8 +81,9 @@ def remove_cross_corpus_duplicates(data):
 	... 	{'fragment': GreekFoot("Dactyl"), 'mod': ('r', 0.125), 'onset_range': (0.5, 1.0), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,), (85,)], "id":5},
 	... 	{'fragment': Decitala("Pratitala"), 'mod': ('d', 2.0), 'onset_range': (0.5, 1.0), 'is_spanned_by_slur' : False, 'pitch_content': [(91,), (78,), (85,)], "id":6}
 	... ]
-	>>> for x in remove_cross_corpus_duplicates(fake_data):
-	... 	print(x)
+
+	# >>> for x in remove_cross_corpus_duplicates(fake_data):
+	# ... 	print(x)
 	"""
 	onset_keyfunc = lambda x: x["onset_range"]
 	onset_range_partition = [list(x) for k, x in groupby(data, key=onset_keyfunc)]
@@ -278,8 +279,8 @@ def create_database(
 def _num_subpath_tables(conn):
 	"""
 	Returns the number of Path tables in a database db.
-
-	>>> example_data = "/Users/lukepoeppel/decitala/tests/static/ex99_data.db"
+	
+	>>> example_data = "./tests/static/ex99_data.db"	
 	>>> conn = sqlite3.connect(example_data)
 	>>> _num_subpath_tables(conn)
 	1
@@ -294,7 +295,7 @@ def _num_rows_in_table(table, conn):
 	"""
 	Returns the number of rows in a given table.
 	
-	>>> example_data = "/Users/lukepoeppel/decitala/tests/static/ex99_data.db"
+	>>> example_data = "./tests/static/ex99_data.db"
 	>>> conn = sqlite3.connect(example_data)
 	>>> _num_rows_in_table("Paths_1", conn)
 	1265
@@ -309,7 +310,7 @@ class DBParser:
 	"""
 	Class used for parsing the database made in :obj:`~decitala.database.create_database`.
 
-	>>> example_data = "/Users/lukepoeppel/decitala/tests/static/ex99_data.db"
+	>>> example_data = "./tests/static/ex99_data.db"
 	>>> parsed = DBParser(example_data)
 	>>> parsed
 	<database.DBParser ex99_data.db>

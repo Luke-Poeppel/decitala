@@ -68,7 +68,7 @@ class GeneralFragment:
 	:param str name: optional name argument.
 	:raises `~decitala.fragment.FragmentException`: when an array and file are provided or neither are provided.
 	
-	>>> random_fragment_path = '/Users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml'
+	>>> random_fragment_path = "./fragments/Decitalas/63_Nandi.xml"
 	>>> g1 = GeneralFragment(data=random_fragment_path, name='test')
 	>>> g1
 	<fragment.GeneralFragment test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]>
@@ -664,7 +664,7 @@ class GreekFoot(GeneralFragment):
 		"""
 		>>> fragment = GreekFoot("Ionic_Minor")
 		>>> fragment.equivalents(rep_type="ratio")
-		[<fragment.Decitala 9_Ratilila>, <fragment.Decitala 32_Kudukka>, <fragment.Decitala 36_Tribhangi>, <fragment.Decitala 49_Crikirti>]
+		[<fragment.Decitala 49_Crikirti>, <fragment.Decitala 32_Kudukka>, <fragment.Decitala 9_Ratilila>, <fragment.Decitala 36_Tribhangi>]
 		"""
 		assert rep_type.lower() in ["ratio", "difference"], DecitalaException("The only possible rep_types are `ratio` and `difference`")
 		

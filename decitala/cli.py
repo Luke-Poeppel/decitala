@@ -23,16 +23,6 @@ def decitala():
 	pass
 
 @decitala.command()
-@click.option('--verbose', is_flag=True, help="Will print verbose messages.")
-@click.option('--name', default='', help="What's your name?")
-def cli(verbose, name):
-	if verbose:
-		click.echo("You are in verbose mode.")
-	click.secho("Hello, World!", fg="blue", bold=True)
-	click.secho("This is a command line tool test.")
-	click.echo(":-) {}".format(name))
-
-@decitala.command()
 @click.option("--filepath", default="", help="Path to filepath parsed for the database.")
 @click.option("--part", default=0, help="Part number.")
 @click.option("--fragtype", default=["decitala"])
