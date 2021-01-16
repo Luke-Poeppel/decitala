@@ -1,9 +1,8 @@
-language: python
-
-python: "3.7"
-
-os: osx
-osx_image: xcode11.2
+matrix:
+    include:
+        - python: 3.7
+          dist: xenial
+          sudo: false
 
 install: pip install -e .
 
