@@ -8,8 +8,8 @@ from decitala.fragment import (
 )
 
 here = os.path.abspath(os.path.dirname(__file__))
-decitala_path = os.path.dirname(here) + "/Fragments/Decitalas"
-greek_path = os.path.dirname(here) + "/Fragments/Greek_Metrics/XML"
+decitala_path = os.path.dirname(here) + "/fragments/Decitalas"
+greek_path = os.path.dirname(here) + "/fragments/Greek_Metrics/XML"
 
 # Possible manipulations for Decitalas and GreekFoot objects. 
 full_name = lambda x: x

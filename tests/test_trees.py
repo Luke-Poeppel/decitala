@@ -13,8 +13,8 @@ from music21 import converter
 from music21 import note
 
 here = os.path.abspath(os.path.dirname(__file__))
-decitala_path = os.path.dirname(here) + "/Fragments/Decitalas"
-greek_path = os.path.dirname(here) + "/Fragments/Greek_Metrics/XML"
+decitala_path = os.path.dirname(here) + "/fragments/Decitalas"
+greek_path = os.path.dirname(here) + "/fragments/Greek_Metrics/XML"
 
 @pytest.fixture
 def tala_ratio_tree():
