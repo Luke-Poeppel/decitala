@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import pytest
 
 from decitala.trees import (
@@ -8,6 +9,13 @@ from decitala.trees import (
 )
 from decitala.fragment import GeneralFragment
 
+from music21 import converter
+from music21 import note
+
+here = os.path.abspath(os.path.dirname(__file__))
+decitala_path = os.path.dirname(here) + "/Fragments/Decitalas"
+greek_path = os.path.dirname(here) + "/Fragments/Greek_Metrics/XML"
+
 @pytest.fixture
 def tala_ratio_tree():
 	ratio_tree = FragmentTree(frag_type='decitala', rep_type='ratio')
@@ -16,6 +24,16 @@ def tala_ratio_tree():
 @pytest.fixture
 def tala_difference_tree():
 	difference_tree = FragmentTree(frag_type='decitala', rep_type='difference')
+	return difference_tree
+
+@pytest.fixture
+def greek_ratio_tree():
+	ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
+	return ratio_tree
+
+@pytest.fixture
+def greek_difference_tree():
+	difference_tree = FragmentTree(frag_type='greek_foot', rep_type='difference')
 	return difference_tree
 
 @pytest.fixture
@@ -42,6 +60,42 @@ def grand_corbeau_examples():
 	phrase_1 = [(chord.Chord(["F#2", "F3"]), (0.0, 0.125)), (chord.Chord(["F#2", "F3"]), (0.125, 0.25)), (chord.Chord(["E-3", "D4"]), (0.25, 0.375)), (chord.Chord(["A2", "A-3>"]) (0.375, 0.625))]
 	phrase_2 = [(chord.Chord(["F#2", "F3"]), (1.625, 1.75)), (chord.Chord(["F#2", "F3"]), (1.75, 1.875)), (chord.Chord(["F#2", "F3"]), (1.875, 2.0)), (chord.Chord(["F#2", "F3"]), (2.0, 2.25))]
 	phrase_3 = [(chord.Chord(["F#2", "F3"]), (2.75, 2.875)), (chord.Chord(["F#2", "F3"]), (2.875, 3.0)), (chord.Chord(["F#2", "F3"]), (3.0, 3.125)), (chord.Chord(["E-3", "D4"]), (3.125, 3.25)), (chord.Chord(["A2", "A-3"]), (3.25, 3.5))]
+
+def test_decitala_tree_instantiation(tala_ratio_tree, tala_difference_tree):
+	"""Check that every file appears in the decitala ratio/difference trees."""
+	found_rtree = []
+	found_dtree = []
+	for this_file in os.listdir(decitala_path):
+		parsed = converter.parse(decitala_path + "/" + this_file)
+		ql_array = np.array([this_note.quarterLength for this_note in parsed.flat.getElementsByClass(note.Note)])
+		if len(ql_array) < 2:
+			pass
+		else:
+			rsearch = get_by_ql_array(ql_array, ratio_tree=tala_ratio_tree, allowed_modifications=["r"])
+			found_rtree.append(rsearch)
+			dsearch = get_by_ql_array(ql_array, difference_tree=tala_difference_tree, allowed_modifications=["d"])
+			found_dtree.append(dsearch)
+
+	assert not(any(x == None for x in found_rtree))
+	assert not(any(x == None for x in found_dtree))
+
+def test_greek_metric_tree_instantiation(greek_ratio_tree, greek_difference_tree):
+	"""Check that every file appears in the greek metric ratio/difference trees."""
+	found_rtree = []
+	found_dtree = []
+	for this_file in os.listdir(greek_path):
+		parsed = converter.parse(greek_path + "/" + this_file)
+		ql_array = np.array([this_note.quarterLength for this_note in parsed.flat.getElementsByClass(note.Note)])
+		if len(ql_array) < 2:
+			pass
+		else:
+			rsearch = get_by_ql_array(ql_array, ratio_tree=greek_ratio_tree, allowed_modifications=["r"])
+			found_rtree.append(rsearch)
+			dsearch = get_by_ql_array(ql_array, difference_tree=greek_difference_tree, allowed_modifications=["d"])
+			found_dtree.append(dsearch)
+
+	assert not(any(x == None for x in found_rtree))
+	assert not(any(x == None for x in found_dtree))
 
 def test_filter(fake_fragment_dataset):
 	filtered = filter_data(fake_fragment_dataset)
