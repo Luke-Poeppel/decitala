@@ -7,7 +7,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Added
 - Added a ``create_fragment_database`` function in ``database.py`` that holds name/ql data & ratio/difference equivalents in the decitala and greek metric databases (including equivalents _across_ databases). This data is available in ``fragment_database.db`` in the databases directory. 
 - Decitala and GreekFoot objects now have an ``equivalents`` method that return equivalents (based on the ``rep_type``) in the fragment corpus.
-- TODO: Created a Travis-CI account for continuous integration. 
+- Created a Travis-CI account for continuous integration. 
 
 ### Changed
 - Decitala and Greek Metric instantiation now relies on SQL database instead of ``os.listdir``.
