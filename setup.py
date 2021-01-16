@@ -46,6 +46,7 @@ setup(
 		"jsonpickle",
 		"matplotlib",
 		"more-itertools",
+		"music21",
 		"numpy",
 		"pandas",
 		"progress",
