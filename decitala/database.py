@@ -13,6 +13,7 @@ Tools for creating SQLite databases of extracted rhythmic data from Messiaen's m
 import numpy as np
 import os
 import pandas as pd
+import random
 import sqlite3
 import timeout_decorator
 import timeit
@@ -82,8 +83,13 @@ def remove_cross_corpus_duplicates(data):
 	... 	{'fragment': Decitala("Pratitala"), 'mod': ('d', 2.0), 'onset_range': (0.5, 1.0), 'is_spanned_by_slur' : False, 'pitch_content': [(91,), (78,), (85,)], "id":6}
 	... ]
 
-	# >>> for x in remove_cross_corpus_duplicates(fake_data):
-	# ... 	print(x)
+	>>> for x in remove_cross_corpus_duplicates(fake_data):
+	... 	print(x)
+	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], 'id': 1}
+	{'fragment': <fragment.GeneralFragment cs-test1: [0.25 0.25]>, 'mod': ('cs', 2.0), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], 'id': 2}
+	{'fragment': <fragment.GreekFoot Trochee>, 'mod': ('r', 0.125), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,)], 'id': 3}
+	{'fragment': <fragment.GeneralFragment cs-test2: [0.25  0.125]>, 'mod': ('cs', 2.0), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], 'id': 4}
+	{'fragment': <fragment.GreekFoot Dactyl>, 'mod': ('r', 0.125), 'onset_range': (0.5, 1.0), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,), (85,)], 'id': 5}
 	"""
 	onset_keyfunc = lambda x: x["onset_range"]
 	onset_range_partition = [list(x) for k, x in groupby(data, key=onset_keyfunc)]
@@ -93,8 +99,12 @@ def remove_cross_corpus_duplicates(data):
 		if len(partition) == 1:
 			data_out.extend(partition)
 		else:
-			pass
-			# segregate cs from non-cs
+			cs_frags = [x for x in partition if "cs" in x["mod"][0]]
+			non_cs_frags = [x for x in partition if "cs" not in x["mod"][0]]
+			data_out.append(random.choice(non_cs_frags))
+			data_out.extend(cs_frags)
+
+	return data_out
 
 @timeout_decorator.timeout(75)
 def create_database(
@@ -164,12 +174,12 @@ def create_database(
 		logging.info("Making fragment tree(s) (and searching) for frag_type: {}".format(this_frag_type))
 
 		if "ratio" in rep_types:
-			curr_ratio_tree = FragmentTree(frag_type=this_frag_type, rep_type="ratio")
+			curr_ratio_tree = FragmentTree.from_frag_type(frag_type=this_frag_type, rep_type="ratio")
 		else:
 			curr_ratio_tree = None
 		
 		if "difference" in rep_types:
-			curr_difference_tree = FragmentTree(frag_type=this_frag_type, rep_type="difference")
+			curr_difference_tree = FragmentTree.from_frag_type(frag_type=this_frag_type, rep_type="difference")
 		else:
 			curr_difference_tree = None
 
@@ -191,8 +201,9 @@ def create_database(
 	logging.info("\n")
 	logging.info("{} fragments extracted".format(initial_length))
 
-	# logging.info("Removing cross-corpus duplicates...")
-	
+	logging.info("Removing cross-corpus duplicates...")
+	ALL_DATA = remove_cross_corpus_duplicates(ALL_DATA)
+
 	############ Filters ############
 	if filter_found_single_anga_class:
 		ALL_DATA = filter_single_anga_class_fragments(ALL_DATA)
@@ -255,7 +266,7 @@ def create_database(
 			for path in pareto_optimal_paths:
 				fragment_row_ids = []
 				for this_fragment_data in path:
-					data = this_fragment_data[0]
+					data = this_fragment_data
 					for j, this_row in enumerate(fragment_rows):
 						if (this_row[2] == data["fragment"].name) and (this_row[0] == data["onset_range"][0]) and (this_row[1] == data["onset_range"][1]):
 							fragment_row_ids.append(j + 1)
