@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/Luke-Poeppel/decitala.svg?token=YxpxoWhsVmQpyqxLyGf3&branch=master)](https://travis-ci.com/Luke-Poeppel/decitala)
+
 Tools for automating ethnological rhythmic analysis of Olivier Messiaen's music. The version of the package
 can be found with ``decitala --version``. 
 
