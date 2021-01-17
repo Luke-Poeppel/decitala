@@ -1,9 +1,17 @@
 language: python
 
-python: "3.7"
+python: 
+  - "3.7"
+  - "3.9"
 
-install: pip install -e .
+install: 
+  - pip install -e .
+  - pip install coverage
 
 script: 
   - pytest
   - python3 tests/doctest_runner.py
+
+after_success: 
+  - coverage run -m pytest
+  - bash <(curl -s https://codecov.io/bash)
