@@ -14,4 +14,4 @@ script:
 
 after_success: 
   - coverage run -m pytest
-  - bash <(curl -s https://codecov.io/bash -t a845d1bb-a8fc-492c-80f3-9489d256edd4) 
+  - bash <(curl -s https://codecov.io/bash) -t a845d1bb-a8fc-492c-80f3-9489d256edd4
