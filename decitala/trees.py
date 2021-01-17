@@ -538,7 +538,7 @@ class FragmentTree(NaryTree):
 	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` (default) and ``difference``.
 	:raises `~decitala.trees.FragmentTreeException`: when an invalid path or representation type is provided.
 
-	>>> ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
+	>>> ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
 	>>> ratio_tree
 	<trees.FragmentTree: nodes=31>
 	>>> ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0])
@@ -558,62 +558,26 @@ class FragmentTree(NaryTree):
 	<fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]>
 	<fragment.GreekFoot Ionic_Major>
 	"""
-	def __init__(self, data=None, frag_type="general_fragment", rep_type="ratio", name=None, **kwargs):
-		assert frag_type.lower() in ["decitala", "greek_foot", "general_fragment"], FragmentTreeException("The only possible frag_types are `decitala`, `greek_foot`, and `general_fragment`.")
+	def __init__(self, data, rep_type, name=None, skip_filter=False, **kwargs):
 		assert rep_type.lower() in ["ratio", "difference"], FragmentTreeException("The only possible rep_types are `ratio` and `difference`")
 
-		self.data = data
-		self.frag_type = frag_type.lower()
 		self.rep_type = rep_type.lower()
 		self.name = name
+		
+		if isinstance(data, str):
+			assert os.path.isdir(data), FragmentTreeException("Invalid path provided.")
+			new_data = []
+			for this_file in os.listdir(self.data):
+				new_data.append(GeneralFragment(data=this_file))
 
-		filtered_data = []
-		if frag_type == "decitala" or frag_type == "greek_foot":
-			if data is None:
-				conn = sqlite3.connect(fragment_db)
-				cur = conn.cursor()
-				if self.frag_type == "decitala":
-					if self.rep_type == "ratio":
-						decitala_table_string = "SELECT * FROM Decitalas WHERE R_Keep = 1"
-					elif self.rep_type == "difference":
-						decitala_table_string = "SELECT * FROM Decitalas WHERE D_Keep = 1"
-
-					cur.execute(decitala_table_string)
-					decitala_rows = cur.fetchall()
-					
-					for this_row in decitala_rows:
-						name = this_row[0]
-						filtered_data.append(Decitala(name=name))
-					self.filtered_data = filtered_data
-
-				if self.frag_type == "greek_foot":
-					if self.rep_type == "ratio":
-						greek_metric_table_string = "SELECT * FROM Greek_Metrics WHERE R_Keep = 1"
-					elif self.rep_type == "difference":
-						greek_metric_table_string = "SELECT * FROM Greek_Metrics WHERE D_Keep = 1"
-					
-					cur.execute(greek_metric_table_string)
-					greek_metric_rows = cur.fetchall()
-					
-					for this_row in greek_metric_rows:
-						name = this_row[0]
-						filtered_data.append(GreekFoot(name=name))
-
-					self.filtered_data = filtered_data
-			else:
-				raise FragmentTreeException("To use the {} frag_type, you may not provide data.".format(frag_type))
-		else:
-			if isinstance(data, str):
-				assert os.path.isdir(data), FragmentTreeException("Invalid path provided.")
-				new_data = []
-				for this_file in os.listdir(self.data):
-					new_data.append(GeneralFragment(data=this_file))
-
-				self.filtered_data = filter_data(new_data)
-
-			if isinstance(data, list):
-				assert all(type(x).__name__ in ["GeneralFragment", "Decitala", "GreekFoot"] for x in data), FragmentTreeException("The elements of data must be GeneralFragment, Decitala, or GreekFoot objects.")
+			self.filtered_data = filter_data(new_data)
+		
+		if isinstance(data, list):
+			assert all(type(x).__name__ in ["GeneralFragment", "Decitala", "GreekFoot"] for x in data), FragmentTreeException("The elements of data must be GeneralFragment, Decitala, or GreekFoot objects.")
+			if skip_filter:
 				self.filtered_data = filter_data(data)
+			else:
+				self.filtered_data = data
 
 		super().__init__()
 		
@@ -641,6 +605,48 @@ class FragmentTree(NaryTree):
 		else:
 			return '<trees.FragmentTree: nodes={}>'.format(self.size())
 	
+	@classmethod
+	def from_frag_type(
+		cls,
+		frag_type,
+		rep_type
+		):
+		"""
+		Create a fragment tree from the data in fragment_database.db in the databases directory. 
+		"""
+		assert frag_type.lower() in ["decitala", "greek_foot"], FragmentTreeException("The only possible frag_types are `decitala` and `greek_foot`.")
+		assert rep_type.lower() in ["ratio", "difference"], FragmentTreeException("The only possible rep_types are `ratio` and `difference`")
+		
+		conn = sqlite3.connect(fragment_db)
+		cur = conn.cursor()
+		
+		data = []
+		if frag_type == "decitala":
+			if rep_type == "ratio":
+				decitala_table_string = "SELECT * FROM Decitalas WHERE R_Keep = 1"
+			elif rep_type == "difference":
+				decitala_table_string = "SELECT * FROM Decitalas WHERE D_Keep = 1"
+
+			cur.execute(decitala_table_string)
+			decitala_rows = cur.fetchall()	
+			for this_row in decitala_rows:
+				name = this_row[0]
+				data.append(Decitala(name=name))
+		
+		if frag_type == "greek_foot":
+			if rep_type == "ratio":
+				greek_metric_table_string = "SELECT * FROM Greek_Metrics WHERE R_Keep = 1"
+			elif rep_type == "difference":
+				greek_metric_table_string = "SELECT * FROM Greek_Metrics WHERE D_Keep = 1"
+			
+			cur.execute(greek_metric_table_string)
+			greek_metric_rows = cur.fetchall()
+			for this_row in greek_metric_rows:
+				name = this_row[0]
+				data.append(GreekFoot(name=name))
+		
+		return FragmentTree(data=data, rep_type=rep_type, skip_filter=True)
+
 	@classmethod
 	def from_composition(
 			cls,
@@ -807,8 +813,8 @@ def get_by_ql_array(
 	:param bool allow_unnamed: whether or not to allow the retrieval of unnamed paths. Default is ``False``.
 
 	>>> fragment = np.array([3.0, 1.5, 1.5, 3.0])
-	>>> ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
-	>>> difference_tree = FragmentTree(frag_type='greek_foot', rep_type='difference')
+	>>> ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
+	>>> difference_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='difference')
 	>>> allowed_modifications = ["r", "rr"]
 	>>> get_by_ql_array(fragment, ratio_tree, difference_tree, allowed_modifications)
 	(<fragment.GreekFoot Choriamb>, ('r', 1.5))
@@ -886,8 +892,8 @@ def rolling_search(
 	:return: list holding dictionaries, each of which holds fragment, modifiation, onset-range, and spanning data.
 	:rtype: list
 
-	>>> ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
-	>>> difference_tree = FragmentTree(frag_type='greek_foot', rep_type='difference')
+	>>> ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
+	>>> difference_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='difference')
 	>>> ex = "./tests/static/Shuffled_Transcription_2.xml"
 	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=["r"], verbose=False)[0:5]:
 	... 	print(tala_data)
