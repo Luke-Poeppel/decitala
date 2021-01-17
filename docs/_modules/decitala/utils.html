@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.utils &mdash; decitala 0.4.4 documentation</title>
+  <title>decitala.utils &mdash; decitala 0.5.0 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.4.4 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.5.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.4.4
+                0.5.0
               </div>
             
           
@@ -679,7 +679,7 @@
 	<span class="n">part</span> <span class="o">=</span> <span class="n">score</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="n">part_num</span><span class="p">]</span>
 	<span class="n">data_out</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="n">stripped</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">stripTies</span><span class="p">(</span><span class="n">retainContainers</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
-	<span class="k">for</span> <span class="n">this_obj</span> <span class="ow">in</span> <span class="n">stripped</span><span class="o">.</span><span class="n">recurse</span><span class="p">()</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notesAndRests</span><span class="p">:</span>
+	<span class="k">for</span> <span class="n">this_obj</span> <span class="ow">in</span> <span class="n">stripped</span><span class="o">.</span><span class="n">recurse</span><span class="p">()</span><span class="o">.</span><span class="n">stream</span><span class="p">()</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notesAndRests</span><span class="p">:</span>
 		<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">this_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)))</span>
 
 	<span class="k">return</span> <span class="n">data_out</span></div>
@@ -1129,7 +1129,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.4.4',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

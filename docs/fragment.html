@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>fragment.py &mdash; decitala 0.4.4 documentation</title>
+  <title>fragment.py &mdash; decitala 0.5.0 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="decitala 0.4.4 documentation" href="index.html"/>
+    <link rel="top" title="decitala 0.5.0 documentation" href="index.html"/>
         <link rel="next" title="pofp.py" href="pofp.html"/>
         <link rel="prev" title="database.py" href="database.html"/> 
 
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.4.4
+                0.5.0
               </div>
             
           
@@ -176,7 +176,7 @@ or a path to a music21 readable file.)</p></li>
 <dd class="field-even"><p><strong>FragmentException</strong> – when an array and file are provided or neither are provided.</p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">random_fragment_path</span> <span class="o">=</span> <span class="s1">&#39;/Users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml&#39;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">random_fragment_path</span> <span class="o">=</span> <span class="s2">&quot;./fragments/Decitalas/63_Nandi.xml&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">random_fragment_path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span>
 <span class="go">&lt;fragment.GeneralFragment test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]&gt;</span>
@@ -505,7 +505,7 @@ corresponding to the original fragment augmented by a given ratio and difference
 folder which contains XML files for each fragment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name of the decitala, as is transliterated in the Lavignac, 1921.</p>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name of the decitala, as is transliterated in the Lavignac (1921).</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><strong>DecitalaException</strong> – when there is an issue with the name.</p>
@@ -616,6 +616,18 @@ numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. So
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="decitala.fragment.Decitala.equivalents">
+<code class="sig-name descname">equivalents</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rep_type</span><span class="o">=</span><span class="default_value">'ratio'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#Decitala.equivalents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.Decitala.equivalents" title="Permalink to this definition">¶</a></dt>
+<dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span> <span class="o">=</span> <span class="n">Decitala</span><span class="p">(</span><span class="s2">&quot;Tritiya&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span><span class="o">.</span><span class="n">equivalents</span><span class="p">(</span><span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span><span class="p">)</span>
+<span class="go">[&lt;fragment.Decitala 95_Anlarakrida&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span><span class="o">.</span><span class="n">equivalents</span><span class="p">(</span><span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;difference&quot;</span><span class="p">)</span>
+<span class="go">[&lt;fragment.Decitala 76_Jhampa&gt;, &lt;fragment.Decitala 95_Anlarakrida&gt;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -654,6 +666,16 @@ numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. So
 <dt id="decitala.fragment.GreekFoot.greek_string">
 <em class="property">property </em><code class="sig-name descname">greek_string</code><a class="headerlink" href="#decitala.fragment.GreekFoot.greek_string" title="Permalink to this definition">¶</a></dt>
 <dd><p>See docstring of <a class="reference internal" href="utils.html#decitala.utils.ql_array_to_greek_diacritics" title="decitala.utils.ql_array_to_greek_diacritics"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.utils.ql_array_to_greek_diacritics</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="decitala.fragment.GreekFoot.equivalents">
+<code class="sig-name descname">equivalents</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rep_type</span><span class="o">=</span><span class="default_value">'ratio'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GreekFoot.equivalents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GreekFoot.equivalents" title="Permalink to this definition">¶</a></dt>
+<dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span> <span class="o">=</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Ionic_Minor&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span><span class="o">.</span><span class="n">equivalents</span><span class="p">(</span><span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span><span class="p">)</span>
+<span class="go">[&lt;fragment.Decitala 49_Crikirti&gt;, &lt;fragment.Decitala 32_Kudukka&gt;, &lt;fragment.Decitala 9_Ratilila&gt;, &lt;fragment.Decitala 36_Tribhangi&gt;]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -701,7 +723,7 @@ numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. So
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.4.4',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

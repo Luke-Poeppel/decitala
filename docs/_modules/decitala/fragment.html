@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.fragment &mdash; decitala 0.4.4 documentation</title>
+  <title>decitala.fragment &mdash; decitala 0.5.0 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.4.4 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.5.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.4.4
+                0.5.0
               </div>
             
           
@@ -173,6 +173,9 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+
+<span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">literal_eval</span>
 
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">converter</span>
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span>
@@ -195,9 +198,10 @@
 
 <span class="c1"># Fragments</span>
 <span class="n">here</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">decitala_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/fragments/Decitalas&quot;</span>
+<span class="n">greek_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/fragments/Greek_Metrics/XML&quot;</span>
 
-<span class="n">decitala_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/Fragments/Decitalas&quot;</span>
-<span class="n">greek_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/Fragments/Greek_Metrics/XML&quot;</span>
+<span class="n">fragment_db</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/databases/fragment_database.db&quot;</span>
 
 <span class="c1"># ID&#39;s of decitalas with &quot;subtalas&quot;</span>
 <span class="n">subdecitala_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">26</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">68</span><span class="p">])</span>
@@ -222,7 +226,7 @@
 <span class="sd">	:param str name: optional name argument.</span>
 <span class="sd">	:raises `~decitala.fragment.FragmentException`: when an array and file are provided or neither are provided.</span>
 <span class="sd">	</span>
-<span class="sd">	&gt;&gt;&gt; random_fragment_path = &#39;/Users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml&#39;</span>
+<span class="sd">	&gt;&gt;&gt; random_fragment_path = &quot;./fragments/Decitalas/63_Nandi.xml&quot;</span>
 <span class="sd">	&gt;&gt;&gt; g1 = GeneralFragment(data=random_fragment_path, name=&#39;test&#39;)</span>
 <span class="sd">	&gt;&gt;&gt; g1</span>
 <span class="sd">	&lt;fragment.GeneralFragment test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]&gt;</span>
@@ -544,7 +548,7 @@
 <span class="sd">	Class defining a Decitala object. The class currently reads from the `Fragments/Decitala`</span>
 <span class="sd">	folder which contains XML files for each fragment. </span>
 
-<span class="sd">	:param str name: Name of the decitala, as is transliterated in the Lavignac, 1921. </span>
+<span class="sd">	:param str name: Name of the decitala, as is transliterated in the Lavignac (1921). </span>
 <span class="sd">	:raises `~decitala.fragment.DecitalaException`: when there is an issue with the name.</span>
 <span class="sd">		</span>
 <span class="sd">	&gt;&gt;&gt; ragavardhana = Decitala(&#39;Ragavardhana&#39;)</span>
@@ -594,12 +598,22 @@
 <span class="sd">	True</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">fragment_db</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">conn</span>
+		<span class="n">cur</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+		
+		<span class="n">decitala_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Decitalas&quot;</span>
+		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">decitala_table_string</span><span class="p">)</span>
+		<span class="n">decitala_rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+		
 		<span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">decitala_path</span><span class="p">):</span>
-			<span class="n">x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">this_file</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="n">decitala_rows</span><span class="p">:</span>
+			<span class="n">x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.xml&quot;</span><span class="p">)</span>
 			<span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-				<span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_file</span><span class="p">)</span>
-
+				<span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		
+		<span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="s2">&quot;.xml&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">]</span>
+		
 		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="n">DecitalaException</span><span class="p">(</span><span class="s2">&quot;No matches were found for name </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
 		
@@ -667,20 +681,23 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">input_id</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span>
 		<span class="k">if</span> <span class="n">input_id</span> <span class="o">&gt;</span> <span class="mi">121</span> <span class="ow">or</span> <span class="n">input_id</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-			<span class="k">raise</span> <span class="n">DecitalaException</span><span class="p">(</span><span class="s1">&#39;Input must be between 1 and 120!&#39;</span><span class="p">)</span>
-		
-		<span class="k">if</span> <span class="n">input_id</span> <span class="ow">in</span> <span class="n">subdecitala_array</span><span class="p">:</span>
-			<span class="k">raise</span> <span class="n">DecitalaException</span><span class="p">(</span><span class="s1">&#39;There are multiple talas with this ID. Please consult the Lavignac (1921).&#39;</span><span class="p">)</span>
+			<span class="k">raise</span> <span class="n">DecitalaException</span><span class="p">(</span><span class="s2">&quot;Input must be between 1 and 120.&quot;</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">input_id</span> <span class="ow">in</span> <span class="n">subdecitala_array</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">DecitalaException</span><span class="p">(</span><span class="s2">&quot;There are multiple talas with this ID. Please consult the Lavignac (1921).&quot;</span><span class="p">)</span>
 
-		<span class="k">for</span> <span class="n">thisFile</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">decitala_path</span><span class="p">):</span>
-			<span class="n">x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="n">thisFile</span><span class="p">)</span>
-			<span class="k">try</span><span class="p">:</span>
-				<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">==</span> <span class="n">input_id</span><span class="p">:</span>
-					<span class="n">span_end</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">span</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
-					<span class="k">return</span> <span class="n">Decitala</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">thisFile</span><span class="p">[</span><span class="n">span_end</span><span class="p">:])</span>
-			<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-				<span class="k">pass</span></div>
-	
+		<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">fragment_db</span><span class="p">)</span>
+		<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+		<span class="n">decitala_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Decitalas&quot;</span>
+		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">decitala_table_string</span><span class="p">)</span>
+		<span class="n">decitala_rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+		<span class="k">for</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="n">decitala_rows</span><span class="p">:</span>
+			<span class="n">name</span> <span class="o">=</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">split</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+			<span class="n">id_num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+			<span class="k">if</span> <span class="n">id_num</span> <span class="o">==</span> <span class="n">input_id</span><span class="p">:</span>
+				<span class="k">return</span> <span class="n">Decitala</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
 	<span class="nd">@property</span>
 	<span class="k">def</span> <span class="nf">carnatic_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;See docstring of :obj:`decitala.utils.ql_array_to_carnatic_string`.&quot;&quot;&quot;</span>
@@ -692,8 +709,34 @@
 <span class="sd">		:return: returns the number of matras in the tala (here, the number of eighth notes).</span>
 <span class="sd">		:rtype: int</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_duration</span> <span class="o">/</span> <span class="mf">0.5</span><span class="p">)</span></div>
-	
+		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_duration</span> <span class="o">/</span> <span class="mf">0.5</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Decitala.equivalents"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.Decitala.equivalents">[docs]</a>	<span class="k">def</span> <span class="nf">equivalents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		&gt;&gt;&gt; fragment = Decitala(&quot;Tritiya&quot;)</span>
+<span class="sd">		&gt;&gt;&gt; fragment.equivalents(rep_type=&quot;ratio&quot;)</span>
+<span class="sd">		[&lt;fragment.Decitala 95_Anlarakrida&gt;]</span>
+<span class="sd">		&gt;&gt;&gt; fragment.equivalents(rep_type=&quot;difference&quot;)</span>
+<span class="sd">		[&lt;fragment.Decitala 76_Jhampa&gt;, &lt;fragment.Decitala 95_Anlarakrida&gt;]</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="n">rep_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;difference&quot;</span><span class="p">],</span> <span class="n">DecitalaException</span><span class="p">(</span><span class="s2">&quot;The only possible rep_types are `ratio` and `difference`&quot;</span><span class="p">)</span>
+		
+		<span class="n">cur</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+		<span class="n">row_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Decitalas WHERE Name = &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">row_string</span><span class="p">)</span>
+		<span class="n">row_data</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+		<span class="k">if</span> <span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
+			<span class="n">r_equivalents</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">row_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+			<span class="k">if</span> <span class="n">r_equivalents</span><span class="p">:</span>
+				<span class="n">fragments</span> <span class="o">=</span> <span class="p">[</span><span class="n">Decitala</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;decitala&quot;</span> <span class="k">else</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">r_equivalents</span><span class="p">]</span>
+				<span class="k">return</span> <span class="n">fragments</span>
+		<span class="k">if</span> <span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;difference&quot;</span><span class="p">:</span>
+			<span class="n">d_equivalents</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">row_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">])</span>
+			<span class="k">if</span> <span class="n">d_equivalents</span><span class="p">:</span>
+				<span class="n">fragments</span> <span class="o">=</span> <span class="p">[</span><span class="n">Decitala</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;decitala&quot;</span> <span class="k">else</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">d_equivalents</span><span class="p">]</span>
+				<span class="k">return</span> <span class="n">fragments</span></div></div>
+
 <span class="c1">####################################################################################################</span>
 <div class="viewcode-block" id="GreekFoot"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GreekFoot">[docs]</a><span class="k">class</span> <span class="nc">GreekFoot</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -726,12 +769,22 @@
 <span class="sd">	[2. 1. 2.]</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">fragment_db</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">conn</span> <span class="o">=</span> <span class="n">conn</span>
+		<span class="n">cur</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+		
+		<span class="n">greek_metric_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Greek_Metrics&quot;</span>
+		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">greek_metric_table_string</span><span class="p">)</span>
+		<span class="n">greek_metric_rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+		
 		<span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">greek_path</span><span class="p">):</span>
-			<span class="n">x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">this_file</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="n">greek_metric_rows</span><span class="p">:</span>
+			<span class="n">x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.xml&quot;</span><span class="p">)</span>
 			<span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-				<span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_file</span><span class="p">)</span>
-
+				<span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		
+		<span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="s2">&quot;.xml&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">]</span>
+		
 		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="n">DecitalaException</span><span class="p">(</span><span class="s2">&quot;No matches were found for name </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
 		
@@ -763,7 +816,31 @@
 	<span class="nd">@property</span>
 	<span class="k">def</span> <span class="nf">greek_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;See docstring of :obj:`decitala.utils.ql_array_to_greek_diacritics`.&quot;&quot;&quot;</span>
-		<span class="k">return</span> <span class="n">ql_array_to_greek_diacritics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span></div>
+		<span class="k">return</span> <span class="n">ql_array_to_greek_diacritics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
+
+<div class="viewcode-block" id="GreekFoot.equivalents"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GreekFoot.equivalents">[docs]</a>	<span class="k">def</span> <span class="nf">equivalents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		&gt;&gt;&gt; fragment = GreekFoot(&quot;Ionic_Minor&quot;)</span>
+<span class="sd">		&gt;&gt;&gt; fragment.equivalents(rep_type=&quot;ratio&quot;)</span>
+<span class="sd">		[&lt;fragment.Decitala 49_Crikirti&gt;, &lt;fragment.Decitala 32_Kudukka&gt;, &lt;fragment.Decitala 9_Ratilila&gt;, &lt;fragment.Decitala 36_Tribhangi&gt;]</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="n">rep_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;difference&quot;</span><span class="p">],</span> <span class="n">DecitalaException</span><span class="p">(</span><span class="s2">&quot;The only possible rep_types are `ratio` and `difference`&quot;</span><span class="p">)</span>
+		
+		<span class="n">cur</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+		<span class="n">row_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Greek_Metrics WHERE Name = &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">row_string</span><span class="p">)</span>
+		<span class="n">row_data</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+		<span class="k">if</span> <span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
+			<span class="n">r_equivalents</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">row_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+			<span class="k">if</span> <span class="n">r_equivalents</span><span class="p">:</span>
+				<span class="n">fragments</span> <span class="o">=</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span> <span class="k">else</span> <span class="n">Decitala</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">r_equivalents</span><span class="p">]</span>
+				<span class="k">return</span> <span class="n">fragments</span>
+		<span class="k">if</span> <span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;difference&quot;</span><span class="p">:</span>
+			<span class="n">d_equivalents</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">row_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">])</span>
+			<span class="k">if</span> <span class="n">d_equivalents</span><span class="p">:</span>
+				<span class="n">fragments</span> <span class="o">=</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span> <span class="k">else</span> <span class="n">Decitala</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">d_equivalents</span><span class="p">]</span>
+				<span class="k">return</span> <span class="n">fragments</span></div></div>
 </pre></div>
 
            </div>
@@ -797,7 +874,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.4.4',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

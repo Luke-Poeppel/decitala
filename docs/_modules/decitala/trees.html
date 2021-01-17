@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>decitala.trees &mdash; decitala 0.4.4 documentation</title>
+  <title>decitala.trees &mdash; decitala 0.5.0 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.4.4 documentation" href="../../index.html"/>
+    <link rel="top" title="decitala 0.5.0 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.4.4
+                0.5.0
               </div>
             
           
@@ -175,6 +175,7 @@
 <span class="kn">import</span> <span class="nn">pytest</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -220,6 +221,8 @@
 <span class="n">here</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
 <span class="n">decitala_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/Fragments/Decitalas&quot;</span>
 <span class="n">greek_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/Fragments/Greek_Metrics/XML&quot;</span>
+
+<span class="n">fragment_db</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/databases/fragment_database.db&quot;</span>
 
 <span class="c1">############### EXCEPTIONS ###############</span>
 <span class="k">class</span> <span class="nc">TreeException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -722,45 +725,59 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">=</span> <span class="n">rep_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
-		<span class="n">raw_data</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="k">if</span> <span class="p">(</span><span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;decitala&quot;</span> <span class="ow">or</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">):</span>
+		<span class="n">filtered_data</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">if</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;decitala&quot;</span> <span class="ow">or</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">:</span>
 			<span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">fragment_db</span><span class="p">)</span>
+				<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;decitala&quot;</span><span class="p">:</span>
-					<span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">decitala_path</span><span class="p">):</span>
-						<span class="n">x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="n">this_file</span><span class="p">)</span>
-						<span class="k">try</span><span class="p">:</span>
-							<span class="n">span_end</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">span</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
-							<span class="n">raw_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Decitala</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">this_file</span><span class="p">[</span><span class="n">span_end</span><span class="p">:]))</span>
-						<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span> <span class="c1"># Is this ok...?</span>
-							<span class="k">pass</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span> <span class="o">=</span> <span class="n">raw_data</span>
+					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
+						<span class="n">decitala_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Decitalas WHERE R_Keep = 1&quot;</span>
+					<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;difference&quot;</span><span class="p">:</span>
+						<span class="n">decitala_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Decitalas WHERE D_Keep = 1&quot;</span>
+
+					<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">decitala_table_string</span><span class="p">)</span>
+					<span class="n">decitala_rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+					
+					<span class="k">for</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="n">decitala_rows</span><span class="p">:</span>
+						<span class="n">name</span> <span class="o">=</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+						<span class="n">filtered_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Decitala</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">filtered_data</span> <span class="o">=</span> <span class="n">filtered_data</span>
 
 				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">:</span>
-					<span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">greek_path</span><span class="p">):</span>
-						<span class="n">raw_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GreekFoot</span><span class="p">(</span><span class="n">this_file</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]))</span>
-					<span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span> <span class="o">=</span> <span class="n">raw_data</span>
+					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
+						<span class="n">greek_metric_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Greek_Metrics WHERE R_Keep = 1&quot;</span>
+					<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;difference&quot;</span><span class="p">:</span>
+						<span class="n">greek_metric_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Greek_Metrics WHERE D_Keep = 1&quot;</span>
+					
+					<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">greek_metric_table_string</span><span class="p">)</span>
+					<span class="n">greek_metric_rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+					
+					<span class="k">for</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="n">greek_metric_rows</span><span class="p">:</span>
+						<span class="n">name</span> <span class="o">=</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+						<span class="n">filtered_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GreekFoot</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
 
+					<span class="bp">self</span><span class="o">.</span><span class="n">filtered_data</span> <span class="o">=</span> <span class="n">filtered_data</span>
 			<span class="k">else</span><span class="p">:</span>
 				<span class="k">raise</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;To use the </span><span class="si">{}</span><span class="s2"> frag_type, you may not provide data.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frag_type</span><span class="p">))</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
 				<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;Invalid path provided.&quot;</span><span class="p">)</span>
+				<span class="n">new_data</span> <span class="o">=</span> <span class="p">[]</span>
 				<span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
-					<span class="n">raw_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">this_file</span><span class="p">))</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span> <span class="o">=</span> <span class="n">raw_data</span>
+					<span class="n">new_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">this_file</span><span class="p">))</span>
+
+				<span class="bp">self</span><span class="o">.</span><span class="n">filtered_data</span> <span class="o">=</span> <span class="n">filter_data</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
 
 			<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
 				<span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;GeneralFragment&quot;</span><span class="p">,</span> <span class="s2">&quot;Decitala&quot;</span><span class="p">,</span> <span class="s2">&quot;GreekFoot&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">),</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The elements of data must be GeneralFragment, Decitala, or GreekFoot objects.&quot;</span><span class="p">)</span>
-				<span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span> <span class="o">=</span> <span class="n">data</span>
-		
+				<span class="bp">self</span><span class="o">.</span><span class="n">filtered_data</span> <span class="o">=</span> <span class="n">filter_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
 		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-
-		<span class="bp">self</span><span class="o">.</span><span class="n">filtered_data</span> <span class="o">=</span> <span class="n">filter_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span><span class="p">)</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># Free up memory</span>
-
+		
 		<span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filtered_data</span><span class="p">])</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">sorted_data</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filtered_data</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()))</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">filtered_data</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># Free up memory</span>
+		<span class="c1"># self.filtered_data = None # Free up memory</span>
 
 		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
 			<span class="n">root_node</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;ROOT&#39;</span><span class="p">)</span>
@@ -1029,14 +1046,14 @@
 
 <span class="sd">	&gt;&gt;&gt; ratio_tree = FragmentTree(frag_type=&#39;greek_foot&#39;, rep_type=&#39;ratio&#39;)</span>
 <span class="sd">	&gt;&gt;&gt; difference_tree = FragmentTree(frag_type=&#39;greek_foot&#39;, rep_type=&#39;difference&#39;)</span>
-<span class="sd">	&gt;&gt;&gt; ex = &#39;/Users/lukepoeppel/moiseaux/Europe/I_La_Haute_Montagne/La_Niverolle/XML/niverolle_3e_example.xml&#39;</span>
+<span class="sd">	&gt;&gt;&gt; ex = &quot;./tests/static/Shuffled_Transcription_2.xml&quot;</span>
 <span class="sd">	&gt;&gt;&gt; for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=[&quot;r&quot;], verbose=False)[0:5]:</span>
 <span class="sd">	... 	print(tala_data)</span>
-<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Spondee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &#39;id&#39;: 1}</span>
-<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot 5_16&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,), (78,)], &#39;id&#39;: 27}</span>
-<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Ionic_Major&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.75), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,), (78,), (85,)], &#39;id&#39;: 50}</span>
-<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Trochee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,)], &#39;id&#39;: 2}</span>
-<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Dactyl&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.25, 0.75), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,), (85,)], &#39;id&#39;: 28}</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Trochee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.375), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(72,), (87,)], &#39;id&#39;: 1}</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Dactyl&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(72,), (87,), (79,)], &#39;id&#39;: 39}</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Spondee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.0625), &#39;onset_range&#39;: (0.25, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(87,), (79,)], &#39;id&#39;: 2}</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Trochee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (1.25, 1.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(85,), (80,)], &#39;id&#39;: 3}</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Dactyl&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (1.25, 1.75), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(85,), (80,), (80,)], &#39;id&#39;: 40}</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">try</span><span class="p">:</span>
 		<span class="k">assert</span> <span class="n">ratio_tree</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span>
@@ -1219,7 +1236,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.4.4',
+            VERSION:'0.5.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
