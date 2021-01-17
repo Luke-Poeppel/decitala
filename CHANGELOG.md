@@ -3,6 +3,8 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.5.1] - January 17, 2020 (Kent, CT)
+
 ## [v0.5.0] - January 16, 2020 (Kent, CT)
 ### Added
 - Added a ``create_fragment_database`` function in ``database.py`` that holds name/ql data & ratio/difference equivalents in the decitala and greek metric databases (including equivalents _across_ databases). This data is available in ``fragment_database.db`` in the databases directory. 
