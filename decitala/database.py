@@ -487,7 +487,7 @@ class DBParser:
 # Fragment Databases
 """The following function is used to create the databases for fragment querying."""
 # Helpers
-def get_initial_data(path, size, log_msg):
+def _get_initial_data(path, size, log_msg):
 	"""Reads the initial data from the input directory."""
 	initial_data = []
 	with Bar(log_msg, max=size) as bar:
@@ -508,7 +508,7 @@ def get_initial_data(path, size, log_msg):
 			bar.next()
 	return initial_data
 
-def track_rd_equivalents(dataset_a, dataset_b, dataset_b_frag_type):
+def _track_rd_equivalents(dataset_a, dataset_b, dataset_b_frag_type):
 	i = 0
 	while i < len(dataset_a):
 		curr_fragment = dataset_a[i]
@@ -534,7 +534,7 @@ def track_rd_equivalents(dataset_a, dataset_b, dataset_b_frag_type):
 
 	return dataset_a
 
-def track_keep_vals(data, size, frag_type):
+def _track_keep_vals(data, size, frag_type):
 	i = 0
 	while i < size:
 		curr_frag_data = data[i]
@@ -569,7 +569,7 @@ def track_keep_vals(data, size, frag_type):
 
 	return data
 
-def make_table(data, table_name, conn):
+def _make_table(data, table_name, conn):
 	"""Function for creating a fragments table in the connected SQL database."""
 	table_string = "CREATE TABLE {} (Name BLOB, QL_Array BLOB, R_Equivalents BLOB, D_Equivalents BLOB, R_Keep INT, D_Keep INT)".format(table_name)
 	conn.cursor().execute(table_string)
@@ -587,51 +587,51 @@ def make_table(data, table_name, conn):
 			conn.cursor().execute(fragment_insertion_string, (str(ql_array), str(r_equivalents), str(d_equivalents), r_keep, d_keep))
 			bar.next()
 
-def create_fragment_database(verbose=True):
+def _create_fragment_database(verbose=True):
 	"""Dataset counts: 130 Decitalas, 26 Greek Metrics."""
 	db_path = os.path.dirname(here) + "/databases/fragment_database.db"
 	
-	decitala_initial_data = get_initial_data(path=decitala_path, size=130, log_msg="Getting initial decitala data...")	
-	greek_metric_initial_data = get_initial_data(path=greek_path, size=26, log_msg="Getting initial greek metric data...")
+	decitala_initial_data = _get_initial_data(path=decitala_path, size=130, log_msg="Getting initial decitala data...")	
+	greek_metric_initial_data = _get_initial_data(path=greek_path, size=26, log_msg="Getting initial greek metric data...")
 
 	logging.info("Tracking intra-level decitala equivalents...")
-	decitala_intra_equivalents = track_rd_equivalents(
+	decitala_intra_equivalents = _track_rd_equivalents(
 		dataset_a=decitala_initial_data, 
 		dataset_b=decitala_initial_data, 
 		dataset_b_frag_type="decitala"
 	)
 	logging.info("Tracking cross-corpus decitala equivalents...")
-	decitala_cross_equivalents = track_rd_equivalents(
+	decitala_cross_equivalents = _track_rd_equivalents(
 		dataset_a=decitala_intra_equivalents, 
 		dataset_b=greek_metric_initial_data, 
 		dataset_b_frag_type="greek_foot"
 	)
 
 	logging.info("Getting keep/ignore decitala data...")
-	final_decitala_data = track_keep_vals(data=decitala_cross_equivalents, size=130, frag_type="decitala")
+	final_decitala_data = _track_keep_vals(data=decitala_cross_equivalents, size=130, frag_type="decitala")
 
 	###############################################################################################
 	logging.info("Tracking intra-level greek metric equivalents...")
-	greek_intra_equivalents = track_rd_equivalents(
+	greek_intra_equivalents = _track_rd_equivalents(
 		dataset_a=greek_metric_initial_data, 
 		dataset_b=greek_metric_initial_data, 
 		dataset_b_frag_type="greek_foot"
 	)	
 	logging.info("Tracking cross-corpus greek metric equivalents...")
-	greek_cross_equivalents = track_rd_equivalents(
+	greek_cross_equivalents = _track_rd_equivalents(
 		dataset_a=greek_intra_equivalents, 
 		dataset_b=decitala_initial_data, 
 		dataset_b_frag_type="decitala"
 	)
 
 	logging.info("Getting keep/ignore greek metric data...")
-	final_greek_data = track_keep_vals(data=greek_cross_equivalents, size=26, frag_type="greek_foot")
+	final_greek_data = _track_keep_vals(data=greek_cross_equivalents, size=26, frag_type="greek_foot")
 
 	logging.info("Creating the fragments tables...")
 	conn = sqlite3.connect(db_path)
 	
-	make_table(data=final_decitala_data, table_name="Decitalas", conn=conn)
-	make_table(data=final_greek_data, table_name="Greek_Metrics", conn=conn)
+	_make_table(data=final_decitala_data, table_name="Decitalas", conn=conn)
+	_make_table(data=final_greek_data, table_name="Greek_Metrics", conn=conn)
 	
 	logging.info("Done preparing ✔")
 	conn.commit()
