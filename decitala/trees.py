@@ -574,7 +574,7 @@ class FragmentTree(NaryTree):
 		
 		if isinstance(data, list):
 			assert all(type(x).__name__ in ["GeneralFragment", "Decitala", "GreekFoot"] for x in data), FragmentTreeException("The elements of data must be GeneralFragment, Decitala, or GreekFoot objects.")
-			if skip_filter:
+			if not(skip_filter):
 				self.filtered_data = filter_data(data)
 			else:
 				self.filtered_data = data
@@ -628,11 +628,11 @@ class FragmentTree(NaryTree):
 				decitala_table_string = "SELECT * FROM Decitalas WHERE D_Keep = 1"
 
 			cur.execute(decitala_table_string)
-			decitala_rows = cur.fetchall()	
+			decitala_rows = cur.fetchall()
 			for this_row in decitala_rows:
 				name = this_row[0]
 				data.append(Decitala(name=name))
-		
+					
 		if frag_type == "greek_foot":
 			if rep_type == "ratio":
 				greek_metric_table_string = "SELECT * FROM Greek_Metrics WHERE R_Keep = 1"

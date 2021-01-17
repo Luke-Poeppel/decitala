@@ -18,22 +18,22 @@ greek_path = os.path.dirname(here) + "/fragments/Greek_Metrics/XML"
 
 @pytest.fixture
 def tala_ratio_tree():
-	ratio_tree = FragmentTree(frag_type='decitala', rep_type='ratio')
+	ratio_tree = FragmentTree.from_frag_type(frag_type='decitala', rep_type='ratio')
 	return ratio_tree
 
 @pytest.fixture
 def tala_difference_tree():
-	difference_tree = FragmentTree(frag_type='decitala', rep_type='difference')
+	difference_tree = FragmentTree.from_frag_type(frag_type='decitala', rep_type='difference')
 	return difference_tree
 
 @pytest.fixture
 def greek_ratio_tree():
-	ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
+	ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
 	return ratio_tree
 
 @pytest.fixture
 def greek_difference_tree():
-	difference_tree = FragmentTree(frag_type='greek_foot', rep_type='difference')
+	difference_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='difference')
 	return difference_tree
 
 @pytest.fixture

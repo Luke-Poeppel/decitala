@@ -5,7 +5,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.5.1] - January 17, 2020 (Kent, CT)
 ### Changed
-- Fragment Trees are now created with ``frag_types`` via the class method ``FragmentTree.from_frag_type``. The logic in the ``__init__`` is now much cleaner. 
+- Fragment Trees are now created with ``frag_types`` via the class method ``FragmentTree.from_frag_type``. (The logic in the ``__init__`` is now much cleaner.) 
 
 ### Fixed
 - Coverage results published on codecov.io (private upload token) with badge. 
