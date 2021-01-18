@@ -28,4 +28,4 @@ def test_num_subpath_tables(db):
 	assert db.num_subpath_tables == 5
 
 def test_spanned_fragments(db):
-	assert len(db.spanned_fragments()) == 0
+	assert len(db.slurred_fragments()) == 0
