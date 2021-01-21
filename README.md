@@ -2,7 +2,7 @@
 
 The ``decitala`` package aims to make rhythmic analysis of Olivier Messiaen's music easier, particularly with respect to his use of ethnological rhythmic fragments. 
 
-![Alt text](sangitaa_image.png?raw=true)
+<img src="sangitaa_image.png" height="50" width="50" style="border: 2px solid">
 
 ### Documentation
 Available at: https://luke-poeppel.github.io/decitala/.
