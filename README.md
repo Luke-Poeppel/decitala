@@ -1,8 +1,9 @@
 [![Build Status](https://travis-ci.com/Luke-Poeppel/decitala.svg?token=YxpxoWhsVmQpyqxLyGf3&branch=master)](https://travis-ci.com/Luke-Poeppel/decitala)
 
+## decitala
 The ``decitala`` package aims to make rhythmic analysis of Olivier Messiaen's music easier, particularly with respect to his use of ethnological rhythmic fragments. 
 
-<img align="center" src="sangitaa_image.png" height="350" width="600" style="border: 2px solid">
+<img src="sangitaa_image.png" height="350" width="600" style="border: 2px solid">
 
 ### Documentation
 Available at: https://luke-poeppel.github.io/decitala/.
