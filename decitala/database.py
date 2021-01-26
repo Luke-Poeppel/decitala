@@ -139,7 +139,9 @@ def create_database(
 
 	:param str db_path: path where the .db file will be written. 
 	:param str filepath: path to score.
+	:param int part_num: part number in the score. 
 	:param bool filter_single_anga_class: whether or not to remove single-anga class fragments from the data in rolling_search. 
+	:param boool filter_found_sub_fragments: whether or not to remove sub-fragments from the dataset. 
 	:param bool verbose: whether or not to log information about the database creation process (including data from rolling search). 
 	
 	:return: sqlite3 database
@@ -333,9 +335,9 @@ class DBParser:
 	<fragment.GreekFoot Amphibrach>
 	>>> parsed.num_subpath_tables
 	1
-	>>> parsed.get_subpath(1, 123)
+	>>> parsed.subpath(1, 123)
 	[1, 10, 19, 24, 31]
-	>>> for data in parsed.get_subpath_data(1, 123):
+	>>> for data in parsed.subpath_data(1, 123):
 	... 	print(data)
 	{'db_row_index': 1, 'fragment': <fragment.GreekFoot Peon_IV>, 'onset_range': (0.125, 0.75), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(83,), (83,), (83,), (82,)], 'is_slurred': False}
 	{'db_row_index': 10, 'fragment': <fragment.GreekFoot Amphibrach>, 'onset_range': (0.75, 1.25), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(80,), (82,), (79,)], 'is_slurred': False}
@@ -346,7 +348,7 @@ class DBParser:
 	83.33333333333334
 	>>> parsed.get_subpath_model_val(1, 123) # 0.7 * intra-gap-score + 0.3 * onset-percentile
 	58.333333333333336
-	>>> parsed.get_highest_modeled_subpath(1)
+	>>> parsed.get_highest_modeled_initial_subpath(1)
 	1265
 	>>> parsed.get_subpath_model_val(1, 1265)
 	66.3157894736842
@@ -366,6 +368,9 @@ class DBParser:
 		cur.execute(fragment_path_string)
 		fragment_rows = cur.fetchall()
 		fragment_data = []
+
+		earliest_detected_onset = 100
+
 		for i, this_row in enumerate(fragment_rows):
 			row_data = dict()
 
@@ -382,16 +387,20 @@ class DBParser:
 			row_data["factor"] = this_row[4]
 			row_data["pitch_content"] = literal_eval(this_row[5])
 			row_data["is_slurred"] = bool(int(this_row[8]))
+
+			if row_data["onset_range"][0] < earliest_detected_onset:
+				earliest_detected_onset = row_data["onset_range"][0]
 			
 			fragment_data.append(row_data)
 
 		self.fragment_data = fragment_data
+		self.earliest_detected_onset = earliest_detected_onset
 
 		self.num_subpath_tables = _num_subpath_tables(self.conn)
 		metadata = []
 		for i in range(1, self.num_subpath_tables + 1):
 			num_rows = _num_rows_in_table("Paths_{}".format(i), self.conn)
-			onset_data = self.table_onsets_percentile(i)
+			onset_data = self.table_average_onsets_per_fragment_per_subpath(i)
 			metadata.append([i, num_rows, onset_data])
 
 		self.metadata = metadata
@@ -399,52 +408,107 @@ class DBParser:
 	def __repr__(self):
 		return "<database.DBParser {}>".format(self.filename)
 
-	@property
 	def fragments(self):
-		"""Returns all extracted fragments in the database."""
+		"""
+		:return: list of all extracted fragments in the database. 
+		:rtype: list
+		"""
 		return [x["fragment"] for x in self.fragment_data]
 
 	def slurred_fragments(self):
-		"""Returns the complete data for the extracted fragments that are slurred."""
+		"""
+		:return: the complete data for the extracted fragments that are slurred.
+		:rtype: list
+		"""
 		return [x for x in self.fragment_data if x["is_slurred"]==True]
 
 	######## Visualization ########
 	def show_fragments_table(self):
-		"""Displays the Fragments table of the db."""
+		"""
+		Displays the Fragments table of the database.
+
+		:return: the fragments table (as a dataframe). 
+		:rtype: pandas.DataFrame 
+		"""
 		data = pd.read_sql_query("SELECT * FROM Fragments", self.conn)
 		return data
 	
-	def show_spanned_fragments(self):
-		"""Displays a subset (slurred fragments) of the Fragments table of the db."""
+	def show_slurred_fragments(self):
+		"""
+		Displays the slurred fragments in the Fragments table of the database.
+		
+		:return: the subset of slurred fragments in the fragments table (as a dataframe). 
+		:rtype: pandas.DataFrame 
+		"""
 		data = pd.read_sql_query("SELECT * FROM Fragments WHERE Is_Slurred = 1", self.conn)
 		return data
 
-	def show_path_table(self, table_num):
-		"""Displays a queried subpath table."""
+	def show_subpath_table(self, table_num):
+		"""
+		Displays the queried subpath table. These subpath tables are 1-indexed.
+		
+		:param int table_num: 1-indexed table number. 
+		:return: the queried subpath tale (as a dataframe).
+		:rtype: pandas.DataFrame
+		"""
+		assert table_num >= 1, DatabaseException("The table_num must be >= 1.")
+		
 		data = pd.read_sql_query("SELECT * FROM Paths_{}".format(table_num), self.conn)
 		return data
 
 	def show_subpath(self, table_num, path_num):
-		"""Displays a queried subpath."""
+		"""
+		Displays a queried subpath in one of the tables. 
+		
+		:param int table_num: 1-indexed table number. 
+		:param int path_num: 1-indexed subpath number. 
+		:return: the queried subpath table (as a dataframe).
+		:rtype: pandas.DataFrame
+		"""
+		assert (table_num >= 1 and path_num >= 1), DatabaseException("The table_num and path_num must be >= 1.")
+		
 		QUERY_STRING = "SELECT * FROM Paths_{0} WHERE rowid = {1}".format(table_num, path_num)
 		data = pd.read_sql_query(QUERY_STRING, self.conn)
+		return data
+	
+	def show_subpath_data(self, table_num, path_num):
+		assert (table_num >= 1 and path_num >= 1), DatabaseException("The table_num and path_num must be >= 1.")
 
+		fragment_row_ids = tuple(str(x) for x in self.subpath(table_num, path_num))
+		QUERY_STRING = "SELECT * FROM Fragments WHERE rowid IN {0}".format(fragment_row_ids)
+		data = pd.read_sql_query(QUERY_STRING, self.conn)
 		return data
 
 	######## Paths Individual ########
-	def get_subpath(self, table_num, path_num):
+	def subpath(self, table_num, path_num):
 		"""
-		Gets the fragment ids (from :obj:`~decitala.trees.rolling_search`) in a subpath. 
+		Gets the SQLite rowids for the fragments in a subpath. 
+		
+		:param int table_num: 1-indexed table number. 
+		:param int path_num: 1-indexed subpath number. 
+		:return: the rowids (int) for the fragments in a subpath.
+		:rtype: list
 		"""
+		assert (table_num >= 1 and path_num >= 1), DatabaseException("The table_num and path_num must be >= 1.")
+
 		QUERY_STRING = "SELECT * FROM Paths_{0} WHERE rowid = {1}".format(table_num, path_num)
 		data = pd.read_sql_query(QUERY_STRING, self.conn)
 		as_ints = data.stack().tolist()
 		
 		return [x for x in as_ints if x != "NULL"]
 
-	def get_subpath_data(self, table_num, path_num):
-		"""Gets the extracted fragment data in a given subpath."""
-		subpath_data = self.get_subpath(table_num, path_num)
+	def subpath_data(self, table_num, path_num):
+		"""
+		Gets the full extracted fragment data in a given subpath.
+		
+		:param int table_num: 1-indexed table number. 
+		:param int path_num: 1-indexed subpath number. 
+		:return: the complete fragment data for a subpath
+		:rtype: list
+		"""
+		assert (table_num >= 1 and path_num >= 1), DatabaseException("The table_num and path_num must be >= 1.")
+
+		subpath_data = self.subpath(table_num, path_num)
 		
 		fragment_data = []
 		for this_row_id in subpath_data:
@@ -454,36 +518,83 @@ class DBParser:
 
 		return fragment_data
 	
-	def table_onsets_percentile(self, table_num):
-		"""Gets the average number of fragments in each subpath of a table."""
+	#####################################################################################
+	def table_average_onsets_per_fragment_per_subpath(self, table_num):
+		"""
+		This is a bit hacky: this method is called in the __init__ and returns the average
+		number of onsets for each fragment in each subpath of the table. Thus, if a paths
+		table has 3 rows, this method returns a list of 3 numbers, each of which corresponds
+		to the average number of onsets in a fragment in that subpath. 
+
+		:param int table_num: 1-indexed table number. 
+		:return: list (of length equal to the number of rows in the queried ``Paths`` table) 
+				holding the average number of onsets (type: float) for a fragment in each subpath. 
+		:rtype: list
+		"""
+		assert table_num >= 1, DatabaseException("The table_num must be >= 1.")
+		
 		num_rows = _num_rows_in_table("Paths_{}".format(table_num), self.conn)
 		averages = []
-		for i in range(1, num_rows+1):
-			subpath_fragments = [x["fragment"].num_onsets for x in self.get_subpath_data(table_num, i)]
+		for i in range(1, num_rows + 1):
+			subpath_fragments = [x["fragment"].num_onsets for x in self.subpath_data(table_num, i)]
 			averages.append(np.mean(subpath_fragments))
 		
 		return averages
+
+	#####################################################################################
+	# Modeling
+	def subpath_onset_percentile(self, table_num, path_num):
+		"""
+		Given the data from :obj:`~decitala.database.DBParser.table_average_onsets_per_fragment_per_subpath`, gets the 
+		percentile of a given subpath. 
+
+		:param int table_num: 1-indexed table number. 
+		:param int path_num: 1-indexed subpath number. 
+		:return: percentile (0-100) of a given subpath in the context of its full ``Paths`` table. 
+		:rtype: float
+		"""
+		assert (table_num >= 1 and path_num >= 1), DatabaseException("The table_num and path_num must be >= 1.")
 		
-	def get_subpath_onset_percentile(self, table_num, path_num):
-		"""
-		Given the data from :obj:`~decitala.database.DBParser.table_onsets_percentile`, gets the percentile
-		of a given subpath. 
-		"""
-		subpath_data = self.get_subpath_data(table_num, path_num)
+		subpath_data = self.subpath_data(table_num, path_num)
 		subpath_average_onsets = np.mean([x["fragment"].num_onsets for x in subpath_data])
 		
+		# NOTE: I call metadata instead of the above function as it then doesn't need to be recalulated. 
 		onset_data = [x[1] for x in self.metadata if x[0] == table_num]
 		percentile = stats.percentileofscore(onset_data, subpath_average_onsets)
 
 		return percentile
 
+	def first_subpath_start_gap(self, path_num):
+		"""
+		:param int path_num: 1-indexed subpath number. 
+		:return: the proportion of the starting gap (i.e. the empty region from the earliest detected onset in the table
+				to the start of the queried subpath) to the total range of the queried subpath in the first table. 
+		:rtype: float
+		"""
+		first_subpath_data = self.subpath_data(table_num=1, path_num=path_num)
+		starting_onset = first_subpath_data[0]["onset_range"][0]
+		ending_onset = first_subpath_data[-1]["onset_range"][-1]
+		total_range = ending_onset - self.earliest_detected_onset
+
+		gap = starting_onset - self.earliest_detected_onset
+		gap_proportion = (gap / total_range) * 100
+
+		return 100 - gap_proportion
+
 	def get_subpath_intra_gap_score(self, table_num, path_num):
-		"""Gets the proportion of gaps in a subpath."""
+		"""
+		Gets the proportion of gaps in a subpath.
+		
+		:param int table_num: 1-indexed table number. 
+		:param int path_num: 1-indexed subpath number. 
+		:return: proportion of the total gaps between fragments in a subpath to the total range of the subpath. 
+		:rtype: float
+		"""
+		assert (table_num >= 1 and path_num >= 1), DatabaseException("The table_num and path_num must be >= 1.")
+		
 		gaps = []
 		total_range = []
-		subpath_data = self.get_subpath_data(table_num, path_num)
-		
-		# just use np.diff?
+		subpath_data = self.subpath_data(table_num, path_num)
 		i = 0
 		while i < len(subpath_data) - 1:
 			curr_data = subpath_data[i]
@@ -500,17 +611,37 @@ class DBParser:
 		total_range = sum(total_range)
 
 		if len(subpath_data) == 1:
-			percentage_gap_pre = 0
+			gap_proportion = 0
 		else:
-			percentage_gap_pre = (gaps / total_range) * 100
+			gap_proportion = (gaps / total_range) * 100
 		
-		percentage_gap = 100.0 - percentage_gap_pre
+		percentage_gap = 100.0 - gap_proportion
 		return percentage_gap
+		
+	def inter_subpath_gap_score(table_num_a, path_num_a, table_num_b, path_num_b):
+		data_a = self.subpath_data(table_num_a, path_num_a)
+		data_b = self.subpath_data(table_num_b, path_num_b)
+
+		start = data_a[0]["onset_range"][0]
+		end = data_b[-1]["onset_range"][1]
+		total_range = end - start
+
+		gap_start = data_a[-1]["onset_range"][1]
+		gap_stop = data_b[0]["onset_range"][0]
+		gap = gap_stop - gap_start
+		
+		inter_gap_score = (gap / total_range) * 100
+		return 100 - inter_gap_score
 
 	def get_subpath_model_val(self, table_num, path_num, weights=[0.7, 0.3]):
-		"""Returns the value of the model for a given subpath."""		
+		"""
+		:return: the value of the model for a given subpath. The default parameters are for the initial path. 
+		:rtype: float
+		"""		
+		assert (table_num >= 1 and path_num >= 1), DatabaseException("The table_num and path_num must be >= 1.")
+		
 		gap_score = self.get_subpath_intra_gap_score(table_num, path_num)
-		onset_score = self.get_subpath_onset_percentile(table_num, path_num)
+		onset_score = self.subpath_onset_percentile(table_num, path_num)
 		scores = [gap_score, onset_score]
 
 		model = 0
@@ -519,20 +650,35 @@ class DBParser:
 		
 		return model
 
-	def get_highest_modeled_subpath(self, table_num):
+	def get_highest_modeled_subpath(self, table_num, weights):
 		"""Gets the highest modeled subpath in the table."""	
+		assert table_num >= 1, DatabaseException("The table_num must be >= 1.")
+		
 		num_rows = _num_rows_in_table("Paths_{}".format(table_num), self.conn)
 		highest_subpath = None
 		highest_model_val = 0
 		for i in range(1, num_rows + 1):
-			model_val = self.get_subpath_model_val(table_num, i)
+			model_val = self.get_subpath_model_val(table_num, i, weights)
 			if model_val > highest_model_val:
 				model_val = highest_model_val
 				highest_subpath = i
 
 		return highest_subpath
 	
-	# def get_inter_subpath_gap_score(self, )
+	def model_full_path(self, initial_weights, weights):
+		"""Return list of subpath nums for each table."""
+		assert table_num >= 1, DatabaseException("The table_num must be >= 1.")
+		
+		path = []
+		# i = 0
+		# # get highest first subpath in paths_0 (1)
+		# first = self.get_highest_modeled_subpath(1, weights=[0.7, 0.3])
+
+
+		# #while i < self.num_subpath_tables - 1:
+		# 	#i += 1
+		# path.append(first)
+		return path
 
 ####################################################################################################
 # Fragment Databases
@@ -551,9 +697,9 @@ def _get_initial_data(path, size, log_msg):
 			frag_dict["name"] = filename
 			frag_dict["ql_array"] = ql_array
 			frag_dict["r_equivalents"] = []
-			frag_dict["r_keep"] = 100
+			frag_dict["r_keep"] = 100 # arbitrary starting value
 			frag_dict["d_equivalents"] = []
-			frag_dict["d_keep"] = 100
+			frag_dict["d_keep"] = 100 # arbitrary starting value
 			
 			initial_data.append(frag_dict)
 			bar.next()

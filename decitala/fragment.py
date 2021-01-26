@@ -180,7 +180,7 @@ class GeneralFragment:
 	def num_anga_classes(self):
 		"""
 		:return: the number of anga classes in the fragment (the number of unique rhythmic values).
-		:rtype: int.
+		:rtype: int
 
 		>>> GeneralFragment(data=np.array([0.75, 0.75, 0.5, 0.25])).num_anga_classes
 		3
@@ -199,7 +199,7 @@ class GeneralFragment:
 		"""
 		:param bool as_str: whether or not to return the d-seg as a string.
 		:return: the d-seg of the fragment, as introducted in `The Perception of Rhythm in Non-Tonal Music <https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents>`_ (Marvin, 1991). Maps a fragment into a sequence of relative durations. 
-		:rtype: numpy.array
+		:rtype: numpy.array (or string if ``as_str=True``)
 
 		>>> g3 = GeneralFragment(np.array([0.25, 0.75, 2.0, 1.0]), name='marvin-p70')
 		>>> g3.dseg()
@@ -225,7 +225,7 @@ class GeneralFragment:
 		"""
 		:param bool as_str: whether or not to return the reduced d-seg as a string.
 		:return: d-seg of the fragment with all contiguous equal values reduced to a single instance.
-		:rtype: numpy.array
+		:rtype: numpy.array (or string if ``as_str=True``)
 
 		>>> g4 = GeneralFragment([0.125, 0.125, 1.75, 0.5], name='marvin-p74-x')
 		>>> g4.dseg(as_str=True)
@@ -335,6 +335,7 @@ class GeneralFragment:
 		"""
 		:return: the c-score of the fragment, as defined in Povel and Essens (1985).
 		:rtype: float
+		:raises: NotImplementedError
 		"""
 		raise NotImplementedError
 	
@@ -387,8 +388,8 @@ class GeneralFragment:
 ####################################################################################################
 class Decitala(GeneralFragment):
 	"""
-	Class defining a Decitala object. The class currently reads from the `Fragments/Decitala`
-	folder which contains XML files for each fragment. 
+	Class defining a Decitala object. The class reads from the fragments_db file in the
+	databases directory (see the Decitalas table). 
 
 	:param str name: Name of the decitala, as is transliterated in the Lavignac (1921). 
 	:raises `~decitala.fragment.DecitalaException`: when there is an issue with the name.
@@ -555,6 +556,10 @@ class Decitala(GeneralFragment):
 
 	def equivalents(self, rep_type="ratio"):
 		"""
+		:return: list of Decitala and Greek foot objects that are equivalent to the given fragment under the 
+				provided ``rep_type``. 
+		:rtype: list
+
 		>>> fragment = Decitala("Tritiya")
 		>>> fragment.equivalents(rep_type="ratio")
 		[<fragment.Decitala 95_Anlarakrida>]
@@ -582,7 +587,8 @@ class Decitala(GeneralFragment):
 ####################################################################################################
 class GreekFoot(GeneralFragment):
 	"""
-	Class that stores greek foot data. Reads from a folder containing all greek feet XML files.
+	Class that stores greek foot data. The class reads from the fragments_db file in the databases
+	directory (see the Greek_Metrics table). 
 
 	>>> bacchius = GreekFoot('Bacchius')
 	>>> bacchius
@@ -662,6 +668,10 @@ class GreekFoot(GeneralFragment):
 
 	def equivalents(self, rep_type="ratio"):
 		"""
+		:return: list of Decitala and Greek foot objects that are equivalent to the given fragment under the 
+				provided ``rep_type``. 
+		:rtype: list
+
 		>>> fragment = GreekFoot("Ionic_Minor")
 		>>> fragment.equivalents(rep_type="ratio")
 		[<fragment.Decitala 49_Crikirti>, <fragment.Decitala 32_Kudukka>, <fragment.Decitala 9_Ratilila>, <fragment.Decitala 36_Tribhangi>]
