@@ -63,10 +63,9 @@ class GeneralFragment:
 	Class representing a generic rhythmic fragment. The user must provide either a path to a music21 readable
 	file or an array of quarter length values. 
 
-	:param data: input data to :obj:`~decitala.fragment.GeneralFragment` (either an array of quarter length values
-				or a path to a music21 readable file.)
-	:param str name: optional name argument.
-	:raises `~decitala.fragment.FragmentException`: when an array and file are provided or neither are provided.
+	:param data: either an array of quarter length values or a path to a music21 readable file.
+	:param str name: optional name.
+	:raises `~decitala.fragment.FragmentException`: if an array **and** file are provided or if neither are provided.
 	
 	>>> random_fragment_path = "./fragments/Decitalas/63_Nandi.xml"
 	>>> g1 = GeneralFragment(data=random_fragment_path, name='test')
