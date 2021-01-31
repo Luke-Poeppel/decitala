@@ -10,6 +10,8 @@
 """
 Tools for creating SQLite databases of extracted rhythmic data from Messiaen's music.  
 """
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 import numpy as np
 import os
 import pandas as pd
@@ -56,6 +58,8 @@ from .pofp import (
 
 import logging
 logging.basicConfig(level=logging.INFO)
+
+mpl.style.use("seaborn")
 
 __all__ = [
 	"create_database",
@@ -110,7 +114,6 @@ def create_database(
 		db_path,
 		filepath,
 		part_num,
-		# Search parameters
 		frag_types=["decitala"],
 		rep_types=["ratio", "difference"],
 		allowed_modifications=[
@@ -124,7 +127,6 @@ def create_database(
 		try_contiguous_summation=True,
 		windows=list(range(1, 20)),
 		allow_unnamed=False,
-		# Filtering parameters. 
 		filter_found_single_anga_class=True,
 		filter_found_sub_fragments=True,
 		keep_grace_notes=True,
@@ -134,8 +136,6 @@ def create_database(
 	This function generates an sqlite3 database for storing extracted rhythmic data from :obj:`decitala.trees.rolling_search`.
 	The database holds has one page for storing all extracted fragments, their onsets/offsets of occurrence, and their 
 	modification data. 
-
-	**NOTE**: I suggest setting ``filter_sub_fragments=True`` for compositions and ``filter_sub_fragments=False`` for birdsong transcriptions. 
 
 	:param str db_path: path where the .db file will be written. 
 	:param str filepath: path to score.
@@ -559,12 +559,12 @@ class DBParser:
 		subpath_average_onsets = np.mean([x["fragment"].num_onsets for x in subpath_data])
 		
 		# NOTE: I call metadata instead of the above function as it then doesn't need to be recalulated. 
-		onset_data = [x[1] for x in self.metadata if x[0] == table_num]
+		onset_data = self.metadata[table_num - 1][2]
 		percentile = stats.percentileofscore(onset_data, subpath_average_onsets)
 
 		return percentile
 
-	def first_subpath_start_gap(self, path_num):
+	def first_subpath_start_gap_score(self, path_num):
 		"""
 		:param int path_num: 1-indexed subpath number. 
 		:return: the proportion of the starting gap (i.e. the empty region from the earliest detected onset in the table
@@ -581,7 +581,7 @@ class DBParser:
 
 		return 100 - gap_proportion
 
-	def get_subpath_intra_gap_score(self, table_num, path_num):
+	def subpath_intra_gap_score(self, table_num, path_num):
 		"""
 		Gets the proportion of gaps in a subpath.
 		
@@ -619,6 +619,9 @@ class DBParser:
 		return percentage_gap
 		
 	def inter_subpath_gap_score(table_num_a, path_num_a, table_num_b, path_num_b):
+		"""
+		Gets the proportion of the gap between two subpaths to the whole range of the paths. 
+		"""
 		data_a = self.subpath_data(table_num_a, path_num_a)
 		data_b = self.subpath_data(table_num_b, path_num_b)
 
@@ -633,53 +636,87 @@ class DBParser:
 		inter_gap_score = (gap / total_range) * 100
 		return 100 - inter_gap_score
 
-	def get_subpath_model_val(self, table_num, path_num, weights=[0.7, 0.3]):
+	#####################################################################################
+	def intra_subpath_model_score(
+			self, 
+			table_num, 
+			path_num, 
+			weights=[0.7, 0.3], # {"intra_gap_weight": 0.7, "onset_percentile_weight": 0.3}, 
+			start_subpath_weights=[0.5, 0.3, 0.2] # {"intra_gap_weight": 0.5, "onset_percentile_weight": 0.3, "start_gap_weight": 0.2} 
+		):
 		"""
-		:return: the value of the model for a given subpath. The default parameters are for the initial path. 
+		:param int table_num: 1-indexed table number. 
+		:param int path_num: 1-indexed subpath number. 
+		:param dict weights: normal intra-subpath weights (only for ``table_num != 1``).
+		:return: returns the intra-subpath model score. 
 		:rtype: float
-		"""		
+		"""
 		assert (table_num >= 1 and path_num >= 1), DatabaseException("The table_num and path_num must be >= 1.")
-		
-		gap_score = self.get_subpath_intra_gap_score(table_num, path_num)
+
+
+		gap_score = self.subpath_intra_gap_score(table_num, path_num)
 		onset_score = self.subpath_onset_percentile(table_num, path_num)
-		scores = [gap_score, onset_score]
-
 		model = 0
-		for weight, score in zip(weights, scores):
-			model += weight * score
-		
-		return model
+		if table_num == 1:
+			start_gap_score = self.first_subpath_start_gap_score(path_num)
+			scores = [gap_score, onset_score, start_gap_score]
+			for weight, score in zip(start_subpath_weights, scores):
+				model += weight * score
+		else:
+			scores = [gap_score, onset_score]
+			for weight, score in zip(weights, scores):
+				model += weight * score
 
-	def get_highest_modeled_subpath(self, table_num, weights):
-		"""Gets the highest modeled subpath in the table."""	
+		return model
+	
+	def highest_modeled_subpath(self, table_num):
+		"""
+		Gets the highest modeled subpath in the table.
+
+		:param int table_num: 1-indexed table number. 
+		"""
 		assert table_num >= 1, DatabaseException("The table_num must be >= 1.")
 		
 		num_rows = _num_rows_in_table("Paths_{}".format(table_num), self.conn)
 		highest_subpath = None
 		highest_model_val = 0
 		for i in range(1, num_rows + 1):
-			model_val = self.get_subpath_model_val(table_num, i, weights)
+			model_val = self.intra_subpath_model_score(table_num, i)
 			if model_val > highest_model_val:
-				model_val = highest_model_val
+				highest_model_val = model_val
 				highest_subpath = i
 
 		return highest_subpath
-	
-	def model_full_path(self, initial_weights, weights):
-		"""Return list of subpath nums for each table."""
-		assert table_num >= 1, DatabaseException("The table_num must be >= 1.")
-		
+
+	def model_full_path(
+			self,
+		):
+		"""
+		Return list of subpath nums for each table.
+
+		Intra scores: onset percentile, intra gap score, if 0 start gap. 
+		Extra scores: inter gap score
+		"""
 		path = []
-		# i = 0
-		# # get highest first subpath in paths_0 (1)
-		# first = self.get_highest_modeled_subpath(1, weights=[0.7, 0.3])
+		i = 0
+		while i < len(self.metadata):
+			if i == 0:
+				highest_first_subpath = self.highest_modeled_subpath(1)
+				data = self.subpath_data(1, highest_first_subpath)
+				print(data)
+			else:
+				pass
 
-
-		# #while i < self.num_subpath_tables - 1:
-		# 	#i += 1
-		# path.append(first)
+			i += 1
+			
 		return path
-
+	
+	def path_data(self, row_nums):
+		full_data = []
+		for i, row_num in enumerate(row_nums):
+			full_data.extend(self.subpath_data(i+1, row_num))
+		return full_data
+	
 ####################################################################################################
 # Fragment Databases
 """The following function is used to create the databases for fragment querying."""
