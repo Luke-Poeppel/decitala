@@ -8,6 +8,7 @@
 ####################################################################################################
 import copy
 import decimal
+import logging
 import numpy as np
 
 from itertools import chain, combinations, groupby
@@ -21,6 +22,7 @@ from music21 import spanner
 from music21 import stream
 
 __all__ = [
+	"get_logger", # Logging
 	"carnatic_string_to_ql_array", # Notation
 	"ql_array_to_carnatic_string",
 	"ql_array_to_greek_diacritics",
@@ -67,6 +69,16 @@ multiplicative_augmentations = [
 	['Double', 3],
 	['Triple', 4],
 ]
+
+####################################################################################################
+# Logging
+def get_logger(filepath=None):
+	if write_to_file:
+		logging.basicConfig(filename=filepath, level=logging.INFO)
+	else:
+		logging.basicConfig(level=logging.INFO)
+
+	return logging.getLogger()
 
 ####################################################################################################
 # Notational Conversion Functions

@@ -7,12 +7,14 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Added
 - Added the missing ``database.model_full_path`` function. 
 - Documentation fixes for ``DBParser`` and ``fragments.py``. 
-- WIP: Added optional ``save_log_to_file`` to file parameter to ``database.create_database``.  
+- WIP: Optional ``save_logs_to_file`` parameter to ``database.create_database``.  
+- Name argument in fragment trees created from ``frag_type``.
 - Section in the documentation giving a brief exposition to the encoded rhythmic fragments. 
 
 ### Changed
 - Documentation now is in sphinx RTD theme. 
 - Revamped README. 
+- Rather than setting the same logger at the top of each file, added ``get_logger`` function to utils.py in which we can set optional filename to the basicConfig for saving to file when desired. 
 
 ## [v0.5.2] - January 17, 2020 (Kent, CT)
 ### Removed
