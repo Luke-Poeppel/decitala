@@ -322,36 +322,37 @@ class DBParser:
 	"""
 	Class used for parsing the SQLite database made in :obj:`~decitala.database.create_database`.
 
-	>>> example_data = "./tests/static/ex99_data.db"
-	>>> parsed = DBParser(example_data)
-	>>> parsed
-	<database.DBParser ex99_data.db>
-	>>> for frag in parsed.fragments[0:5]:
+	>>> example_data = "./databases/liturgie_3.db"
+	>>> lit_db = DBParser(example_data)
+	>>> lit_db
+	<database.DBParser liturgie_3.db>
+	>>> for frag in lit_db.fragments()[0:5]:
 	... 	print(frag)
-	<fragment.GreekFoot Peon_IV>
-	<fragment.GreekFoot Anapest>
-	<fragment.GreekFoot Peon_III>
-	<fragment.GreekFoot Iamb>
-	<fragment.GreekFoot Amphibrach>
-	>>> parsed.num_subpath_tables
-	1
-	>>> parsed.subpath(1, 123)
-	[1, 10, 19, 24, 31]
-	>>> for data in parsed.subpath_data(1, 123):
-	... 	print(data)
-	{'db_row_index': 1, 'fragment': <fragment.GreekFoot Peon_IV>, 'onset_range': (0.125, 0.75), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(83,), (83,), (83,), (82,)], 'is_slurred': False}
-	{'db_row_index': 10, 'fragment': <fragment.GreekFoot Amphibrach>, 'onset_range': (0.75, 1.25), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(80,), (82,), (79,)], 'is_slurred': False}
-	{'db_row_index': 19, 'fragment': <fragment.GreekFoot Iamb>, 'onset_range': (1.5, 1.875), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(78,), (80,)], 'is_slurred': True}
-	{'db_row_index': 24, 'fragment': <fragment.GreekFoot Iamb>, 'onset_range': (1.875, 2.25), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(77,), (79,)], 'is_slurred': True}
-	{'db_row_index': 31, 'fragment': <fragment.GreekFoot Trochee>, 'onset_range': (2.375, 2.75), 'mod': 'r', 'factor': 0.125, 'pitch_content': [(79,), (77,)], 'is_slurred': False}
-	>>> parsed.get_subpath_intra_gap_score(1, 123)
-	83.33333333333334
-	>>> parsed.get_subpath_model_val(1, 123) # 0.7 * intra-gap-score + 0.3 * onset-percentile
-	58.333333333333336
-	>>> parsed.get_highest_modeled_initial_subpath(1)
-	1265
-	>>> parsed.get_subpath_model_val(1, 1265)
-	66.3157894736842
+	<fragment.Decitala 93_Ragavardhana>
+	<fragment.Decitala 43_Malikamoda>
+	<fragment.Decitala 105_Candrakala>
+	<fragment.Decitala 47_Makaranda>
+	<fragment.Decitala 88_Lakskmica>
+	>>> lit_db.num_subpath_tables
+	10
+	>>> lit_db.subpath(8, 2)
+	[41, 43, 46]
+	>>> for data in lit_db.subpath_data(8, 2):
+	... 	print(data["fragment"], data["onset_range"])
+	<fragment.Decitala 88_Lakskmica> (88.75, 93.0)
+	<fragment.Decitala 93_Ragavardhana> (93.0, 97.75)
+	<fragment.Decitala 47_Makaranda> (98.25, 101.5)
+	>>> lit_db.subpath_intra_gap_score(8, 2)
+	95.91836734693878
+	>>> lit_db.subpath_onset_percentile(8, 2)
+	33.333333333333336
+	>>> # the model requires weights (for table num > 1, 2 values). 
+	>>> lit_db.intra_subpath_model_score(8, 2, weights=[0.7, 0.3])
+	77.14285714285714
+	>>> # for table num == 1, it requires 3 weights: 
+	>>> lit_db.intra_subpath_model_score(1, 1, weights=[0.5, 0.3, 0.2])
+	90.0
+
 	"""
 	def __init__(self, db_path):
 		assert os.path.isfile(db_path), DatabaseException("You've provided an invalid file.")
@@ -369,7 +370,7 @@ class DBParser:
 		fragment_rows = cur.fetchall()
 		fragment_data = []
 
-		earliest_detected_onset = 100
+		earliest_detected_onset = 100 # random starting value.
 
 		for i, this_row in enumerate(fragment_rows):
 			row_data = dict()
@@ -618,7 +619,13 @@ class DBParser:
 		percentage_gap = 100.0 - gap_proportion
 		return percentage_gap
 		
-	def inter_subpath_gap_score(table_num_a, path_num_a, table_num_b, path_num_b):
+	def subpath_inter_gap_score(
+			self, 
+			table_num_a, 
+			path_num_a, 
+			table_num_b, 
+			path_num_b
+		):
 		"""
 		Gets the proportion of the gap between two subpaths to the whole range of the paths. 
 		"""
@@ -641,18 +648,18 @@ class DBParser:
 			self, 
 			table_num, 
 			path_num, 
-			weights=[0.7, 0.3], # {"intra_gap_weight": 0.7, "onset_percentile_weight": 0.3}, 
-			start_subpath_weights=[0.5, 0.3, 0.2] # {"intra_gap_weight": 0.5, "onset_percentile_weight": 0.3, "start_gap_weight": 0.2} 
+			weights
 		):
 		"""
 		:param int table_num: 1-indexed table number. 
 		:param int path_num: 1-indexed subpath number. 
-		:param dict weights: normal intra-subpath weights (only for ``table_num != 1``).
+		:param list weights: intra-subpath weights.  
 		:return: returns the intra-subpath model score. 
 		:rtype: float
 		"""
 		assert (table_num >= 1 and path_num >= 1), DatabaseException("The table_num and path_num must be >= 1.")
-
+		if table_num == 1:
+			assert len(weights) == 3, DatabaseException("For the first table, three weights must be provided.")
 
 		gap_score = self.subpath_intra_gap_score(table_num, path_num)
 		onset_score = self.subpath_onset_percentile(table_num, path_num)
@@ -660,7 +667,7 @@ class DBParser:
 		if table_num == 1:
 			start_gap_score = self.first_subpath_start_gap_score(path_num)
 			scores = [gap_score, onset_score, start_gap_score]
-			for weight, score in zip(start_subpath_weights, scores):
+			for weight, score in zip(weights, scores):
 				model += weight * score
 		else:
 			scores = [gap_score, onset_score]
@@ -669,11 +676,16 @@ class DBParser:
 
 		return model
 	
-	def highest_modeled_subpath(self, table_num):
+	def highest_modeled_subpath(
+			self, 
+			table_num,
+			weights
+		):
 		"""
 		Gets the highest modeled subpath in the table.
 
 		:param int table_num: 1-indexed table number. 
+		:param list weights: intra-subpath weights. 
 		"""
 		assert table_num >= 1, DatabaseException("The table_num must be >= 1.")
 		
@@ -681,7 +693,7 @@ class DBParser:
 		highest_subpath = None
 		highest_model_val = 0
 		for i in range(1, num_rows + 1):
-			model_val = self.intra_subpath_model_score(table_num, i)
+			model_val = self.intra_subpath_model_score(table_num, i, weights)
 			if model_val > highest_model_val:
 				highest_model_val = model_val
 				highest_subpath = i
@@ -690,24 +702,33 @@ class DBParser:
 
 	def model_full_path(
 			self,
+			start_weights = [0.5, 0.3, 0.2], 
+			rest_weights = [0.7, 0.3], 
+			intra_inter_weights = [0.8, 0.2]
 		):
 		"""
-		Return list of subpath nums for each table.
-
-		Intra scores: onset percentile, intra gap score, if 0 start gap. 
-		Extra scores: inter gap score
+		Return list of highest modeled subpath nums for each table. 
 		"""
 		path = []
-		i = 0
-		while i < len(self.metadata):
-			if i == 0:
-				highest_first_subpath = self.highest_modeled_subpath(1)
-				data = self.subpath_data(1, highest_first_subpath)
-				print(data)
+		table_num = 1
+		while table_num < self.metadata[-1][0] + 1:
+			if table_num == 1:
+				highest_first_subpath = self.highest_modeled_subpath(table_num, weights=start_weights)
+				path.append(highest_first_subpath)
 			else:
-				pass
-
-			i += 1
+				last = path[-1]
+				curr_data = self.metadata[table_num - 1]
+				scores = []
+				for row_num in range(1, curr_data[1] + 1):
+					fragments = [x["fragment"] for x in self.subpath_data(table_num, row_num)]
+					intra_model_score = self.intra_subpath_model_score(table_num, row_num, rest_weights)
+					inter_subpath_score = self.subpath_inter_gap_score(table_num - 1, last, table_num, row_num)
+					combined = (intra_inter_weights[0] * intra_model_score) + (intra_inter_weights[1] * inter_subpath_score)
+					scores.append(combined)
+				
+				path.append(scores.index(max(scores))+1)
+			
+			table_num += 1
 			
 		return path
 	
