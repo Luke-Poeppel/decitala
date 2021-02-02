@@ -21,4 +21,4 @@ Check with ``decitala --version``.
 - Also recommended is the following application for viewing SQLite databases, freely available at https://sqlitebrowser.org/. 
 
 ### Why is it called decitala?
-Śārngadeva (शार्ङ्गदेव) compiled a list of 130 rhythmic fragments called desītālas (देसी ताल) in his 13th-century musicological treatise, the Sangītaratnākara (सङ्गीतरत्नाकर). Messiaen used the gallicized "deçi-tâlas" in his writing which has been simplified to "decitala" for ease of writing. (In IAST transliteration, it would be written "desītālas"). 
+Śārngadeva (शार्ङ्गदेव) compiled a list of 130 rhythmic fragments called desītālas (देसी ताल) in his 13th-century musicological treatise, the Sangītaratnākara (सङ्गीतरत्नाकर). Messiaen used the gallicized "deçi-tâlas" in his writing which has been simplified to "decitala" for ease of writing. 

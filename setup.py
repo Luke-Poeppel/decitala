@@ -53,6 +53,7 @@ setup(
 		"pre-commit",
 		"pytest",
 		"scipy",
+		"sphinx_rtd_theme", 
 		"timeout-decorator",
 	],
 	entry_points={
