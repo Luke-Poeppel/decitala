@@ -352,7 +352,6 @@ class DBParser:
 	>>> # for table num == 1, it requires 3 weights: 
 	>>> lit_db.intra_subpath_model_score(1, 1, weights=[0.5, 0.3, 0.2])
 	90.0
-
 	"""
 	def __init__(self, db_path):
 		assert os.path.isfile(db_path), DatabaseException("You've provided an invalid file.")

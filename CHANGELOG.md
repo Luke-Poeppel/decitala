@@ -5,8 +5,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.6.0] - January 25, 2020 (Kent, CT)
 ### Added
-- WIP: Added the missing ``database.model_full_path`` function. 
-- WIP: Documentation fixes for ``DBParser`` and ``fragments.py``. 
+- Added the missing ``database.model_full_path`` function. 
+- Documentation fixes for ``DBParser`` and ``fragments.py``. 
+- WIP: Added optional ``save_log_to_file`` to file parameter to ``database.create_database``.  
 - Section in the documentation giving a brief exposition to the encoded rhythmic fragments. 
 
 ### Changed

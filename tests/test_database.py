@@ -23,9 +23,3 @@ def db():
 		verbose = False
 	)
 	return DBParser(path)
-
-def test_num_subpath_tables(db):
-	assert db.num_subpath_tables == 5
-
-def test_spanned_fragments(db):
-	assert len(db.slurred_fragments()) == 0
