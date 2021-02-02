@@ -540,7 +540,7 @@ class FragmentTree(NaryTree):
 
 	>>> ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
 	>>> ratio_tree
-	<trees.FragmentTree: nodes=31>
+	<trees.FragmentTree greek_foot_ratio: nodes=31>
 	>>> ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0])
 	<fragment.GreekFoot Peon_II>
 	>>> # We can also create a FragmentTree object from either a list of GeneralFragment, Decitala, and GreekFoot objects or from a directory of files using the `data` parameter.
@@ -645,7 +645,7 @@ class FragmentTree(NaryTree):
 				name = this_row[0]
 				data.append(GreekFoot(name=name))
 		
-		return FragmentTree(data=data, rep_type=rep_type, skip_filter=True)
+		return FragmentTree(data=data, rep_type=rep_type, name="{0}_{1}".format(frag_type, rep_type), skip_filter=True)
 
 	@classmethod
 	def from_composition(
