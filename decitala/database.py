@@ -43,7 +43,8 @@ from .utils import (
 	filter_single_anga_class_fragments,
 	filter_sub_fragments,
 	pitch_content_to_contour,
-	contour_to_prime_contour
+	contour_to_prime_contour, 
+	get_logger
 )
 from .trees import (
 	FragmentTree,
@@ -56,7 +57,6 @@ from .pofp import (
 	get_pareto_optimal_longest_paths
 )
 
-import logging
 logging.basicConfig(level=logging.INFO)
 
 mpl.style.use("seaborn")
@@ -130,6 +130,7 @@ def create_database(
 		filter_found_single_anga_class=True,
 		filter_found_sub_fragments=True,
 		keep_grace_notes=True,
+		write_logs_to_file=False, 
 		verbose=True
 	):
 	"""
@@ -148,31 +149,34 @@ def create_database(
 	:rtype: .db file
 	"""
 	assert os.path.isfile(filepath), DatabaseException("The path provided is not a valid file.")
+		
 	if os.path.isfile(db_path):
 		logging.info("That database already exists ✔")
 		return
 
-	if not(verbose):
-		logging.disable(logging.INFO)
+	filename = filepath.split("")[-1]
+	log_filepath = filepath.split("/")[:-1]+"/" + filename[:-4] + ".txt"
 	
-	filename = filepath.split('/')[-1]
-
-	logging.info("Preparing database...")
-	logging.info("\n")
-	logging.info("File: {}".format(filename))
-	logging.info("Part: {}".format(part_num))
-	logging.info("Fragment types: {}".format(frag_types))
-	logging.info("Representation types: {}".format(rep_types))
-	logging.info("Modifications: {}".format(allowed_modifications))
-	logging.info("Try contiguous summations: {}".format(try_contiguous_summation))
-	logging.info("Filter single anga class fragments: {}".format(filter_found_single_anga_class))
-	logging.info("Filter sub fragments: {}".format(filter_found_sub_fragments))
+	logger = get_logger(filepath=log_filepath)
+	if not(verbose):
+		logger.disable(logger.INFO)
+	
+	logger.info("Preparing database...")
+	logger.info("\n")
+	logger.info("File: {}".format(filename))
+	logger.info("Part: {}".format(part_num))
+	logger.info("Fragment types: {}".format(frag_types))
+	logger.info("Representation types: {}".format(rep_types))
+	logger.info("Modifications: {}".format(allowed_modifications))
+	logger.info("Try contiguous summations: {}".format(try_contiguous_summation))
+	logger.info("Filter single anga class fragments: {}".format(filter_found_single_anga_class))
+	logger.info("Filter sub fragments: {}".format(filter_found_sub_fragments))
 	# logging.info("Keep grace notes: {}".format(keep_grace_notes))
 
 	ALL_DATA = []
 	for this_frag_type in frag_types:
-		logging.info("\n")
-		logging.info("Making fragment tree(s) (and searching) for frag_type: {}".format(this_frag_type))
+		logger.info("\n")
+		logger.info("Making fragment tree(s) (and searching) for frag_type: {}".format(this_frag_type))
 
 		if "ratio" in rep_types:
 			curr_ratio_tree = FragmentTree.from_frag_type(frag_type=this_frag_type, rep_type="ratio")
@@ -199,28 +203,28 @@ def create_database(
 		ALL_DATA.extend(data)
 
 	initial_length = len(ALL_DATA)
-	logging.info("\n")
-	logging.info("{} fragments extracted".format(initial_length))
+	logger.info("\n")
+	logger.info("{} fragments extracted".format(initial_length))
 
-	logging.info("Removing cross-corpus duplicates...")
+	logger.info("Removing cross-corpus duplicates...")
 	ALL_DATA = remove_cross_corpus_duplicates(ALL_DATA)
 
 	############ Filters ############
 	if filter_found_single_anga_class:
 		ALL_DATA = filter_single_anga_class_fragments(ALL_DATA)
 
-		logging.info("Removing all single anga class fragments...")
-		logging.info("Removed {0} fragments ({1} remaining)".format(initial_length - len(ALL_DATA), len(ALL_DATA)))
+		logger.info("Removing all single anga class fragments...")
+		logger.info("Removed {0} fragments ({1} remaining)".format(initial_length - len(ALL_DATA), len(ALL_DATA)))
 	
 	new_length = len(ALL_DATA)
 
 	if filter_found_sub_fragments:
 		ALL_DATA = filter_sub_fragments(ALL_DATA)
-		logging.info("Removing all sub fragments...")
-		logging.info("Removed {0} fragments ({1} remaining)".format(new_length - len(ALL_DATA), len(ALL_DATA)))
+		logger.info("Removing all sub fragments...")
+		logger.info("Removed {0} fragments ({1} remaining)".format(new_length - len(ALL_DATA), len(ALL_DATA)))
 	#################################
 
-	logging.info("Calculated break points: {}".format(get_break_points(ALL_DATA)))
+	logger.info("Calculated break points: {}".format(get_break_points(ALL_DATA)))
 
 	all_object = get_object_indices(filepath, part_num)
 	sorted_onset_ranges = sorted(ALL_DATA, key = lambda x: x["onset_range"][0])
@@ -228,8 +232,8 @@ def create_database(
 
 	conn = sqlite3.connect(db_path)
 	with conn:
-		logging.info("\n")
-		logging.info("Connected to database at: {}".format(db_path))
+		logger.info("\n")
+		logger.info("Connected to database at: {}".format(db_path))
 
 		cur = conn.cursor()
 		
@@ -259,7 +263,7 @@ def create_database(
 			columns_declaration = ", ".join("%s INTEGER" % c for c in columns)
 
 			cur.execute("CREATE TABLE Paths_{0} ({1})".format(str(i+1), columns_declaration))
-			logging.info("Making Paths_{} table".format(i+1))
+			logger.info("Making Paths_{} table".format(i+1))
 			
 			FRAGMENT_TABLE_STRING = "SELECT * FROM Fragments"
 			cur.execute(FRAGMENT_TABLE_STRING)
@@ -284,7 +288,7 @@ def create_database(
 					shorter_paths_insertion_string = "INSERT INTO Paths_{0} VALUES({1})".format(str(i+1), shorter_paths_values_string)
 					cur.execute(shorter_paths_insertion_string)
 		
-		logging.info("Done preparing ✔")
+		logger.info("Done preparing ✔")
 
 ####################################################################################################
 # Helper functions

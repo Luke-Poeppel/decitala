@@ -7,7 +7,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Added
 - Added the missing ``database.model_full_path`` function. 
 - Documentation fixes for ``DBParser`` and ``fragments.py``. 
-- WIP: Optional ``save_logs_to_file`` parameter to ``database.create_database``. 
+- Optional ``save_logs_to_file`` parameter to ``database.create_database``. 
 - Can now create FragmentTrees from a list of multiple data paths. 
 - Section in the documentation giving a brief exposition to the encoded rhythmic fragments. 
 
