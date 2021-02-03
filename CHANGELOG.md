@@ -3,18 +3,21 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.6.0] - January 25, 2020 (Kent, CT)
+## [v0.6.0] - February 3, 2021 (Kent, CT)
 ### Added
 - Added the missing ``database.model_full_path`` function. 
 - Documentation fixes for ``DBParser`` and ``fragments.py``. 
-- WIP: Optional ``save_logs_to_file`` parameter to ``database.create_database``.  
-- Name argument in fragment trees created from ``frag_type``.
+- WIP: Optional ``save_logs_to_file`` parameter to ``database.create_database``. 
+- Can now create FragmentTrees from a list of multiple data paths. 
 - Section in the documentation giving a brief exposition to the encoded rhythmic fragments. 
 
 ### Changed
 - Documentation now is in sphinx RTD theme. 
 - Revamped README. 
 - Rather than setting the same logger at the top of each file, added ``get_logger`` function to utils.py in which we can set optional filename to the basicConfig for saving to file when desired. 
+
+### Fixed
+- Missing name argument in fragment trees created from ``frag_type``.
 
 ## [v0.5.2] - January 17, 2020 (Kent, CT)
 ### Removed

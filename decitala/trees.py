@@ -660,6 +660,8 @@ class FragmentTree(NaryTree):
 
 		:param str filepath: path to file 
 		:param int part: part number
+		:return: a FragmentTree made from a rolling window of a part in a composition.  
+		:rtype: :obj:`~decitala.trees.FragmentTree`
 		"""
 		assert os.path.isfile(filepath)
 		assert type(part) == int
@@ -682,29 +684,39 @@ class FragmentTree(NaryTree):
 
 		return FragmentTree(data=data, rep_type=rep_type)
 
+	@classmethod
+	def from_multiple_paths(
+			self, 
+			paths, 
+			rep_type, 
+			name=None
+		):
+		"""
+		Create a FragmentTree from a list of paths (each a directory of music21-readable files). 
+
+		:param list paths: list of paths (each a string), each a directory of music21-readable files of rhythmic fragments.
+		:return: a Fragment tree holding multiple paths of data. 
+		:rtype: :obj:`~decitala.trees.FragmentTree`
+		"""
+		assert all(os.path.isdir(path) for path in paths), TreeException("Not all provided paths are valid.")
+
+		data = []
+		for this_path in paths:
+			for this_file in os.listdir(this_path):
+				data.append(GeneralFragment(data=this_file))
+
+		return FragmentTree(data=data, rep_type=rep_type, name=name)
+
 	def show(self):
 		"""
-		The vis module uses the Treant.js library to create a tree diagram. We then use 
-		html2canvas.js and FileSaver.js to render the image and display it with matplotlib. 
-		Notes: (1) this is still in development, so the exported image may not look great (yet) and
-		(2) the FileSaver requires the image to go to downloads, so that is where it is read from. 
+		The vis module uses the Treant.js library to create a tree diagram. We then open the index.html
+		file of the generated diagram in the chrome webbrowser. 
 		"""
 		warnings.warn("Function still in development...")
-		#dirpath = tempfile.mkdtemp()
-		#shutil.rmtree(dirpath)
-
 		path = str(Path.home()) + "/{}".format(uuid.uuid4().hex)
 		create_tree_diagram(self, path)
 		browser = webbrowser.get("chrome")
 		browser.open_new_tab("file://" + path + "/index.html")
-
-		# downloads_path = str(Path.home() / "Downloads/*")
-		# all_downloads = glob.glob(downloads_path)
-		# latest_image = max(all_downloads, key = os.path.getctime)
-		
-		# img = mpimg.imread(latest_image)
-		# plt.imshow(img)
-		# plt.show()
 
 ####################################################################################################
 # Search
