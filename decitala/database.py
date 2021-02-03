@@ -57,6 +57,7 @@ from .pofp import (
 	get_pareto_optimal_longest_paths
 )
 
+import logging
 logging.basicConfig(level=logging.INFO)
 
 mpl.style.use("seaborn")
