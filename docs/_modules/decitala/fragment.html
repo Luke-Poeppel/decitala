@@ -1,55 +1,54 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.fragment &mdash; decitala 0.5.2 documentation</title>
+  <title>decitala.fragment &mdash; decitala 0.6.0 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
 
   
   
 
   
+  
 
   
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="decitala 0.5.2 documentation" href="../../index.html"/>
-        <link rel="up" title="Module code" href="../index.html"/> 
-
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -63,7 +62,7 @@
             
             
               <div class="version">
-                0.5.2
+                0.6.0
               </div>
             
           
@@ -80,11 +79,15 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
             
-                <p class="caption"><span class="caption-text">Modules</span></p>
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../database.html">database.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../fragment.html">fragment.py</a></li>
@@ -93,17 +96,23 @@
 <li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../vis.html">vis.py</a></li>
 </ul>
+<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../greek_metrics.html">Greek Metrics</a></li>
+</ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">decitala</a>
@@ -111,10 +120,13 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
+
+
 
 
 
@@ -134,7 +146,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
@@ -142,8 +154,6 @@
     
     
       <li class="wy-breadcrumbs-aside">
-        
-            
         
       </li>
     
@@ -221,10 +231,9 @@
 <span class="sd">	Class representing a generic rhythmic fragment. The user must provide either a path to a music21 readable</span>
 <span class="sd">	file or an array of quarter length values. </span>
 
-<span class="sd">	:param data: input data to :obj:`~decitala.fragment.GeneralFragment` (either an array of quarter length values</span>
-<span class="sd">				or a path to a music21 readable file.)</span>
-<span class="sd">	:param str name: optional name argument.</span>
-<span class="sd">	:raises `~decitala.fragment.FragmentException`: when an array and file are provided or neither are provided.</span>
+<span class="sd">	:param data: either an array of quarter length values or a path to a music21 readable file.</span>
+<span class="sd">	:param str name: optional name.</span>
+<span class="sd">	:raises `~decitala.fragment.FragmentException`: if an array **and** file are provided or if neither are provided.</span>
 <span class="sd">	</span>
 <span class="sd">	&gt;&gt;&gt; random_fragment_path = &quot;./fragments/Decitalas/63_Nandi.xml&quot;</span>
 <span class="sd">	&gt;&gt;&gt; g1 = GeneralFragment(data=random_fragment_path, name=&#39;test&#39;)</span>
@@ -338,7 +347,7 @@
 	<span class="k">def</span> <span class="nf">num_anga_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		:return: the number of anga classes in the fragment (the number of unique rhythmic values).</span>
-<span class="sd">		:rtype: int.</span>
+<span class="sd">		:rtype: int</span>
 
 <span class="sd">		&gt;&gt;&gt; GeneralFragment(data=np.array([0.75, 0.75, 0.5, 0.25])).num_anga_classes</span>
 <span class="sd">		3</span>
@@ -357,7 +366,7 @@
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		:param bool as_str: whether or not to return the d-seg as a string.</span>
 <span class="sd">		:return: the d-seg of the fragment, as introducted in `The Perception of Rhythm in Non-Tonal Music &lt;https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents&gt;`_ (Marvin, 1991). Maps a fragment into a sequence of relative durations. </span>
-<span class="sd">		:rtype: numpy.array</span>
+<span class="sd">		:rtype: numpy.array (or string if ``as_str=True``)</span>
 
 <span class="sd">		&gt;&gt;&gt; g3 = GeneralFragment(np.array([0.25, 0.75, 2.0, 1.0]), name=&#39;marvin-p70&#39;)</span>
 <span class="sd">		&gt;&gt;&gt; g3.dseg()</span>
@@ -383,7 +392,7 @@
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		:param bool as_str: whether or not to return the reduced d-seg as a string.</span>
 <span class="sd">		:return: d-seg of the fragment with all contiguous equal values reduced to a single instance.</span>
-<span class="sd">		:rtype: numpy.array</span>
+<span class="sd">		:rtype: numpy.array (or string if ``as_str=True``)</span>
 
 <span class="sd">		&gt;&gt;&gt; g4 = GeneralFragment([0.125, 0.125, 1.75, 0.5], name=&#39;marvin-p74-x&#39;)</span>
 <span class="sd">		&gt;&gt;&gt; g4.dseg(as_str=True)</span>
@@ -493,6 +502,7 @@
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		:return: the c-score of the fragment, as defined in Povel and Essens (1985).</span>
 <span class="sd">		:rtype: float</span>
+<span class="sd">		:raises: NotImplementedError</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 	
@@ -545,8 +555,8 @@
 <span class="c1">####################################################################################################</span>
 <div class="viewcode-block" id="Decitala"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.Decitala">[docs]</a><span class="k">class</span> <span class="nc">Decitala</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Class defining a Decitala object. The class currently reads from the `Fragments/Decitala`</span>
-<span class="sd">	folder which contains XML files for each fragment. </span>
+<span class="sd">	Class defining a Decitala object. The class reads from the fragments_db file in the</span>
+<span class="sd">	databases directory (see the Decitalas table). </span>
 
 <span class="sd">	:param str name: Name of the decitala, as is transliterated in the Lavignac (1921). </span>
 <span class="sd">	:raises `~decitala.fragment.DecitalaException`: when there is an issue with the name.</span>
@@ -713,6 +723,10 @@
 
 <div class="viewcode-block" id="Decitala.equivalents"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.Decitala.equivalents">[docs]</a>	<span class="k">def</span> <span class="nf">equivalents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:return: list of Decitala and Greek foot objects that are equivalent to the given fragment under the </span>
+<span class="sd">				provided ``rep_type``. </span>
+<span class="sd">		:rtype: list</span>
+
 <span class="sd">		&gt;&gt;&gt; fragment = Decitala(&quot;Tritiya&quot;)</span>
 <span class="sd">		&gt;&gt;&gt; fragment.equivalents(rep_type=&quot;ratio&quot;)</span>
 <span class="sd">		[&lt;fragment.Decitala 95_Anlarakrida&gt;]</span>
@@ -740,7 +754,8 @@
 <span class="c1">####################################################################################################</span>
 <div class="viewcode-block" id="GreekFoot"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GreekFoot">[docs]</a><span class="k">class</span> <span class="nc">GreekFoot</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Class that stores greek foot data. Reads from a folder containing all greek feet XML files.</span>
+<span class="sd">	Class that stores greek foot data. The class reads from the fragments_db file in the databases</span>
+<span class="sd">	directory (see the Greek_Metrics table). </span>
 
 <span class="sd">	&gt;&gt;&gt; bacchius = GreekFoot(&#39;Bacchius&#39;)</span>
 <span class="sd">	&gt;&gt;&gt; bacchius</span>
@@ -820,6 +835,10 @@
 
 <div class="viewcode-block" id="GreekFoot.equivalents"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GreekFoot.equivalents">[docs]</a>	<span class="k">def</span> <span class="nf">equivalents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:return: list of Decitala and Greek foot objects that are equivalent to the given fragment under the </span>
+<span class="sd">				provided ``rep_type``. </span>
+<span class="sd">		:rtype: list</span>
+
 <span class="sd">		&gt;&gt;&gt; fragment = GreekFoot(&quot;Ionic_Minor&quot;)</span>
 <span class="sd">		&gt;&gt;&gt; fragment.equivalents(rep_type=&quot;ratio&quot;)</span>
 <span class="sd">		[&lt;fragment.Decitala 49_Crikirti&gt;, &lt;fragment.Decitala 32_Kudukka&gt;, &lt;fragment.Decitala 9_Ratilila&gt;, &lt;fragment.Decitala 36_Tribhangi&gt;]</span>
@@ -844,22 +863,28 @@
 </pre></div>
 
            </div>
+           
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Luke Poeppel.
+        &#169; Copyright 2020, Luke Poeppel.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -868,39 +893,15 @@
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'0.5.2',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="../../_static/language_data.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

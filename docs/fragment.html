@@ -1,56 +1,56 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>fragment.py &mdash; decitala 0.5.2 documentation</title>
+  <title>fragment.py &mdash; decitala 0.6.0 documentation</title>
   
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
 
   
   
 
   
+  
 
   
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="decitala 0.5.2 documentation" href="index.html"/>
-        <link rel="next" title="pofp.py" href="pofp.html"/>
-        <link rel="prev" title="database.py" href="database.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pofp.py" href="pofp.html" />
+    <link rel="prev" title="database.py" href="database.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.5.2
+                0.6.0
               </div>
             
           
@@ -81,11 +81,15 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
             
-                <p class="caption"><span class="caption-text">Modules</span></p>
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">fragment.py</a></li>
@@ -94,17 +98,23 @@
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils.py</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vis.html">vis.py</a></li>
 </ul>
+<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="greek_metrics.html">Greek Metrics</a></li>
+</ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">decitala</a>
@@ -112,10 +122,13 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
+
+
 
 
 
@@ -135,14 +148,14 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>fragment.py</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="_sources/fragment.rst.txt" rel="nofollow"> View page source</a>
           
         
@@ -167,13 +180,12 @@ file or an array of quarter length values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> – input data to <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GeneralFragment</span></code></a> (either an array of quarter length values
-or a path to a music21 readable file.)</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – optional name argument.</p></li>
+<li><p><strong>data</strong> – either an array of quarter length values or a path to a music21 readable file.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – optional name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>FragmentException</strong> – when an array and file are provided or neither are provided.</p>
+<dd class="field-even"><p><strong>FragmentException</strong> – if an array <strong>and</strong> file are provided or if neither are provided.</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">random_fragment_path</span> <span class="o">=</span> <span class="s2">&quot;./fragments/Decitalas/63_Nandi.xml&quot;</span>
@@ -264,7 +276,7 @@ or a path to a music21 readable file.)</p></li>
 <dd class="field-odd"><p>the number of anga classes in the fragment (the number of unique rhythmic values).</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int.</p>
+<dd class="field-even"><p>int</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">]))</span><span class="o">.</span><span class="n">num_anga_classes</span>
@@ -297,7 +309,7 @@ or a path to a music21 readable file.)</p></li>
 <dd class="field-even"><p>the d-seg of the fragment, as introducted in <a class="reference external" href="https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents">The Perception of Rhythm in Non-Tonal Music</a> (Marvin, 1991). Maps a fragment into a sequence of relative durations.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>numpy.array</p>
+<dd class="field-odd"><p>numpy.array (or string if <code class="docutils literal notranslate"><span class="pre">as_str=True</span></code>)</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g3</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;marvin-p70&#39;</span><span class="p">)</span>
@@ -318,7 +330,7 @@ or a path to a music21 readable file.)</p></li>
 <dd class="field-even"><p>d-seg of the fragment with all contiguous equal values reduced to a single instance.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>numpy.array</p>
+<dd class="field-odd"><p>numpy.array (or string if <code class="docutils literal notranslate"><span class="pre">as_str=True</span></code>)</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g4</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">([</span><span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;marvin-p74-x&#39;</span><span class="p">)</span>
@@ -454,6 +466,9 @@ A Classification of Talas in Indian Music</a> (1999).</p>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>float</p>
 </dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p>NotImplementedError</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -501,8 +516,8 @@ corresponding to the original fragment augmented by a given ratio and difference
 <dt id="decitala.fragment.Decitala">
 <em class="property">class </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">Decitala</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#Decitala"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.Decitala" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.GeneralFragment</span></code></a></p>
-<p>Class defining a Decitala object. The class currently reads from the <cite>Fragments/Decitala</cite>
-folder which contains XML files for each fragment.</p>
+<p>Class defining a Decitala object. The class reads from the fragments_db file in the
+databases directory (see the Decitalas table).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name of the decitala, as is transliterated in the Lavignac (1921).</p>
@@ -619,7 +634,16 @@ numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. So
 <dl class="py method">
 <dt id="decitala.fragment.Decitala.equivalents">
 <code class="sig-name descname">equivalents</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rep_type</span><span class="o">=</span><span class="default_value">'ratio'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#Decitala.equivalents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.Decitala.equivalents" title="Permalink to this definition">¶</a></dt>
-<dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span> <span class="o">=</span> <span class="n">Decitala</span><span class="p">(</span><span class="s2">&quot;Tritiya&quot;</span><span class="p">)</span>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of Decitala and Greek foot objects that are equivalent to the given fragment under the 
+provided <code class="docutils literal notranslate"><span class="pre">rep_type</span></code>.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span> <span class="o">=</span> <span class="n">Decitala</span><span class="p">(</span><span class="s2">&quot;Tritiya&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span><span class="o">.</span><span class="n">equivalents</span><span class="p">(</span><span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span><span class="p">)</span>
 <span class="go">[&lt;fragment.Decitala 95_Anlarakrida&gt;]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span><span class="o">.</span><span class="n">equivalents</span><span class="p">(</span><span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;difference&quot;</span><span class="p">)</span>
@@ -634,7 +658,8 @@ numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. So
 <dt id="decitala.fragment.GreekFoot">
 <em class="property">class </em><code class="sig-prename descclassname">decitala.fragment.</code><code class="sig-name descname">GreekFoot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GreekFoot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GreekFoot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.GeneralFragment</span></code></a></p>
-<p>Class that stores greek foot data. Reads from a folder containing all greek feet XML files.</p>
+<p>Class that stores greek foot data. The class reads from the fragments_db file in the databases
+directory (see the Greek_Metrics table).</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bacchius</span> <span class="o">=</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s1">&#39;Bacchius&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">bacchius</span>
 <span class="go">&lt;fragment.GreekFoot Bacchius&gt;</span>
@@ -671,7 +696,16 @@ numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. So
 <dl class="py method">
 <dt id="decitala.fragment.GreekFoot.equivalents">
 <code class="sig-name descname">equivalents</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">rep_type</span><span class="o">=</span><span class="default_value">'ratio'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/fragment.html#GreekFoot.equivalents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.fragment.GreekFoot.equivalents" title="Permalink to this definition">¶</a></dt>
-<dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span> <span class="o">=</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Ionic_Minor&quot;</span><span class="p">)</span>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of Decitala and Greek foot objects that are equivalent to the given fragment under the 
+provided <code class="docutils literal notranslate"><span class="pre">rep_type</span></code>.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span> <span class="o">=</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Ionic_Minor&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span><span class="o">.</span><span class="n">equivalents</span><span class="p">(</span><span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span><span class="p">)</span>
 <span class="go">[&lt;fragment.Decitala 49_Crikirti&gt;, &lt;fragment.Decitala 32_Kudukka&gt;, &lt;fragment.Decitala 9_Ratilila&gt;, &lt;fragment.Decitala 36_Tribhangi&gt;]</span>
 </pre></div>
@@ -684,31 +718,32 @@ numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. So
 
 
            </div>
+           
           </div>
           <footer>
-  
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="pofp.html" class="btn btn-neutral float-right" title="pofp.py" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="database.html" class="btn btn-neutral" title="database.py" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+        <a href="pofp.html" class="btn btn-neutral float-right" title="pofp.py" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="database.html" class="btn btn-neutral float-left" title="database.py" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, Luke Poeppel.
+        &#169; Copyright 2020, Luke Poeppel.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -717,39 +752,15 @@ numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. So
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'0.5.2',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="_static/language_data.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

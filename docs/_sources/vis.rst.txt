@@ -7,7 +7,6 @@ vis.py
    :show-inheritance:
 
 .. figure:: ./_static/Prosodic_Tree.png
-   :scale: 50 %
-   :alt: map to buried treasure
+   :scale: 30 %
 
    The Fragment Tree of Greek Prosodic Feet
