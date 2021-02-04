@@ -3,6 +3,10 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.6.2] - February X, 2021 (Kent, CT)
+### Changed
+- Refactored code in ``database.create_database`` and ``trees.rolling_search`` to improve readability.
+
 ## [v0.6.0] - February 3, 2021 (Kent, CT)
 ### Added
 - Added the missing ``database.model_full_path`` function. 
