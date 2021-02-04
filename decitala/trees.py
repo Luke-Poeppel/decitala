@@ -49,9 +49,6 @@ from .vis import (
 	create_tree_diagram
 )
 
-import logging
-logging.basicConfig(level=logging.INFO)
-
 __all__ = [
 	"NaryTree",
 	"FragmentTree",
@@ -921,9 +918,6 @@ def rolling_search(
 	except AttributeError:
 		pass
 
-	if not(verbose):
-		logging.disable(logging.INFO)
-
 	depths = []
 	if ratio_tree is not None:
 		depths.append(ratio_tree.depth)
@@ -941,7 +935,7 @@ def rolling_search(
 	fragment_id = 0
 	fragments_found = []
 	for this_win in windows:
-		logging.info("Searching window of size {}.".format(this_win))
+		# logging.info("Searching window of size {}.".format(this_win))
 		
 		frames = roll_window(array = object_list, window_length = this_win)
 		for this_frame in frames:
@@ -972,7 +966,7 @@ def rolling_search(
 					search_dict["id"] = fragment_id
 
 					fragments_found.append(search_dict)
-					logging.info("({0}, {1}), ({2}), {3}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset_range"], search_dict["is_spanned_by_slur"]))
+					# logging.info("({0}, {1}), ({2}), {3}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset_range"], search_dict["is_spanned_by_slur"]))
 
 				if try_contiguous_summation:
 					copied_frame = copy.copy(this_frame)
@@ -1008,7 +1002,7 @@ def rolling_search(
 
 						fragments_found.append(cs_search_dict)
 
-						logging.info("({0}, {1}), ({2}), {3}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset_range"], search_dict["is_spanned_by_slur"]))
+						# logging.info("({0}, {1}), ({2}), {3}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset_range"], search_dict["is_spanned_by_slur"]))
 	
 	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
 

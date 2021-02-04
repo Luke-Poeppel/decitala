@@ -17,6 +17,7 @@ import os
 import pandas as pd
 import random
 import sqlite3
+import sys
 import timeout_decorator
 import timeit
 import uuid
@@ -58,10 +59,6 @@ from .pofp import (
 )
 
 import logging
-for handler in logging.root.handlers[:]:
-	logging.root.removeHandler(handler)
-
-#logging.basicConfig(level=logging.INFO)
 
 mpl.style.use("seaborn")
 
@@ -159,17 +156,19 @@ def create_database(
 		return
 
 	filename = filepath.split("/")[-1]
-	log_filepath = db_path[:-3] + ".txt"
-	logger = get_logger(filepath="test2.log")
-	if not(verbose):
-		logger.disable(logger.INFO)
+	
+	if write_logs_to_file:
+		log_filepath = db_path[:-3] + ".log"
+		logger = get_logger(name=__name__, print_to_console=verbose, write_to_file=log_filepath)
+	else:
+		logger = get_logger(name=__name__, print_to_console=verbose, write_to_file=None)
 	
 	logger.info("Preparing database...")
-	logger.info("\n")
 	logger.info("File: {}".format(filename))
 	logger.info("Part: {}".format(part_num))
 	logger.info("Fragment types: {}".format(frag_types))
 	logger.info("Representation types: {}".format(rep_types))
+	logger.info("Allowed windows: {}".format(windows))
 	logger.info("Modifications: {}".format(allowed_modifications))
 	logger.info("Try contiguous summations: {}".format(try_contiguous_summation))
 	logger.info("Filter single anga class fragments: {}".format(filter_found_single_anga_class))
@@ -855,44 +854,44 @@ def _create_fragment_database(verbose=True):
 	decitala_initial_data = _get_initial_data(path=decitala_path, size=130, log_msg="Getting initial decitala data...")	
 	greek_metric_initial_data = _get_initial_data(path=greek_path, size=26, log_msg="Getting initial greek metric data...")
 
-	logging.info("Tracking intra-level decitala equivalents...")
+	#logging.info("Tracking intra-level decitala equivalents...")
 	decitala_intra_equivalents = _track_rd_equivalents(
 		dataset_a=decitala_initial_data, 
 		dataset_b=decitala_initial_data, 
 		dataset_b_frag_type="decitala"
 	)
-	logging.info("Tracking cross-corpus decitala equivalents...")
+	#logging.info("Tracking cross-corpus decitala equivalents...")
 	decitala_cross_equivalents = _track_rd_equivalents(
 		dataset_a=decitala_intra_equivalents, 
 		dataset_b=greek_metric_initial_data, 
 		dataset_b_frag_type="greek_foot"
 	)
 
-	logging.info("Getting keep/ignore decitala data...")
+	#logging.info("Getting keep/ignore decitala data...")
 	final_decitala_data = _track_keep_vals(data=decitala_cross_equivalents, size=130, frag_type="decitala")
 
 	###############################################################################################
-	logging.info("Tracking intra-level greek metric equivalents...")
+	#logging.info("Tracking intra-level greek metric equivalents...")
 	greek_intra_equivalents = _track_rd_equivalents(
 		dataset_a=greek_metric_initial_data, 
 		dataset_b=greek_metric_initial_data, 
 		dataset_b_frag_type="greek_foot"
 	)	
-	logging.info("Tracking cross-corpus greek metric equivalents...")
+	#logging.info("Tracking cross-corpus greek metric equivalents...")
 	greek_cross_equivalents = _track_rd_equivalents(
 		dataset_a=greek_intra_equivalents, 
 		dataset_b=decitala_initial_data, 
 		dataset_b_frag_type="decitala"
 	)
 
-	logging.info("Getting keep/ignore greek metric data...")
+	#logging.info("Getting keep/ignore greek metric data...")
 	final_greek_data = _track_keep_vals(data=greek_cross_equivalents, size=26, frag_type="greek_foot")
 
-	logging.info("Creating the fragments tables...")
+	#logging.info("Creating the fragments tables...")
 	conn = sqlite3.connect(db_path)
 	
 	_make_table(data=final_decitala_data, table_name="Decitalas", conn=conn)
 	_make_table(data=final_greek_data, table_name="Greek_Metrics", conn=conn)
 	
-	logging.info("Done preparing ✔")
+	#logging.info("Done preparing ✔")
 	conn.commit()

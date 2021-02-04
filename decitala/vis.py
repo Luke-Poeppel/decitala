@@ -19,7 +19,7 @@ from collections import Counter
 from . import trees # To avoid circular dependency. 
 
 import logging
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 __all__ = [
 	"create_tree_diagram"
