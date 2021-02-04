@@ -73,10 +73,10 @@ multiplicative_augmentations = [
 ####################################################################################################
 # Logging
 def get_logger(filepath=None):
-	if write_to_file:
-		logging.basicConfig(filename=filepath, level=logging.INFO)
-	else:
+	if not(filepath):
 		logging.basicConfig(level=logging.INFO)
+	else:
+		logging.basicConfig(filename=filepath, level=logging.INFO)
 
 	return logging.getLogger()
 
