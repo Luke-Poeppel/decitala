@@ -5,7 +5,10 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.6.1] - February 3, 2021 (Kent, CT)
 ### Fixed
-- WIP: Fixed issue #35. Error with saving logs to file. 
+- Fixed issue #35. Error with saving logs to file. 
+
+### Changed
+- The trees module no longer logs results. This is a temporary change while I figure out a better solution for global/local logging. 
 
 ## [v0.6.0] - February 3, 2021 (Kent, CT)
 ### Added
