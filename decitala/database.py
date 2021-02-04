@@ -58,7 +58,10 @@ from .pofp import (
 )
 
 import logging
-logging.basicConfig(level=logging.INFO)
+for handler in logging.root.handlers[:]:
+	logging.root.removeHandler(handler)
+
+#logging.basicConfig(level=logging.INFO)
 
 mpl.style.use("seaborn")
 
@@ -143,7 +146,7 @@ def create_database(
 	:param str filepath: path to score.
 	:param int part_num: part number in the score. 
 	:param bool filter_single_anga_class: whether or not to remove single-anga class fragments from the data in rolling_search. 
-	:param boool filter_found_sub_fragments: whether or not to remove sub-fragments from the dataset. 
+	:param bool filter_found_sub_fragments: whether or not to remove sub-fragments from the dataset. 
 	:param bool verbose: whether or not to log information about the database creation process (including data from rolling search). 
 	
 	:return: sqlite3 database
@@ -152,13 +155,12 @@ def create_database(
 	assert os.path.isfile(filepath), DatabaseException("The path provided is not a valid file.")
 		
 	if os.path.isfile(db_path):
-		logging.info("That database already exists ✔")
+		#logging.info("That database already exists ✔")
 		return
 
-	filename = filepath.split("")[-1]
-	log_filepath = filepath.split("/")[:-1]+"/" + filename[:-4] + ".txt"
-	
-	logger = get_logger(filepath=log_filepath)
+	filename = filepath.split("/")[-1]
+	log_filepath = db_path[:-3] + ".txt"
+	logger = get_logger(filepath="test2.log")
 	if not(verbose):
 		logger.disable(logger.INFO)
 	
