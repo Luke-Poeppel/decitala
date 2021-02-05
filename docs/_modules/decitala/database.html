@@ -7,7 +7,8 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.database &mdash; decitala 0.6.1 documentation</title>
+  <title>decitala.database &mdash; decitala 0.6.2
+ documentation</title>
   
 
   
@@ -62,7 +63,8 @@
             
             
               <div class="version">
-                0.6.1
+                0.6.2
+
               </div>
             
           
@@ -278,6 +280,60 @@
 
 	<span class="k">return</span> <span class="n">data_out</span>
 
+<span class="k">def</span> <span class="nf">_make_fragment_table</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Helper function for writing the Fragments table of the database.&quot;&quot;&quot;</span>
+	<span class="n">fragment_table_string</span> <span class="o">=</span> <span class="s2">&quot;CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Pitch_Content BLOB, Pitch_Contour BLOB, Prime_Contour BLOB, Is_Slurred INT)&quot;</span>
+	<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">fragment_table_string</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+		<span class="n">contour</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;pitch_content&quot;</span><span class="p">]))</span>
+		<span class="n">prime_contour</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="n">include_depth</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+		<span class="n">fragment_insertion_string</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO Fragments VALUES(</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">, &#39;</span><span class="si">{2}</span><span class="s2">&#39;, &#39;</span><span class="si">{3}</span><span class="s2">&#39;, </span><span class="si">{4}</span><span class="s2">, &#39;</span><span class="si">{5}</span><span class="s2">&#39;, &#39;</span><span class="si">{6}</span><span class="s2">&#39;, &#39;</span><span class="si">{7}</span><span class="s2">&#39;, </span><span class="si">{8}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="c1"># start offset</span>
+																											<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="c1"># end offset</span>
+																											<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="c1"># fragment</span>
+																											<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="c1"># mod type </span>
+																											<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="c1"># mod factor/difference</span>
+																											<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;pitch_content&quot;</span><span class="p">],</span> <span class="c1"># pitch content</span>
+																											<span class="n">contour</span><span class="p">,</span> <span class="c1"># pitch contour </span>
+																											<span class="n">prime_contour</span><span class="p">,</span> <span class="c1"># prime contour</span>
+																											<span class="nb">int</span><span class="p">(</span><span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;is_spanned_by_slur&quot;</span><span class="p">]))</span> <span class="c1"># is_slurred</span>
+		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">fragment_insertion_string</span><span class="p">)</span>
+	<span class="k">return</span>
+
+<span class="k">def</span> <span class="nf">_make_paths_table</span><span class="p">(</span><span class="n">cur</span><span class="p">,</span> <span class="n">partitioned_data</span><span class="p">):</span>
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_partition</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">partitioned_data</span><span class="p">):</span>			
+		<span class="n">pareto_optimal_paths</span> <span class="o">=</span> <span class="n">get_pareto_optimal_longest_paths</span><span class="p">(</span><span class="n">this_partition</span><span class="p">)</span>
+		<span class="n">longest_path</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">pareto_optimal_paths</span><span class="p">])</span>
+
+		<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Onset_Range_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">longest_path</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+		<span class="n">columns_declaration</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> INTEGER&quot;</span> <span class="o">%</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">)</span>
+
+		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE Paths_</span><span class="si">{0}</span><span class="s2"> (</span><span class="si">{1}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">columns_declaration</span><span class="p">))</span>
+		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Making Paths_</span><span class="si">{}</span><span class="s2"> table&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+		
+		<span class="n">FRAGMENT_TABLE_STRING</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Fragments&quot;</span>
+		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">FRAGMENT_TABLE_STRING</span><span class="p">)</span>
+		<span class="n">fragment_rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">pareto_optimal_paths</span><span class="p">:</span>
+			<span class="n">fragment_row_ids</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">this_fragment_data</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+				<span class="n">data</span> <span class="o">=</span> <span class="n">this_fragment_data</span>
+				<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fragment_rows</span><span class="p">):</span>
+					<span class="k">if</span> <span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]):</span>
+						<span class="n">fragment_row_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">==</span> <span class="n">longest_path</span><span class="p">:</span>
+				<span class="n">longest_paths_insertion_string</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO Paths_</span><span class="si">{0}</span><span class="s2"> VALUES(</span><span class="si">{1}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragment_row_ids</span><span class="p">]))</span>
+				<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">longest_paths_insertion_string</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">diff</span> <span class="o">=</span> <span class="n">longest_path</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+				<span class="n">nulls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&#39;NULL&#39;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">diff</span>
+				<span class="n">combined</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragment_row_ids</span><span class="p">]</span> <span class="o">+</span> <span class="n">nulls</span>					
+				<span class="n">shorter_paths_values_string</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">combined</span><span class="p">)</span>
+
+				<span class="n">shorter_paths_insertion_string</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO Paths_</span><span class="si">{0}</span><span class="s2"> VALUES(</span><span class="si">{1}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">shorter_paths_values_string</span><span class="p">)</span>
+				<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">shorter_paths_insertion_string</span><span class="p">)</span>
+	<span class="k">return</span>
+
 <div class="viewcode-block" id="create_database"><a class="viewcode-back" href="../../database.html#decitala.database.create_database">[docs]</a><span class="nd">@timeout_decorator</span><span class="o">.</span><span class="n">timeout</span><span class="p">(</span><span class="mi">75</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span>
 		<span class="n">db_path</span><span class="p">,</span>
@@ -317,19 +373,17 @@
 <span class="sd">	:return: sqlite3 database</span>
 <span class="sd">	:rtype: .db file</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filepath</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The path provided is not a valid file.&quot;</span><span class="p">)</span>
-		
+	<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filepath</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;✗ The path provided is not a valid file.&quot;</span><span class="p">)</span>
 	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
-		<span class="c1">#logging.info(&quot;That database already exists ✔&quot;)</span>
-		<span class="k">return</span>
+		<span class="k">return</span> <span class="s2">&quot;That database already exists ✔&quot;</span>
 
 	<span class="n">filename</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-	
 	<span class="k">if</span> <span class="n">write_logs_to_file</span><span class="p">:</span>
 		<span class="n">log_filepath</span> <span class="o">=</span> <span class="n">db_path</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.log&quot;</span>
-		<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">print_to_console</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">write_to_file</span><span class="o">=</span><span class="n">log_filepath</span><span class="p">)</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">print_to_console</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">write_to_file</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+		<span class="n">log_filepath</span><span class="o">=</span><span class="kc">None</span>
+
+	<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">print_to_console</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">write_to_file</span><span class="o">=</span><span class="n">log_filepath</span><span class="p">)</span>
 	
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Preparing database...&quot;</span><span class="p">)</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;File: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
@@ -341,7 +395,6 @@
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Try contiguous summations: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">try_contiguous_summation</span><span class="p">))</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Filter single anga class fragments: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filter_found_single_anga_class</span><span class="p">))</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Filter sub fragments: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filter_found_sub_fragments</span><span class="p">))</span>
-	<span class="c1"># logging.info(&quot;Keep grace notes: {}&quot;.format(keep_grace_notes))</span>
 
 	<span class="n">ALL_DATA</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">this_frag_type</span> <span class="ow">in</span> <span class="n">frag_types</span><span class="p">:</span>
@@ -350,13 +403,8 @@
 
 		<span class="k">if</span> <span class="s2">&quot;ratio&quot;</span> <span class="ow">in</span> <span class="n">rep_types</span><span class="p">:</span>
 			<span class="n">curr_ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="n">this_frag_type</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span><span class="p">)</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="n">curr_ratio_tree</span> <span class="o">=</span> <span class="kc">None</span>
-		
 		<span class="k">if</span> <span class="s2">&quot;difference&quot;</span> <span class="ow">in</span> <span class="n">rep_types</span><span class="p">:</span>
 			<span class="n">curr_difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="n">this_frag_type</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;difference&quot;</span><span class="p">)</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="n">curr_difference_tree</span> <span class="o">=</span> <span class="kc">None</span>
 
 		<span class="n">data</span> <span class="o">=</span> <span class="n">rolling_search</span><span class="p">(</span>
 			<span class="n">filepath</span><span class="p">,</span>
@@ -369,30 +417,26 @@
 			<span class="n">allow_unnamed</span><span class="p">,</span>
 			<span class="n">verbose</span>
 		<span class="p">)</span>
-
 		<span class="n">ALL_DATA</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-	<span class="n">initial_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)</span>
-	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> fragments extracted&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">initial_length</span><span class="p">))</span>
-
+	<span class="n">DATA_LENGTH</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)</span>
+	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> fragments extracted&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">DATA_LENGTH</span><span class="p">))</span>
+	
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing cross-corpus duplicates...&quot;</span><span class="p">)</span>
 	<span class="n">ALL_DATA</span> <span class="o">=</span> <span class="n">remove_cross_corpus_duplicates</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)</span>
+	<span class="n">DATA_LENGTH</span> <span class="o">=</span> <span class="n">DATA_LENGTH</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)</span>
 
-	<span class="c1">############ Filters ############</span>
 	<span class="k">if</span> <span class="n">filter_found_single_anga_class</span><span class="p">:</span>
 		<span class="n">ALL_DATA</span> <span class="o">=</span> <span class="n">filter_single_anga_class_fragments</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)</span>
-
+		<span class="n">DATA_LENGTH</span> <span class="o">=</span> <span class="n">DATA_LENGTH</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)</span>
 		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing all single anga class fragments...&quot;</span><span class="p">)</span>
-		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removed </span><span class="si">{0}</span><span class="s2"> fragments (</span><span class="si">{1}</span><span class="s2"> remaining)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">initial_length</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)))</span>
+		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removed </span><span class="si">{0}</span><span class="s2"> fragments (</span><span class="si">{1}</span><span class="s2"> remaining)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)</span> <span class="o">-</span> <span class="n">DATA_LENGTH</span><span class="p">,</span> <span class="n">DATA_LENGTH</span><span class="p">))</span>
 	
-	<span class="n">new_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)</span>
-
 	<span class="k">if</span> <span class="n">filter_found_sub_fragments</span><span class="p">:</span>
 		<span class="n">ALL_DATA</span> <span class="o">=</span> <span class="n">filter_sub_fragments</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)</span>
+		<span class="n">DATA_LENGTH</span> <span class="o">=</span> <span class="n">DATA_LENGTH</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)</span>
 		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing all sub fragments...&quot;</span><span class="p">)</span>
-		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removed </span><span class="si">{0}</span><span class="s2"> fragments (</span><span class="si">{1}</span><span class="s2"> remaining)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">new_length</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)))</span>
-	<span class="c1">#################################</span>
+		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removed </span><span class="si">{0}</span><span class="s2"> fragments (</span><span class="si">{1}</span><span class="s2"> remaining)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">),</span> <span class="n">DATA_LENGTH</span><span class="p">,</span> <span class="n">DATA_LENGTH</span><span class="p">))</span>
 
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculated break points: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">get_break_points</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)))</span>
 
@@ -402,62 +446,11 @@
 
 	<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
 	<span class="k">with</span> <span class="n">conn</span><span class="p">:</span>
-		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Connected to database at: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">db_path</span><span class="p">))</span>
+		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> Connected to database at: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">db_path</span><span class="p">))</span>
 
 		<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-		
-		<span class="c1">###### Creating Fragments Table ######</span>
-		<span class="n">fragment_table_string</span> <span class="o">=</span> <span class="s2">&quot;CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Pitch_Content BLOB, Pitch_Contour BLOB, Prime_Contour BLOB, Is_Slurred INT)&quot;</span>
-		<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">fragment_table_string</span><span class="p">)</span>
-		<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="n">sorted_onset_ranges</span><span class="p">:</span>
-			<span class="n">contour</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;pitch_content&quot;</span><span class="p">]))</span>
-			<span class="n">prime_contour</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="n">include_depth</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
-			<span class="n">fragment_insertion_string</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO Fragments VALUES(</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">, &#39;</span><span class="si">{2}</span><span class="s2">&#39;, &#39;</span><span class="si">{3}</span><span class="s2">&#39;, </span><span class="si">{4}</span><span class="s2">, &#39;</span><span class="si">{5}</span><span class="s2">&#39;, &#39;</span><span class="si">{6}</span><span class="s2">&#39;, &#39;</span><span class="si">{7}</span><span class="s2">&#39;, </span><span class="si">{8}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="c1"># start offset</span>
-																												<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="c1"># end offset</span>
-																												<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="c1"># fragment</span>
-																												<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="c1"># mod type </span>
-																												<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="c1"># mod factor/difference</span>
-																												<span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;pitch_content&quot;</span><span class="p">],</span> <span class="c1"># pitch content</span>
-																												<span class="n">contour</span><span class="p">,</span> <span class="c1"># pitch contour </span>
-																												<span class="n">prime_contour</span><span class="p">,</span> <span class="c1"># prime contour</span>
-																												<span class="nb">int</span><span class="p">(</span><span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;is_spanned_by_slur&quot;</span><span class="p">]))</span> <span class="c1"># is_slurred</span>
-			<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">fragment_insertion_string</span><span class="p">)</span>
-
-		<span class="c1">###### Creating Paths Table ######</span>
-		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_partition</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">partitioned_data</span><span class="p">):</span>			
-			<span class="n">pareto_optimal_paths</span> <span class="o">=</span> <span class="n">get_pareto_optimal_longest_paths</span><span class="p">(</span><span class="n">this_partition</span><span class="p">)</span>
-			<span class="n">longest_path</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">pareto_optimal_paths</span><span class="p">])</span>
-
-			<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Onset_Range_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">longest_path</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
-			<span class="n">columns_declaration</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> INTEGER&quot;</span> <span class="o">%</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">)</span>
-
-			<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE TABLE Paths_</span><span class="si">{0}</span><span class="s2"> (</span><span class="si">{1}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">columns_declaration</span><span class="p">))</span>
-			<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Making Paths_</span><span class="si">{}</span><span class="s2"> table&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
-			
-			<span class="n">FRAGMENT_TABLE_STRING</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Fragments&quot;</span>
-			<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">FRAGMENT_TABLE_STRING</span><span class="p">)</span>
-			<span class="n">fragment_rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-			<span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">pareto_optimal_paths</span><span class="p">:</span>
-				<span class="n">fragment_row_ids</span> <span class="o">=</span> <span class="p">[]</span>
-				<span class="k">for</span> <span class="n">this_fragment_data</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
-					<span class="n">data</span> <span class="o">=</span> <span class="n">this_fragment_data</span>
-					<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fragment_rows</span><span class="p">):</span>
-						<span class="k">if</span> <span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]):</span>
-							<span class="n">fragment_row_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-
-				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">==</span> <span class="n">longest_path</span><span class="p">:</span>
-					<span class="n">longest_paths_insertion_string</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO Paths_</span><span class="si">{0}</span><span class="s2"> VALUES(</span><span class="si">{1}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragment_row_ids</span><span class="p">]))</span>
-					<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">longest_paths_insertion_string</span><span class="p">)</span>
-				<span class="k">else</span><span class="p">:</span>
-					<span class="n">diff</span> <span class="o">=</span> <span class="n">longest_path</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-					<span class="n">nulls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&#39;NULL&#39;&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">diff</span>
-					<span class="n">combined</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragment_row_ids</span><span class="p">]</span> <span class="o">+</span> <span class="n">nulls</span>					
-					<span class="n">shorter_paths_values_string</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">combined</span><span class="p">)</span>
-
-					<span class="n">shorter_paths_insertion_string</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO Paths_</span><span class="si">{0}</span><span class="s2"> VALUES(</span><span class="si">{1}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">shorter_paths_values_string</span><span class="p">)</span>
-					<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">shorter_paths_insertion_string</span><span class="p">)</span>
-		
+		<span class="n">_make_fragment_table</span><span class="p">(</span><span class="n">cur</span><span class="o">=</span><span class="n">cur</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">sorted_onset_ranges</span><span class="p">)</span>
+		<span class="n">_make_paths_table</span><span class="p">(</span><span class="n">cur</span><span class="o">=</span><span class="n">cur</span><span class="p">,</span> <span class="n">partitioned_data</span><span class="o">=</span><span class="n">partitioned_data</span><span class="p">)</span>
 		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done preparing ✔&quot;</span><span class="p">)</span></div>
 
 <span class="c1">####################################################################################################</span>
