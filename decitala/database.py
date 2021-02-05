@@ -266,7 +266,7 @@ def create_database(
 		ALL_DATA = filter_sub_fragments(ALL_DATA)
 		DATA_LENGTH = DATA_LENGTH - len(ALL_DATA)
 		logger.info("Removing all sub fragments...")
-		logger.info("Removed {0} fragments ({1} remaining)".format(len(ALL_DATA) DATA_LENGTH, DATA_LENGTH))
+		logger.info("Removed {0} fragments ({1} remaining)".format(len(ALL_DATA), DATA_LENGTH, DATA_LENGTH))
 
 	logger.info("Calculated break points: {}".format(get_break_points(ALL_DATA)))
 
