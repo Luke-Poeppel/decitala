@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.database &mdash; decitala 0.6.0 documentation</title>
+  <title>decitala.database &mdash; decitala 0.6.1 documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                0.6.0
+                0.6.1
               </div>
             
           
@@ -185,6 +185,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">timeout_decorator</span>
 <span class="kn">import</span> <span class="nn">timeit</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
@@ -226,7 +227,6 @@
 <span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 
 <span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;seaborn&quot;</span><span class="p">)</span>
 
@@ -311,7 +311,7 @@
 <span class="sd">	:param str filepath: path to score.</span>
 <span class="sd">	:param int part_num: part number in the score. </span>
 <span class="sd">	:param bool filter_single_anga_class: whether or not to remove single-anga class fragments from the data in rolling_search. </span>
-<span class="sd">	:param boool filter_found_sub_fragments: whether or not to remove sub-fragments from the dataset. </span>
+<span class="sd">	:param bool filter_found_sub_fragments: whether or not to remove sub-fragments from the dataset. </span>
 <span class="sd">	:param bool verbose: whether or not to log information about the database creation process (including data from rolling search). </span>
 <span class="sd">	</span>
 <span class="sd">	:return: sqlite3 database</span>
@@ -320,22 +320,23 @@
 	<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filepath</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The path provided is not a valid file.&quot;</span><span class="p">)</span>
 		
 	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
-		<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;That database already exists ✔&quot;</span><span class="p">)</span>
+		<span class="c1">#logging.info(&quot;That database already exists ✔&quot;)</span>
 		<span class="k">return</span>
 
-	<span class="n">filename</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-	<span class="n">log_filepath</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span>
+	<span class="n">filename</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 	
-	<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="n">log_filepath</span><span class="p">)</span>
-	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">verbose</span><span class="p">):</span>
-		<span class="n">logger</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="n">logger</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">write_logs_to_file</span><span class="p">:</span>
+		<span class="n">log_filepath</span> <span class="o">=</span> <span class="n">db_path</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.log&quot;</span>
+		<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">print_to_console</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">write_to_file</span><span class="o">=</span><span class="n">log_filepath</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">print_to_console</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">write_to_file</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 	
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Preparing database...&quot;</span><span class="p">)</span>
-	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;File: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Part: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">part_num</span><span class="p">))</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Fragment types: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frag_types</span><span class="p">))</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Representation types: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rep_types</span><span class="p">))</span>
+	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Allowed windows: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">windows</span><span class="p">))</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Modifications: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">allowed_modifications</span><span class="p">))</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Try contiguous summations: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">try_contiguous_summation</span><span class="p">))</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Filter single anga class fragments: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filter_found_single_anga_class</span><span class="p">))</span>
@@ -1021,46 +1022,46 @@
 	<span class="n">decitala_initial_data</span> <span class="o">=</span> <span class="n">_get_initial_data</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">log_msg</span><span class="o">=</span><span class="s2">&quot;Getting initial decitala data...&quot;</span><span class="p">)</span>	
 	<span class="n">greek_metric_initial_data</span> <span class="o">=</span> <span class="n">_get_initial_data</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">greek_path</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">26</span><span class="p">,</span> <span class="n">log_msg</span><span class="o">=</span><span class="s2">&quot;Getting initial greek metric data...&quot;</span><span class="p">)</span>
 
-	<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Tracking intra-level decitala equivalents...&quot;</span><span class="p">)</span>
+	<span class="c1">#logging.info(&quot;Tracking intra-level decitala equivalents...&quot;)</span>
 	<span class="n">decitala_intra_equivalents</span> <span class="o">=</span> <span class="n">_track_rd_equivalents</span><span class="p">(</span>
 		<span class="n">dataset_a</span><span class="o">=</span><span class="n">decitala_initial_data</span><span class="p">,</span> 
 		<span class="n">dataset_b</span><span class="o">=</span><span class="n">decitala_initial_data</span><span class="p">,</span> 
 		<span class="n">dataset_b_frag_type</span><span class="o">=</span><span class="s2">&quot;decitala&quot;</span>
 	<span class="p">)</span>
-	<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Tracking cross-corpus decitala equivalents...&quot;</span><span class="p">)</span>
+	<span class="c1">#logging.info(&quot;Tracking cross-corpus decitala equivalents...&quot;)</span>
 	<span class="n">decitala_cross_equivalents</span> <span class="o">=</span> <span class="n">_track_rd_equivalents</span><span class="p">(</span>
 		<span class="n">dataset_a</span><span class="o">=</span><span class="n">decitala_intra_equivalents</span><span class="p">,</span> 
 		<span class="n">dataset_b</span><span class="o">=</span><span class="n">greek_metric_initial_data</span><span class="p">,</span> 
 		<span class="n">dataset_b_frag_type</span><span class="o">=</span><span class="s2">&quot;greek_foot&quot;</span>
 	<span class="p">)</span>
 
-	<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Getting keep/ignore decitala data...&quot;</span><span class="p">)</span>
+	<span class="c1">#logging.info(&quot;Getting keep/ignore decitala data...&quot;)</span>
 	<span class="n">final_decitala_data</span> <span class="o">=</span> <span class="n">_track_keep_vals</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">decitala_cross_equivalents</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s2">&quot;decitala&quot;</span><span class="p">)</span>
 
 	<span class="c1">###############################################################################################</span>
-	<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Tracking intra-level greek metric equivalents...&quot;</span><span class="p">)</span>
+	<span class="c1">#logging.info(&quot;Tracking intra-level greek metric equivalents...&quot;)</span>
 	<span class="n">greek_intra_equivalents</span> <span class="o">=</span> <span class="n">_track_rd_equivalents</span><span class="p">(</span>
 		<span class="n">dataset_a</span><span class="o">=</span><span class="n">greek_metric_initial_data</span><span class="p">,</span> 
 		<span class="n">dataset_b</span><span class="o">=</span><span class="n">greek_metric_initial_data</span><span class="p">,</span> 
 		<span class="n">dataset_b_frag_type</span><span class="o">=</span><span class="s2">&quot;greek_foot&quot;</span>
 	<span class="p">)</span>	
-	<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Tracking cross-corpus greek metric equivalents...&quot;</span><span class="p">)</span>
+	<span class="c1">#logging.info(&quot;Tracking cross-corpus greek metric equivalents...&quot;)</span>
 	<span class="n">greek_cross_equivalents</span> <span class="o">=</span> <span class="n">_track_rd_equivalents</span><span class="p">(</span>
 		<span class="n">dataset_a</span><span class="o">=</span><span class="n">greek_intra_equivalents</span><span class="p">,</span> 
 		<span class="n">dataset_b</span><span class="o">=</span><span class="n">decitala_initial_data</span><span class="p">,</span> 
 		<span class="n">dataset_b_frag_type</span><span class="o">=</span><span class="s2">&quot;decitala&quot;</span>
 	<span class="p">)</span>
 
-	<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Getting keep/ignore greek metric data...&quot;</span><span class="p">)</span>
+	<span class="c1">#logging.info(&quot;Getting keep/ignore greek metric data...&quot;)</span>
 	<span class="n">final_greek_data</span> <span class="o">=</span> <span class="n">_track_keep_vals</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">greek_cross_equivalents</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">26</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s2">&quot;greek_foot&quot;</span><span class="p">)</span>
 
-	<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating the fragments tables...&quot;</span><span class="p">)</span>
+	<span class="c1">#logging.info(&quot;Creating the fragments tables...&quot;)</span>
 	<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
 	
 	<span class="n">_make_table</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">final_decitala_data</span><span class="p">,</span> <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;Decitalas&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="o">=</span><span class="n">conn</span><span class="p">)</span>
 	<span class="n">_make_table</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">final_greek_data</span><span class="p">,</span> <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;Greek_Metrics&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="o">=</span><span class="n">conn</span><span class="p">)</span>
 	
-	<span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done preparing ✔&quot;</span><span class="p">)</span>
+	<span class="c1">#logging.info(&quot;Done preparing ✔&quot;)</span>
 	<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </pre></div>
 

@@ -7,6 +7,13 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Changed
 - Refactored code in ``database.create_database`` and ``trees.rolling_search`` to improve readability.
 
+## [v0.6.1] - February 3, 2021 (Kent, CT)
+### Fixed
+- Fixed issue #35. Error with saving logs to file. 
+
+### Changed
+- The trees module no longer logs results. This is a temporary change while I figure out a better solution for global/local logging. 
+
 ## [v0.6.0] - February 3, 2021 (Kent, CT)
 ### Added
 - Added the missing ``database.model_full_path`` function. 

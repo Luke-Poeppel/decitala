@@ -38,9 +38,6 @@ from .fragment import (
 	GreekFoot
 )
 
-import logging
-logging.basicConfig(level=logging.INFO)
-
 __all__ = [
 	"check_break_point",
 	"get_break_points",

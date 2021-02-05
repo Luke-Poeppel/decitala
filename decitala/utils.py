@@ -10,6 +10,7 @@ import copy
 import decimal
 import logging
 import numpy as np
+import sys
 
 from itertools import chain, combinations, groupby
 from more_itertools import consecutive_groups, windowed, powerset, groupby_transform
@@ -72,13 +73,18 @@ multiplicative_augmentations = [
 
 ####################################################################################################
 # Logging
-def get_logger(filepath=None):
-	if write_to_file:
-		logging.basicConfig(filename=filepath, level=logging.INFO)
-	else:
-		logging.basicConfig(level=logging.INFO)
-
-	return logging.getLogger()
+def get_logger(name, print_to_console=True, write_to_file=None):
+	logger = logging.getLogger(name)
+	logger.setLevel(logging.INFO)
+	
+	if write_to_file is not None:
+		file_handler = logging.FileHandler(write_to_file)
+		logger.addHandler(file_handler)
+	if print_to_console:
+		stdout_handler = logging.StreamHandler(sys.stdout)
+		logger.addHandler(stdout_handler)		
+	
+	return logger
 
 ####################################################################################################
 # Notational Conversion Functions
