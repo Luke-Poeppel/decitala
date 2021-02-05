@@ -110,6 +110,26 @@ def remove_cross_corpus_duplicates(data):
 
 	return data_out
 
+def _make_fragment_table(cur, data):
+	"""
+	Helper function for writing the Fragments table of the database. 
+	"""
+	fragment_table_string = "CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Pitch_Content BLOB, Pitch_Contour BLOB, Prime_Contour BLOB, Is_Slurred INT)"
+	cur.execute(fragment_table_string)
+	for this_fragment in data:
+		contour = list(pitch_content_to_contour(this_fragment["pitch_content"]))
+		prime_contour = list(contour_to_prime_contour(contour, include_depth=False))
+		fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, '{5}', '{6}', '{7}', {8})".format(this_fragment["onset_range"][0], # start offset
+																											this_fragment["onset_range"][1], # end offset
+																											this_fragment["fragment"].name, # fragment
+																											this_fragment["mod"][0], # mod type 
+																											this_fragment["mod"][1], # mod factor/difference
+																											this_fragment["pitch_content"], # pitch content
+																											contour, # pitch contour 
+																											prime_contour, # prime contour
+																											int(this_fragment["is_spanned_by_slur"])) # is_slurred
+		cur.execute(fragment_insertion_string)
+
 @timeout_decorator.timeout(75)
 def create_database(
 		db_path,
@@ -240,21 +260,7 @@ def create_database(
 		cur = conn.cursor()
 		
 		###### Creating Fragments Table ######
-		fragment_table_string = "CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Pitch_Content BLOB, Pitch_Contour BLOB, Prime_Contour BLOB, Is_Slurred INT)"
-		cur.execute(fragment_table_string)
-		for this_fragment in sorted_onset_ranges:
-			contour = list(pitch_content_to_contour(this_fragment["pitch_content"]))
-			prime_contour = list(contour_to_prime_contour(contour, include_depth=False))
-			fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, '{5}', '{6}', '{7}', {8})".format(this_fragment["onset_range"][0], # start offset
-																												this_fragment["onset_range"][1], # end offset
-																												this_fragment["fragment"].name, # fragment
-																												this_fragment["mod"][0], # mod type 
-																												this_fragment["mod"][1], # mod factor/difference
-																												this_fragment["pitch_content"], # pitch content
-																												contour, # pitch contour 
-																												prime_contour, # prime contour
-																												int(this_fragment["is_spanned_by_slur"])) # is_slurred
-			cur.execute(fragment_insertion_string)
+		_make_fragment_table(cur, sorted_onset_ranges)
 
 		###### Creating Paths Table ######
 		for i, this_partition in enumerate(partitioned_data):			
