@@ -4,5 +4,4 @@ __pycache__/
 build/
 decitala.egg-info/
 dist/
-decitala/entropy/
 local_docs/*
