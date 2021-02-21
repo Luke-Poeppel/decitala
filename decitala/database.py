@@ -204,6 +204,7 @@ def create_database(
 	:rtype: .db file
 	"""
 	assert os.path.isfile(filepath), DatabaseException("✗ The path provided is not a valid file.")
+	assert db_path.endswith(".db"), DatabaseException("✗ The db_path must end with '.db'.")
 	if os.path.isfile(db_path):
 		return "That database already exists ✔"
 
