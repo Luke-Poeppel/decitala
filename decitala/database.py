@@ -180,7 +180,7 @@ def create_database(
 			"rsr"
 		],
 		try_contiguous_summation=True,
-		windows=list(range(1, 20)),
+		windows=list(range(2, 20)),
 		allow_unnamed=False,
 		filter_found_single_anga_class=True,
 		filter_found_sub_fragments=True,
