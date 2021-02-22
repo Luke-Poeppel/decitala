@@ -52,6 +52,7 @@ setup(
 		"progress",
 		"pre-commit",
 		"pytest",
+		"sqlalchemy",
 		"scipy",
 		"sphinx_rtd_theme", 
 		"timeout-decorator",
