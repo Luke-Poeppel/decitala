@@ -1,3 +1,4 @@
+[![Wiki](https://luke-poeppel.github.io/decitala/)
 [![Build Status](https://travis-ci.com/Luke-Poeppel/decitala.svg?token=YxpxoWhsVmQpyqxLyGf3&branch=master)](https://travis-ci.com/Luke-Poeppel/decitala)
 
 # decitala
