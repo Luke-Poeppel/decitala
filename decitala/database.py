@@ -10,6 +10,7 @@
 """
 Tools for creating SQLite databases of extracted rhythmic data from Messiaen's music.  
 """
+import json
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -28,10 +29,19 @@ from progress.bar import Bar
 from progress.spinner import Spinner
 from scipy import stats
 
-from sqlalchemy import (
-	Column, 
-)
 from sqlalchemy.ext.declarative import declarative_base 
+from sqlalchemy import (
+	create_engine,
+	MetaData,
+	Column,
+	Table,
+	Integer,
+	String,
+	Float,
+	Boolean,
+	PickleType,
+	ARRAY
+)
 
 from music21 import converter
 from music21 import note
@@ -63,8 +73,6 @@ from .pofp import (
 	get_pareto_optimal_longest_paths
 )
 
-import logging
-
 mpl.style.use("seaborn")
 
 __all__ = [
@@ -82,6 +90,7 @@ greek_path = os.path.dirname(here) + "/Fragments/Greek_Metrics/XML"
 class DatabaseException(Exception):
 	pass
 
+# Helper function
 def remove_cross_corpus_duplicates(data):
 	"""
 	>>> fake_data = [
@@ -115,23 +124,45 @@ def remove_cross_corpus_duplicates(data):
 
 	return data_out
 
-def _make_fragment_table(cur, data):
+def as_native_type(x):
+	if type(x).__module__ == np.__name__:
+		return x.item()
+	return x
+
+####################################################################################################
+def _make_fragment_table(data, metadata):
 	"""Helper function for writing the Fragments table of the database."""
-	fragment_table_string = "CREATE TABLE Fragments (Onset_Start REAL, Onset_Stop REAL, Fragment BLOB, Mod TEXT, Factor REAL, Pitch_Content BLOB, Pitch_Contour BLOB, Prime_Contour BLOB, Is_Slurred INT)"
-	cur.execute(fragment_table_string)
+	FragmentTable = Table(
+		"Fragments",
+		metadata,
+		Column("onset_start", Float),
+		Column("onset_stop", Float),
+		Column("fragment", String),
+		Column("mod", String),
+		Column("fod", Float),
+		Column("pitch_content", String),
+		Column("contour", String),
+		Column("prime_contour", String),
+		Column("is_slurred", Boolean)
+	)
+	FragmentTable.create()
+	
+	cur = FragmentTable.insert()
 	for this_fragment in data:
-		contour = list(pitch_content_to_contour(this_fragment["pitch_content"]))
-		prime_contour = list(contour_to_prime_contour(contour, include_depth=False))
-		fragment_insertion_string = "INSERT INTO Fragments VALUES({0}, {1}, '{2}', '{3}', {4}, '{5}', '{6}', '{7}', {8})".format(this_fragment["onset_range"][0], # start offset
-																											this_fragment["onset_range"][1], # end offset
-																											this_fragment["fragment"].name, # fragment
-																											this_fragment["mod"][0], # mod type 
-																											this_fragment["mod"][1], # mod factor/difference
-																											this_fragment["pitch_content"], # pitch content
-																											contour, # pitch contour 
-																											prime_contour, # prime contour
-																											int(this_fragment["is_spanned_by_slur"])) # is_slurred
-		cur.execute(fragment_insertion_string)
+		pitch_content = this_fragment["pitch_content"]
+		contour = pitch_content_to_contour(this_fragment["pitch_content"]).tolist()
+		prime_contour = contour_to_prime_contour(contour, include_depth=False).tolist()
+		cur.execute(
+			onset_start=as_native_type(this_fragment["onset_range"][0]),
+			onset_stop=as_native_type(this_fragment["onset_range"][1]),
+			fragment=this_fragment["fragment"].name,
+			mod=this_fragment["mod"][0],
+			fod=as_native_type(this_fragment["mod"][1]),
+			pitch_content=json.dumps(pitch_content),
+			contour=json.dumps(contour),
+			prime_contour=json.dumps(prime_contour),
+			is_slurred=int(this_fragment["is_spanned_by_slur"])
+		)
 	return
 
 def _make_paths_table(cur, partitioned_data, logger):
@@ -168,6 +199,65 @@ def _make_paths_table(cur, partitioned_data, logger):
 				shorter_paths_insertion_string = "INSERT INTO Paths_{0} VALUES({1})".format(str(i+1), shorter_paths_values_string)
 				cur.execute(shorter_paths_insertion_string)
 	return
+
+def _prepare_fragment_data(
+		filepath,
+		part_num,
+		frag_types,
+		rep_types,
+		allowed_modifications,
+		try_contiguous_summation,
+		windows,
+		allow_unnamed,
+		filter_found_single_anga_class,
+		filter_found_sub_fragments,
+		keep_grace_notes,
+		logger
+	):
+	ALL_DATA = []
+	for this_frag_type in frag_types:
+		logger.info("\n")
+		logger.info("Making fragment tree(s) (and searching) for frag_type: {}".format(this_frag_type))
+
+		if "ratio" in rep_types:
+			curr_ratio_tree = FragmentTree.from_frag_type(frag_type=this_frag_type, rep_type="ratio")
+		if "difference" in rep_types:
+			curr_difference_tree = FragmentTree.from_frag_type(frag_type=this_frag_type, rep_type="difference")
+
+		data = rolling_search(
+			filepath,
+			part_num,
+			curr_ratio_tree,
+			curr_difference_tree,
+			allowed_modifications,
+			try_contiguous_summation,
+			windows,
+			allow_unnamed,
+			logger
+		)
+		ALL_DATA.extend(data)
+
+	DATA_LENGTH = len(ALL_DATA)
+	logger.info("{} fragments extracted".format(DATA_LENGTH))
+	
+	logger.info("Removing cross-corpus duplicates...")
+	ALL_DATA = remove_cross_corpus_duplicates(ALL_DATA)
+	DATA_LENGTH = DATA_LENGTH - len(ALL_DATA)
+
+	if filter_found_single_anga_class:
+		ALL_DATA = filter_single_anga_class_fragments(ALL_DATA)
+		DATA_LENGTH = DATA_LENGTH - len(ALL_DATA)
+		logger.info("Removing all single anga class fragments...")
+		logger.info("{1} fragments remaining.".format(DATA_LENGTH))
+	
+	if filter_found_sub_fragments:
+		ALL_DATA = filter_sub_fragments(ALL_DATA)
+		DATA_LENGTH = DATA_LENGTH - len(ALL_DATA)
+		logger.info("Removing all sub fragments...")
+		logger.info("{1} fragments remaining.".format(DATA_LENGTH)
+
+	logger.info("Calculated break points: {}".format(get_break_points(ALL_DATA)))
+	return ALL_DATA
 
 @timeout_decorator.timeout(75)
 def create_database(
@@ -232,62 +322,31 @@ def create_database(
 	logger.info("Filter single anga class fragments: {}".format(filter_found_single_anga_class))
 	logger.info("Filter sub fragments: {}".format(filter_found_sub_fragments))
 
-	ALL_DATA = []
-	for this_frag_type in frag_types:
-		logger.info("\n")
-		logger.info("Making fragment tree(s) (and searching) for frag_type: {}".format(this_frag_type))
-
-		if "ratio" in rep_types:
-			curr_ratio_tree = FragmentTree.from_frag_type(frag_type=this_frag_type, rep_type="ratio")
-		if "difference" in rep_types:
-			curr_difference_tree = FragmentTree.from_frag_type(frag_type=this_frag_type, rep_type="difference")
-
-		data = rolling_search(
-			filepath,
-			part_num,
-			curr_ratio_tree,
-			curr_difference_tree,
-			allowed_modifications,
-			try_contiguous_summation,
-			windows,
-			allow_unnamed,
-			logger
-		)
-		ALL_DATA.extend(data)
-
-	DATA_LENGTH = len(ALL_DATA)
-	logger.info("{} fragments extracted".format(DATA_LENGTH))
-	
-	logger.info("Removing cross-corpus duplicates...")
-	ALL_DATA = remove_cross_corpus_duplicates(ALL_DATA)
-	DATA_LENGTH = DATA_LENGTH - len(ALL_DATA)
-
-	if filter_found_single_anga_class:
-		ALL_DATA = filter_single_anga_class_fragments(ALL_DATA)
-		DATA_LENGTH = DATA_LENGTH - len(ALL_DATA)
-		logger.info("Removing all single anga class fragments...")
-		logger.info("Removed {0} fragments ({1} remaining)".format(len(ALL_DATA) - DATA_LENGTH, DATA_LENGTH))
-	
-	if filter_found_sub_fragments:
-		ALL_DATA = filter_sub_fragments(ALL_DATA)
-		DATA_LENGTH = DATA_LENGTH - len(ALL_DATA)
-		logger.info("Removing all sub fragments...")
-		logger.info("Removed {0} fragments ({1} remaining)".format(len(ALL_DATA), DATA_LENGTH, DATA_LENGTH))
-
-	logger.info("Calculated break points: {}".format(get_break_points(ALL_DATA)))
-
+	ALL_DATA = _prepare_fragment_data(
+		filepath,
+		part_num,
+		frag_types,
+		rep_types,
+		allowed_modifications,
+		try_contiguous_summation,
+		windows,
+		allow_unnamed,
+		filter_found_single_anga_class,
+		filter_found_sub_fragments,
+		keep_grace_notes,
+		logger
+	)
 	all_object = get_object_indices(filepath, part_num)
 	sorted_onset_ranges = sorted(ALL_DATA, key = lambda x: x["onset_range"][0])
 	partitioned_data = partition_data_by_break_points(sorted_onset_ranges)
 
-	conn = sqlite3.connect(db_path)
-	with conn:
-		logger.info("\n Connected to database at: {}".format(db_path))
+	db = create_engine("sqlite:////{}".format(db_path))
+	logger.info("\nConnected to database at: {}".format(db_path))
 
-		cur = conn.cursor()
-		_make_fragment_table(cur=cur, data=sorted_onset_ranges)
-		_make_paths_table(cur=cur, partitioned_data=partitioned_data, logger=logger)
-		logger.info("Done preparing ✔")
+	metadata = MetaData(db)
+	_make_fragment_table(data=sorted_onset_ranges, metadata=metadata)
+	# 	# _make_paths_table(cur=cur, partitioned_data=partitioned_data, logger=logger)
+	# 	logger.info("Done preparing ✔")
 
 ####################################################################################################
 # Helper functions
