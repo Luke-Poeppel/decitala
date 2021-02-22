@@ -13,6 +13,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Fixed
 - Issue #45: requires .db extension in `database.create_database`. 
 - Issue #46: missing logger reference in helper function. 
+- Issue #47: missing logs in the trees.py module. 
 
 ## [v0.6.2] - February 5, 2021 (NYC)
 ### Changed

@@ -5,7 +5,7 @@
 # 
 # Author:   Luke Poeppel
 #
-# Location: Kent, CT 2020 / Frankfurt, DE 2020
+# Location: Kent, CT 2020 / Frankfurt, DE 2020 / NYC, 2021
 ####################################################################################################
 """
 Tools for creating SQLite databases of extracted rhythmic data from Messiaen's music.  
@@ -27,6 +27,11 @@ from itertools import groupby
 from progress.bar import Bar
 from progress.spinner import Spinner
 from scipy import stats
+
+from sqlalchemy import (
+	Column, 
+)
+from sqlalchemy.ext.declarative import declarative_base 
 
 from music21 import converter
 from music21 import note
@@ -185,8 +190,8 @@ def create_database(
 		filter_found_single_anga_class=True,
 		filter_found_sub_fragments=True,
 		keep_grace_notes=True,
-		write_logs_to_file=False, 
-		verbose=True
+		verbose=True,
+		write_logs_to_file=False
 	):
 	"""
 	This function generates an sqlite3 database for storing extracted rhythmic data from :obj:`decitala.trees.rolling_search`.
@@ -246,7 +251,7 @@ def create_database(
 			try_contiguous_summation,
 			windows,
 			allow_unnamed,
-			verbose
+			logger
 		)
 		ALL_DATA.extend(data)
 

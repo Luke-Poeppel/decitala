@@ -881,7 +881,7 @@ def rolling_search(
 		try_contiguous_summation=True,
 		windows=list(range(2, 20)),
 		allow_unnamed=False,
-		verbose=True
+		logger=None
 	):
 	"""
 	Rolling rhythmic search on a music21-readable file on a given part. For search types, see 
@@ -896,7 +896,7 @@ def rolling_search(
 	:param bool try_contiguous_summation: ties together all elements of equal pitch and duration and searches. See :obj:`~decitala.utils.contiguous_summation`.
 	:param list windows: possible lengths of the search frames. 
 	:param bool allow_unnamed: whether or not to include unnamed fragments (in the fragment tree(s)) in the return.
-	:param bool verbose: whether or not to log results in real time. 
+	:param bool logger: logger object (see :obj:`~decitala.utils.get_logger`).  
 
 	:return: list holding dictionaries, each of which holds fragment, modifiation, onset-range, and spanning data.
 	:rtype: list
@@ -904,7 +904,7 @@ def rolling_search(
 	>>> ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
 	>>> difference_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='difference')
 	>>> ex = "./tests/static/Shuffled_Transcription_2.xml"
-	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=["r"], verbose=False)[0:5]:
+	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=["r"])[0:5]:
 	... 	print(tala_data)
 	{'fragment': <fragment.GreekFoot Trochee>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.375), 'is_spanned_by_slur': False, 'pitch_content': [(72,), (87,)], 'id': 1}
 	{'fragment': <fragment.GreekFoot Dactyl>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(72,), (87,), (79,)], 'id': 39}
@@ -935,7 +935,7 @@ def rolling_search(
 	fragment_id = 0
 	fragments_found = []
 	for this_win in windows:
-		# logging.info("Searching window of size {}.".format(this_win))
+		logger.info("Searching window of size {}.".format(this_win))
 		
 		frames = roll_window(array = object_list, window_length = this_win)
 		for this_frame in frames:
@@ -966,7 +966,7 @@ def rolling_search(
 					search_dict["id"] = fragment_id
 
 					fragments_found.append(search_dict)
-					# logging.info("({0}, {1}), ({2}), {3}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset_range"], search_dict["is_spanned_by_slur"]))
+					logger.info("({0}, {1}), ({2}), {3}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset_range"], search_dict["is_spanned_by_slur"]))
 
 				if try_contiguous_summation:
 					copied_frame = copy.copy(this_frame)
@@ -1002,7 +1002,7 @@ def rolling_search(
 
 						fragments_found.append(cs_search_dict)
 
-						# logging.info("({0}, {1}), ({2}), {3}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset_range"], search_dict["is_spanned_by_slur"]))
+						logger.info("({0}, {1}), ({2}), {3}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset_range"], search_dict["is_spanned_by_slur"]))
 	
 	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
 

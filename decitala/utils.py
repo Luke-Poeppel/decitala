@@ -82,7 +82,7 @@ def get_logger(name, print_to_console=True, write_to_file=None):
 		logger.addHandler(file_handler)
 	if print_to_console:
 		stdout_handler = logging.StreamHandler(sys.stdout)
-		logger.addHandler(stdout_handler)		
+		logger.addHandler(stdout_handler)
 	
 	return logger
 
