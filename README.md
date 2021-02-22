@@ -1,5 +1,5 @@
 # decitala
-[![Wiki][https://img.shields.io/badge/docs-Wiki-blue.svg]](https://luke-poeppel.github.io/decitala/)
+[![Wiki][wiki-img]][wiki]
 [![Build Status](https://travis-ci.com/Luke-Poeppel/decitala.svg?token=YxpxoWhsVmQpyqxLyGf3&branch=master)](https://travis-ci.com/Luke-Poeppel/decitala)
 
 The ``decitala`` package aims to make rhythmic analysis of Olivier Messiaen's music easier, particularly with respect to his use of ethnological rhythmic fragments.  
@@ -23,3 +23,7 @@ Check with ``decitala --version``.
 
 ### Why is it called decitala?
 Śārngadeva (शार्ङ्गदेव) compiled a list of 130 rhythmic fragments called desītālas (देसी ताल) in his 13th-century musicological treatise, the Sangītaratnākara (सङ्गीतरत्नाकर). Messiaen used the gallicized "deçi-tâlas" in his writing which has been simplified to "decitala" for ease of writing. 
+
+
+  [wiki-img]: https://img.shields.io/badge/docs-Wiki-blue.svg
+  [wiki]: https://luke-poeppel.github.io/decitala/
