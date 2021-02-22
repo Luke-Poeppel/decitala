@@ -2,7 +2,6 @@ __pycache__/
  *.pyc
 .DS_Store
 build/
-decitala.egg-info/
 dist/
 local_docs/*
 *.egg-info/

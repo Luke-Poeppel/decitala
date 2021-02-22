@@ -129,7 +129,7 @@ def _make_fragment_table(cur, data):
 		cur.execute(fragment_insertion_string)
 	return
 
-def _make_paths_table(cur, partitioned_data):
+def _make_paths_table(cur, partitioned_data, logger):
 	for i, this_partition in enumerate(partitioned_data):			
 		pareto_optimal_paths = get_pareto_optimal_longest_paths(this_partition)
 		longest_path = max([len(path) for path in pareto_optimal_paths])
@@ -281,7 +281,7 @@ def create_database(
 
 		cur = conn.cursor()
 		_make_fragment_table(cur=cur, data=sorted_onset_ranges)
-		_make_paths_table(cur=cur, partitioned_data=partitioned_data)
+		_make_paths_table(cur=cur, partitioned_data=partitioned_data, logger=logger)
 		logger.info("Done preparing ✔")
 
 ####################################################################################################

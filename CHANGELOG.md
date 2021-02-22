@@ -10,6 +10,10 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Removed
 - Updated the gitignore file. 
 
+### Fixed
+- Issue #45: requires .db extension in `database.create_database`. 
+- Issue #46: missing logger reference in helper function. 
+
 ## [v0.6.2] - February 5, 2021 (NYC)
 ### Changed
 - Refactored code in ``database.create_database`` to improve readability. 
