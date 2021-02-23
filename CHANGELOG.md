@@ -15,7 +15,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Updated the gitignore file. 
 
 ### Fixed
-- Issue #45 (requires .db extension in `database.create_database`); Issue #46 (missing logger reference in helper function); Issue #47 (missing logs in the trees.py module); Issue #40 (incorrect numbers in `database.create_database` logs); Issue  
+- Issue #45 (requires .db extension in `database.create_database`); Issue #46 (missing logger reference in helper function); Issue #47 (missing logs in the trees.py module); Issue #40 (incorrect numbers in `database.create_database` logs); Issue #50 (change `start` in enumeration statements for readability).
 
 ## [v0.6.2] - February 5, 2021 (NYC)
 ### Changed
