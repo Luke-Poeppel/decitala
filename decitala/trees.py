@@ -1001,8 +1001,7 @@ def rolling_search(
 						cs_search_dict["id"] = fragment_id
 
 						fragments_found.append(cs_search_dict)
-
-						logger.info("({0}, {1}), ({2}), {3}".format(search_dict["fragment"], search_dict["mod"], search_dict["onset_range"], search_dict["is_spanned_by_slur"]))
+						logger.info("({0}, {1}), ({2}), {3}".format(cs_search_dict["fragment"], cs_search_dict["mod"], cs_search_dict["onset_range"], cs_search_dict["is_spanned_by_slur"]))
 	
 	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
 
