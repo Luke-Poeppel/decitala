@@ -11,6 +11,10 @@ pipeline used in this package is Search → Path Finding (Database Creation) →
 
 The version of the ``decitala`` package can be found with ``decitala --version``. 
 
+Basic Usage
+====================================
+Coming soon! 
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

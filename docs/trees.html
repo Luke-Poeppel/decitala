@@ -7,8 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>trees.py &mdash; decitala 0.6.2
- documentation</title>
+  <title>trees.py &mdash; decitala 0.6.3 documentation</title>
   
 
   
@@ -65,8 +64,7 @@
             
             
               <div class="version">
-                0.6.2
-
+                0.6.3
               </div>
             
           
@@ -586,7 +584,7 @@ Current possibilities are <code class="docutils literal notranslate"><span class
 
 <dl class="py function">
 <dt id="decitala.trees.rolling_search">
-<code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">rolling_search</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">ratio_tree</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">difference_tree</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">allowed_modifications</span><span class="o">=</span><span class="default_value">['r', 'rr', 'd', 'rd', 'sr', 'rsr']</span></em>, <em class="sig-param"><span class="n">try_contiguous_summation</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">windows</span><span class="o">=</span><span class="default_value">[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]</span></em>, <em class="sig-param"><span class="n">allow_unnamed</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/trees.html#rolling_search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.trees.rolling_search" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">decitala.trees.</code><code class="sig-name descname">rolling_search</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">ratio_tree</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">difference_tree</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">allowed_modifications</span><span class="o">=</span><span class="default_value">['r', 'rr', 'd', 'rd', 'sr', 'rsr']</span></em>, <em class="sig-param"><span class="n">try_contiguous_summation</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">windows</span><span class="o">=</span><span class="default_value">[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]</span></em>, <em class="sig-param"><span class="n">allow_unnamed</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">logger</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/decitala/trees.html#rolling_search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.trees.rolling_search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rolling rhythmic search on a music21-readable file on a given part. For search types, see 
 documentation for <a class="reference internal" href="#decitala.trees.get_by_ql_array" title="decitala.trees.get_by_ql_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_by_ql_array()</span></code></a>. The default window lengths 
 are the lengths of fragments in the decitala dataset.</p>
@@ -601,7 +599,7 @@ are the lengths of fragments in the decitala dataset.</p>
 <li><p><strong>try_contiguous_summation</strong> (<em>bool</em>) – ties together all elements of equal pitch and duration and searches. See <a class="reference internal" href="utils.html#decitala.utils.contiguous_summation" title="decitala.utils.contiguous_summation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contiguous_summation</span></code></a>.</p></li>
 <li><p><strong>windows</strong> (<em>list</em>) – possible lengths of the search frames.</p></li>
 <li><p><strong>allow_unnamed</strong> (<em>bool</em>) – whether or not to include unnamed fragments (in the fragment tree(s)) in the return.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – whether or not to log results in real time.</p></li>
+<li><p><strong>logger</strong> (<em>bool</em>) – logger object (see <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_logger</span></code>).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -614,7 +612,7 @@ are the lengths of fragments in the decitala dataset.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ex</span> <span class="o">=</span> <span class="s2">&quot;./tests/static/Shuffled_Transcription_2.xml&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tala_data</span> <span class="ow">in</span> <span class="n">rolling_search</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">,</span> <span class="n">allowed_modifications</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tala_data</span> <span class="ow">in</span> <span class="n">rolling_search</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">,</span> <span class="n">allowed_modifications</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">tala_data</span><span class="p">)</span>
 <span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Trochee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.375), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(72,), (87,)], &#39;id&#39;: 1}</span>
 <span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Dactyl&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(72,), (87,), (79,)], &#39;id&#39;: 39}</span>
