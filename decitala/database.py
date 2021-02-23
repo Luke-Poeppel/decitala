@@ -40,7 +40,8 @@ from sqlalchemy import (
 	Float,
 	Boolean,
 	PickleType,
-	ARRAY
+	ARRAY,
+	select
 )
 
 from music21 import converter
@@ -130,41 +131,6 @@ def as_native_type(x):
 	return x
 
 ####################################################################################################
-def _make_fragment_table(data, metadata):
-	"""Helper function for writing the Fragments table of the database."""
-	FragmentTable = Table(
-		"Fragments",
-		metadata,
-		Column("onset_start", Float),
-		Column("onset_stop", Float),
-		Column("fragment", String),
-		Column("mod", String),
-		Column("fod", Float),
-		Column("pitch_content", String),
-		Column("contour", String),
-		Column("prime_contour", String),
-		Column("is_slurred", Boolean)
-	)
-	FragmentTable.create()
-	
-	cur = FragmentTable.insert()
-	for this_fragment in data:
-		pitch_content = this_fragment["pitch_content"]
-		contour = pitch_content_to_contour(this_fragment["pitch_content"]).tolist()
-		prime_contour = contour_to_prime_contour(contour, include_depth=False).tolist()
-		cur.execute(
-			onset_start=as_native_type(this_fragment["onset_range"][0]),
-			onset_stop=as_native_type(this_fragment["onset_range"][1]),
-			fragment=this_fragment["fragment"].name,
-			mod=this_fragment["mod"][0],
-			fod=as_native_type(this_fragment["mod"][1]),
-			pitch_content=json.dumps(pitch_content),
-			contour=json.dumps(contour),
-			prime_contour=json.dumps(prime_contour),
-			is_slurred=int(this_fragment["is_spanned_by_slur"])
-		)
-	return
-
 def _prepare_fragment_data(
 		filepath,
 		part_num,
@@ -206,27 +172,67 @@ def _prepare_fragment_data(
 	
 	logger.info("Removing cross-corpus duplicates...")
 	ALL_DATA = remove_cross_corpus_duplicates(ALL_DATA)
-	logger.info("{} fragments remaining ✔".format(len(ALL_DATA)))
+	logger.info("{} fragments remaining.".format(len(ALL_DATA)))
 
 	if filter_found_single_anga_class:
 		logger.info("Removing all single anga class fragments...")
 		ALL_DATA = filter_single_anga_class_fragments(ALL_DATA)
-		logger.info("{} fragments remaining ✔".format(len(ALL_DATA)))
+		logger.info("{} fragments remaining.".format(len(ALL_DATA)))
 	
 	if filter_found_sub_fragments:
 		ALL_DATA = filter_sub_fragments(ALL_DATA)
 		logger.info("Removing all sub fragments...")
-		logger.info("{} fragments remaining ✔".format(len(ALL_DATA)))
+		logger.info("{} fragments remaining.".format(len(ALL_DATA)))
 
 	logger.info("Calculated break points: {}".format(get_break_points(ALL_DATA)))
 	return ALL_DATA
 
-def _make_subpath_table(partitioned_data, metadata, logger):
+def _make_fragment_table(data, metadata):
+	"""Helper function for writing the Fragments table of the database."""
+	FragmentTable = Table(
+		"Fragments",
+		metadata,
+		Column("onset_start", Float),
+		Column("onset_stop", Float),
+		Column("fragment", String),
+		Column("mod", String),
+		Column("fod", Float),
+		Column("pitch_content", String),
+		Column("contour", String),
+		Column("prime_contour", String),
+		Column("is_slurred", Boolean)
+	)
+	FragmentTable.create()
+	
+	cur = FragmentTable.insert()
+	for this_fragment in data:
+		pitch_content = this_fragment["pitch_content"]
+		contour = pitch_content_to_contour(this_fragment["pitch_content"]).tolist()
+		prime_contour = contour_to_prime_contour(contour, include_depth=False).tolist()
+		cur.execute(
+			onset_start=as_native_type(this_fragment["onset_range"][0]),
+			onset_stop=as_native_type(this_fragment["onset_range"][1]),
+			fragment=this_fragment["fragment"].name,
+			mod=this_fragment["mod"][0],
+			fod=as_native_type(this_fragment["mod"][1]),
+			pitch_content=json.dumps(pitch_content),
+			contour=json.dumps(contour),
+			prime_contour=json.dumps(prime_contour),
+			is_slurred=int(this_fragment["is_spanned_by_slur"])
+		)
+	return FragmentTable
+
+def _make_subpath_table(partitioned_data, fragment_table, metadata, connection, logger):
+	query = select([fragment_table])
+	res_exec = connection.execute(query)
+	fragment_rows = res_exec.fetchall()
 	for i, this_partition in enumerate(partitioned_data, start=1):
 		pareto_optimal_paths = get_pareto_optimal_longest_paths(this_partition)
 		longest_path = max([len(path) for path in pareto_optimal_paths])
-
-		columns = []
+		
+		columns = [Column("onset_range_{}".format(i), Integer) for i in range(1, longest_path + 1)]
+		subpath_table = Table("SubPath_{}".format(i), metadata, *columns)
+		subpath_table.create()
 		for path in pareto_optimal_paths:
 			fragment_row_ids = []
 			for this_fragment_data in path:
@@ -234,8 +240,8 @@ def _make_subpath_table(partitioned_data, metadata, logger):
 				for j, this_row in enumerate(fragment_rows, start=1):
 					if (this_row[2] == data["fragment"].name) and (this_row[0] == data["onset_range"][0]) and (this_row[1] == data["onset_range"][1]):
 						fragment_row_ids.append(j)
-			# column = Column(
-			# )
+			
+			connection.execute(subpath_table.insert().values(fragment_row_ids))
 	return
 
 @timeout_decorator.timeout(75)
@@ -320,14 +326,17 @@ def create_database(
 	partitioned_data = partition_data_by_break_points(sorted_onset_ranges)
 
 	db = create_engine("sqlite:////{}".format(db_path))
+	connection = db.connect()
 	logger.info("\nConnected to database at: {}".format(db_path))
 
 	metadata = MetaData(db)
 	
 	logger.info("Making the fragment table...")
-	_make_fragment_table(data=sorted_onset_ranges, metadata=metadata)
+	fragment_table = _make_fragment_table(data=sorted_onset_ranges, metadata=metadata)
+	logger.info("Done ✔")
 	logger.info("Calculating pareto optimal paths...")
-	_make_subpath_table(partitioned_data=partitioned_data, metadata=metadata, logger=logger)
+	_make_subpath_table(partitioned_data=partitioned_data, fragment_table=fragment_table, metadata=metadata, connection=connection, logger=logger)
+	logger.info("Done ✔")
 	logger.info("Done preparing ✔")
 
 ####################################################################################################

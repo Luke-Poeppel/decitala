@@ -9,9 +9,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ### Changed
 - Migrated to SQLAlchemy for most SQLite management. 
+- Further refactored `database.create_database`. 
 - Default window sizes in `database.create_database` no longer includes 1. 
-
-### Removed
 - Updated the gitignore file. 
 
 ### Fixed
