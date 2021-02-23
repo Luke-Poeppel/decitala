@@ -452,7 +452,7 @@ class DBParser:
 		self.num_subpath_tables = _num_subpath_tables(self.conn)
 		metadata = []
 		for i in range(1, self.num_subpath_tables + 1):
-			num_rows = _num_rows_in_table("Paths_{}".format(i), self.conn)
+			num_rows = _num_rows_in_table("SubPath_{}".format(i), self.conn)
 			onset_data = self.table_average_onsets_per_fragment_per_subpath(i)
 			metadata.append([i, num_rows, onset_data])
 
@@ -493,7 +493,7 @@ class DBParser:
 		:return: the subset of slurred fragments in the fragments table (as a dataframe). 
 		:rtype: pandas.DataFrame 
 		"""
-		data = pd.read_sql_query("SELECT * FROM Fragments WHERE Is_Slurred = 1", self.conn)
+		data = pd.read_sql_query("SELECT * FROM Fragments WHERE is_slurred = 1", self.conn)
 		return data
 
 	def show_subpath_table(self, table_num):
@@ -520,7 +520,7 @@ class DBParser:
 		"""
 		assert (table_num >= 1 and path_num >= 1), DatabaseException("The table_num and path_num must be >= 1.")
 		
-		QUERY_STRING = "SELECT * FROM Paths_{0} WHERE rowid = {1}".format(table_num, path_num)
+		QUERY_STRING = "SELECT * FROM SubPath_{0} WHERE rowid = {1}".format(table_num, path_num)
 		data = pd.read_sql_query(QUERY_STRING, self.conn)
 		return data
 	
@@ -586,7 +586,7 @@ class DBParser:
 		"""
 		assert table_num >= 1, DatabaseException("The table_num must be >= 1.")
 		
-		num_rows = _num_rows_in_table("Paths_{}".format(table_num), self.conn)
+		num_rows = _num_rows_in_table("SubPath_{}".format(table_num), self.conn)
 		averages = []
 		for i in range(1, num_rows + 1):
 			subpath_fragments = [x["fragment"].num_onsets for x in self.subpath_data(table_num, i)]
