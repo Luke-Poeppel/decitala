@@ -8,16 +8,14 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added support/testing for python3.8. 
 
 ### Changed
+- Migrated to SQLAlchemy for most SQLite management. 
 - Default window sizes in `database.create_database` no longer includes 1. 
 
 ### Removed
 - Updated the gitignore file. 
 
 ### Fixed
-- Issue #45: requires .db extension in `database.create_database`. 
-- Issue #46: missing logger reference in helper function. 
-- Issue #47: missing logs in the trees.py module. 
-- Issue #40: incorrect numbers in `database.create_database` logs. 
+- Issue #45 (requires .db extension in `database.create_database`); Issue #46 (missing logger reference in helper function); Issue #47 (missing logs in the trees.py module); Issue #40 (incorrect numbers in `database.create_database` logs); Issue  
 
 ## [v0.6.2] - February 5, 2021 (NYC)
 ### Changed

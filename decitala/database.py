@@ -222,10 +222,8 @@ def _prepare_fragment_data(
 	return ALL_DATA
 
 def _make_subpath_table(partitioned_data, metadata, logger):
-	
-
-	# for i, this_partition in enumerate(partitioned_data):			
-	# 	pareto_optimal_paths = get_pareto_optimal_longest_paths(this_partition)
+	for i, this_partition in enumerate(partitioned_data, start=1):
+		pareto_optimal_paths = get_pareto_optimal_longest_paths(this_partition)
 	# 	longest_path = max([len(path) for path in pareto_optimal_paths])
 
 	# 	columns = ["Onset_Range_{}".format(i) for i in range(1, longest_path + 1)]
@@ -241,7 +239,7 @@ def _make_subpath_table(partitioned_data, metadata, logger):
 	# 		fragment_row_ids = []
 	# 		for this_fragment_data in path:
 	# 			data = this_fragment_data
-	# 			for j, this_row in enumerate(fragment_rows):
+	# 			for j, this_row in enumerate(fragment_rows, start=1):
 	# 				if (this_row[2] == data["fragment"].name) and (this_row[0] == data["onset_range"][0]) and (this_row[1] == data["onset_range"][1]):
 	# 					fragment_row_ids.append(j + 1)
 
