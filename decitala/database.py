@@ -345,10 +345,10 @@ def _num_subpath_tables(conn):
 	"""
 	Returns the number of Path tables in a database db.
 	
-	>>> example_data = "./tests/static/ex99_data.db"	
+	>>> example_data = "./databases/liturgie_3.db"
 	>>> conn = sqlite3.connect(example_data)
 	>>> _num_subpath_tables(conn)
-	1
+	14
 	"""
 	QUERY_STRING = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table'"
 	data = pd.read_sql_query(QUERY_STRING, conn)
@@ -360,10 +360,10 @@ def _num_rows_in_table(table, conn):
 	"""
 	Returns the number of rows in a given table.
 	
-	>>> example_data = "./tests/static/ex99_data.db"
+	>>> example_data = "./databases/liturgie_3.db"
 	>>> conn = sqlite3.connect(example_data)
-	>>> _num_rows_in_table("Paths_1", conn)
-	1265
+	>>> _num_rows_in_table("SubPath_1", conn)
+	2
 	"""
 	QUERY_STRING = "SELECT COUNT(*) FROM {}".format(table)
 	data = pd.read_sql_query(QUERY_STRING, conn)
@@ -381,30 +381,31 @@ class DBParser:
 	<database.DBParser liturgie_3.db>
 	>>> for frag in lit_db.fragments()[0:5]:
 	... 	print(frag)
-	<fragment.Decitala 93_Ragavardhana>
+	<fragment.Decitala 41_Rajavidyadhara>
+	<fragment.Decitala 101_Simha>
 	<fragment.Decitala 43_Malikamoda>
-	<fragment.Decitala 105_Candrakala>
-	<fragment.Decitala 47_Makaranda>
 	<fragment.Decitala 88_Lakskmica>
+	<fragment.Decitala 93_Ragavardhana>
 	>>> lit_db.num_subpath_tables
-	10
-	>>> lit_db.subpath(8, 2)
-	[41, 43, 46]
-	>>> for data in lit_db.subpath_data(8, 2):
+	14
+	>>> lit_db.subpath(11, 5)
+	[42, 44, 49, 54]
+	>>> for data in lit_db.subpath_data(11, 5):
 	... 	print(data["fragment"], data["onset_range"])
-	<fragment.Decitala 88_Lakskmica> (88.75, 93.0)
 	<fragment.Decitala 93_Ragavardhana> (93.0, 97.75)
-	<fragment.Decitala 47_Makaranda> (98.25, 101.5)
-	>>> lit_db.subpath_intra_gap_score(8, 2)
-	95.91836734693878
-	>>> lit_db.subpath_onset_percentile(8, 2)
-	33.333333333333336
+	<fragment.Decitala 37_Rangabharana> (97.75, 100.0)
+	<fragment.Decitala 21_Tribhinna> (101.5, 103.0)
+	<fragment.Decitala 93_Ragavardhana> (106.0, 110.75)
+	>>> lit_db.subpath_intra_gap_score(11, 5)
+	66.0377358490566
+	>>> lit_db.subpath_onset_percentile(11, 5)
+	11.904761904761905
 	>>> # the model requires weights (for table num > 1, 2 values). 
-	>>> lit_db.intra_subpath_model_score(8, 2, weights=[0.7, 0.3])
-	77.14285714285714
+	>>> lit_db.intra_subpath_model_score(11, 5, weights=[0.7, 0.3])
+	49.79784366576819
 	>>> # for table num == 1, it requires 3 weights: 
 	>>> lit_db.intra_subpath_model_score(1, 1, weights=[0.5, 0.3, 0.2])
-	90.0
+	90.83333333333334
 	"""
 	def __init__(self, db_path):
 		assert os.path.isfile(db_path), DatabaseException("You've provided an invalid file.")
@@ -506,7 +507,7 @@ class DBParser:
 		"""
 		assert table_num >= 1, DatabaseException("The table_num must be >= 1.")
 		
-		data = pd.read_sql_query("SELECT * FROM Paths_{}".format(table_num), self.conn)
+		data = pd.read_sql_query("SELECT * FROM SubPath_{}".format(table_num), self.conn)
 		return data
 
 	def show_subpath(self, table_num, path_num):
@@ -544,7 +545,7 @@ class DBParser:
 		"""
 		assert (table_num >= 1 and path_num >= 1), DatabaseException("The table_num and path_num must be >= 1.")
 
-		QUERY_STRING = "SELECT * FROM Paths_{0} WHERE rowid = {1}".format(table_num, path_num)
+		QUERY_STRING = "SELECT * FROM SubPath_{0} WHERE rowid = {1}".format(table_num, path_num)
 		data = pd.read_sql_query(QUERY_STRING, self.conn)
 		as_ints = data.stack().tolist()
 		
@@ -580,7 +581,7 @@ class DBParser:
 		to the average number of onsets in a fragment in that subpath. 
 
 		:param int table_num: 1-indexed table number. 
-		:return: list (of length equal to the number of rows in the queried ``Paths`` table) 
+		:return: list (of length equal to the number of rows in the queried ``SubPath`` table) 
 				holding the average number of onsets (type: float) for a fragment in each subpath. 
 		:rtype: list
 		"""
@@ -603,7 +604,7 @@ class DBParser:
 
 		:param int table_num: 1-indexed table number. 
 		:param int path_num: 1-indexed subpath number. 
-		:return: percentile (0-100) of a given subpath in the context of its full ``Paths`` table. 
+		:return: percentile (0-100) of a given subpath in the context of its full ``Subpath`` table. 
 		:rtype: float
 		"""
 		assert (table_num >= 1 and path_num >= 1), DatabaseException("The table_num and path_num must be >= 1.")
@@ -741,7 +742,7 @@ class DBParser:
 		"""
 		assert table_num >= 1, DatabaseException("The table_num must be >= 1.")
 		
-		num_rows = _num_rows_in_table("Paths_{}".format(table_num), self.conn)
+		num_rows = _num_rows_in_table("SubPath_{}".format(table_num), self.conn)
 		highest_subpath = None
 		highest_model_val = 0
 		for i in range(1, num_rows + 1):

@@ -6,7 +6,8 @@ python:
   - "3.9"
 
 install: 
-  - pip install -e .
+  - pip install .
 
 script: 
-  - pytest --doctest-modules
+  - pytest
+  - python3 tests/doctest_runner.py
