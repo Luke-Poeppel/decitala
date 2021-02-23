@@ -145,6 +145,7 @@ def _prepare_fragment_data(
 		keep_grace_notes,
 		logger
 	):
+	UNFILTERED_DATA = []
 	ALL_DATA = []
 	for this_frag_type in frag_types:
 		logger.info("\n")
@@ -166,6 +167,7 @@ def _prepare_fragment_data(
 			allow_unnamed,
 			logger
 		)
+		UNFILTERED_DATA.extend(data)
 		ALL_DATA.extend(data)
 
 	logger.info("\n{} fragments extracted".format(len(ALL_DATA)))
@@ -185,12 +187,12 @@ def _prepare_fragment_data(
 		logger.info("{} fragments remaining.".format(len(ALL_DATA)))
 
 	logger.info("Calculated break points: {}".format(get_break_points(ALL_DATA)))
-	return ALL_DATA
+	return UNFILTERED_DATA, ALL_DATA
 
-def _make_fragment_table(data, metadata):
+def _make_fragment_table(name, data, metadata):
 	"""Helper function for writing the Fragments table of the database."""
 	FragmentTable = Table(
-		"Fragments",
+		name,
 		metadata,
 		Column("onset_start", Float),
 		Column("onset_stop", Float),
@@ -307,7 +309,13 @@ def create_database(
 	logger.info("Filter single anga class fragments: {}".format(filter_found_single_anga_class))
 	logger.info("Filter sub fragments: {}".format(filter_found_sub_fragments))
 
-	ALL_DATA = _prepare_fragment_data(
+	db = create_engine("sqlite:////{}".format(db_path))
+	connection = db.connect()
+	logger.info("\nConnected to database at: {}".format(db_path))
+
+	metadata = MetaData(db)
+	
+	UNFILTERED_DATA, ALL_DATA = _prepare_fragment_data(
 		filepath,
 		part_num,
 		frag_types,
@@ -321,18 +329,14 @@ def create_database(
 		keep_grace_notes,
 		logger
 	)
-	all_object = get_object_indices(filepath, part_num)
 	sorted_onset_ranges = sorted(ALL_DATA, key = lambda x: x["onset_range"][0])
+	sorted_onset_ranges_two = sorted(UNFILTERED_DATA, key = lambda x: x["onset_range"][0])
+	logger.info("Making the (unfiltered) fragment table...")
+	fragment_table = _make_fragment_table(name="UnfilteredFragments", data=sorted_onset_ranges_two, metadata=metadata)
 	partitioned_data = partition_data_by_break_points(sorted_onset_ranges)
 
-	db = create_engine("sqlite:////{}".format(db_path))
-	connection = db.connect()
-	logger.info("\nConnected to database at: {}".format(db_path))
-
-	metadata = MetaData(db)
-	
-	logger.info("Making the fragment table...")
-	fragment_table = _make_fragment_table(data=sorted_onset_ranges, metadata=metadata)
+	logger.info("Making the (filtered) fragment table...")
+	fragment_table = _make_fragment_table(name="Fragments", data=sorted_onset_ranges, metadata=metadata)
 	logger.info("Done ✔")
 	logger.info("Calculating pareto optimal paths...")
 	_make_subpath_table(partitioned_data=partitioned_data, fragment_table=fragment_table, metadata=metadata, connection=connection, logger=logger)
@@ -452,7 +456,7 @@ class DBParser:
 
 		self.num_subpath_tables = _num_subpath_tables(self.conn)
 		metadata = []
-		for i in range(1, self.num_subpath_tables + 1):
+		for i in range(1, self.num_subpath_tables):
 			num_rows = _num_rows_in_table("SubPath_{}".format(i), self.conn)
 			onset_data = self.table_average_onsets_per_fragment_per_subpath(i)
 			metadata.append([i, num_rows, onset_data])
@@ -484,14 +488,17 @@ class DBParser:
 		return [x["onset_range"] for x in self.fragment_data]
 
 	######## Visualization ########
-	def show_fragments_table(self):
+	def show_fragments_table(self, unfiltered=False):
 		"""
 		Displays the Fragments table of the database.
 
 		:return: the fragments table (as a dataframe). 
 		:rtype: pandas.DataFrame 
 		"""
-		data = pd.read_sql_query("SELECT * FROM Fragments", self.conn)
+		if not(unfiltered):
+			data = pd.read_sql_query("SELECT * FROM Fragments", self.conn)
+		else:
+			data = pd.read_sql_query("SELECT * FROM UnfilteredFragments", self.conn)
 		return data
 	
 	def show_slurred_fragments(self):
