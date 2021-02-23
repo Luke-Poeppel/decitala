@@ -165,41 +165,6 @@ def _make_fragment_table(data, metadata):
 		)
 	return
 
-def _make_paths_table(cur, partitioned_data, logger):
-	for i, this_partition in enumerate(partitioned_data):			
-		pareto_optimal_paths = get_pareto_optimal_longest_paths(this_partition)
-		longest_path = max([len(path) for path in pareto_optimal_paths])
-
-		columns = ["Onset_Range_{}".format(i) for i in range(1, longest_path + 1)]
-		columns_declaration = ", ".join("%s INTEGER" % c for c in columns)
-
-		cur.execute("CREATE TABLE Paths_{0} ({1})".format(str(i+1), columns_declaration))
-		logger.info("Making Paths_{} table".format(i+1))
-		
-		FRAGMENT_TABLE_STRING = "SELECT * FROM Fragments"
-		cur.execute(FRAGMENT_TABLE_STRING)
-		fragment_rows = cur.fetchall()
-		for path in pareto_optimal_paths:
-			fragment_row_ids = []
-			for this_fragment_data in path:
-				data = this_fragment_data
-				for j, this_row in enumerate(fragment_rows):
-					if (this_row[2] == data["fragment"].name) and (this_row[0] == data["onset_range"][0]) and (this_row[1] == data["onset_range"][1]):
-						fragment_row_ids.append(j + 1)
-
-			if len(path) == longest_path:
-				longest_paths_insertion_string = "INSERT INTO Paths_{0} VALUES({1})".format(str(i+1), ", ".join([str(x) for x in fragment_row_ids]))
-				cur.execute(longest_paths_insertion_string)
-			else:
-				diff = longest_path - len(path)
-				nulls = ["'NULL'"] * diff
-				combined = [str(x) for x in fragment_row_ids] + nulls					
-				shorter_paths_values_string = ", ".join(combined)
-
-				shorter_paths_insertion_string = "INSERT INTO Paths_{0} VALUES({1})".format(str(i+1), shorter_paths_values_string)
-				cur.execute(shorter_paths_insertion_string)
-	return
-
 def _prepare_fragment_data(
 		filepath,
 		part_num,
@@ -237,27 +202,62 @@ def _prepare_fragment_data(
 		)
 		ALL_DATA.extend(data)
 
-	DATA_LENGTH = len(ALL_DATA)
-	logger.info("{} fragments extracted".format(DATA_LENGTH))
+	logger.info("\n{} fragments extracted".format(len(ALL_DATA)))
 	
 	logger.info("Removing cross-corpus duplicates...")
 	ALL_DATA = remove_cross_corpus_duplicates(ALL_DATA)
-	DATA_LENGTH = DATA_LENGTH - len(ALL_DATA)
+	logger.info("{} fragments remaining ✔".format(len(ALL_DATA)))
 
 	if filter_found_single_anga_class:
-		ALL_DATA = filter_single_anga_class_fragments(ALL_DATA)
-		DATA_LENGTH = DATA_LENGTH - len(ALL_DATA)
 		logger.info("Removing all single anga class fragments...")
-		logger.info("{1} fragments remaining.".format(DATA_LENGTH))
+		ALL_DATA = filter_single_anga_class_fragments(ALL_DATA)
+		logger.info("{} fragments remaining ✔".format(len(ALL_DATA)))
 	
 	if filter_found_sub_fragments:
 		ALL_DATA = filter_sub_fragments(ALL_DATA)
-		DATA_LENGTH = DATA_LENGTH - len(ALL_DATA)
 		logger.info("Removing all sub fragments...")
-		logger.info("{1} fragments remaining.".format(DATA_LENGTH)
+		logger.info("{} fragments remaining ✔".format(len(ALL_DATA)))
 
 	logger.info("Calculated break points: {}".format(get_break_points(ALL_DATA)))
 	return ALL_DATA
+
+def _make_subpath_table(partitioned_data, metadata, logger):
+	
+
+	# for i, this_partition in enumerate(partitioned_data):			
+	# 	pareto_optimal_paths = get_pareto_optimal_longest_paths(this_partition)
+	# 	longest_path = max([len(path) for path in pareto_optimal_paths])
+
+	# 	columns = ["Onset_Range_{}".format(i) for i in range(1, longest_path + 1)]
+	# 	columns_declaration = ", ".join("%s INTEGER" % c for c in columns)
+
+	# 	cur.execute("CREATE TABLE Paths_{0} ({1})".format(str(i+1), columns_declaration))
+	# 	logger.info("Making Paths_{} table".format(i+1))
+		
+	# 	FRAGMENT_TABLE_STRING = "SELECT * FROM Fragments"
+	# 	cur.execute(FRAGMENT_TABLE_STRING)
+	# 	fragment_rows = cur.fetchall()
+	# 	for path in pareto_optimal_paths:
+	# 		fragment_row_ids = []
+	# 		for this_fragment_data in path:
+	# 			data = this_fragment_data
+	# 			for j, this_row in enumerate(fragment_rows):
+	# 				if (this_row[2] == data["fragment"].name) and (this_row[0] == data["onset_range"][0]) and (this_row[1] == data["onset_range"][1]):
+	# 					fragment_row_ids.append(j + 1)
+
+	# 		if len(path) == longest_path:
+	# 			longest_paths_insertion_string = "INSERT INTO Paths_{0} VALUES({1})".format(str(i+1), ", ".join([str(x) for x in fragment_row_ids]))
+	# 			cur.execute(longest_paths_insertion_string)
+	# 		else:
+	# 			diff = longest_path - len(path)
+	# 			nulls = ["'NULL'"] * diff
+	# 			combined = [str(x) for x in fragment_row_ids] + nulls					
+	# 			shorter_paths_values_string = ", ".join(combined)
+
+	# 			shorter_paths_insertion_string = "INSERT INTO Paths_{0} VALUES({1})".format(str(i+1), shorter_paths_values_string)
+	# 			cur.execute(shorter_paths_insertion_string)
+	# return
+
 
 @timeout_decorator.timeout(75)
 def create_database(
@@ -345,8 +345,8 @@ def create_database(
 
 	metadata = MetaData(db)
 	_make_fragment_table(data=sorted_onset_ranges, metadata=metadata)
-	# 	# _make_paths_table(cur=cur, partitioned_data=partitioned_data, logger=logger)
-	# 	logger.info("Done preparing ✔")
+	# _make_subpath_table(partitioned_data=partitioned_data, metadata=metadata, logger=logger)
+	logger.info("Done preparing ✔")
 
 ####################################################################################################
 # Helper functions
