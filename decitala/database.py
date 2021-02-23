@@ -476,6 +476,13 @@ class DBParser:
 		"""
 		return [x for x in self.fragment_data if x["is_slurred"]==True]
 
+	def onset_ranges(self):
+		"""
+		:return: a list of tuples holding the onset ranges for each extracted fragment.
+		:rtype: list
+		"""
+		return [x["onset_range"] for x in self.fragment_data]
+
 	######## Visualization ########
 	def show_fragments_table(self):
 		"""
