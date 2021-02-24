@@ -5,7 +5,7 @@
 #
 # Author:   Luke Poeppel
 #
-# Location: Kent, CT 2020
+# Location: Kent, CT, 2020 / NYC, 2021
 ####################################################################################################
 import json
 import matplotlib as mpl
@@ -22,7 +22,8 @@ import logging
 # logging.basicConfig(level=logging.INFO)
 
 __all__ = [
-	"create_tree_diagram"
+	"create_tree_diagram",
+	"fragment_roll"
 ]
 
 FONTNAME = 'Times'
@@ -80,3 +81,36 @@ def create_tree_diagram(FragmentTree, path):
 	# execute_js("parse_data.js")
 	logging.info("Done ✔")
 	logging.info("See {}".format(path))
+
+def fragment_roll(data, title=None, show=True, save=None):
+	"""
+	Creates a piano-roll type visualization of fragments in the input data. 
+
+	:param list data: intended for output of :obj:`~database.DBParser.model_full_path(return_data=True)`.
+	:param str title: optional title. 
+	:param bool show: displays the plot.
+	:param str save: optional path to save the file. 
+	"""
+	plt.figure(figsize=(11, 3))
+	plt.title(title, fontsize=14, fontname="Times")
+	highest_onset = 0
+	for fragment in data:
+		if highest_onset > fragment["onset_range"][1]:
+			pass
+		else:
+			highest_onset = fragment["onset_range"][1]
+	
+	plt.xticks(list(range(0, int(highest_onset), 10)))
+	plt.xlim(-0.02, highest_onset + 2.0)
+	plt.xlabel("Onset", fontsize=12, fontname="Times")
+	plt.ylabel("Fragment", fontsize=12, fontname="Times")
+
+	bars = []
+	for i, fragment in enumerate(sorted(data, key=lambda x: x["fragment"].name)):
+		plt.barh(y=fragment["fragment"].name, width=fragment["onset_range"][1] - fragment["onset_range"][0], height = 0.8, left = fragment["onset_range"][0], color='k')
+
+	plt.plot([x for x in bars])
+	if show:
+		plt.show()
+	if save:
+		plt.savefig(save, dpi=300)
