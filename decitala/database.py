@@ -492,6 +492,7 @@ class DBParser:
 		"""
 		Displays the Fragments table of the database.
 
+		:param bool unfiltered: whether to display the unfiltered fragment data. 
 		:return: the fragments table (as a dataframe). 
 		:rtype: pandas.DataFrame 
 		"""
@@ -778,24 +779,28 @@ class DBParser:
 		"""
 		path = []
 		table_num = 1
-		while table_num < self.metadata[-1][0] + 1:
-			if table_num == 1:
-				highest_first_subpath = self.highest_modeled_subpath(table_num, weights=start_weights)
-				path.append(highest_first_subpath)
-			else:
-				last = path[-1]
-				curr_data = self.metadata[table_num - 1]
-				scores = []
-				for row_num in range(1, curr_data[1] + 1):
-					fragments = [x["fragment"] for x in self.subpath_data(table_num, row_num)]
-					intra_model_score = self.intra_subpath_model_score(table_num, row_num, rest_weights)
-					inter_subpath_score = self.subpath_inter_gap_score(table_num - 1, last, table_num, row_num)
-					combined = (intra_inter_weights[0] * intra_model_score) + (intra_inter_weights[1] * inter_subpath_score)
-					scores.append(combined)
+		with Bar("Modeling full path...", max=self.metadata[-1][0] + 1) as bar:
+			while table_num < self.metadata[-1][0] + 1:
+				if table_num == 1:
+					highest_first_subpath = self.highest_modeled_subpath(table_num, weights=start_weights)
+					path.append(highest_first_subpath)
+				else:
+					last = path[-1]
+					curr_data = self.metadata[table_num - 1]
+					scores = []
+					for row_num in range(1, curr_data[1] + 1):
+						fragments = [x["fragment"] for x in self.subpath_data(table_num, row_num)]
+						intra_model_score = self.intra_subpath_model_score(table_num, row_num, rest_weights)
+						inter_subpath_score = self.subpath_inter_gap_score(table_num - 1, last, table_num, row_num)
+						combined = (intra_inter_weights[0] * intra_model_score) + (intra_inter_weights[1] * inter_subpath_score)
+						scores.append(combined)
+					
+					path.append(scores.index(max(scores))+1)
 				
-				path.append(scores.index(max(scores))+1)
+				bar.next()
+				table_num += 1
 			
-			table_num += 1
+			bar.next() # one extra...
 			
 		return path
 	
