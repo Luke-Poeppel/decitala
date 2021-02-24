@@ -131,6 +131,55 @@ def as_native_type(x):
 	return x
 
 ####################################################################################################
+"""
+FragmentTable = Table(
+		name,
+		metadata,
+		Column("onset_start", Float),
+		Column("onset_stop", Float),
+		Column("fragment", String),
+		Column("mod", String),
+		Column("fod", Float),
+		Column("pitch_content", String),
+		Column("contour", String),
+		Column("prime_contour", String),
+		Column("is_slurred", Boolean)
+	)
+"""
+Base = declarative_base()
+class Fragment(Base):
+	onset_start = Column(Float)
+	onset_stop = Column(Float)
+	fragment = Column(String)
+	mod = Column(String),
+	fod = Column(Float),
+	pitch_content = Column(String),
+	contour = Column(String),
+	prime_contour = Column(String),
+	is_slurred = Column(Boolean)
+
+	def __init__(
+			self, 
+			onset_start, 
+			onset_stop,
+			fragment,
+			mod,
+			fod,
+			pitch_content,
+			contour,
+			prime_contour,
+			is_slurred
+		):
+		self.onset_start = onset_start
+		self.onset_stop = onset_stop
+		self.fragment = fragment
+		self.mod = mod
+		self.fod = fod
+		self.pitch_content = pitch_content
+		self.contour = contour
+		self.prime_contour = prime_contour
+		self.is_slurred = is_slurred
+
 def _prepare_fragment_data(
 		filepath,
 		part_num,
