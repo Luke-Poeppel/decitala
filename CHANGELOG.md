@@ -11,7 +11,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Fixed
 - Issue #54 (unreferenced variable); Issue #51 (updated databases); Issue #58 (unfiltered fragment table); 
 
-## [v0.6.3]
+## [v0.6.3] February 23, 2021 (NYC)
 ### Added
 - Added support/testing for python3.8. 
 

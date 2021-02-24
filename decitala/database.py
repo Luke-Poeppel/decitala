@@ -148,6 +148,8 @@ FragmentTable = Table(
 """
 Base = declarative_base()
 class Fragment(Base):
+	__tablename__ = "Fragments"
+
 	onset_start = Column(Float)
 	onset_stop = Column(Float)
 	fragment = Column(String)
