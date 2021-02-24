@@ -779,7 +779,8 @@ class DBParser:
 		"""
 		path = []
 		table_num = 1
-		with Bar("Modeling full path...", max=self.metadata[-1][0] + 1) as bar:
+		# the latter two arguments allow for displaying in jupyter. 
+		with Bar("Modeling full path...", max=self.metadata[-1][0] + 1, check_tty=False, hide_cursor=False) as bar:
 			while table_num < self.metadata[-1][0] + 1:
 				if table_num == 1:
 					highest_first_subpath = self.highest_modeled_subpath(table_num, weights=start_weights)
