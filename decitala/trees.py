@@ -45,9 +45,7 @@ from .utils import (
 	frame_to_midi
 )
 
-from .vis import (
-	create_tree_diagram
-)
+from . import vis
 
 __all__ = [
 	"NaryTree",
@@ -711,7 +709,7 @@ class FragmentTree(NaryTree):
 		"""
 		warnings.warn("Function still in development...")
 		path = str(Path.home()) + "/{}".format(uuid.uuid4().hex)
-		create_tree_diagram(self, path)
+		vis.create_tree_diagram(self, path)
 		browser = webbrowser.get("chrome")
 		browser.open_new_tab("file://" + path + "/index.html")
 
