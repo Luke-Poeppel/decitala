@@ -114,3 +114,4 @@ def fragment_roll(data, title=None, show=True, save=None):
 		plt.show()
 	if save:
 		plt.savefig(save, dpi=300)
+	return plt
