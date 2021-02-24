@@ -5,8 +5,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## ??
 ### Added
-- Added a progress bar to `DBParser.model_full_path` to more easily track progress. This progress bar doesn't seem to render in jupyter notebook but is fine in terminal. 
+- Added a progress bar to `DBParser.model_full_path` to more easily track progress. 
 - Added a `DBParser.onset_ranges` method that returns a list of tuples holding the onset ranges of all extracted fragments.
+- Added a `return_data` parameter to `model_full_path` (just a wrapper for `path_data`). 
 
 ### Fixed
 - Issue #54 (unreferenced variable); Issue #51 (updated databases); Issue #58 (unfiltered fragment table); 

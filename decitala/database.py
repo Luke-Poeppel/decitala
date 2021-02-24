@@ -138,11 +138,11 @@ class Fragment(Base):
 	onset_start = Column(Float)
 	onset_stop = Column(Float)
 	fragment = Column(String, primary_key=True)
-	mod = Column(String),
-	fod = Column(Float),
-	pitch_content = Column(String),
-	contour = Column(String),
-	prime_contour = Column(String),
+	mod = Column(String)
+	fod = Column(Float)
+	pitch_content = Column(String)
+	contour = Column(String)
+	prime_contour = Column(String)
 	is_slurred = Column(Boolean)
 
 	def __init__(
@@ -812,7 +812,8 @@ class DBParser:
 			self,
 			start_weights = [0.5, 0.3, 0.2], 
 			rest_weights = [0.7, 0.3], 
-			intra_inter_weights = [0.8, 0.2]
+			intra_inter_weights = [0.8, 0.2],
+			return_data=False
 		):
 		"""
 		Return list of highest modeled subpath nums for each table. 
@@ -843,7 +844,10 @@ class DBParser:
 			
 			bar.next() # one extra...
 			
-		return path
+		if not(return_data):
+			return path
+		else:
+			return self.path_data(row_nums=path)
 	
 	def path_data(self, row_nums):
 		full_data = []
