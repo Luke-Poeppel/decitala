@@ -16,6 +16,7 @@ import shutil
 
 from collections import Counter
 
+from .pofp import get_break_points
 from . import trees # To avoid circular dependency. 
 
 import logging
@@ -82,7 +83,13 @@ def create_tree_diagram(FragmentTree, path):
 	logging.info("Done ✔")
 	logging.info("See {}".format(path))
 
-def fragment_roll(data, title=None, show=True, save=None):
+def fragment_roll(
+		data, 
+		title=None, 
+		show=True, 
+		save=None,
+		plot_break_points=False
+	):
 	"""
 	Creates a piano-roll type visualization of fragments in the input data. 
 
@@ -105,11 +112,12 @@ def fragment_roll(data, title=None, show=True, save=None):
 	plt.xlabel("Onset", fontsize=12, fontname="Times")
 	plt.ylabel("Fragment", fontsize=12, fontname="Times")
 
-	bars = []
 	for i, fragment in enumerate(sorted(data, key=lambda x: x["fragment"].name)):
 		plt.barh(y=fragment["fragment"].name, width=fragment["onset_range"][1] - fragment["onset_range"][0], height = 0.8, left = fragment["onset_range"][0], color='k')
 
-	plt.plot([x for x in bars])
+	if plot_break_points:
+		pass # TODO
+
 	if show:
 		plt.show()
 	if save:

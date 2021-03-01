@@ -286,7 +286,7 @@ def _make_subpath_table(partitioned_data, fragment_table, metadata, connection, 
 			connection.execute(subpath_table.insert().values(fragment_row_ids))
 	return
 
-@timeout_decorator.timeout(75)
+@timeout_decorator.timeout(300)
 def create_database(
 		db_path,
 		filepath,
@@ -820,8 +820,7 @@ class DBParser:
 		"""
 		path = []
 		table_num = 1
-		# the latter two arguments allow for displaying in jupyter. 
-		with Bar("Modeling full path...", max=self.metadata[-1][0] + 1, check_tty=False, hide_cursor=False) as bar:
+		with Bar("Modeling full path...", max=self.metadata[-1][0] + 1, check_tty=False, hide_cursor=False) as bar: # the latter two arguments allow for displaying in jupyter. 
 			while table_num < self.metadata[-1][0] + 1:
 				if table_num == 1:
 					highest_first_subpath = self.highest_modeled_subpath(table_num, weights=start_weights)

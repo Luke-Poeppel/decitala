@@ -47,6 +47,7 @@ setup(
 		"matplotlib",
 		"more-itertools",
 		"music21>=6.5.0",
+		"networkx",
 		"numpy>=1.16.5",
 		"pandas",
 		"progress",
