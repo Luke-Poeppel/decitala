@@ -328,6 +328,7 @@ def find_clusters(input_, data_mode=False):
 	>>> varied_ragavardhana[clusters[2][0]:clusters[2][1]+1]
 	array([0.25, 0.25, 0.25])
 	>>> # We can also find clusters of pitch and rhythmic information for data from get_object_indices.
+	>>> from music21 import note, chord
 	>>> example_data = [
 	...		(note.Note("F#"), (6.5, 6.75)),
 	...     (note.Note("G"), (6.75, 7.0)),
@@ -526,6 +527,7 @@ def contiguous_summation(data):
 	Given some ``data`` from :obj:`~decitala.utils.get_object_indices`, finds every location
 	where the pitch and rhythmic material are contiguously equal and sums these regions.
 
+	>>> from music21 import note, chord
 	>>> example_data = [
 	...		(note.Note("F#"), (6.5, 6.75)),
 	...     (note.Note("G"), (6.75, 7.0)),
@@ -602,6 +604,7 @@ def frame_to_ql_array(frame):
 	:return: numpy array holding the associated quarter length of a given window.
 	:rtype: numpy.array
 
+	>>> from music21 import note
 	>>> my_frame = [
 	...     (note.Note("B-", quarterLength=0.125), (4.125, 4.25)),
 	...		(note.Note("A", quarterLength=0.25), (4.25, 4.5)),
@@ -626,6 +629,7 @@ def frame_to_midi(frame, ignore_graces=True):
 	:return: numpy array holding the pitches within the frame.
 	:rtype: numpy.array
 
+	>>> from music21 import note
 	>>> my_frame = [
 	...     (note.Note("B-", quarterLength=0.125), (4.125, 4.25)),
 	...		(note.Note("A", quarterLength=0.25), (4.25, 4.5)),

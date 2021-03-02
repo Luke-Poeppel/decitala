@@ -15,7 +15,8 @@ from .trees import FragmentTree
 from .utils import (
     successive_ratio_array, 
     successive_difference_array,
-    find_possible_superdivisions
+    find_possible_superdivisions,
+    get_object_indices
 )
 
 class _SearchConfig():
@@ -231,7 +232,7 @@ def rolling_search(
 	max_window_size = min(max(depths), len(object_list))
 	closest_window = min(windows, key=lambda x: abs(x - max_window_size))
 	index_of_closest = windows.index(closest_window)
-	windows = windows[0:index_of_closest+1]
+	windows = windows[0:index_of_closest + 1]
 
 	fragment_id = 0
 	fragments_found = []
