@@ -5,8 +5,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## ??
 ### Added
-- Added flake8 for maintaining PEP8 standards. 
-- WIP: Implementation of the (weighted) Floyd-Warshall Algorithm.
+- Added flake8 for maintaining PEP8 standards. Applied to setup.py, fragment.py, and utils.py. 
+- WIP: Implemented the Floyd-Warshall Algorithm for path-finding. 
 - Added a `fragment_roll` function to `vis.py` (#62). 
 - Added a progress bar to `DBParser.model_full_path` to more easily track progress. 
 - Added a `DBParser.onset_ranges` method that returns a list of tuples holding the onset ranges of all extracted fragments.

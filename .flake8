@@ -5,3 +5,4 @@ ignore =
     W191, # indentation contains tabs
     W292, # no newline at end of file
     E302, # expected 2 blank lines, found 1
+    E731, # do not assign a lambda expression
