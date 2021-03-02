@@ -12,6 +12,8 @@ Implementation of the Floyd-Warshall Algorithm (path of minimal cost).
 """
 import numpy as np
 
+from progress.bar import Bar
+
 def cost(
 		vertex_1, 
 		vertex_2, 
@@ -51,12 +53,14 @@ def floyd_warshall(
 				next_matrix[iterator.multi_index] = data[iterator.multi_index[1]]
 		iterator.iternext()
 	
-	for k in range(0, len(data)):
-		for i in range(0, len(data)):
-			for j in range(0, len(data)):
-				if dist_matrix[i][j] > dist_matrix[i][k] + dist_matrix[k][j]:
-					dist_matrix[i][j] = dist_matrix[i][k] + dist_matrix[k][j]
-					next_matrix[i][j] = next_matrix[i][k]
+	with Bar("Building matrices...", max=len(data), check_tty=False, hide_cursor=False) as bar:
+		for k in range(0, len(data)):
+			for i in range(0, len(data)):
+				for j in range(0, len(data)):
+					if dist_matrix[i][j] > dist_matrix[i][k] + dist_matrix[k][j]:
+						dist_matrix[i][j] = dist_matrix[i][k] + dist_matrix[k][j]
+						next_matrix[i][j] = next_matrix[i][k]
+			bar.next()
 	
 	return dist_matrix, next_matrix
 
