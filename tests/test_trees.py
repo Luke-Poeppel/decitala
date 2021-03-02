@@ -5,6 +5,8 @@ import pytest
 from decitala.trees import (
 	FragmentTree,
 	filter_data,
+)
+from decitala.search import (
 	get_by_ql_array
 )
 from decitala.fragment import GeneralFragment
