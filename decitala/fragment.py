@@ -1,8 +1,8 @@
 ####################################################################################################
 # File:     fragment.py
 # Purpose:  Representation and tools for dealing with generic rhythmic fragments, as well as those
-#			used specifically by Messiaen. Includes Decitala and GreekFoot objects. 
-# 
+# 			used specifically by Messiaen. Includes Decitala and GreekFoot objects.
+#
 # Author:   Luke Poeppel
 #
 # Location: Kent, CT 2020
@@ -10,8 +10,6 @@
 from __future__ import division, print_function, unicode_literals
 
 import copy
-import json
-import jsonpickle
 import numpy as np
 import os
 import re
@@ -21,11 +19,9 @@ from ast import literal_eval
 
 from music21 import converter
 from music21 import note
-from music21 import stream
 
 from .utils import (
 	augment,
-	carnatic_string_to_ql_array,
 	ql_array_to_carnatic_string,
 	ql_array_to_greek_diacritics,
 	successive_ratio_array,
@@ -48,7 +44,7 @@ fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
 # ID's of decitalas with "subtalas"
 subdecitala_array = np.array([26, 38, 55, 65, 68])
 
-############### EXCEPTIONS ###############
+####################################################################################################
 class FragmentException(Exception):
 	pass
 
@@ -60,13 +56,14 @@ class GreekFootException(FragmentException):
 
 class GeneralFragment:
 	"""
-	Class representing a generic rhythmic fragment. The user must provide either a path to a music21 readable
-	file or an array of quarter length values. 
+	Class representing a generic rhythmic fragment. The user must provide either a path to a music21
+	readable file or an array of quarter length values.
 
 	:param data: either an array of quarter length values or a path to a music21 readable file.
 	:param str name: optional name.
-	:raises `~decitala.fragment.FragmentException`: if an array **and** file are provided or if neither are provided.
-	
+	:raises `~decitala.fragment.FragmentException`: if an array **and** file are provided or if \
+		neither are provided.
+
 	>>> random_fragment_path = "./fragments/Decitalas/63_Nandi.xml"
 	>>> g1 = GeneralFragment(data=random_fragment_path, name='test')
 	>>> g1
@@ -96,7 +93,6 @@ class GeneralFragment:
 	[0.5  1.   1.   0.5  0.25 0.25 0.5 ]
 	[1.   1.   0.5  0.25 0.25 0.5  0.5 ]
 	[1.   0.5  0.25 0.25 0.5  0.5  1.  ]
-	>>> 
 	>>> # We may also initialize with an array...
 	>>> GeneralFragment(data=np.array([0.75, 0.75, 0.5, 0.25]))
 	<fragment.GeneralFragment: [0.75 0.75 0.5  0.25]>
@@ -104,7 +100,7 @@ class GeneralFragment:
 	def __init__(self, data, name=None, **kwargs):
 		if isinstance(data, str):
 			assert os.path.isfile(data), FragmentException("The path provided does not lead to a file.")
-		
+
 			self.creation_type = 'filepath'
 			self.filepath = data
 			self.filename = self.filepath.split('/')[-1]
@@ -113,7 +109,7 @@ class GeneralFragment:
 			self.stream = stream
 		elif isinstance(data, np.ndarray) or isinstance(data, list):
 			assert len(data) >= 1
-			
+
 			self.creation_type = 'array'
 			self.temp_ql_array = np.array(data)
 		else:
@@ -126,7 +122,7 @@ class GeneralFragment:
 			return '<fragment.GeneralFragment: {}>'.format(self.ql_array())
 		else:
 			return '<fragment.GeneralFragment {0}: {1}>'.format(self.name, self.ql_array())
-	
+
 	def __hash__(self):
 		"""
 		:return: hash of the tala by its name.
@@ -141,18 +137,21 @@ class GeneralFragment:
 			return True
 		else:
 			return False
-	
+
 	def ql_array(self, retrograde=False):
 		"""
-		:param bool retrograde: whether or not to return the fragment in its original form or in retrograde.
-		:return: the quarter length array of the fragment. 
+		:param bool retrograde: whether or not to return the fragment in its original form \
+								or in retrograde.
+		:return: the quarter length array of the fragment.
 		:rtype: numpy.array
 		"""
 		if self.creation_type == 'filepath':
 			if not(retrograde):
-				return np.array([this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)])
+				data = [this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)]
+				return np.array(data)
 			else:
-				return np.flip(np.array([this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)]))
+				data = [this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)]
+				return np.flip(np.array(data))
 		else:
 			if not(retrograde):
 				return self.temp_ql_array
@@ -161,7 +160,8 @@ class GeneralFragment:
 
 	def ql_tuple(self, retrograde=False):
 		"""
-		:param bool retrograde: whether or not to return the fragment in its original form or in retrograde.
+		:param bool retrograde: whether or not to return the fragment in its original form \
+								or in retrograde.
 		:return: the quarter length array of the fragment (as a tuple).
 		:rtype: tuple
 		"""
@@ -197,7 +197,9 @@ class GeneralFragment:
 	def dseg(self, as_str=False):
 		"""
 		:param bool as_str: whether or not to return the d-seg as a string.
-		:return: the d-seg of the fragment, as introducted in `The Perception of Rhythm in Non-Tonal Music <https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents>`_ (Marvin, 1991). Maps a fragment into a sequence of relative durations. 
+		:return: the d-seg of the fragment, as introducted in `The Perception of Rhythm \
+		in Non-Tonal Music <https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents>`_ \
+		(Marvin, 1991). Maps a fragment into a sequence of relative durations.
 		:rtype: numpy.array (or string if ``as_str=True``)
 
 		>>> g3 = GeneralFragment(np.array([0.25, 0.75, 2.0, 1.0]), name='marvin-p70')
@@ -215,7 +217,7 @@ class GeneralFragment:
 				if thisValue == thisKey:
 					dseg_vals[i] = valueDict[thisKey]
 
-		if as_str == True:
+		if as_str is True:
 			return '<' + ' '.join([str(int(val)) for val in dseg_vals]) + '>'
 		else:
 			return np.array([int(val) for val in dseg_vals])
@@ -237,8 +239,8 @@ class GeneralFragment:
 			filtered = [a for a, b in zip(as_lst, as_lst[1:] + [not as_lst[-1]]) if a != b]
 			return np.array(filtered)
 
-		orig = self.dseg(as_str = False)
-		as_array = _remove_adjacent_equal_elements(array = orig)
+		orig = self.dseg(as_str=False)
+		as_array = _remove_adjacent_equal_elements(array=orig)
 
 		if not(as_str):
 			return np.array([int(val) for val in as_array])
@@ -251,11 +253,11 @@ class GeneralFragment:
 			return successive_ratio_array(self.ql_array())
 		else:
 			return successive_ratio_array(self.ql_array(retrograde=True))
-	
+
 	def successive_difference_array(self):
 		"""See docstring of :obj:`decitala.utils.successive_difference_array`."""
 		return successive_difference_array(self.ql_array())
-		
+
 	def cyclic_permutations(self):
 		"""
 		:return: all cyclic permutations of :meth:`~decitala.fragment.Decitala.ql_array` as in Morris.
@@ -269,44 +271,53 @@ class GeneralFragment:
 		:return: whether or not the given fragment is palindromic (i.e. non-retrogradable.)
 		:rtype: bool
 		"""
-		return (self.ql_array(retrograde = False) == self.ql_array(retrograde = True)).all()
+		return (self.ql_array(retrograde=False) == self.ql_array(retrograde=True)).all()
 
 	def is_sub_fragment(self, other, try_retrograde=True):
 		"""
-		:param other: a :obj:`~decitala.fragment.GeneralFragment`, :obj:`~decitala.fragment.Decitala`, or :obj:`~decitala.fragment.GreekFoot` object.
-		:param bool try_retrograde: whether to allow searching in retrograde. 
-		:return: whether or not self is a sub-fragment, meaning its successive_ratio_array exists inorder in the others.
+		:param other: a :obj:`~decitala.fragment.GeneralFragment`, :obj:`~decitala.fragment.Decitala`, \
+						or :obj:`~decitala.fragment.GreekFoot` object.
+		:param bool try_retrograde: whether to allow searching in retrograde.
+		:return: whether or not self is a sub-fragment, meaning its successive_ratio_array exists \
+				inorder in the others.
 		:rtype: bool
 		"""
 		def _check(array_1, array_2):
 			n = len(array_1)
 			m = len(array_2)
-			return any((array_1.tolist() == array_2[i:i+n].tolist()) for i in range(m-n+1))
+			return any((array_1.tolist() == array_2[i:i + n].tolist()) for i in range(m - n + 1))
 
 		if self.num_onsets > other.num_onsets:
 			return False
 
-		res = _check(array_1 = self.successive_ratio_array(retrograde=False), array_2=other.successive_ratio_array(retrograde=False))
-		if res == False and try_retrograde == True:
-			res = _check(array_1 = self.successive_ratio_array(retrograde=False), array_2=other.successive_ratio_array(retrograde=True))
+		res = _check(
+			array_1=self.successive_ratio_array(retrograde=False),
+			array_2=other.successive_ratio_array(retrograde=False)
+		)
+		if res is False and try_retrograde is True:
+			res = _check(
+				array_1=self.successive_ratio_array(retrograde=False),
+				array_2=other.successive_ratio_array(retrograde=True)
+			)
 		return res
-	
+
 	def morris_symmetry_class(self):
 		"""
-		:return: the fragment's form of rhythmic symmetry, as defined by Morris in `Sets, Scales and Rhythmic Cycles. 
-				A Classification of Talas in Indian Music <http://ecmc.rochester.edu/rdm/pdflib/talapaper.pdf>`_ (1999). 
+		:return: the fragment's form of rhythmic symmetry, as defined by Morris in \
+				`Sets, Scales and Rhythmic Cycles. A Classification of Talas in Indian \
+				Music <http://ecmc.rochester.edu/rdm/pdflib/talapaper.pdf>`_ (1999).
 		:rtype: str
 
-		- I. Maximally Trivial:				of the form :math:`X` (one onset, one anga class)
-		- II. Trivial Symmetry: 			of the form :math:`XXXXXX` (multiple onsets, same anga class)
-		- III. Trivial Dual Symmetry:  		of the form :math:`XY` (two onsets, two anga classes)
-		- IV. Maximally Trivial Palindrome: of the form :math:`XXX...XYX...XXX` (multiple onsets, two anga classes)
-		- V. Trivial Dual Palindromic:		of the form :math:`XXX...XYYYX...XXX` (multiple onsets, two anga classes)
-		- VI. Palindromic: 					of the form :math:`XY...Z...YX` (multiple onsets, :math:`n/2` anga classes)
-		- VII. Stream:						of the form :math:`XYZ...abc...` (:math:`n` onsets, :math:`n` anga classes)
+		- I. Maximally Trivial:	of the form :math:`X` (one onset, one anga class)
+		- II. Trivial Symmetry: 			of the form :math:`XXXXXX`
+		- III. Trivial Dual Symmetry:  		of the form :math:`XY`
+		- IV. Maximally Trivial Palindrome: of the form :math:`XXX...XYX...XXX`
+		- V. Trivial Dual Palindromic:		of the form :math:`XXX...XYYYX...XXX`
+		- VI. Palindromic: 					of the form :math:`XY...Z...YX`
+		- VII. Stream:						of the form :math:`XYZ...abc...`
 		"""
-		dseg = self.dseg(as_str = False)
-		reduced_dseg = self.reduced_dseg(as_str = False)
+		dseg = self.dseg(as_str=False)
+		reduced_dseg = self.reduced_dseg(as_str=False)
 
 		if len(dseg) == 1:
 			return "I. Maximally Trivial"
@@ -337,7 +348,7 @@ class GeneralFragment:
 		:raises: NotImplementedError
 		"""
 		raise NotImplementedError
-	
+
 	def nPVI(self):
 		"""
 		:return: the nPVI of the fragment (Low, Grabe, & Nolan, 2000).
@@ -358,17 +369,17 @@ class GeneralFragment:
 			prev = curr
 
 		final = summation * 100 / (num_onsets - 1)
-		
+
 		return final
-	
+
 	def augment(self, factor=1.0, difference=0.0):
 		"""
-		This method returns a new :obj:`~decitala.fragment.GeneralFragment` object with a ql_array 
-		corresponding to the original fragment augmented by a given ratio and difference. 
+		This method returns a new :obj:`~decitala.fragment.GeneralFragment` object with a ql_array
+		corresponding to the original fragment augmented by a given ratio and difference.
 
 		:param float factor: the factor by which the GeneralFragment will be augmented.
-		:param float difference: the difference by which the GeneralFragment will be augmented. 
-		:rtype: :obj:`~decitala.fragment.GeneralFragment` object. 
+		:param float difference: the difference by which the GeneralFragment will be augmented.
+		:rtype: :obj:`~decitala.fragment.GeneralFragment` object.
 
 		>>> pre_augmentation = GeneralFragment([2.0, 2.0], name="Spondee")
 		>>> pre_augmentation
@@ -379,20 +390,20 @@ class GeneralFragment:
 		new_ql_array = augment(self.ql_array(), factor=factor, difference=difference)
 		new_name = self.name + "/r:{}/".format(factor) + "d:{}".format(difference)
 		return GeneralFragment(new_ql_array, new_name)
-	
+
 	def show(self):
 		if self.stream:
-			return self.stream.show() 
+			return self.stream.show()
 
 ####################################################################################################
 class Decitala(GeneralFragment):
 	"""
 	Class defining a Decitala object. The class reads from the fragments_db file in the
-	databases directory (see the Decitalas table). 
+	databases directory (see the Decitalas table).
 
-	:param str name: Name of the decitala, as is transliterated in the Lavignac (1921). 
+	:param str name: Name of the decitala, as is transliterated in the Lavignac (1921).
 	:raises `~decitala.fragment.DecitalaException`: when there is an issue with the name.
-		
+
 	>>> ragavardhana = Decitala('Ragavardhana')
 	>>> ragavardhana
 	<fragment.Decitala 93_Ragavardhana>
@@ -435,7 +446,7 @@ class Decitala(GeneralFragment):
 	[0.25 1.5  0.5  1.   0.5  0.5  0.25]
 	[1.5  0.5  1.   0.5  0.5  0.25 0.25]
 	>>> # We can check if a fragment is a sub-fragment of another (meaning its
-	>>> # successive_ratio_array appears inorder in another with the is_sub_fragment method. 
+	>>> # successive_ratio_array appears inorder in another with the is_sub_fragment method.
 	>>> Decitala("75_Pratapacekhara").is_sub_fragment(Decitala("Ragavardhana"), try_retrograde=True)
 	True
 	"""
@@ -443,22 +454,22 @@ class Decitala(GeneralFragment):
 		conn = sqlite3.connect(fragment_db)
 		self.conn = conn
 		cur = self.conn.cursor()
-		
+
 		decitala_table_string = "SELECT * FROM Decitalas"
 		cur.execute(decitala_table_string)
 		decitala_rows = cur.fetchall()
-		
+
 		matches = []
 		for this_row in decitala_rows:
 			x = re.search(name, this_row[0] + ".xml")
 			if bool(x):
 				matches.append(this_row[0])
-		
+
 		matches = [x + ".xml" for x in matches]
-		
+
 		if len(matches) == 0:
 			raise DecitalaException("No matches were found for name {}.".format(name))
-		
+
 		if len(matches) == 1:
 			match = matches[0]
 			self.full_path = decitala_path + "/" + match
@@ -480,7 +491,7 @@ class Decitala(GeneralFragment):
 				match_new_name = "".join([x for x in this_match if not x.isdigit()])
 				if match_new_name[0] == "_":
 					match_new_name = match_new_name[1:]
-				
+
 				match_split = match_new_name.split("_")
 
 				if match_split == new_name_split:
@@ -492,11 +503,11 @@ class Decitala(GeneralFragment):
 		try:
 			super().__init__(data=self.full_path, name=self.name)
 		except AttributeError:
-			raise DecitalaException("Something is wrong with the name {}.".format(name)) 
-	
+			raise DecitalaException("Something is wrong with the name {}.".format(name))
+
 	def __repr__(self):
 		return '<fragment.Decitala {}>'.format(self.name)
-	
+
 	@property
 	def id_num(self):
 		"""
@@ -505,13 +516,14 @@ class Decitala(GeneralFragment):
 		"""
 		idValue = re.search(r'\d+', self.name)
 		return int(idValue.group(0))
-	
+
 	@classmethod
 	def get_by_id(cls, input_id):
 		"""
-		A class method which retrieves a :obj:`~decitala.fragment.Decitala` object based on a given ID number. These 
-		numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. Some talas have (as I'm calling them) 
-		"sub-talas," meaning that their id is not unique. Querying by those talas is currently not supported.
+		A class method which retrieves a :obj:`~decitala.fragment.Decitala` object based \
+		on a given ID number. These numbers are listed in the Lavignac Encyclopédie (1921) \
+		and Messiaen Traité. Some talas have "sub-talas," meaning that their id is not \
+		unique. Querying by those talas is currently not supported.
 
 		:return: a :obj:`~decitala.fragment.Decitala` object
 		:param int input_id: id number of the tala (in range 1-120).
@@ -525,7 +537,8 @@ class Decitala(GeneralFragment):
 		if input_id > 121 or input_id < 1:
 			raise DecitalaException("Input must be between 1 and 120.")
 		elif input_id in subdecitala_array:
-			raise DecitalaException("There are multiple talas with this ID. Please consult the Lavignac (1921).")
+			raise DecitalaException("There are multiple talas with this ID. \
+									Please consult the Lavignac (1921).")
 
 		conn = sqlite3.connect(fragment_db)
 		cur = conn.cursor()
@@ -544,10 +557,10 @@ class Decitala(GeneralFragment):
 	def carnatic_string(self):
 		"""See docstring of :obj:`decitala.utils.ql_array_to_carnatic_string`."""
 		return ql_array_to_carnatic_string(self.ql_array())
-	
+
 	@property
 	def num_matras(self):
-		"""		
+		"""
 		:return: returns the number of matras in the tala (here, the number of eighth notes).
 		:rtype: int
 		"""
@@ -555,8 +568,8 @@ class Decitala(GeneralFragment):
 
 	def equivalents(self, rep_type="ratio"):
 		"""
-		:return: list of Decitala and Greek foot objects that are equivalent to the given fragment under the 
-				provided ``rep_type``. 
+		:return: list of Decitala and Greek foot objects that are equivalent to the given fragment under \
+				the provided ``rep_type``.
 		:rtype: list
 
 		>>> fragment = Decitala("Tritiya")
@@ -565,8 +578,9 @@ class Decitala(GeneralFragment):
 		>>> fragment.equivalents(rep_type="difference")
 		[<fragment.Decitala 76_Jhampa>, <fragment.Decitala 95_Anlarakrida>]
 		"""
-		assert rep_type.lower() in ["ratio", "difference"], DecitalaException("The only possible rep_types are `ratio` and `difference`")
-		
+		assert rep_type.lower() in ["ratio", "difference"], DecitalaException("The only possible rep_types are \
+																				`ratio` and `difference`")
+
 		cur = self.conn.cursor()
 		row_string = "SELECT * FROM Decitalas WHERE Name = '{}'".format(self.name)
 		cur.execute(row_string)
@@ -587,7 +601,7 @@ class Decitala(GeneralFragment):
 class GreekFoot(GeneralFragment):
 	"""
 	Class that stores greek foot data. The class reads from the fragments_db file in the databases
-	directory (see the Greek_Metrics table). 
+	directory (see the Greek_Metrics table).
 
 	>>> bacchius = GreekFoot('Bacchius')
 	>>> bacchius
@@ -619,22 +633,21 @@ class GreekFoot(GeneralFragment):
 		conn = sqlite3.connect(fragment_db)
 		self.conn = conn
 		cur = self.conn.cursor()
-		
+
 		greek_metric_table_string = "SELECT * FROM Greek_Metrics"
 		cur.execute(greek_metric_table_string)
 		greek_metric_rows = cur.fetchall()
-		
+
 		matches = []
 		for this_row in greek_metric_rows:
 			x = re.search(name, this_row[0] + ".xml")
 			if bool(x):
 				matches.append(this_row[0])
-		
+
 		matches = [x + ".xml" for x in matches]
-		
 		if len(matches) == 0:
 			raise DecitalaException("No matches were found for name {}.".format(name))
-		
+
 		if len(matches) == 1:
 			match = matches[0]
 			self.full_path = greek_path + "/" + match
@@ -644,7 +657,7 @@ class GreekFoot(GeneralFragment):
 		else:
 			if name[-4:] == ".xml":
 				name = name[:-4]
-			
+
 			for this_match in matches:
 				if name == this_match[:-4]:
 					self.full_path = greek_path + "/" + this_match
@@ -655,11 +668,11 @@ class GreekFoot(GeneralFragment):
 		try:
 			super().__init__(data=self.full_path, name=self.name)
 		except AttributeError:
-			raise GreekFootException("Something is wrong with the name {}.".format(name)) 
-	
+			raise GreekFootException("Something is wrong with the name {}.".format(name))
+
 	def __repr__(self):
 		return '<fragment.GreekFoot {}>'.format(self.name)
-	
+
 	@property
 	def greek_string(self):
 		"""See docstring of :obj:`decitala.utils.ql_array_to_greek_diacritics`."""
@@ -667,16 +680,21 @@ class GreekFoot(GeneralFragment):
 
 	def equivalents(self, rep_type="ratio"):
 		"""
-		:return: list of Decitala and Greek foot objects that are equivalent to the given fragment under the 
-				provided ``rep_type``. 
+		:return: list of Decitala and Greek foot objects that are equivalent to the given fragment under \
+				the provided ``rep_type``.
 		:rtype: list
 
 		>>> fragment = GreekFoot("Ionic_Minor")
-		>>> fragment.equivalents(rep_type="ratio")
-		[<fragment.Decitala 49_Crikirti>, <fragment.Decitala 32_Kudukka>, <fragment.Decitala 9_Ratilila>, <fragment.Decitala 36_Tribhangi>]
+		>>> for equivalent in fragment.equivalents(rep_type="ratio"):
+		... 	print(equivalent)
+		<fragment.Decitala 49_Crikirti>
+		<fragment.Decitala 32_Kudukka>
+		<fragment.Decitala 9_Ratilila>
+		<fragment.Decitala 36_Tribhangi>
 		"""
-		assert rep_type.lower() in ["ratio", "difference"], DecitalaException("The only possible rep_types are `ratio` and `difference`")
-		
+		assert rep_type.lower() in ["ratio", "difference"], DecitalaException("The only possible rep_types \
+																				are ratio and difference")
+
 		cur = self.conn.cursor()
 		row_string = "SELECT * FROM Greek_Metrics WHERE Name = '{}'".format(self.name)
 		cur.execute(row_string)
