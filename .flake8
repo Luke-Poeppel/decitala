@@ -1,0 +1,4 @@
+[flake8]
+exclude = tests
+ignore =
+    W191, # indentation contains tabs
