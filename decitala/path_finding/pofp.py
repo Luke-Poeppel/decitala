@@ -33,7 +33,7 @@ import copy
 import itertools
 import pytest
 
-from .fragment import (
+from ..fragment import (
 	GeneralFragment,
 	GreekFoot
 )

@@ -7,6 +7,9 @@
 #
 # Location: NYC, 2021
 ####################################################################################################
+"""
+Implementation of the Floyd-Warshall Algorithm (path of minimal cost). 
+"""
 def cost(
 		vertex_1, 
 		vertex_2, 

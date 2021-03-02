@@ -65,10 +65,12 @@ from .utils import (
 )
 from .trees import (
 	FragmentTree,
-	rolling_search,
 	filter_data
 )
-from .pofp import (
+from .search import (
+	rolling_search,
+)
+from .path_finding.pofp import (
 	get_break_points,
 	partition_data_by_break_points,
 	get_pareto_optimal_longest_paths

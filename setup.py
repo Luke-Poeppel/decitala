@@ -43,6 +43,7 @@ setup(
 	include_package_data=True,
 	install_requires=[
 		"click",
+		"flake8",
 		"jsonpickle",
 		"matplotlib",
 		"more-itertools",

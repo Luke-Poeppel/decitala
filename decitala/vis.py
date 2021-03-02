@@ -16,7 +16,6 @@ import shutil
 
 from collections import Counter
 
-from .pofp import get_break_points
 from . import trees # To avoid circular dependency. 
 
 import logging
