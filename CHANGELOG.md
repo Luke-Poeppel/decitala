@@ -6,7 +6,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## ??
 ### Added
 - Added flake8 for maintaining PEP8 standards. Applied to setup.py, fragment.py, and utils.py. 
-- WIP: Implemented the Floyd-Warshall Algorithm for path-finding. 
+- Implemented the Floyd-Warshall Algorithm for path-finding. 
 - Added a `fragment_roll` function to `vis.py` (#62). 
 - Added a progress bar to `DBParser.model_full_path` to more easily track progress. 
 - Added a `DBParser.onset_ranges` method that returns a list of tuples holding the onset ranges of all extracted fragments.
@@ -14,7 +14,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - MIT License
 
 ### Changed
-- WIP: The ``trees.py`` module has been separated into ``trees.py`` and ``search.py`` with the relevant search functions in the latter module. (#27)
+- The ``trees.py`` module has been separated into ``trees.py`` and ``search.py`` with the relevant search functions in the latter module. (#27)
 
 ### Fixed
 - Issue #54 (unreferenced variable); Issue #51 (updated databases); Issue #58 (unfiltered fragment table); 
