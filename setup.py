@@ -1,31 +1,31 @@
 ####################################################################################################
 # File:     setup.py
-# Purpose:  Setup of the package. 
-# 
+# Purpose:  Setup of the package.
+#
 # Author:   Luke Poeppel
 #
 # Location: Frankfurt, DE 2020 / NYC, 2020 / Kent, CT 2020
 ####################################################################################################
 import os
 
-from setuptools import setup, find_packages, Command
+from setuptools import setup, find_packages
 
 with open(os.path.join("decitala", "VERSION")) as version:
 	__version__ = version.readline()
 
 __MODULES__ = [
-	"decitala.cli", 
-	"decitala.database", 
-	"decitala.fragment", 
+	"decitala.cli",
+	"decitala.database",
+	"decitala.fragment",
 	"decitala.pofp",
-	"decitala.trees", 
-	"decitala.utils", 
+	"decitala.trees",
+	"decitala.utils",
 	"decitala.vis",
 ]
 
 setup(
 	name="decitala",
-	version=__version__, 
+	version=__version__,
 	py_modules=__MODULES__,
 	author="Luke Poeppel",
 	author_email="luke.poeppel@gmail.com",
@@ -56,7 +56,7 @@ setup(
 		"pytest",
 		"sqlalchemy",
 		"scipy",
-		"sphinx_rtd_theme", 
+		"sphinx_rtd_theme",
 		"timeout-decorator",
 	],
 	entry_points={
