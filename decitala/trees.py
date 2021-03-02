@@ -68,9 +68,6 @@ class TreeException(Exception):
 class FragmentTreeException(TreeException):
 	pass
 
-class SearchException(Exception):
-	pass
-
 ####################################################################################################
 class NaryTree:
 	"""

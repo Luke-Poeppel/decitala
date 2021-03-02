@@ -16,8 +16,17 @@ from .utils import (
     successive_ratio_array, 
     successive_difference_array,
     find_possible_superdivisions,
-    get_object_indices
+    get_object_indices,
+    roll_window,
+    frame_to_ql_array,
+    frame_is_spanned_by_slur,
+    contiguous_summation,
+    frame_to_midi
 )
+
+####################################################################################################
+class SearchException(Exception):
+	pass
 
 class _SearchConfig():
 	"""Helper class for managing relationship between search ql_arrays and search trees."""
