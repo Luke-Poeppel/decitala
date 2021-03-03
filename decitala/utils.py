@@ -960,7 +960,7 @@ def parse_hash_table_string(string_):
 	# if name is more than one word, underscores
 	>>> s = "decitala-Gajajhampa-r-2"
 	>>> parse_hash_table_string(s)
-	(<fragment.Decitala Gajajhampa>, ("r", 2.0))
+	(<fragment.Decitala 77_Gajajhampa>, ('r', '2'))
 	"""
 	split = string_.split("-")
 	frag_type = split[0]

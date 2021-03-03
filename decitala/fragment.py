@@ -20,13 +20,7 @@ from ast import literal_eval
 from music21 import converter
 from music21 import note
 
-from .utils import (
-	augment,
-	ql_array_to_carnatic_string,
-	ql_array_to_greek_diacritics,
-	successive_ratio_array,
-	successive_difference_array,
-)
+from . import utils
 
 __all__ = [
 	"GeneralFragment",
@@ -250,13 +244,13 @@ class GeneralFragment:
 	def successive_ratio_array(self, retrograde=False):
 		"""See docstring of :obj:`decitala.utils.successive_ratio_array`."""
 		if not retrograde:
-			return successive_ratio_array(self.ql_array())
+			return utils.successive_ratio_array(self.ql_array())
 		else:
-			return successive_ratio_array(self.ql_array(retrograde=True))
+			return utils.successive_ratio_array(self.ql_array(retrograde=True))
 
 	def successive_difference_array(self):
 		"""See docstring of :obj:`decitala.utils.successive_difference_array`."""
-		return successive_difference_array(self.ql_array())
+		return utils.successive_difference_array(self.ql_array())
 
 	def cyclic_permutations(self):
 		"""
@@ -387,7 +381,7 @@ class GeneralFragment:
 		>>> pre_augmentation.augment(factor=2.0, difference=0.75)
 		<fragment.GeneralFragment Spondee/r:2.0/d:0.75: [4.75 4.75]>
 		"""
-		new_ql_array = augment(self.ql_array(), factor=factor, difference=difference)
+		new_ql_array = utils.augment(self.ql_array(), factor=factor, difference=difference)
 		new_name = self.name + "/r:{}/".format(factor) + "d:{}".format(difference)
 		return GeneralFragment(new_ql_array, new_name)
 
@@ -556,7 +550,7 @@ class Decitala(GeneralFragment):
 	@property
 	def carnatic_string(self):
 		"""See docstring of :obj:`decitala.utils.ql_array_to_carnatic_string`."""
-		return ql_array_to_carnatic_string(self.ql_array())
+		return utils.ql_array_to_carnatic_string(self.ql_array())
 
 	@property
 	def num_matras(self):
@@ -676,7 +670,7 @@ class GreekFoot(GeneralFragment):
 	@property
 	def greek_string(self):
 		"""See docstring of :obj:`decitala.utils.ql_array_to_greek_diacritics`."""
-		return ql_array_to_greek_diacritics(self.ql_array())
+		return utils.ql_array_to_greek_diacritics(self.ql_array())
 
 	def equivalents(self, rep_type="ratio"):
 		"""
