@@ -969,10 +969,8 @@ def parse_hash_table_string(string_):
 	mod_value = split[3]
 
 	if frag_type == "decitala":
-		if len(name.split("_")) == 1:
-			f = fragment.Decitala(name)
+		f = fragment.Decitala(name)
 	else:
-		if len(name.split("_")) == 1:
-			f = fragment.GreekFoot(name)
+		f = fragment.GreekFoot(name)
 
 	return (f, (mod_type, mod_value))
