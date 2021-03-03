@@ -21,7 +21,8 @@ from .utils import (
     frame_to_ql_array,
     frame_is_spanned_by_slur,
     contiguous_summation,
-    frame_to_midi
+    frame_to_midi,
+	parse_hash_table_string
 )
 
 __all__ = [
@@ -376,22 +377,58 @@ def rolling_search(
 
 ####################################################################################################
 # Hash table search method. 
-# def rolling_hash_search(
-# 	filename,
-# 	part_num,
-# 	table,
-#     allowed_modifications=[
-# 			"r", 
-# 			"rr", 
-# 			"d", 
-# 			"rd", 
-# 			"sr",
-# 			"rsr"
-# 	    ],
-#     windows=list(range(2, 19)),
-#     logger=None
-# )
+def rolling_hash_search(
+		filepath,
+		part_num,
+		table,
+		allowed_modifications=[
+				"r", 
+				"rr", 
+				"d", 
+				"rd", 
+				"sr",
+				"rsr"
+			],
+		windows=list(range(2, 19)),
+		logger=None
+	):
+	object_list = get_object_indices(filepath = filepath, part_num = part_num)
+	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
+	fragment_id = 0
+	fragments_found = []
+	for this_win in windows:		
+		frames = roll_window(array = object_list, window_length = this_win)
+		for this_frame in frames:
+			objects = [x[0] for x in this_frame]
+			if any(x.isRest for x in objects): # Skip any window that has a rest in it.
+				continue
+			else:
+				ql_array = frame_to_ql_array(this_frame)
+				if len(ql_array) < 2:
+					continue
 
-# Need a way to parse the string value. 
-# decitala_name_mod_val -> Decitala("Name"), mod=(...)
-# parse_hash_table_string
+				try:
+					searched = table[tuple(ql_array)]
+					if searched is not None:
+						search_dict = dict()
+						fragment_id += 1
+						offset_1 = this_frame[0][0]
+						offset_2 = this_frame[-1][0]
+						is_spanned_by_slur = frame_is_spanned_by_slur(this_frame)
+						pitch_content = frame_to_midi(this_frame)
+
+						retrieved_search_string = searched
+						parsed_search_string = parse_hash_table_string(retrieved_search_string)
+						search_dict["fragment"] = parsed_search_string[0]
+						search_dict["mod"] = parsed_search_string[1]
+						search_dict["onset_range"] = (offset_1.offset, offset_2.offset + offset_2.quarterLength)
+						search_dict["is_spanned_by_slur"] = is_spanned_by_slur
+						search_dict["pitch_content"] = pitch_content
+						search_dict["id"] = fragment_id
+
+						fragments_found.append(search_dict)
+				except KeyError:
+					continue				
+	
+	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
+
