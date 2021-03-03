@@ -17,6 +17,8 @@ from scipy.linalg import norm
 
 from music21 import converter
 
+from . import fragment
+
 __all__ = [
 	"get_logger",  # Logging
 	"carnatic_string_to_ql_array",  # Notation
@@ -946,3 +948,31 @@ def cauchy_schwartz(vector1, vector2):
 	"""
 	assert len(vector1) == len(vector2)
 	return abs(np.dot(vector1, vector2)) < (norm(vector1) * norm(vector2))
+
+####################################################################################################
+# Modification parsing
+
+def parse_hash_table_string(string_):
+	"""
+	In the hash_table classes, we store a string in the value giving both the extracted fragment 
+	as well as its modification type. This function parses that string to get the python objects. 
+
+	# if name is more than one word, underscores
+	>>> s = "decitala-Gajajhampa-r-2"
+	>>> parse_hash_table_string(s)
+	(<fragment.Decitala Gajajhampa>, ("r", 2.0))
+	"""
+	split = string_.split("-")
+	frag_type = split[0]
+	name = split[1]
+	mod_type = split[2]
+	mod_value = split[3]
+
+	if frag_type == "decitala":
+		if len(name.split("_")) == 1:
+			f = fragment.Decitala(name)
+	else:
+		if len(name.split("_")) == 1:
+			f = fragment.GreekFoot(name)
+
+	return (f, (mod_type, mod_value))
