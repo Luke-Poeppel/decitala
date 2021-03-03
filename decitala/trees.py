@@ -51,8 +51,6 @@ __all__ = [
 	"NaryTree",
 	"FragmentTree",
 	"filter_data",
-	"get_by_ql_array",
-	"rolling_search"
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))

@@ -24,6 +24,12 @@ from .utils import (
     frame_to_midi
 )
 
+__all__ = [
+	"get_by_ql_array",
+	"rolling_search",
+    "rolling_hash_search"
+]
+
 ####################################################################################################
 class SearchException(Exception):
 	pass
@@ -368,3 +374,24 @@ def rolling_search(
 
 # 	return fragments_found
 
+####################################################################################################
+# Hash table search method. 
+# def rolling_hash_search(
+# 	filename,
+# 	part_num,
+# 	table,
+#     allowed_modifications=[
+# 			"r", 
+# 			"rr", 
+# 			"d", 
+# 			"rd", 
+# 			"sr",
+# 			"rsr"
+# 	    ],
+#     windows=list(range(2, 19)),
+#     logger=None
+# )
+
+# Need a way to parse the string value. 
+# decitala_name_mod_val -> Decitala("Name"), mod=(...)
+# parse_hash_table_string
