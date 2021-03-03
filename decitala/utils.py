@@ -950,27 +950,40 @@ def cauchy_schwartz(vector1, vector2):
 	return abs(np.dot(vector1, vector2)) < (norm(vector1) * norm(vector2))
 
 ####################################################################################################
-# Modification parsing
-
+# Hash table string parsing
 def parse_hash_table_string(string_):
 	"""
 	In the hash_table classes, we store a string in the value giving both the extracted fragment 
 	as well as its modification type. This function parses that string to get the python objects. 
 
 	# if name is more than one word, underscores
-	>>> s = "decitala-Gajajhampa-r-2"
+	>>> s = "decitala-Gajajhampa-r:2"
 	>>> parse_hash_table_string(s)
-	(<fragment.Decitala 77_Gajajhampa>, ('r', '2'))
+	(<fragment.Decitala 77_Gajajhampa>, ('r', 2.0))
+	>>> parse_hash_table_string('decitala-30_Hamsanada-r:0.75_d:0.25')
+	(<fragment.Decitala 30_Hamsanada>, ('r_d', 0.75, 0.25))
 	"""
 	split = string_.split("-")
 	frag_type = split[0]
 	name = split[1]
-	mod_type = split[2]
-	mod_value = split[3]
+	mod_data = split[2]
+	mod_split = mod_data.split("_")
+	
+	if len(mod_split) == 1:
+		type_val_split = mod_split[0].split(":") 
+		mod_type = type_val_split[0]
+		mod_vals = (float(type_val_split[1]),)        
+	else:
+		mod_type = "_".join([mod_split[0][0], mod_split[1][0]])
+		mod_type_lst = []
+		for this_mod in mod_split:
+			type_val_split = this_mod.split(":")
+			mod_type_lst.append(type_val_split[1])
+		mod_vals = tuple([float(x) for x in mod_type_lst])
 
 	if frag_type == "decitala":
 		f = fragment.Decitala(name)
 	else:
 		f = fragment.GreekFoot(name)
 
-	return (f, (mod_type, mod_value))
+	return (f, (mod_type, *mod_vals))
