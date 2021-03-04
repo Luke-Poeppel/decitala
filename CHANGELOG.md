@@ -3,10 +3,10 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## ??
+## [v0.7.0] March 3, 2021 (NYC)
 ### Added
 - Implemented the Floyd-Warshall Algorithm for path-finding. 
-- WIP: Added a ``hash_table.py`` module for more efficient searching.
+- Added a ``hash_table.py`` module for more efficient searching. This is  used in ``search.rolling_hash_search``.
 - Added flake8 for maintaining PEP8 standards. Applied to setup.py, fragment.py, and utils.py. 
 - Added a `fragment_roll` function to `vis.py` (#62). 
 - Added a progress bar to `DBParser.model_full_path` to more easily track progress. 
