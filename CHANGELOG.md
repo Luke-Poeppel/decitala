@@ -3,7 +3,9 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.7.1] ???
+## [v0.7.1] March 3, 2021 (NYC)
+### Fixed
+- In enabling github actions, I hit several git/github snags. There was some commit message errors and bad merges. Hopefully everything is fixed now. 
 
 ## [v0.7.0] March 3, 2021 (NYC)
 ### Added
