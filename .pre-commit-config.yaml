@@ -2,5 +2,6 @@ repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks.git
   rev: v0.9.5
   hooks:
-  -  id: no-commit-to-branch
+  # -  id: no-commit-to-branch
   # -  id: flake8
+  -  id: pretty-format-json
