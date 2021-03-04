@@ -10,6 +10,7 @@
 from __future__ import division, print_function, unicode_literals
 
 import copy
+import json
 import numpy as np
 import os
 import re
@@ -47,6 +48,12 @@ class DecitalaException(FragmentException):
 
 class GreekFootException(FragmentException):
 	pass
+
+# Serialization
+class GeneralFragmentEncoder(json.JSONEncoder):
+	def default(self, obj):
+		if isinstance(obj, GeneralFragment):
+			return obj.name
 
 class GeneralFragment:
 	"""
