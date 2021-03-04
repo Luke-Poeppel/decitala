@@ -22,10 +22,8 @@ def cost(
 	"""
 	Cost function used in the Floyd-Warshall Algorithm. 
 
-	:param :obj:`~decitala.fragment.GeneralFragment` vertex_1: an object inheriting 
-		from :obj:`~decitala.fragment.GeneralFragment`
-	:param :obj:`~decitala.fragment.GeneralFragment` vertex_2: an object inheriting 
-		from :obj:`~decitala.fragment.GeneralFragment`
+	:param `~decitala.fragment.GeneralFragment` vertex_1: an object inheriting from :obj:`~decitala.fragment.GeneralFragment`.
+	:param `~decitala.fragment.GeneralFragment` vertex_2: an object inheriting from :obj:`~decitala.fragment.GeneralFragment`.
 	:param dict weights: weights used in the model. Must sum to 1. Requires "gap" and "onsets" values. 
 	:return: cost of moving from ``vertex_1`` to ``vertex_2``.
 	:rtype: float
@@ -42,7 +40,7 @@ def floyd_warshall(
 	"""
 	Calculates the distance and next matrices of the Floyd-Warshall path-finding algorithm.
 
-	:param list data: data from :obj:`~decitala.search.rolling_search``.
+	:param list data: data from :obj:`~decitala.search.rolling_search`.
 	:param dict weights: weights to be used in the cost function. Must sum to 1. Requires "gap" and "onsets" values.
 	:return: two matrices of size len(data) x len(data): first is the weighted adjacency matrix, the 
 			second is the matrix used for path reconstruction. 
