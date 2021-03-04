@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>decitala.path_finding.floyd_warshall &mdash; decitala 0.7.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/floyd_warshall.html">floyd_warshall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/pofp.html">pofp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/vis.html">vis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">decitala</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>decitala.path_finding.floyd_warshall</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for decitala.path_finding.floyd_warshall</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">####################################################################################################</span>
+<span class="c1"># File:     floyd_warshall.py</span>
+<span class="c1"># Purpose:  Implementation of the Floyd-Warshall Algorithm for path-finding. </span>
+<span class="c1"># </span>
+<span class="c1"># Author:   Luke Poeppel</span>
+<span class="c1">#</span>
+<span class="c1"># Location: NYC, 2021</span>
+<span class="c1">####################################################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Implementation of the Floyd-Warshall Algorithm (path of minimal cost). </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">progress.bar</span> <span class="kn">import</span> <span class="n">Bar</span>
+
+<div class="viewcode-block" id="cost"><a class="viewcode-back" href="../../../mods/floyd_warshall.html#decitala.path_finding.floyd_warshall.cost">[docs]</a><span class="k">def</span> <span class="nf">cost</span><span class="p">(</span>
+		<span class="n">vertex_1</span><span class="p">,</span> 
+		<span class="n">vertex_2</span><span class="p">,</span> 
+		<span class="n">weights</span>
+	<span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Cost function used in the Floyd-Warshall Algorithm. </span>
+
+<span class="sd">	:param `~decitala.fragment.GeneralFragment` vertex_1: an object inheriting from :obj:`~decitala.fragment.GeneralFragment`.</span>
+<span class="sd">	:param `~decitala.fragment.GeneralFragment` vertex_2: an object inheriting from :obj:`~decitala.fragment.GeneralFragment`.</span>
+<span class="sd">	:param dict weights: weights used in the model. Must sum to 1. Requires &quot;gap&quot; and &quot;onsets&quot; values. </span>
+<span class="sd">	:return: cost of moving from ``vertex_1`` to ``vertex_2``.</span>
+<span class="sd">	:rtype: float</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">gap</span> <span class="o">=</span> <span class="n">vertex_2</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">vertex_1</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+	<span class="n">onsets</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">vertex_1</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">num_onsets</span> <span class="o">+</span> <span class="n">vertex_2</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">num_onsets</span><span class="p">)</span>
+	<span class="n">cost</span> <span class="o">=</span> <span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">gap</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="s2">&quot;onsets&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">onsets</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">cost</span></div>
+
+<div class="viewcode-block" id="floyd_warshall"><a class="viewcode-back" href="../../../mods/floyd_warshall.html#decitala.path_finding.floyd_warshall.floyd_warshall">[docs]</a><span class="k">def</span> <span class="nf">floyd_warshall</span><span class="p">(</span>
+		<span class="n">data</span><span class="p">,</span> 
+		<span class="n">weights</span>
+	<span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Calculates the distance and next matrices of the Floyd-Warshall path-finding algorithm.</span>
+
+<span class="sd">	:param list data: data from :obj:`~decitala.search.rolling_search`.</span>
+<span class="sd">	:param dict weights: weights to be used in the cost function. Must sum to 1. Requires &quot;gap&quot; and &quot;onsets&quot; values.</span>
+<span class="sd">	:return: two matrices of size len(data) x len(data): first is the weighted adjacency matrix, the </span>
+<span class="sd">			second is the matrix used for path reconstruction. </span>
+<span class="sd">	:rtype: tuple</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">dist_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+	<span class="n">next_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+	<span class="n">iterator</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nditer</span><span class="p">(</span>
+		<span class="p">[</span><span class="n">dist_matrix</span><span class="p">,</span> <span class="n">next_matrix</span><span class="p">],</span> 
+		<span class="n">flags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;multi_index&#39;</span><span class="p">,</span> <span class="s1">&#39;refs_ok&#39;</span><span class="p">],</span> 
+		<span class="n">op_flags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;readwrite&#39;</span><span class="p">],</span>
+	<span class="p">)</span>
+	<span class="k">while</span> <span class="ow">not</span> <span class="n">iterator</span><span class="o">.</span><span class="n">finished</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+			<span class="n">dist_matrix</span><span class="p">[</span><span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="n">next_matrix</span><span class="p">[</span><span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+		<span class="k">elif</span> <span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+			<span class="n">dist_matrix</span><span class="p">[</span><span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">index_1</span> <span class="o">=</span> <span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="n">index_2</span> <span class="o">=</span> <span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">cost_</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">index_1</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">index_2</span><span class="p">],</span> <span class="n">weights</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">cost_</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">dist_matrix</span><span class="p">[</span><span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+				<span class="n">next_matrix</span><span class="p">[</span><span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">dist_matrix</span><span class="p">[</span><span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">cost_</span>
+				<span class="n">next_matrix</span><span class="p">[</span><span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">iterator</span><span class="o">.</span><span class="n">multi_index</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+		<span class="n">iterator</span><span class="o">.</span><span class="n">iternext</span><span class="p">()</span>
+	
+	<span class="c1">#with Bar(&quot;Building matrices...&quot;, max=len(data), check_tty=False, hide_cursor=False) as bar:</span>
+	<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+			<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+				<span class="k">if</span> <span class="n">dist_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">dist_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">dist_matrix</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">]:</span>
+					<span class="n">dist_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">dist_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">dist_matrix</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+					<span class="n">next_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">next_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
+		<span class="c1">#bar.next()</span>
+	
+	<span class="k">return</span> <span class="n">dist_matrix</span><span class="p">,</span> <span class="n">next_matrix</span></div>
+
+<div class="viewcode-block" id="get_path"><a class="viewcode-back" href="../../../mods/floyd_warshall.html#decitala.path_finding.floyd_warshall.get_path">[docs]</a><span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">next_matrix</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for retriving the best path extracted from :obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.</span>
+
+<span class="sd">	:param :obj:`~decitala.fragment.GeneralFragment` start: starting fragment in the path.</span>
+<span class="sd">	:param :obj:`~decitala.fragment.GeneralFragment` end: ending fragment in the path.</span>
+<span class="sd">	:param numpy.array next_matrix: second matrix from :obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.</span>
+<span class="sd">	:param list data: data from :obj:`~decitala.search.rolling_search``.</span>
+<span class="sd">	:return: best path extracted using the Floyd-Warshall algorithm.</span>
+<span class="sd">	:rtype: list</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="n">start</span><span class="p">]</span>
+	<span class="k">while</span> <span class="n">start</span> <span class="o">!=</span> <span class="n">end</span><span class="p">:</span>
+		<span class="n">start_index</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">index</span> <span class="k">for</span> <span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">start</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]),</span> <span class="kc">None</span><span class="p">)</span>
+		<span class="n">end_index</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">index</span> <span class="k">for</span> <span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">end</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]),</span> <span class="kc">None</span><span class="p">)</span>
+		<span class="n">start</span> <span class="o">=</span> <span class="n">next_matrix</span><span class="p">[</span><span class="n">start_index</span><span class="p">][</span><span class="n">end_index</span><span class="p">]</span>
+		<span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">path</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Luke Poeppel.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

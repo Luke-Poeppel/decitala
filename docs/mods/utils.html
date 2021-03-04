@@ -1,0 +1,736 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>utils &mdash; decitala 0.7.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="vis" href="vis.html" />
+    <link rel="prev" title="trees" href="trees.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="floyd_warshall.html">floyd_warshall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trees.html">trees</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vis.html">vis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">decitala</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/mods/utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-decitala.utils">
+<span id="utils"></span><h1>utils<a class="headerlink" href="#module-decitala.utils" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="decitala.utils.carnatic_string_to_ql_array">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">carnatic_string_to_ql_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string_</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#carnatic_string_to_ql_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.carnatic_string_to_ql_array" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>string</strong> (<em>str</em>) – string of carnatic durations separated by spaces.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>input string converted to a quarter length array.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">carnatic_string_to_ql_array</span><span class="p">(</span><span class="s1">&#39;oc o | | Sc S o o o&#39;</span><span class="p">)</span>
+<span class="go">array([0.375, 0.25 , 0.5  , 0.5  , 1.5  , 1.   , 0.25 , 0.25 , 0.25 ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.ql_array_to_carnatic_string">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">ql_array_to_carnatic_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ql_array</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#ql_array_to_carnatic_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.ql_array_to_carnatic_string" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ql_array</strong> (<em>iterable</em>) – quarter length array.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>quarter length array converted to carnatic notation.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ql_array_to_carnatic_string</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="go">&#39;| o o oc S Sc S | S&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.ql_array_to_greek_diacritics">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">ql_array_to_greek_diacritics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ql_array</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#ql_array_to_greek_diacritics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.ql_array_to_greek_diacritics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the input <code class="docutils literal notranslate"><span class="pre">ql_array</span></code> in greek prosodic notation. This notation only allows
+for two types of rhythmic values (long &amp; short).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ql_array</strong> (<em>iterable</em>) – quarter length array.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>quarter length array converted to greek prosodic notation.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ql_array_to_greek_diacritics</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="go">&#39;–– ⏑ ⏑ –– –– ⏑&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.augment">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">augment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fragment</span></em>, <em class="sig-param"><span class="n">factor</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">difference</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#augment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.augment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an augmentation in the style of Messiaen. If difference is set to 0.0, then the
+augmentation is multiplicative. If factor is set to 1.0, then augmentation is additive. If
+factor &amp; difference are non-zero, we have a mixed augmentation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fragment</strong> (<em>numpy.array</em>) – array defining the rhythmic fragment.</p></li>
+<li><p><strong>factor</strong> (<em>float</em>) – factor for multiplicative augmentation.</p></li>
+<li><p><strong>difference</strong> (<em>float</em>) – factor for additive augmentation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>an augmented fragment.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">augment</span><span class="p">(</span><span class="n">fragment</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span> <span class="n">factor</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="go">array([2.25, 2.25, 1.25, 0.75])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.successive_ratio_array">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">successive_ratio_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fragment</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#successive_ratio_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.successive_ratio_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns array defined by the ratio of successive elements. By convention,
+we set the first value to 1.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fragment</strong> (<em>numpy.array</em>) – array defining a rhythmic fragment.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>array consisting of successive ratios of the input elements.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">successive_ratio_array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="go">array([1.  , 1.  , 2.  , 0.25, 1.  , 0.5 , 4.  ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.successive_difference_array">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">successive_difference_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fragment</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#successive_difference_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.successive_difference_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the first order difference of <code class="docutils literal notranslate"><span class="pre">fragment</span></code> (contiguous differences).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fragment</strong> (<em>numpy.array</em>) – array defining a rhythmic fragment.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>array consisting of successive differences of the input elements.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">successive_difference_array</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">])</span>
+<span class="go">array([ 0.  ,  0.  ,  0.5 ,  0.  , -0.25,  0.5 ,  0.5 ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.find_clusters">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">find_clusters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_</span></em>, <em class="sig-param"><span class="n">data_mode</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#find_clusters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.find_clusters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds the regions with consecutive equal elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> (<em>iterable</em>) – either a list/array (representing
+<a class="reference internal" href="fragment.html#decitala.fragment.GeneralFragment.ql_array" title="decitala.fragment.GeneralFragment.ql_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ql_array</span></code></a>) or data from
+<a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p></li>
+<li><p><strong>data_mode</strong> (<em>bool</em>) – whether or not the input data is a quarter length array or data from
+<a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a list of cluster indices; if not in data mode, regions with equal quarter length values;
+if <code class="docutils literal notranslate"><span class="pre">data_mode=True</span></code>, then regions where the quarter lengths and pitch content are equal.</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">varied_ragavardhana</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clusters</span> <span class="o">=</span> <span class="n">find_clusters</span><span class="p">(</span><span class="n">varied_ragavardhana</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clusters</span>
+<span class="go">[[0, 2], [4, 5], [7, 9]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">varied_ragavardhana</span><span class="p">[</span><span class="n">clusters</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span><span class="n">clusters</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">array([1., 1., 1.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">varied_ragavardhana</span><span class="p">[</span><span class="n">clusters</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span><span class="n">clusters</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">array([0.75, 0.75])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">varied_ragavardhana</span><span class="p">[</span><span class="n">clusters</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span><span class="n">clusters</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+<span class="go">array([0.25, 0.25, 0.25])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># We can also find clusters of pitch and rhythmic information for data from get_object_indices.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span><span class="p">,</span> <span class="n">chord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example_data</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;F#&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">6.5</span><span class="p">,</span> <span class="mf">6.75</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">6.75</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C#&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.25</span><span class="p">,</span> <span class="mf">7.5</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.5</span><span class="p">,</span> <span class="mf">7.75</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.75</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A-&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">8.125</span><span class="p">)),</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">find_clusters</span><span class="p">(</span><span class="n">example_data</span><span class="p">,</span> <span class="n">data_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">[[1, 2], [4, 5]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example_data2</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;F#2&quot;</span><span class="p">,</span> <span class="s2">&quot;F3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;F#2&quot;</span><span class="p">,</span> <span class="s2">&quot;F3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;F#2&quot;</span><span class="p">,</span> <span class="s2">&quot;F3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;E-3&quot;</span><span class="p">,</span> <span class="s2">&quot;D4&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.375</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;A2&quot;</span><span class="p">,</span> <span class="s2">&quot;A-3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">)),</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">find_clusters</span><span class="p">(</span><span class="n">example_data2</span><span class="p">,</span> <span class="n">data_mode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">[[0, 2]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.find_possible_superdivisions">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">find_possible_superdivisions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#find_possible_superdivisions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.find_possible_superdivisions" title="Permalink to this definition">¶</a></dt>
+<dd><p>There is a more general approach to the subdivision problem, but we note that Messiaen’s
+subdivision of tala components tends to be even.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">varied_ragavardhana</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">find_possible_superdivisions</span><span class="p">(</span><span class="n">varied_ragavardhana</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">[1.   1.   1.   0.5  0.75 0.5 ]</span>
+<span class="go">[3.   0.5  0.75 0.5 ]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">varied_ragavardhana_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">find_possible_superdivisions</span><span class="p">(</span><span class="n">varied_ragavardhana_2</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">[1.   1.   1.   0.5  0.75 0.75 0.5  0.25 0.25 0.25]</span>
+<span class="go">[3.   0.5  0.75 0.75 0.5  0.25 0.25 0.25]</span>
+<span class="go">[1.   1.   1.   0.5  1.5  0.5  0.25 0.25 0.25]</span>
+<span class="go">[1.   1.   1.   0.5  0.75 0.75 0.5  0.75]</span>
+<span class="go">[3.   0.5  1.5  0.5  0.25 0.25 0.25]</span>
+<span class="go">[3.   0.5  0.75 0.75 0.5  0.75]</span>
+<span class="go">[1.   1.   1.   0.5  1.5  0.5  0.75]</span>
+<span class="go">[3.   0.5  1.5  0.5  0.75]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.roll_window">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">roll_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array</span></em>, <em class="sig-param"><span class="n">window_length</span></em>, <em class="sig-param"><span class="n">fn</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#roll_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.roll_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes in a list and returns a numpy vstack holding rolling windows of length <code class="docutils literal notranslate"><span class="pre">window_length</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>array</strong> (<em>numpy.array</em>) – an iterable</p></li>
+<li><p><strong>window_length</strong> (<em>int</em>) – size of the window</p></li>
+<li><p><strong>fn</strong> (<em>lambda</em>) – function evaluating a bool.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>rolling windows of array, each of length <cite>window_length</cite>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.vstack</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">composers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;Mozart&#39;</span><span class="p">,</span> <span class="s1">&#39;Monteverdi&#39;</span><span class="p">,</span> <span class="s1">&#39;Messiaen&#39;</span><span class="p">,</span> <span class="s1">&#39;Mahler&#39;</span><span class="p">,</span> <span class="s1">&#39;MacDowell&#39;</span><span class="p">,</span> <span class="s1">&#39;Massenet&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">composers</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+<span class="go">(&#39;Mozart&#39;, &#39;Monteverdi&#39;, &#39;Messiaen&#39;)</span>
+<span class="go">(&#39;Monteverdi&#39;, &#39;Messiaen&#39;, &#39;Mahler&#39;)</span>
+<span class="go">(&#39;Messiaen&#39;, &#39;Mahler&#39;, &#39;MacDowell&#39;)</span>
+<span class="go">(&#39;Mahler&#39;, &#39;MacDowell&#39;, &#39;Massenet&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This function also allows the use of a function input for filtering.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Say we wanted to iterate over the elements of the following collection that have</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># 1s in the set.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cseg_data</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">}]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">cseg_data</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+<span class="go">([0, {1, -1}], [4, {1}], [5, {1}])</span>
+<span class="go">([4, {1}], [5, {1}], [5, {1}])</span>
+<span class="go">([5, {1}], [5, {1}], [1, {1, -1}])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.power_list">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">power_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#power_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.power_list" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – an iterable</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>power set of the data as a list (excluding the empty list).</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">power_list</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+<span class="go">[(1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">power_list</span><span class="p">([(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">),</span> <span class="p">(</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">)]):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">((0.0, 2.0),)</span>
+<span class="go">((4.0, 5.5),)</span>
+<span class="go">((6.0, 7.25),)</span>
+<span class="go">((0.0, 2.0), (4.0, 5.5))</span>
+<span class="go">((0.0, 2.0), (6.0, 7.25))</span>
+<span class="go">((4.0, 5.5), (6.0, 7.25))</span>
+<span class="go">((0.0, 2.0), (4.0, 5.5), (6.0, 7.25))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.get_object_indices">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">get_object_indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part_num</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#get_object_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.get_object_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns data of the form [(object, (start, end)), …] for a given file path and part number.
+(Supports rests and grace notes.)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.contiguous_summation">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">contiguous_summation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#contiguous_summation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.contiguous_summation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given some <code class="docutils literal notranslate"><span class="pre">data</span></code> from <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>, finds every location
+where the pitch and rhythmic material are contiguously equal and sums these regions.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span><span class="p">,</span> <span class="n">chord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example_data</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;F#&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">6.5</span><span class="p">,</span> <span class="mf">6.75</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">6.75</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">7.25</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;C#&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.25</span><span class="p">,</span> <span class="mf">7.5</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.5</span><span class="p">,</span> <span class="mf">7.75</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">7.75</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A-&quot;</span><span class="p">),</span> <span class="p">(</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">8.125</span><span class="p">)),</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_object</span> <span class="ow">in</span> <span class="n">contiguous_summation</span><span class="p">(</span><span class="n">example_data</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">this_object</span><span class="p">)</span>
+<span class="go">(&lt;music21.note.Note F#&gt;, (6.5, 6.75))</span>
+<span class="go">(&lt;music21.note.Note G&gt;, (6.75, 7.25))</span>
+<span class="go">(&lt;music21.note.Note C#&gt;, (7.25, 7.5))</span>
+<span class="go">(&lt;music21.note.Note G&gt;, (7.5, 8.0))</span>
+<span class="go">(&lt;music21.note.Note A-&gt;, (8.0, 8.125))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Also works with chords.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example_data2</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;F#2&quot;</span><span class="p">,</span> <span class="s2">&quot;F3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;F#2&quot;</span><span class="p">,</span> <span class="s2">&quot;F3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;F#2&quot;</span><span class="p">,</span> <span class="s2">&quot;F3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;E-3&quot;</span><span class="p">,</span> <span class="s2">&quot;D4&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.375</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">chord</span><span class="o">.</span><span class="n">Chord</span><span class="p">([</span><span class="s2">&quot;A2&quot;</span><span class="p">,</span> <span class="s2">&quot;A-3&quot;</span><span class="p">],</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">)),</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sum_search</span> <span class="o">=</span> <span class="n">contiguous_summation</span><span class="p">(</span><span class="n">example_data2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_object</span> <span class="ow">in</span> <span class="n">sum_search</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">this_object</span><span class="p">)</span>
+<span class="go">(&lt;music21.chord.Chord F#2 F3&gt;, (0.0, 0.375))</span>
+<span class="go">(&lt;music21.chord.Chord E-3 D4&gt;, (0.375, 0.5))</span>
+<span class="go">(&lt;music21.chord.Chord A2 A-3&gt;, (0.5, 0.75))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># The quarter lengths of the objects change according to the new summation.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_object</span> <span class="ow">in</span> <span class="n">sum_search</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">this_object</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)</span>
+<span class="go">0.375</span>
+<span class="go">0.125</span>
+<span class="go">0.25</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.frame_to_ql_array">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">frame_to_ql_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#frame_to_ql_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.frame_to_ql_array" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>frame</strong> (<em>list</em>) – frame of data from <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy array holding the associated quarter length of a given window.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_frame</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B-&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.125</span><span class="p">,</span> <span class="mf">4.25</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.25</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">4.625</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B-&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.625</span><span class="p">,</span> <span class="mf">4.75</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.75</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.25</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">5.25</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame_to_ql_array</span><span class="p">(</span><span class="n">my_frame</span><span class="p">)</span>
+<span class="go">array([0.125, 0.25 , 0.125, 0.125, 0.25 , 0.25 , 0.25 ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.frame_to_midi">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">frame_to_midi</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame</span></em>, <em class="sig-param"><span class="n">ignore_graces</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#frame_to_midi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.frame_to_midi" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>frame</strong> (<em>list</em>) – frame of data from <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy array holding the pitches within the frame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_frame</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B-&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.125</span><span class="p">,</span> <span class="mf">4.25</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.25</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">4.625</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B-&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.625</span><span class="p">,</span> <span class="mf">4.75</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.75</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.25</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">5.25</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame_to_midi</span><span class="p">(</span><span class="n">my_frame</span><span class="p">)</span>
+<span class="go">[(70,), (69,), (71,), (70,), (69,), (67,), (67,)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.frame_is_spanned_by_slur">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">frame_is_spanned_by_slur</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#frame_is_spanned_by_slur"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.frame_is_spanned_by_slur" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>frame</strong> (<em>list</em>) – frame from <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>whether or not the frame is spanned by a music21.spanner.Slur object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.filter_single_anga_class_fragments">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">filter_single_anga_class_fragments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#filter_single_anga_class_fragments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.filter_single_anga_class_fragments" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – data from <code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_search</span></code>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>data from the input with all single-anga-class talas removed. For information on anga-class, see:
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">num_anga_classes</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.fragment</span> <span class="kn">import</span> <span class="n">GreekFoot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span><span class="p">{</span><span class="s1">&#39;fragment&#39;</span><span class="p">:</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Spondee&quot;</span><span class="p">),</span> <span class="s1">&#39;mod&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">),</span> <span class="s1">&#39;onset_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="s1">&#39;is_spanned_by_slur&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;pitch_content&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">80</span><span class="p">,),</span> <span class="p">(</span><span class="mi">91</span><span class="p">,)]},</span>  <span class="c1"># noqa: E501</span>
+<span class="gp">... </span><span class="p">{</span><span class="s1">&#39;fragment&#39;</span><span class="p">:</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Trochee&quot;</span><span class="p">),</span> <span class="s1">&#39;mod&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">),</span> <span class="s1">&#39;onset_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.625</span><span class="p">),</span> <span class="s1">&#39;is_spanned_by_slur&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;pitch_content&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">91</span><span class="p">,),</span> <span class="p">(</span><span class="mi">78</span><span class="p">,)]},</span>
+<span class="gp">... </span><span class="p">{</span><span class="s1">&#39;fragment&#39;</span><span class="p">:</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Spondee&quot;</span><span class="p">),</span> <span class="s1">&#39;mod&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="mf">0.0625</span><span class="p">),</span> <span class="s1">&#39;onset_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">),</span> <span class="s1">&#39;is_spanned_by_slur&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;pitch_content&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">78</span><span class="p">,),</span> <span class="p">(</span><span class="mi">85</span><span class="p">,)]},</span>
+<span class="gp">... </span><span class="p">{</span><span class="s1">&#39;fragment&#39;</span><span class="p">:</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">),</span> <span class="s1">&#39;mod&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">),</span> <span class="s1">&#39;onset_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.625</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="s1">&#39;is_spanned_by_slur&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;pitch_content&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">85</span><span class="p">,),</span> <span class="p">(</span><span class="mi">93</span><span class="p">,)]},</span>
+<span class="gp">... </span><span class="p">{</span><span class="s1">&#39;fragment&#39;</span><span class="p">:</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Spondee&quot;</span><span class="p">),</span> <span class="s1">&#39;mod&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">),</span> <span class="s1">&#39;onset_range&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">),</span> <span class="s1">&#39;is_spanned_by_slur&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;pitch_content&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">93</span><span class="p">,),</span> <span class="p">(</span><span class="mi">91</span><span class="p">,)]}</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filtered</span> <span class="o">=</span> <span class="n">filter_single_anga_class_fragments</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">filtered</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Trochee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,)]}</span>
+<span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Iamb&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.625, 1.0), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(85,), (93,)]}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.filter_sub_fragments">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">filter_sub_fragments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">filter_in_retrograde</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#filter_sub_fragments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.filter_sub_fragments" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – data from <code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_search</span></code>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>data from the input with all sub-talas removed; that is, talas that sit inside of another.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.pitch_content_to_contour">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">pitch_content_to_contour</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pitch_content</span></em>, <em class="sig-param"><span class="n">as_str</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#pitch_content_to_contour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.pitch_content_to_contour" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function calculates the pitch contour information from data out of rolling_search.
+This function assumes the data is monophonic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pitch_content</strong> (<em>list</em>) – pitch content from the output of rolling_search.”</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pc</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">80</span><span class="p">,),</span> <span class="p">(</span><span class="mi">91</span><span class="p">,),</span> <span class="p">(</span><span class="mi">78</span><span class="p">,),</span> <span class="p">(</span><span class="mi">85</span><span class="p">,)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">pc</span><span class="p">)</span>
+<span class="go">array([1, 3, 0, 2])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pc2</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">80</span><span class="p">,),</span> <span class="p">(</span><span class="mi">84</span><span class="p">,),</span> <span class="p">(</span><span class="mi">84</span><span class="p">,)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">pc2</span><span class="p">)</span>
+<span class="go">array([0, 1, 1])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.contour_to_prime_contour">
+<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">contour_to_prime_contour</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">contour</span></em>, <em class="sig-param"><span class="n">include_depth</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#contour_to_prime_contour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.contour_to_prime_contour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implementation of Morris’ 1993 Contour-Reduction algorithm. “The algorithm prunes pitches
+from a contour until it is reduced to a prime.” The loop runs until all elements
+are flagged as maxima or minima.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>contour</strong> (<em>np.array</em>) – contour input</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">contour_a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour_a</span><span class="p">)</span>
+<span class="go">array([0, 1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour_b</span><span class="p">,</span> <span class="n">include_depth</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">array([0, 2, 1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_c</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour_c</span><span class="p">,</span> <span class="n">include_depth</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">array([1, 0, 2])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_d</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour_d</span><span class="p">,</span> <span class="n">include_depth</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">array([0, 1, 1])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="vis.html" class="btn btn-neutral float-right" title="vis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="trees.html" class="btn btn-neutral float-left" title="trees" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Luke Poeppel.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

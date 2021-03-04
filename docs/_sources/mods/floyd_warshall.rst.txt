@@ -1,0 +1,7 @@
+==============
+floyd_warshall
+==============
+.. automodule:: decitala.path_finding.floyd_warshall
+   :members:
+   :member-order: bysource
+   :show-inheritance:

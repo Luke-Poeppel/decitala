@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Decitala Documentation &mdash; decitala 0.6.3 documentation</title>
+  <title>Decitala Documentation &mdash; decitala 0.7.0 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="database.py" href="database.html" /> 
+    <link rel="next" title="database" href="mods/database.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.6.3
+                0.7.0
               </div>
             
           
@@ -90,17 +90,19 @@
             
               <p class="caption"><span class="caption-text">Modules</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trees.html">trees.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">utils.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vis.html">vis.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/floyd_warshall.html">floyd_warshall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/pofp.html">pofp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/vis.html">vis</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="decitalas.html">Desītālas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="greek_metrics.html">Greek Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets/greek_metrics.html">Greek Metrics</a></li>
 </ul>
 
             
@@ -171,30 +173,90 @@
   <div class="section" id="decitala-documentation">
 <h1>Decitala Documentation<a class="headerlink" href="#decitala-documentation" title="Permalink to this headline">¶</a></h1>
 <p>Tools for automating ethnological rhythmic analysis of Olivier Messiaen’s music. The basic
-pipeline used in this package is Search → Path Finding (Database Creation) → Path Ranking → Analysis.</p>
+pipeline used in this package is Search →→ Path Finding →→ Analysis.</p>
 <p>The version of the <code class="docutils literal notranslate"><span class="pre">decitala</span></code> package can be found with <code class="docutils literal notranslate"><span class="pre">decitala</span> <span class="pre">--version</span></code>.</p>
+</div>
+<div class="section" id="rhythmic-manipulation">
+<h1>Rhythmic Manipulation<a class="headerlink" href="#rhythmic-manipulation" title="Permalink to this headline">¶</a></h1>
+<p>Messiaen often altered rhythmic fragments from the decitala database before including
+them in his composition. But he still establishes a kind of equivalence relation such that
+a fragment <span class="math notranslate nohighlight">\(F\)</span> and a transformed fragment <span class="math notranslate nohighlight">\(T(F)\)</span> are equivalent if there
+exists a special kind (and highly specified) transformation between them. These possible
+transformations include multiplicative augmentation, additive augmentation, mixed augmentation,
+flips into retrograde, and subdivision. Using a n-ary tree-based algorithm, we can
+efficiently search for such modification.</p>
+<p>We define the following representations of a rhythm (see X for the implementation):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 81%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Corresponding Search</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">r</span></code></p></td>
+<td><p>ratio</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rr</span></code></p></td>
+<td><p>retrograde-ratio</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">d</span></code></p></td>
+<td><p>difference</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rd</span></code></p></td>
+<td><p>retrograde-difference</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sr</span></code></p></td>
+<td><p>subdivision-ratio</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rsr</span></code></p></td>
+<td><p>retrograde-subdivision-ratio</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sd</span></code></p></td>
+<td><p>subdivision-difference</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rsd</span></code></p></td>
+<td><p>retrograde-subdivision-difference</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
 <p>Coming soon!</p>
+</div>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic simple" start="0">
+<li><p>Navigate to home directory with <code class="docutils literal notranslate"><span class="pre">cd</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/Luke-Poeppel/decitala</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">decitala</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">install</span></code></p></li>
+</ol>
 <div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Modules</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="database.html">database.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trees.html">trees.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">utils.py</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vis.html">vis.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/floyd_warshall.html">floyd_warshall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/pofp.html">pofp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/vis.html">vis</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="decitalas.html">Desītālas</a></li>
-<li class="toctree-l1"><a class="reference internal" href="greek_metrics.html">Greek Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets/greek_metrics.html">Greek Metrics</a></li>
 </ul>
 </div>
 </div>
@@ -213,7 +275,7 @@ pipeline used in this package is Search → Path Finding (Database Creation) →
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="database.html" class="btn btn-neutral float-right" title="database.py" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mods/database.html" class="btn btn-neutral float-right" title="database" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

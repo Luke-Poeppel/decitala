@@ -1,6 +1,6 @@
-===========
-fragment.py
-===========
+========
+fragment
+========
 .. automodule:: decitala.fragment
    :members:
    :member-order: bysource

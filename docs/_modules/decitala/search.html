@@ -1,0 +1,650 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>decitala.search &mdash; decitala 0.7.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/floyd_warshall.html">floyd_warshall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/pofp.html">pofp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/vis.html">vis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">decitala</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>decitala.search</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for decitala.search</h1><div class="highlight"><pre>
+<span></span><span class="c1">####################################################################################################</span>
+<span class="c1"># File:     search.py</span>
+<span class="c1"># Purpose:  Search algorithms.</span>
+<span class="c1"># </span>
+<span class="c1"># Author:   Luke Poeppel</span>
+<span class="c1">#</span>
+<span class="c1"># Location: NYC, 2021</span>
+<span class="c1">####################################################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Search algorithms.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.trees</span> <span class="kn">import</span> <span class="n">FragmentTree</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">successive_ratio_array</span><span class="p">,</span> 
+    <span class="n">successive_difference_array</span><span class="p">,</span>
+    <span class="n">find_possible_superdivisions</span><span class="p">,</span>
+    <span class="n">get_object_indices</span><span class="p">,</span>
+    <span class="n">roll_window</span><span class="p">,</span>
+    <span class="n">frame_to_ql_array</span><span class="p">,</span>
+    <span class="n">frame_is_spanned_by_slur</span><span class="p">,</span>
+    <span class="n">contiguous_summation</span><span class="p">,</span>
+    <span class="n">frame_to_midi</span><span class="p">,</span>
+	<span class="n">parse_hash_table_string</span>
+<span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+	<span class="s2">&quot;get_by_ql_array&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;rolling_search&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rolling_hash_search&quot;</span>
+<span class="p">]</span>
+
+<span class="c1">####################################################################################################</span>
+<span class="k">class</span> <span class="nc">SearchException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+	<span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">_SearchConfig</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;Helper class for managing relationship between search ql_arrays and search trees.&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ql_array</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">difference_tree</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">modifications</span><span class="o">=</span><span class="p">[]):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span> <span class="o">=</span> <span class="n">ql_array</span>
+		
+		<span class="k">if</span> <span class="n">ratio_tree</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">difference_tree</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">SearchException</span><span class="p">(</span><span class="s2">&quot;You need to provide at least one tree.&quot;</span><span class="p">)</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">ratio_tree</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">difference_tree</span>
+
+		<span class="c1"># Check agreement between provided FragmentTree(s) and provided modifications.</span>
+		<span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">modifications</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">({</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="s2">&quot;rr&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="s2">&quot;rd&quot;</span><span class="p">,</span> <span class="s2">&quot;sr&quot;</span><span class="p">,</span> <span class="s2">&quot;rsr&quot;</span><span class="p">}),</span> <span class="n">SearchException</span><span class="p">(</span><span class="s2">&quot;Current supported searches are r, rr, d, rd, sr, rsr.&quot;</span><span class="p">)</span>
+		<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">modifications</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">modifications</span><span class="p">),</span> <span class="n">SearchException</span><span class="p">(</span><span class="s2">&quot;You have a duplicate element in your allowed modifications.&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">modifications</span> <span class="o">=</span> <span class="n">modifications</span>
+
+		<span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modifications</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">({</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="s2">&quot;rr&quot;</span><span class="p">,</span> <span class="s2">&quot;sr&quot;</span><span class="p">,</span> <span class="s2">&quot;rsr&quot;</span><span class="p">}))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ratio_tree</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">SearchException</span><span class="p">(</span><span class="s2">&quot;You did not provide a ratio FragmentTree.&quot;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modifications</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">({</span><span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="s2">&quot;rd&quot;</span><span class="p">}))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">difference_tree</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">SearchException</span><span class="p">(</span><span class="s2">&quot;You did not provide a difference FragmentTree.&quot;</span><span class="p">)</span> 
+
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="s2">&quot;&lt;_SearchConfig: </span><span class="si">{}</span><span class="s2">&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modifications</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modification</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">modification</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modifications</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">Exceptions</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{0}</span><span class="s2">&#39; is not in &#39;</span><span class="si">{1}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">modification</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">modifications</span><span class="p">))</span>
+	
+		<span class="n">retrograde</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		
+		<span class="n">ratio_array</span> <span class="o">=</span> <span class="n">successive_ratio_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">)</span>
+		<span class="n">difference_array</span> <span class="o">=</span> <span class="n">successive_difference_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">)</span>
+		<span class="n">retrograde_ratio_array</span> <span class="o">=</span> <span class="n">successive_ratio_array</span><span class="p">(</span><span class="n">retrograde</span><span class="p">)</span>
+		<span class="n">retrograde_difference_array</span> <span class="o">=</span> <span class="n">successive_difference_array</span><span class="p">(</span><span class="n">retrograde</span><span class="p">)</span>
+		
+		<span class="n">all_superdivisions</span> <span class="o">=</span> <span class="n">find_possible_superdivisions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">)</span>
+		<span class="n">superdivisions_ratio</span> <span class="o">=</span> <span class="p">[</span><span class="n">successive_ratio_array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_superdivisions</span><span class="p">]</span>
+		<span class="n">retrograde_superdivisions_pre</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_superdivisions</span><span class="p">]</span>
+		<span class="n">retrograde_superdivisions_ratio</span> <span class="o">=</span> <span class="p">[</span><span class="n">successive_ratio_array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">retrograde_superdivisions_pre</span><span class="p">]</span>
+
+		<span class="k">if</span> <span class="n">modification</span> <span class="o">==</span> <span class="s2">&quot;r&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_tree</span><span class="p">,</span> <span class="n">ratio_array</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">modification</span> <span class="o">==</span> <span class="s2">&quot;rr&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_tree</span><span class="p">,</span> <span class="n">retrograde_ratio_array</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">modification</span> <span class="o">==</span> <span class="s2">&quot;d&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">difference_tree</span><span class="p">,</span> <span class="n">difference_array</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">modification</span> <span class="o">==</span> <span class="s2">&quot;rd&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">difference_tree</span><span class="p">,</span> <span class="n">retrograde_difference_array</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">modification</span> <span class="o">==</span> <span class="s2">&quot;sr&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_tree</span><span class="p">,</span> <span class="n">superdivisions_ratio</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="c1"># exclude original </span>
+		<span class="k">elif</span> <span class="n">modification</span> <span class="o">==</span> <span class="s2">&quot;rsr&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ratio_tree</span><span class="p">,</span> <span class="n">retrograde_superdivisions_ratio</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="c1"># exclude original</span>
+
+	<span class="k">def</span> <span class="nf">_get_modification_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">found_fragment</span><span class="p">,</span> <span class="n">modification</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Helper function for retrieving the modifier between the input &amp; founds fragments.&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">modification</span> <span class="o">==</span> <span class="s2">&quot;r&quot;</span><span class="p">:</span>
+			<span class="n">ratio</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">found_fragment</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+			<span class="k">return</span> <span class="p">(</span><span class="n">modification</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">modification</span> <span class="o">==</span> <span class="s2">&quot;rr&quot;</span><span class="p">:</span>
+			<span class="n">flipped</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">ratio</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">flipped</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">found_fragment</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+			<span class="k">return</span> <span class="p">(</span><span class="n">modification</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">modification</span> <span class="o">==</span> <span class="s2">&quot;d&quot;</span><span class="p">:</span>
+			<span class="n">difference</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">found_fragment</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+			<span class="k">return</span> <span class="p">(</span><span class="n">modification</span><span class="p">,</span> <span class="n">difference</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">modification</span> <span class="o">==</span> <span class="s2">&quot;rd&quot;</span><span class="p">:</span>
+			<span class="n">flipped</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">difference</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">flipped</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">found_fragment</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+			<span class="k">return</span> <span class="p">(</span><span class="n">modification</span><span class="p">,</span> <span class="n">difference</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">modification</span> <span class="o">==</span> <span class="s2">&quot;sr&quot;</span><span class="p">:</span>
+			<span class="c1"># How can I get the superdivision information easily...?</span>
+			<span class="n">ratio</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">found_fragment</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+			<span class="k">return</span> <span class="p">(</span><span class="n">modification</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">modification</span> <span class="o">==</span> <span class="s2">&quot;rsr&quot;</span><span class="p">:</span>
+			<span class="c1"># See the above. </span>
+			<span class="n">flipped</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">ratio</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">flipped</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">found_fragment</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+			<span class="k">return</span> <span class="p">(</span><span class="n">modification</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
+
+<div class="viewcode-block" id="get_by_ql_array"><a class="viewcode-back" href="../../mods/search.html#decitala.search.get_by_ql_array">[docs]</a><span class="k">def</span> <span class="nf">get_by_ql_array</span><span class="p">(</span>
+		<span class="n">ql_array</span><span class="p">,</span>
+		<span class="n">ratio_tree</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+		<span class="n">difference_tree</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+		<span class="n">allowed_modifications</span><span class="o">=</span><span class="p">[</span>
+			<span class="s2">&quot;r&quot;</span><span class="p">,</span> 
+			<span class="s2">&quot;rr&quot;</span><span class="p">,</span> 
+			<span class="s2">&quot;d&quot;</span><span class="p">,</span> 
+			<span class="s2">&quot;rd&quot;</span><span class="p">,</span> 
+			<span class="s2">&quot;sr&quot;</span><span class="p">,</span>
+			<span class="s2">&quot;rsr&quot;</span>
+		<span class="p">],</span>
+		<span class="n">allow_unnamed</span><span class="o">=</span><span class="kc">False</span>
+	<span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Searches a given ratio and/or difference tree for a given fragment. Supports fragments with grace notes. </span>
+
+<span class="sd">	:param numpy.array ql_array: fragment to be searched.</span>
+<span class="sd">	:param `~decitala.trees.FragmentTree` ratio_tree: tree storing ratio representations.</span>
+<span class="sd">	:param `~decitala.trees.FragmentTree` difference_tree: tree storing difference representations.</span>
+<span class="sd">	:param list allowed_modifications: possible ways for a fragment to be modified. </span>
+<span class="sd">									Current possibilities are ``r``, ``rr``, ``d``, ``rd``, ``sr``, and ``rsr``.</span>
+<span class="sd">									*NOTE*: the order of ``allowed_modifications`` is the order of the search. </span>
+<span class="sd">	:param bool allow_unnamed: whether or not to allow the retrieval of unnamed paths. Default is ``False``.</span>
+
+<span class="sd">	&gt;&gt;&gt; fragment = np.array([3.0, 1.5, 1.5, 3.0])</span>
+<span class="sd">	&gt;&gt;&gt; ratio_tree = FragmentTree.from_frag_type(frag_type=&#39;greek_foot&#39;, rep_type=&#39;ratio&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; difference_tree = FragmentTree.from_frag_type(frag_type=&#39;greek_foot&#39;, rep_type=&#39;difference&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; allowed_modifications = [&quot;r&quot;, &quot;rr&quot;]</span>
+<span class="sd">	&gt;&gt;&gt; get_by_ql_array(fragment, ratio_tree, difference_tree, allowed_modifications)</span>
+<span class="sd">	(&lt;fragment.GreekFoot Choriamb&gt;, (&#39;r&#39;, 1.5))</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">allowed_modifications</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span>
+	
+	<span class="c1"># Remove any grace notes.</span>
+	<span class="n">ql_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">ql_array</span> <span class="k">if</span> <span class="n">val</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+
+	<span class="n">fragment</span> <span class="o">=</span> <span class="kc">None</span>
+	<span class="n">config</span> <span class="o">=</span> <span class="n">_SearchConfig</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="n">ql_array</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="o">=</span><span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="o">=</span><span class="n">difference_tree</span><span class="p">,</span> <span class="n">modifications</span><span class="o">=</span><span class="n">allowed_modifications</span><span class="p">)</span>
+	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">allowed_modifications</span><span class="p">):</span>
+		<span class="n">curr_modification</span> <span class="o">=</span> <span class="n">allowed_modifications</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+		<span class="n">search_tree</span><span class="p">,</span> <span class="n">search_ql_array</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="n">curr_modification</span><span class="p">]</span>
+
+		<span class="k">if</span> <span class="n">curr_modification</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;sr&quot;</span><span class="p">,</span> <span class="s2">&quot;rsr&quot;</span><span class="p">}:</span>
+			<span class="k">for</span> <span class="n">this_array</span> <span class="ow">in</span> <span class="n">search_ql_array</span><span class="p">:</span>
+				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">this_array</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+					<span class="k">pass</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">search</span> <span class="o">=</span> <span class="n">search_tree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">(</span><span class="n">this_array</span><span class="p">,</span> <span class="n">allow_unnamed</span><span class="p">)</span>
+
+				<span class="k">if</span> <span class="n">search</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="k">break</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">search</span> <span class="o">=</span> <span class="n">search_tree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">(</span><span class="n">search_ql_array</span><span class="p">,</span> <span class="n">allow_unnamed</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">search</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">fragment</span> <span class="o">=</span> <span class="n">search</span>
+			<span class="n">change</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">_get_modification_data</span><span class="p">(</span><span class="n">fragment</span><span class="p">,</span> <span class="n">curr_modification</span><span class="p">)</span>
+			<span class="k">break</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+	<span class="k">if</span> <span class="n">fragment</span><span class="p">:</span>
+		<span class="k">return</span> <span class="p">(</span><span class="n">fragment</span><span class="p">,</span> <span class="n">change</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="kc">None</span></div>
+
+<span class="c1">####################################################################################################</span>
+<div class="viewcode-block" id="rolling_search"><a class="viewcode-back" href="../../mods/search.html#decitala.search.rolling_search">[docs]</a><span class="k">def</span> <span class="nf">rolling_search</span><span class="p">(</span>
+		<span class="n">filepath</span><span class="p">,</span> 
+		<span class="n">part_num</span><span class="p">,</span> 
+		<span class="n">ratio_tree</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+		<span class="n">difference_tree</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+		<span class="n">allowed_modifications</span><span class="o">=</span><span class="p">[</span>
+			<span class="s2">&quot;r&quot;</span><span class="p">,</span> 
+			<span class="s2">&quot;rr&quot;</span><span class="p">,</span> 
+			<span class="s2">&quot;d&quot;</span><span class="p">,</span> 
+			<span class="s2">&quot;rd&quot;</span><span class="p">,</span> 
+			<span class="s2">&quot;sr&quot;</span><span class="p">,</span>
+			<span class="s2">&quot;rsr&quot;</span>
+		<span class="p">],</span>
+		<span class="n">try_contiguous_summation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+		<span class="n">windows</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">20</span><span class="p">)),</span>
+		<span class="n">allow_unnamed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+		<span class="n">logger</span><span class="o">=</span><span class="kc">None</span>
+	<span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Rolling rhythmic search on a music21-readable file on a given part. For search types, see </span>
+<span class="sd">	documentation for :func:`~decitala.trees.get_by_ql_array`. The default window lengths </span>
+<span class="sd">	are the lengths of fragments in the decitala dataset.</span>
+
+<span class="sd">	:param str filepath: path to file to be searched.</span>
+<span class="sd">	:param int part_num: part in the file to be searched (0-indexed).</span>
+<span class="sd">	:param `~decitala.trees.FragmentTree` ratio_tree: tree storing ratio representations.</span>
+<span class="sd">	:param `~decitala.trees.FragmentTree` difference_tree: tree storing difference representations.</span>
+<span class="sd">	:param list allowed_modifications: see :obj:`~decitala.trees.get_by_ql_array`.</span>
+<span class="sd">	:param bool try_contiguous_summation: ties together all elements of equal pitch and duration and searches. See :obj:`~decitala.utils.contiguous_summation`.</span>
+<span class="sd">	:param list windows: possible lengths of the search frames. </span>
+<span class="sd">	:param bool allow_unnamed: whether or not to include unnamed fragments (in the fragment tree(s)) in the return.</span>
+<span class="sd">	:param bool logger: logger object (see :obj:`~decitala.utils.get_logger`).  </span>
+
+<span class="sd">	:return: list holding dictionaries, each of which holds fragment, modifiation, onset-range, and spanning data.</span>
+<span class="sd">	:rtype: list</span>
+
+<span class="sd">	&gt;&gt;&gt; ratio_tree = FragmentTree.from_frag_type(frag_type=&#39;greek_foot&#39;, rep_type=&#39;ratio&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; difference_tree = FragmentTree.from_frag_type(frag_type=&#39;greek_foot&#39;, rep_type=&#39;difference&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; ex = &quot;./tests/static/Shuffled_Transcription_2.xml&quot;</span>
+<span class="sd">	&gt;&gt;&gt; for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=[&quot;r&quot;])[0:5]:</span>
+<span class="sd">	... 	print(tala_data)</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Trochee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.375), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(72,), (87,)], &#39;id&#39;: 1}</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Dactyl&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(72,), (87,), (79,)], &#39;id&#39;: 39}</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Spondee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.0625), &#39;onset_range&#39;: (0.25, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(87,), (79,)], &#39;id&#39;: 2}</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Trochee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (1.25, 1.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(85,), (80,)], &#39;id&#39;: 3}</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Dactyl&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (1.25, 1.75), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(85,), (80,), (80,)], &#39;id&#39;: 40}</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="k">assert</span> <span class="n">ratio_tree</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span>
+		<span class="k">assert</span> <span class="n">difference_tree</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;difference&quot;</span>
+	<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+		<span class="k">pass</span>
+
+	<span class="n">depths</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">if</span> <span class="n">ratio_tree</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">depths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ratio_tree</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">difference_tree</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">depths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">difference_tree</span><span class="o">.</span><span class="n">depth</span><span class="p">)</span>
+
+	<span class="n">object_list</span> <span class="o">=</span> <span class="n">get_object_indices</span><span class="p">(</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">part_num</span> <span class="o">=</span> <span class="n">part_num</span><span class="p">)</span>
+	<span class="n">object_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">object_list</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+
+	<span class="n">max_window_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">depths</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">object_list</span><span class="p">))</span>
+	<span class="n">closest_window</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">windows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">max_window_size</span><span class="p">))</span>
+	<span class="n">index_of_closest</span> <span class="o">=</span> <span class="n">windows</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">closest_window</span><span class="p">)</span>
+	<span class="n">windows</span> <span class="o">=</span> <span class="n">windows</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">index_of_closest</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+	<span class="n">fragment_id</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">fragments_found</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">this_win</span> <span class="ow">in</span> <span class="n">windows</span><span class="p">:</span>
+		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Searching window of size </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">this_win</span><span class="p">))</span>
+		
+		<span class="n">frames</span> <span class="o">=</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span> <span class="o">=</span> <span class="n">object_list</span><span class="p">,</span> <span class="n">window_length</span> <span class="o">=</span> <span class="n">this_win</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
+			<span class="n">objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_frame</span><span class="p">]</span>
+			<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">isRest</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">):</span> <span class="c1"># Skip any window that has a rest in it.</span>
+				<span class="k">continue</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">ql_array</span> <span class="o">=</span> <span class="n">frame_to_ql_array</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+					<span class="k">continue</span>
+
+				<span class="n">searched</span> <span class="o">=</span> <span class="n">get_by_ql_array</span><span class="p">(</span><span class="n">ql_array</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">,</span> <span class="n">allowed_modifications</span><span class="p">,</span> <span class="n">allow_unnamed</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">searched</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="n">search_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+					<span class="n">fragment_id</span> <span class="o">+=</span> <span class="mi">1</span>
+
+					<span class="n">offset_1</span> <span class="o">=</span> <span class="n">this_frame</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+					<span class="n">offset_2</span> <span class="o">=</span> <span class="n">this_frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+					<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="n">frame_is_spanned_by_slur</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+					<span class="n">pitch_content</span> <span class="o">=</span> <span class="n">frame_to_midi</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+
+					<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">searched</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+					<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">searched</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+					<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">offset_1</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)</span>
+					<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;is_spanned_by_slur&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_spanned_by_slur</span>
+					<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;pitch_content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pitch_content</span>
+					<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fragment_id</span>
+
+					<span class="n">fragments_found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">search_dict</span><span class="p">)</span>
+					<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;(</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">), (</span><span class="si">{2}</span><span class="s2">), </span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">],</span> <span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">],</span> <span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">],</span> <span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;is_spanned_by_slur&quot;</span><span class="p">]))</span>
+
+				<span class="k">if</span> <span class="n">try_contiguous_summation</span><span class="p">:</span>
+					<span class="n">copied_frame</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+					<span class="n">new_frame</span> <span class="o">=</span> <span class="n">contiguous_summation</span><span class="p">(</span><span class="n">copied_frame</span><span class="p">)</span>
+					<span class="n">contiguous_summation_ql_array</span> <span class="o">=</span> <span class="n">frame_to_ql_array</span><span class="p">(</span><span class="n">new_frame</span><span class="p">)</span>
+
+					<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contiguous_summation_ql_array</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">ql_array</span><span class="p">,</span> <span class="n">contiguous_summation_ql_array</span><span class="p">):</span>
+						<span class="k">continue</span>
+
+					<span class="n">contiguous_summation_search</span> <span class="o">=</span> <span class="n">get_by_ql_array</span><span class="p">(</span><span class="n">contiguous_summation_ql_array</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">,</span> <span class="n">allowed_modifications</span><span class="p">,</span> <span class="n">allow_unnamed</span><span class="p">)</span>
+					<span class="k">if</span> <span class="n">contiguous_summation_search</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+						<span class="n">rewritten_search</span> <span class="o">=</span> <span class="p">[</span><span class="n">contiguous_summation_search</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">contiguous_summation_search</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span> <span class="c1"># fragment + modification data</span>
+						<span class="n">rewritten_search</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">rewritten_search</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;-cs&quot;</span>
+						<span class="n">frag</span> <span class="o">=</span> <span class="n">rewritten_search</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+						<span class="n">mod</span> <span class="o">=</span> <span class="n">rewritten_search</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+						<span class="n">cs_search_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+						<span class="n">fragment_id</span> <span class="o">+=</span> <span class="mi">1</span>
+						
+						<span class="n">offset_1</span> <span class="o">=</span> <span class="n">new_frame</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">offset</span>
+						<span class="n">offset_2</span> <span class="o">=</span> <span class="n">new_frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">new_frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">quarterLength</span>
+
+						<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="n">frame_is_spanned_by_slur</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+						<span class="n">cs_pitch_content</span> <span class="o">=</span> <span class="n">frame_to_midi</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+
+						<span class="n">cs_search_dict</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">frag</span>
+						<span class="n">cs_search_dict</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mod</span>
+						<span class="n">cs_search_dict</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">offset_1</span><span class="p">,</span> <span class="n">offset_2</span><span class="p">)</span>
+						<span class="n">cs_search_dict</span><span class="p">[</span><span class="s2">&quot;is_spanned_by_slur&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_spanned_by_slur</span>
+						<span class="n">cs_search_dict</span><span class="p">[</span><span class="s2">&quot;pitch_content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cs_pitch_content</span>
+						<span class="n">cs_search_dict</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fragment_id</span>
+
+						<span class="n">fragments_found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cs_search_dict</span><span class="p">)</span>
+						<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;(</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">), (</span><span class="si">{2}</span><span class="s2">), </span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cs_search_dict</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">],</span> <span class="n">cs_search_dict</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">],</span> <span class="n">cs_search_dict</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">],</span> <span class="n">cs_search_dict</span><span class="p">[</span><span class="s2">&quot;is_spanned_by_slur&quot;</span><span class="p">]))</span>
+	
+	<span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fragments_found</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span></div>
+
+<span class="c1"># def rolling_search_on_array(</span>
+<span class="c1"># 		ql_array, </span>
+<span class="c1"># 		ratio_tree=None, </span>
+<span class="c1"># 		difference_tree=None,</span>
+<span class="c1"># 		allowed_modifications=[</span>
+<span class="c1"># 			&quot;r&quot;, </span>
+<span class="c1"># 			&quot;rr&quot;, </span>
+<span class="c1"># 			&quot;d&quot;, </span>
+<span class="c1"># 			&quot;rd&quot;, </span>
+<span class="c1"># 			&quot;sr&quot;,</span>
+<span class="c1"># 			&quot;rsr&quot;</span>
+<span class="c1"># 		],</span>
+<span class="c1"># 		windows=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19],</span>
+<span class="c1"># 		allow_unnamed=False,</span>
+<span class="c1"># 	):</span>
+<span class="c1"># 	&quot;&quot;&quot;</span>
+<span class="c1"># 	Rolling search on an array (useful for quick checks in a score). For search types, </span>
+<span class="c1"># 	see documentation for :func:`~decitala.trees.get_by_ql_array`. </span>
+
+<span class="c1"># 	:param numpy.array ql_array: fragment to be searched.</span>
+<span class="c1"># 	:param `~decitala.trees.FragmentTree` ratio_tree: tree storing ratio representations.</span>
+<span class="c1"># 	:param `~decitala.trees.FragmentTree` difference_tree: tree storing difference representations.</span>
+<span class="c1"># 	:param list windows: possible length of the search frame. </span>
+<span class="c1"># 	:return: list holding fragments in the array present in the trees.</span>
+<span class="c1"># 	:rtype: list</span>
+
+<span class="c1"># 	&gt;&gt;&gt; greek_ratio_tree = FragmentTree(frag_type=&#39;greek_foot&#39;, rep_type=&#39;ratio&#39;)</span>
+<span class="c1"># 	&gt;&gt;&gt; greek_difference_tree = FragmentTree(frag_type=&#39;greek_foot&#39;, rep_type=&#39;difference&#39;)</span>
+<span class="c1"># 	&gt;&gt;&gt; example_fragment = np.array([0.25, 0.5, 0.25, 0.5])</span>
+<span class="c1"># 	&gt;&gt;&gt; for x in rolling_search_on_array(ql_array=example_fragment, ratio_tree=greek_ratio_tree, difference_tree=greek_difference_tree):</span>
+<span class="c1"># 	...     print(x)</span>
+<span class="c1"># 	(&lt;fragment.GreekFoot Iamb&gt;, (&#39;r&#39;, 0.25))</span>
+<span class="c1"># 	(&lt;fragment.GreekFoot Trochee&gt;, (&#39;r&#39;, 0.25))</span>
+<span class="c1"># 	(&lt;fragment.GreekFoot Iamb&gt;, (&#39;r&#39;, 0.25))</span>
+<span class="c1"># 	(&lt;fragment.GreekFoot Amphibrach&gt;, (&#39;r&#39;, 0.25))</span>
+<span class="c1"># 	(&lt;fragment.GreekFoot Amphimacer&gt;, (&#39;r&#39;, 0.25))</span>
+<span class="c1"># 	&quot;&quot;&quot;</span>
+<span class="c1"># 	assert ratio_tree.rep_type == &quot;ratio&quot;</span>
+<span class="c1"># 	assert difference_tree.rep_type == &quot;difference&quot;</span>
+
+<span class="c1"># 	fragments_found = []</span>
+<span class="c1"># 	max_window_size = min(windows, key = lambda x: abs(x - len(ql_array)))</span>
+<span class="c1"># 	max_index = windows.index(max_window_size)</span>
+<span class="c1"># 	windows = windows[0:max_index + 1]</span>
+<span class="c1"># 	for this_window in windows:</span>
+<span class="c1"># 		for this_frame in roll_window(array = ql_array, window_length = this_window):</span>
+<span class="c1"># 			searched = get_by_ql_array(this_frame, ratio_tree, difference_tree, allowed_modifications, allow_unnamed)</span>
+<span class="c1"># 			if searched is not None:</span>
+<span class="c1"># 				fragments_found.append(searched)</span>
+
+<span class="c1"># 	return fragments_found</span>
+
+<span class="c1">####################################################################################################</span>
+<span class="c1"># Hash table search method. </span>
+<span class="k">def</span> <span class="nf">rolling_hash_search</span><span class="p">(</span>
+		<span class="n">filepath</span><span class="p">,</span>
+		<span class="n">part_num</span><span class="p">,</span>
+		<span class="n">table</span><span class="p">,</span>
+		<span class="n">allowed_modifications</span><span class="o">=</span><span class="p">[</span>
+				<span class="s2">&quot;r&quot;</span><span class="p">,</span> 
+				<span class="s2">&quot;rr&quot;</span><span class="p">,</span> 
+				<span class="s2">&quot;d&quot;</span><span class="p">,</span> 
+				<span class="s2">&quot;rd&quot;</span><span class="p">,</span> 
+				<span class="s2">&quot;sr&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;rsr&quot;</span>
+			<span class="p">],</span>
+		<span class="n">windows</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">19</span><span class="p">)),</span>
+		<span class="n">logger</span><span class="o">=</span><span class="kc">None</span>
+	<span class="p">):</span>
+	<span class="n">object_list</span> <span class="o">=</span> <span class="n">get_object_indices</span><span class="p">(</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">part_num</span> <span class="o">=</span> <span class="n">part_num</span><span class="p">)</span>
+	<span class="n">object_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">object_list</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
+	<span class="n">fragment_id</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">fragments_found</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">this_win</span> <span class="ow">in</span> <span class="n">windows</span><span class="p">:</span>		
+		<span class="n">frames</span> <span class="o">=</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span> <span class="o">=</span> <span class="n">object_list</span><span class="p">,</span> <span class="n">window_length</span> <span class="o">=</span> <span class="n">this_win</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
+			<span class="n">objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_frame</span><span class="p">]</span>
+			<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">isRest</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">):</span> <span class="c1"># Skip any window that has a rest in it.</span>
+				<span class="k">continue</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">ql_array</span> <span class="o">=</span> <span class="n">frame_to_ql_array</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+					<span class="k">continue</span>
+
+				<span class="k">try</span><span class="p">:</span>
+					<span class="n">searched</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)]</span>
+					<span class="k">if</span> <span class="n">searched</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+						<span class="n">search_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+						<span class="n">fragment_id</span> <span class="o">+=</span> <span class="mi">1</span>
+						<span class="n">offset_1</span> <span class="o">=</span> <span class="n">this_frame</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+						<span class="n">offset_2</span> <span class="o">=</span> <span class="n">this_frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+						<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="n">frame_is_spanned_by_slur</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+						<span class="n">pitch_content</span> <span class="o">=</span> <span class="n">frame_to_midi</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+
+						<span class="n">retrieved_search_string</span> <span class="o">=</span> <span class="n">searched</span>
+						<span class="n">parsed_search_string</span> <span class="o">=</span> <span class="n">parse_hash_table_string</span><span class="p">(</span><span class="n">retrieved_search_string</span><span class="p">)</span>
+						<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parsed_search_string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+						<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parsed_search_string</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+						<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">offset_1</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)</span>
+						<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;is_spanned_by_slur&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_spanned_by_slur</span>
+						<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;pitch_content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pitch_content</span>
+						<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fragment_id</span>
+
+						<span class="n">fragments_found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">search_dict</span><span class="p">)</span>
+				<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+					<span class="k">continue</span>				
+	
+	<span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fragments_found</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Luke Poeppel.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
