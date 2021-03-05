@@ -50,10 +50,31 @@ class GreekFootException(FragmentException):
 	pass
 
 # Serialization
-class GeneralFragmentEncoder(json.JSONEncoder):
+class FragmentEncoder(json.JSONEncoder):
 	def default(self, obj):
-		if isinstance(obj, GeneralFragment):
-			return obj.name
+		if type(obj).__name__ == "GeneralFragment":
+			return "GeneralFragment-{}".format(obj.data)
+		elif type(obj).__name__ == "Decitala":
+			return "Decitala-{}".format(obj.name)
+		elif type(obj).__name__ == "GreekFoot":
+			return "GreekFoot-{}".format(obj.name)
+		else:
+			raise FragmentException("This object is not JSON serializable. File an issue?")
+			
+class FragmentDecoder(json.JSONDecoder):
+	def __init__(self, *args, **kwargs):
+		json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
+	
+	def object_hook(self, obj):
+		split = obj.split("-")
+		if "GeneralFragment" in obj:
+			return GeneralFragment(data=split[1])
+		elif "Decitala" in obj:
+			return Decitala(name=split[1])
+		elif "GreekFoot" in obj:
+			return GreekFoot(name=split[1])
+		else:
+			raise FragmentException("This object is not JSON deserializable. File an issue?")
 
 class GeneralFragment:
 	"""

@@ -5,7 +5,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## ???
 ### Added
-- Applied flake8 to vis.py
+- WIP: Modifications types ``rr``, ``rd``, ``sr``, and ``rsr``. 
+- Applied flake8 to vis.py.
+- JSON Serialization/Deserialization to ``GeneralFragment`` and its inherited classes. Make saving "training data" easier. 
 
 ## [v0.7.1] March 3, 2021 (NYC)
 ### Fixed
