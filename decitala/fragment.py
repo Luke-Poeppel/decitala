@@ -53,26 +53,44 @@ class GreekFootException(FragmentException):
 class FragmentEncoder(json.JSONEncoder):
 	def default(self, obj):
 		if type(obj).__name__ == "GeneralFragment":
-			return "GeneralFragment-{}".format(obj.data)
+			d = {
+				"frag_type": "GeneraFragment",
+				"data": obj.data
+			}
+			return d
 		elif type(obj).__name__ == "Decitala":
-			return "Decitala-{}".format(obj.name)
+			d = {
+				"frag_type": "Decitala",
+				"name": obj.name
+			}
+			return d
 		elif type(obj).__name__ == "GreekFoot":
-			return "GreekFoot-{}".format(obj.name)
+			d = {
+				"frag_type": "GreekFoot",
+				"name": obj.name
+			}
+			return d
 		else:
 			raise FragmentException("This object is not JSON serializable. File an issue?")
 			
 class FragmentDecoder(json.JSONDecoder):
 	def __init__(self, *args, **kwargs):
 		json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
+
+	def temp_loader(self, obj):
+		loaded = json.loads(obj)
+		return loaded["name"]
 	
 	def object_hook(self, obj):
-		split = obj.split("-")
-		if "GeneralFragment" in obj:
-			return GeneralFragment(data=split[1])
-		elif "Decitala" in obj:
-			return Decitala(name=split[1])
-		elif "GreekFoot" in obj:
-			return GreekFoot(name=split[1])
+		"""
+		This function already runs json.loads invisibly on ``obj``. 
+		"""
+		if obj["frag_type"] == "GeneralFragment":
+			return GeneralFragment(data=obj["data"])
+		elif obj["frag_type"] == "Decitala":
+			return Decitala(obj["name"])
+		elif obj["frag_type"] == "GreekFoot":
+			return GreekFoot(obj["name"])
 		else:
 			raise FragmentException("This object is not JSON deserializable. File an issue?")
 
