@@ -377,6 +377,25 @@ def rolling_search(
 
 ####################################################################################################
 # Hash table search method. 
+
+def _make_search_dict(data, frame, fragment_id):
+	fragment_id += 1
+	offset_1 = this_frame[0][0]
+	offset_2 = this_frame[-1][0]
+	is_spanned_by_slur = frame_is_spanned_by_slur(this_frame)
+	pitch_content = frame_to_midi(this_frame)
+	retrieved_search_string = searched
+	parsed_search_string = parse_hash_table_string(retrieved_search_string)
+
+	return {
+		"fragment": parsed_search_string[0],
+		"mod": parsed_search_string[1],
+		"onset_range": (offset_1.offset, offset_2.offset + offset_2.quarterLength),
+		"is_spanned_by_slur": is_spanned_by_slur,
+		"pitch_content": pitch_content,
+		"id": fragment_id
+	}
+
 def rolling_hash_search(
 		filepath,
 		part_num,
@@ -410,22 +429,7 @@ def rolling_hash_search(
 				try:
 					searched = table[tuple(ql_array)]
 					if searched is not None:
-						search_dict = dict()
-						fragment_id += 1
-						offset_1 = this_frame[0][0]
-						offset_2 = this_frame[-1][0]
-						is_spanned_by_slur = frame_is_spanned_by_slur(this_frame)
-						pitch_content = frame_to_midi(this_frame)
-
-						retrieved_search_string = searched
-						parsed_search_string = parse_hash_table_string(retrieved_search_string)
-						search_dict["fragment"] = parsed_search_string[0]
-						search_dict["mod"] = parsed_search_string[1]
-						search_dict["onset_range"] = (offset_1.offset, offset_2.offset + offset_2.quarterLength)
-						search_dict["is_spanned_by_slur"] = is_spanned_by_slur
-						search_dict["pitch_content"] = pitch_content
-						search_dict["id"] = fragment_id
-
+						search_dict = _make_search_dict(data=searched, frame=this_frame)
 						fragments_found.append(search_dict)
 				except KeyError:
 					continue				
