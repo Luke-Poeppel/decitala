@@ -86,8 +86,8 @@ def get_path(start, end, next_matrix, data):
 	"""
 	Function for retriving the best path extracted from :obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.
 
-	:param :obj:`~decitala.fragment.GeneralFragment` start: starting fragment in the path.
-	:param :obj:`~decitala.fragment.GeneralFragment` end: ending fragment in the path.
+	:param `~decitala.fragment.GeneralFragment` start: starting fragment in the path.
+	:param `~decitala.fragment.GeneralFragment` end: ending fragment in the path.
 	:param numpy.array next_matrix: second matrix from :obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.
 	:param list data: data from :obj:`~decitala.search.rolling_search``.
 	:return: best path extracted using the Floyd-Warshall algorithm.
