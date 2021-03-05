@@ -956,34 +956,41 @@ def parse_hash_table_string(string_):
 	In the hash_table classes, we store a string in the value giving both the extracted fragment 
 	as well as its modification type. This function parses that string to get the python objects. 
 
-	# if name is more than one word, underscores
-	>>> s = "decitala-Gajajhampa-r:2"
+	# if name is more than one word, uses underscores. 
+	>>> s = "decitala-Gajajhampa-r-r:2_d:0"
 	>>> parse_hash_table_string(s)
-	(<fragment.Decitala 77_Gajajhampa>, ('r', 2.0))
-	>>> parse_hash_table_string('decitala-30_Hamsanada-r:0.75_d:0.25')
-	(<fragment.Decitala 30_Hamsanada>, ('r_d', 0.75, 0.25))
+	(<fragment.Decitala 77_Gajajhampa>, ('rr', 2.0))
+	>>> parse_hash_table_string('decitala-30_Hamsanada-n-r:0.75_d:0.25')
+	(<fragment.Decitala 30_Hamsanada>, ('r+d', 0.75, 0.25))
 	"""
 	split = string_.split("-")
 	frag_type = split[0]
 	name = split[1]
-	mod_data = split[2]
-	mod_split = mod_data.split("_")
+	nor = split[2] #  normal or retrograde
+	mod_data = split[3].split("_")
 	
-	if len(mod_split) == 1:
-		type_val_split = mod_split[0].split(":") 
-		mod_type = type_val_split[0]
-		mod_vals = (float(type_val_split[1]),)        
-	else:
-		mod_type = "_".join([mod_split[0][0], mod_split[1][0]])
-		mod_type_lst = []
-		for this_mod in mod_split:
-			type_val_split = this_mod.split(":")
-			mod_type_lst.append(type_val_split[1])
-		mod_vals = tuple([float(x) for x in mod_type_lst])
-
 	if frag_type == "decitala":
-		f = fragment.Decitala(name)
+		f = Decitala(name)
 	else:
-		f = fragment.GreekFoot(name)
-
+		f = GreekFoot(name)
+	
+	mod_vals = [float(mod_data[0][2:]), float(mod_data[1][2:])]
+	if mod_vals[0] != 1 and mod_vals[1] == 0:
+		mod_vals = [mod_vals[0]]
+		if nor == "n":
+			mod_type="r"
+		else:
+			mod_type="rr"
+	elif mod_vals[0] == 1 and mod_vals[1] != 0:
+		mod_vals = [mod_vals[1]]
+		if nor == "n":
+			mod_type="d"
+		else:
+			mod_type="rd"
+	else:
+		if nor == "n":
+			mod_type="r+d"
+		else:
+			mod_type="r(r+d)"
+	
 	return (f, (mod_type, *mod_vals))
