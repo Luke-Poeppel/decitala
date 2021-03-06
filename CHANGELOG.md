@@ -3,7 +3,7 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.8.0] March 5, 2021 (NYC)
+## [v0.8.0] ???
 ### Added
 - Modifications types ``rr``, ``rd``, ``sr``, and ``rsr`` to ``DecitalaHashTable``. Refactored and clean up the instantiation code –– still requires work for Greek metrics and General fragments. 
 - Applied flake8 to vis.py.
