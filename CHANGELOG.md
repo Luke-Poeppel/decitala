@@ -3,11 +3,11 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## ???
-### Added
-- WIP: Modifications types ``rr``, ``rd``, ``sr``, and ``rsr``. 
+## [v0.7.2] March 5, 2021 (NYC)
+### Fixed
+- Modifications types ``rr``, ``rd``, ``sr``, and ``rsr`` to ``DecitalaHashTable``. Refactored and clean up the instantiation code –– still requires work for Greek metrics and General fragments. 
 - Applied flake8 to vis.py.
-- JSON Serialization/Deserialization to ``GeneralFragment`` and its inherited classes. Make saving "training data" easier. 
+- JSON Serialization/Deserialization errors for ``GeneralFragment`` and its inherited classes. This makes saving "training data" easier. (This step is for the next minor patch.)
 
 ## [v0.7.1] March 3, 2021 (NYC)
 ### Fixed
