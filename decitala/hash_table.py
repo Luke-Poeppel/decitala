@@ -11,6 +11,10 @@ import os
 import json
 
 from .utils import augment
+from .fragment import (
+	Decitala,
+	GreekFoot
+)
 
 here = os.path.abspath(os.path.dirname(__file__))
 fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"

@@ -22,8 +22,8 @@ from .utils import (
     frame_is_spanned_by_slur,
     contiguous_summation,
     frame_to_midi,
-	parse_hash_table_string
 )
+from .hash_table import parse_hash_table_string
 
 __all__ = [
 	"get_by_ql_array",
@@ -432,7 +432,7 @@ def rolling_hash_search(
 						search_dict = _make_search_dict(data=searched, frame=this_frame)
 						fragments_found.append(search_dict)
 				except KeyError:
-					continue				
+					continue
 	
 	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
 
