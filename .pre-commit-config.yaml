@@ -3,4 +3,4 @@ repos:
   rev: v0.9.5
   hooks:
   -  id: no-commit-to-branch
-# -  id: flake8
+  -  id: flake8

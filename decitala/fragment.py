@@ -72,7 +72,7 @@ class FragmentEncoder(json.JSONEncoder):
 			return d
 		else:
 			raise FragmentException("This object is not JSON serializable. File an issue?")
-			
+
 class FragmentDecoder(json.JSONDecoder):
 	def __init__(self, *args, **kwargs):
 		json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
@@ -80,10 +80,10 @@ class FragmentDecoder(json.JSONDecoder):
 	def temp_loader(self, obj):
 		loaded = json.loads(obj)
 		return loaded["name"]
-	
+
 	def object_hook(self, obj):
 		"""
-		This function already runs json.loads invisibly on ``obj``. 
+		This function already runs json.loads invisibly on ``obj``.
 		"""
 		if obj["frag_type"] == "GeneralFragment":
 			return GeneralFragment(data=obj["data"])

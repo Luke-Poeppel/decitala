@@ -17,8 +17,6 @@ from scipy.linalg import norm
 
 from music21 import converter
 
-from . import fragment
-
 __all__ = [
 	"get_logger",  # Logging
 	"carnatic_string_to_ql_array",  # Notation
