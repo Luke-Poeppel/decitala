@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Decitala Documentation &mdash; decitala 0.7.1 documentation</title>
+  <title>Decitala Documentation &mdash; decitala 0.7.2 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.7.1
+                0.7.2
               </div>
             
           
@@ -91,9 +91,8 @@
               <p class="caption"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="mods/database.html">database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mods/floyd_warshall.html">floyd_warshall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/fragment.html">fragment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mods/pofp.html">pofp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/search.html">search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/utils.html">utils</a></li>
@@ -174,7 +173,17 @@
 <h1>Decitala Documentation<a class="headerlink" href="#decitala-documentation" title="Permalink to this headline">¶</a></h1>
 <p>Tools for automating ethnological rhythmic analysis of Olivier Messiaen’s music. The basic
 pipeline used in this package is Search →→ Path Finding →→ Analysis.</p>
-<p>The version of the <code class="docutils literal notranslate"><span class="pre">decitala</span></code> package can be found with <code class="docutils literal notranslate"><span class="pre">decitala</span> <span class="pre">--version</span></code>.</p>
+</div>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cd</span> <span class="c1"># Navigate to home directory</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">Luke</span><span class="o">-</span><span class="n">Poeppel</span><span class="o">/</span><span class="n">decitala</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cd</span> <span class="n">decitala</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pip3</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decitala</span> <span class="o">--</span><span class="n">version</span> <span class="c1"># Check for proper installation.</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="rhythmic-manipulation">
 <h1>Rhythmic Manipulation<a class="headerlink" href="#rhythmic-manipulation" title="Permalink to this headline">¶</a></h1>
@@ -227,25 +236,18 @@ efficiently search for such modification.</p>
 <div class="section" id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
 <p>Coming soon!</p>
-</div>
-<div class="section" id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<ol class="arabic simple" start="0">
-<li><p>Navigate to home directory with <code class="docutils literal notranslate"><span class="pre">cd</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/Luke-Poeppel/decitala</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">decitala</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">install</span></code></p></li>
-</ol>
 <div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="mods/database.html">database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mods/floyd_warshall.html">floyd_warshall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/path_finding.html">path_finding</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mods/path_finding.html#module-decitala.path_finding.floyd_warshall">floyd_warshall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mods/path_finding.html#module-decitala.path_finding.pofp">pofp</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="mods/fragment.html">fragment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mods/pofp.html">pofp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/search.html">search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/utils.html">utils</a></li>

@@ -32,7 +32,6 @@
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -191,8 +190,8 @@
     <span class="n">frame_is_spanned_by_slur</span><span class="p">,</span>
     <span class="n">contiguous_summation</span><span class="p">,</span>
     <span class="n">frame_to_midi</span><span class="p">,</span>
-	<span class="n">parse_hash_table_string</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.hash_table</span> <span class="kn">import</span> <span class="n">parse_hash_table_string</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
 	<span class="s2">&quot;get_by_ql_array&quot;</span><span class="p">,</span>
@@ -546,6 +545,25 @@
 
 <span class="c1">####################################################################################################</span>
 <span class="c1"># Hash table search method. </span>
+
+<span class="k">def</span> <span class="nf">_make_search_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">fragment_id</span><span class="p">):</span>
+	<span class="n">fragment_id</span> <span class="o">+=</span> <span class="mi">1</span>
+	<span class="n">offset_1</span> <span class="o">=</span> <span class="n">this_frame</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">offset_2</span> <span class="o">=</span> <span class="n">this_frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="n">frame_is_spanned_by_slur</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+	<span class="n">pitch_content</span> <span class="o">=</span> <span class="n">frame_to_midi</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+	<span class="n">retrieved_search_string</span> <span class="o">=</span> <span class="n">searched</span>
+	<span class="n">parsed_search_string</span> <span class="o">=</span> <span class="n">parse_hash_table_string</span><span class="p">(</span><span class="n">retrieved_search_string</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="p">{</span>
+		<span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="n">parsed_search_string</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+		<span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="n">parsed_search_string</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+		<span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">offset_1</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">),</span>
+		<span class="s2">&quot;is_spanned_by_slur&quot;</span><span class="p">:</span> <span class="n">is_spanned_by_slur</span><span class="p">,</span>
+		<span class="s2">&quot;pitch_content&quot;</span><span class="p">:</span> <span class="n">pitch_content</span><span class="p">,</span>
+		<span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">fragment_id</span>
+	<span class="p">}</span>
+
 <span class="k">def</span> <span class="nf">rolling_hash_search</span><span class="p">(</span>
 		<span class="n">filepath</span><span class="p">,</span>
 		<span class="n">part_num</span><span class="p">,</span>
@@ -579,25 +597,10 @@
 				<span class="k">try</span><span class="p">:</span>
 					<span class="n">searched</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)]</span>
 					<span class="k">if</span> <span class="n">searched</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-						<span class="n">search_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-						<span class="n">fragment_id</span> <span class="o">+=</span> <span class="mi">1</span>
-						<span class="n">offset_1</span> <span class="o">=</span> <span class="n">this_frame</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-						<span class="n">offset_2</span> <span class="o">=</span> <span class="n">this_frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-						<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="n">frame_is_spanned_by_slur</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
-						<span class="n">pitch_content</span> <span class="o">=</span> <span class="n">frame_to_midi</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
-
-						<span class="n">retrieved_search_string</span> <span class="o">=</span> <span class="n">searched</span>
-						<span class="n">parsed_search_string</span> <span class="o">=</span> <span class="n">parse_hash_table_string</span><span class="p">(</span><span class="n">retrieved_search_string</span><span class="p">)</span>
-						<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parsed_search_string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-						<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parsed_search_string</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-						<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">offset_1</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)</span>
-						<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;is_spanned_by_slur&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_spanned_by_slur</span>
-						<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;pitch_content&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pitch_content</span>
-						<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fragment_id</span>
-
+						<span class="n">search_dict</span> <span class="o">=</span> <span class="n">_make_search_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">searched</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">this_frame</span><span class="p">)</span>
 						<span class="n">fragments_found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">search_dict</span><span class="p">)</span>
 				<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-					<span class="k">continue</span>				
+					<span class="k">continue</span>
 	
 	<span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fragments_found</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 

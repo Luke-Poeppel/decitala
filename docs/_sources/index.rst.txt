@@ -9,7 +9,16 @@ Decitala Documentation
 Tools for automating ethnological rhythmic analysis of Olivier Messiaen's music. The basic
 pipeline used in this package is Search →→ Path Finding →→ Analysis.
 
-The version of the ``decitala`` package can be found with ``decitala --version``. 
+Installation
+====================================
+.. code-block:: python
+
+   >>> cd # Navigate to home directory
+   >>> git clone https://github.com/Luke-Poeppel/decitala
+   >>> cd decitala
+   >>> pip3 install -e .
+   >>> pre-commit install
+   >>> decitala --version # Check for proper installation.
 
 Rhythmic Manipulation
 ====================================
@@ -47,14 +56,6 @@ Basic Usage
 ====================================
 Coming soon! 
 
-Installation
-====================================
-0. Navigate to home directory with ``cd``
-1. ``git clone https://github.com/Luke-Poeppel/decitala``
-2. ``cd decitala``
-3. ``pip3 install -e .``
-4. ``pre-commit install``
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
@@ -65,9 +66,8 @@ Installation
    :glob:
 
    mods/database
-   mods/floyd_warshall
+   mods/path_finding
    mods/fragment
-   mods/pofp
    mods/search
    mods/trees
    mods/utils

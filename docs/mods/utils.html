@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>utils &mdash; decitala 0.7.1 documentation</title>
+  <title>utils &mdash; decitala 0.7.2 documentation</title>
   
 
   
@@ -32,7 +32,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -64,7 +63,7 @@
             
             
               <div class="version">
-                0.7.1
+                0.7.2
               </div>
             
           
@@ -92,9 +91,8 @@
               <p class="caption"><span class="caption-text">Modules</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="database.html">database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="floyd_warshall.html">floyd_warshall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pofp.html">pofp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="search.html">search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trees.html">trees</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">utils</a></li>
@@ -175,7 +173,7 @@
 <span id="utils"></span><h1>utils<a class="headerlink" href="#module-decitala.utils" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="decitala.utils.carnatic_string_to_ql_array">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">carnatic_string_to_ql_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string_</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#carnatic_string_to_ql_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.carnatic_string_to_ql_array" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">carnatic_string_to_ql_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#carnatic_string_to_ql_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.carnatic_string_to_ql_array" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>string</strong> (<em>str</em>) – string of carnatic durations separated by spaces.</p>
@@ -195,7 +193,7 @@
 
 <dl class="py function">
 <dt id="decitala.utils.ql_array_to_carnatic_string">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">ql_array_to_carnatic_string</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ql_array</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#ql_array_to_carnatic_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.ql_array_to_carnatic_string" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">ql_array_to_carnatic_string</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ql_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#ql_array_to_carnatic_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.ql_array_to_carnatic_string" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>ql_array</strong> (<em>iterable</em>) – quarter length array.</p>
@@ -215,7 +213,7 @@
 
 <dl class="py function">
 <dt id="decitala.utils.ql_array_to_greek_diacritics">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">ql_array_to_greek_diacritics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ql_array</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#ql_array_to_greek_diacritics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.ql_array_to_greek_diacritics" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">ql_array_to_greek_diacritics</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ql_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#ql_array_to_greek_diacritics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.ql_array_to_greek_diacritics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the input <code class="docutils literal notranslate"><span class="pre">ql_array</span></code> in greek prosodic notation. This notation only allows
 for two types of rhythmic values (long &amp; short).</p>
 <dl class="field-list simple">
@@ -237,7 +235,7 @@ for two types of rhythmic values (long &amp; short).</p>
 
 <dl class="py function">
 <dt id="decitala.utils.augment">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">augment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fragment</span></em>, <em class="sig-param"><span class="n">factor</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">difference</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#augment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.augment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">augment</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fragment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#augment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.augment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an augmentation in the style of Messiaen. If difference is set to 0.0, then the
 augmentation is multiplicative. If factor is set to 1.0, then augmentation is additive. If
 factor &amp; difference are non-zero, we have a mixed augmentation.</p>
@@ -264,7 +262,7 @@ factor &amp; difference are non-zero, we have a mixed augmentation.</p>
 
 <dl class="py function">
 <dt id="decitala.utils.successive_ratio_array">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">successive_ratio_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fragment</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#successive_ratio_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.successive_ratio_array" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">successive_ratio_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fragment</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#successive_ratio_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.successive_ratio_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns array defined by the ratio of successive elements. By convention,
 we set the first value to 1.0.</p>
 <dl class="field-list simple">
@@ -286,7 +284,7 @@ we set the first value to 1.0.</p>
 
 <dl class="py function">
 <dt id="decitala.utils.successive_difference_array">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">successive_difference_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fragment</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#successive_difference_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.successive_difference_array" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">successive_difference_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fragment</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#successive_difference_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.successive_difference_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the first order difference of <code class="docutils literal notranslate"><span class="pre">fragment</span></code> (contiguous differences).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -307,7 +305,7 @@ we set the first value to 1.0.</p>
 
 <dl class="py function">
 <dt id="decitala.utils.find_clusters">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">find_clusters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_</span></em>, <em class="sig-param"><span class="n">data_mode</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#find_clusters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.find_clusters" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">find_clusters</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#find_clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.find_clusters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the regions with consecutive equal elements.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -362,7 +360,7 @@ if <code class="docutils literal notranslate"><span class="pre">data_mode=True</
 
 <dl class="py function">
 <dt id="decitala.utils.find_possible_superdivisions">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">find_possible_superdivisions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#find_possible_superdivisions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.find_possible_superdivisions" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">find_possible_superdivisions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#find_possible_superdivisions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.find_possible_superdivisions" title="Permalink to this definition">¶</a></dt>
 <dd><p>There is a more general approach to the subdivision problem, but we note that Messiaen’s
 subdivision of tala components tends to be even.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">varied_ragavardhana</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
@@ -389,7 +387,7 @@ subdivision of tala components tends to be even.</p>
 
 <dl class="py function">
 <dt id="decitala.utils.roll_window">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">roll_window</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array</span></em>, <em class="sig-param"><span class="n">window_length</span></em>, <em class="sig-param"><span class="n">fn</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#roll_window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.roll_window" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">roll_window</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#roll_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.roll_window" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes in a list and returns a numpy vstack holding rolling windows of length <code class="docutils literal notranslate"><span class="pre">window_length</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -429,7 +427,7 @@ subdivision of tala components tends to be even.</p>
 
 <dl class="py function">
 <dt id="decitala.utils.power_list">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">power_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#power_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.power_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">power_list</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#power_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.power_list" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> – an iterable</p>
@@ -461,14 +459,14 @@ subdivision of tala components tends to be even.</p>
 
 <dl class="py function">
 <dt id="decitala.utils.get_object_indices">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">get_object_indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part_num</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#get_object_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.get_object_indices" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">get_object_indices</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#get_object_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.get_object_indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns data of the form [(object, (start, end)), …] for a given file path and part number.
 (Supports rests and grace notes.)</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="decitala.utils.contiguous_summation">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">contiguous_summation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#contiguous_summation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.contiguous_summation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">contiguous_summation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#contiguous_summation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.contiguous_summation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given some <code class="docutils literal notranslate"><span class="pre">data</span></code> from <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>, finds every location
 where the pitch and rhythmic material are contiguously equal and sums these regions.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span><span class="p">,</span> <span class="n">chord</span>
@@ -514,7 +512,7 @@ where the pitch and rhythmic material are contiguously equal and sums these regi
 
 <dl class="py function">
 <dt id="decitala.utils.frame_to_ql_array">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">frame_to_ql_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#frame_to_ql_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.frame_to_ql_array" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">frame_to_ql_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#frame_to_ql_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.frame_to_ql_array" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>frame</strong> (<em>list</em>) – frame of data from <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p>
@@ -544,7 +542,7 @@ where the pitch and rhythmic material are contiguously equal and sums these regi
 
 <dl class="py function">
 <dt id="decitala.utils.frame_to_midi">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">frame_to_midi</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame</span></em>, <em class="sig-param"><span class="n">ignore_graces</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#frame_to_midi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.frame_to_midi" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">frame_to_midi</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_graces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#frame_to_midi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.frame_to_midi" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>frame</strong> (<em>list</em>) – frame of data from <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p>
@@ -574,7 +572,7 @@ where the pitch and rhythmic material are contiguously equal and sums these regi
 
 <dl class="py function">
 <dt id="decitala.utils.frame_is_spanned_by_slur">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">frame_is_spanned_by_slur</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#frame_is_spanned_by_slur"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.frame_is_spanned_by_slur" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">frame_is_spanned_by_slur</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#frame_is_spanned_by_slur"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.frame_is_spanned_by_slur" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>frame</strong> (<em>list</em>) – frame from <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p>
@@ -590,7 +588,7 @@ where the pitch and rhythmic material are contiguously equal and sums these regi
 
 <dl class="py function">
 <dt id="decitala.utils.filter_single_anga_class_fragments">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">filter_single_anga_class_fragments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#filter_single_anga_class_fragments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.filter_single_anga_class_fragments" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">filter_single_anga_class_fragments</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#filter_single_anga_class_fragments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.filter_single_anga_class_fragments" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – data from <code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_search</span></code>.</p>
@@ -622,7 +620,7 @@ where the pitch and rhythmic material are contiguously equal and sums these regi
 
 <dl class="py function">
 <dt id="decitala.utils.filter_sub_fragments">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">filter_sub_fragments</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">filter_in_retrograde</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#filter_sub_fragments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.filter_sub_fragments" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">filter_sub_fragments</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_in_retrograde</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#filter_sub_fragments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.filter_sub_fragments" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> (<em>list</em>) – data from <code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_search</span></code>.</p>
@@ -638,7 +636,7 @@ where the pitch and rhythmic material are contiguously equal and sums these regi
 
 <dl class="py function">
 <dt id="decitala.utils.pitch_content_to_contour">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">pitch_content_to_contour</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pitch_content</span></em>, <em class="sig-param"><span class="n">as_str</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#pitch_content_to_contour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.pitch_content_to_contour" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">pitch_content_to_contour</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pitch_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#pitch_content_to_contour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.pitch_content_to_contour" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function calculates the pitch contour information from data out of rolling_search.
 This function assumes the data is monophonic.</p>
 <dl class="field-list simple">
@@ -658,7 +656,7 @@ This function assumes the data is monophonic.</p>
 
 <dl class="py function">
 <dt id="decitala.utils.contour_to_prime_contour">
-<code class="sig-prename descclassname">decitala.utils.</code><code class="sig-name descname">contour_to_prime_contour</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">contour</span></em>, <em class="sig-param"><span class="n">include_depth</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#contour_to_prime_contour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.utils.contour_to_prime_contour" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">contour_to_prime_contour</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contour</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#contour_to_prime_contour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.contour_to_prime_contour" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implementation of Morris’ 1993 Contour-Reduction algorithm. “The algorithm prunes pitches
 from a contour until it is reduced to a prime.” The loop runs until all elements
 are flagged as maxima or minima.</p>

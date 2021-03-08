@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.fragment &mdash; decitala 0.7.1 documentation</title>
+  <title>decitala.fragment &mdash; decitala 0.7.2 documentation</title>
   
 
   
@@ -32,7 +32,6 @@
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -62,7 +61,7 @@
             
             
               <div class="version">
-                0.7.1
+                0.7.2
               </div>
             
           
@@ -90,9 +89,8 @@
               <p class="caption"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/database.html">database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../mods/floyd_warshall.html">floyd_warshall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/fragment.html">fragment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../mods/pofp.html">pofp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/search.html">search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/utils.html">utils</a></li>
@@ -180,6 +178,7 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -217,6 +216,51 @@
 
 <span class="k">class</span> <span class="nc">GreekFootException</span><span class="p">(</span><span class="n">FragmentException</span><span class="p">):</span>
 	<span class="k">pass</span>
+
+<span class="c1"># Serialization</span>
+<span class="k">class</span> <span class="nc">FragmentEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
+	<span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+		<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;GeneralFragment&quot;</span><span class="p">:</span>
+			<span class="n">d</span> <span class="o">=</span> <span class="p">{</span>
+				<span class="s2">&quot;frag_type&quot;</span><span class="p">:</span> <span class="s2">&quot;GeneraFragment&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">data</span>
+			<span class="p">}</span>
+			<span class="k">return</span> <span class="n">d</span>
+		<span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;Decitala&quot;</span><span class="p">:</span>
+			<span class="n">d</span> <span class="o">=</span> <span class="p">{</span>
+				<span class="s2">&quot;frag_type&quot;</span><span class="p">:</span> <span class="s2">&quot;Decitala&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">name</span>
+			<span class="p">}</span>
+			<span class="k">return</span> <span class="n">d</span>
+		<span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;GreekFoot&quot;</span><span class="p">:</span>
+			<span class="n">d</span> <span class="o">=</span> <span class="p">{</span>
+				<span class="s2">&quot;frag_type&quot;</span><span class="p">:</span> <span class="s2">&quot;GreekFoot&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">name</span>
+			<span class="p">}</span>
+			<span class="k">return</span> <span class="n">d</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">FragmentException</span><span class="p">(</span><span class="s2">&quot;This object is not JSON serializable. File an issue?&quot;</span><span class="p">)</span>
+			
+<span class="k">class</span> <span class="nc">FragmentDecoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecoder</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="n">json</span><span class="o">.</span><span class="n">JSONDecoder</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_hook</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">object_hook</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">temp_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+		<span class="n">loaded</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">loaded</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+	
+	<span class="k">def</span> <span class="nf">object_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This function already runs json.loads invisibly on ``obj``. </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;frag_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GeneralFragment&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">])</span>
+		<span class="k">elif</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;frag_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Decitala&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">Decitala</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+		<span class="k">elif</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;frag_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GreekFoot&quot;</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">FragmentException</span><span class="p">(</span><span class="s2">&quot;This object is not JSON deserializable. File an issue?&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="GeneralFragment"><a class="viewcode-back" href="../../mods/fragment.html#decitala.fragment.GeneralFragment">[docs]</a><span class="k">class</span> <span class="nc">GeneralFragment</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;</span>

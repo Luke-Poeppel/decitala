@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.path_finding.pofp &mdash; decitala 0.7.1 documentation</title>
+  <title>decitala.path_finding.pofp &mdash; decitala 0.7.2 documentation</title>
   
 
   
@@ -32,7 +32,6 @@
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -62,7 +61,7 @@
             
             
               <div class="version">
-                0.7.1
+                0.7.2
               </div>
             
           
@@ -90,9 +89,8 @@
               <p class="caption"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/database.html">database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../mods/floyd_warshall.html">floyd_warshall</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/fragment.html">fragment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../mods/pofp.html">pofp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/search.html">search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/utils.html">utils</a></li>
@@ -215,7 +213,7 @@
 	<span class="s2">&quot;get_pareto_optimal_longest_paths&quot;</span>
 <span class="p">]</span>
 
-<div class="viewcode-block" id="check_break_point"><a class="viewcode-back" href="../../../mods/pofp.html#decitala.path_finding.pofp.check_break_point">[docs]</a><span class="k">def</span> <span class="nf">check_break_point</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<div class="viewcode-block" id="check_break_point"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.pofp.check_break_point">[docs]</a><span class="k">def</span> <span class="nf">check_break_point</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Helper function for :obj:`~decitala.pofp.get_break_points`. Checks index i of the onset_list that all values </span>
 <span class="sd">	prior to it are less than or equal to :math:`b_i` and :math:`s_i`. If True, this means that </span>
@@ -253,7 +251,7 @@
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="get_break_points"><a class="viewcode-back" href="../../../mods/pofp.html#decitala.path_finding.pofp.get_break_points">[docs]</a><span class="k">def</span> <span class="nf">get_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="get_break_points"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.pofp.get_break_points">[docs]</a><span class="k">def</span> <span class="nf">get_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	:param list data: data from :obj:`~decitala.trees.rolling_search`.</span>
 <span class="sd">	:return: every index in the input at which the data is at most end-overlapping. </span>
@@ -281,7 +279,7 @@
 	
 	<span class="k">return</span> <span class="n">break_points</span></div>
 
-<div class="viewcode-block" id="partition_data_by_break_points"><a class="viewcode-back" href="../../../mods/pofp.html#decitala.path_finding.pofp.partition_data_by_break_points">[docs]</a><span class="k">def</span> <span class="nf">partition_data_by_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="partition_data_by_break_points"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.pofp.partition_data_by_break_points">[docs]</a><span class="k">def</span> <span class="nf">partition_data_by_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Partitions the input data according to all calculated breakpoints. </span>
 
@@ -325,7 +323,7 @@
 		<span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">elem</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]:</span>
 			<span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-<div class="viewcode-block" id="get_pareto_optimal_longest_paths"><a class="viewcode-back" href="../../../mods/pofp.html#decitala.path_finding.pofp.get_pareto_optimal_longest_paths">[docs]</a><span class="k">def</span> <span class="nf">get_pareto_optimal_longest_paths</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="get_pareto_optimal_longest_paths"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.pofp.get_pareto_optimal_longest_paths">[docs]</a><span class="k">def</span> <span class="nf">get_pareto_optimal_longest_paths</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	&gt;&gt;&gt; data_1 = [</span>
 <span class="sd">	... 	{&quot;fragment&quot;: &quot;info1&quot;, &quot;mod&quot;: (&quot;r&quot;, 1.0), &quot;onset_range&quot;: (0.0, 2.0), &quot;id&quot;:1},</span>
