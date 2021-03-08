@@ -1,4 +1,4 @@
-name: Package-Testing
+name: Build
 
 on:
   push:

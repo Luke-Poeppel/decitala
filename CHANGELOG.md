@@ -8,8 +8,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Missing modifications types ``rr``, ``rd``, ``sr``, and ``rsr`` in ``DecitalaHashTable``. Refactored and clean up the instantiation code –– still requires work for Greek metrics and General fragments. 
 - Applied flake8 to vis.py.
 - JSON Serialization/Deserialization errors for ``GeneralFragment`` and its inherited classes. This makes saving "training data" easier. (This step is for the next minor patch.)
-- Analyses directory of databases holding valid analysis of compositions. 
-- The ``local_docs`` directory (this was previously gitignored for no good reason). 
+- The ``local_docs`` directory (this was previously gitignored for no good reason). Also an analyses directory of databases holding valid analysis of compositions. 
 
 ## [v0.7.1] March 3, 2021 (NYC)
 ### Fixed
