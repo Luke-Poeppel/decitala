@@ -7,6 +7,7 @@
 # Location: Kent, CT 2020 / Frankfurt, DE 2020
 ####################################################################################################
 import copy
+import json
 import logging
 import numpy as np
 import sys
@@ -16,6 +17,8 @@ from more_itertools import consecutive_groups, windowed, powerset
 from scipy.linalg import norm
 
 from music21 import converter
+
+from . import fragment
 
 __all__ = [
 	"get_logger",  # Logging
@@ -946,3 +949,16 @@ def cauchy_schwartz(vector1, vector2):
 	"""
 	assert len(vector1) == len(vector2)
 	return abs(np.dot(vector1, vector2)) < (norm(vector1) * norm(vector2))
+
+####################################################################################################
+def loader(analysis):
+	"""
+	Useful function for loading analyses into native python format (from a json).
+
+	:param str analysis: path to analysis file in the databases/analyses directory.
+	:return: analysis in native python types; fragments and their associated onset range.
+	:rtype: list
+	"""
+	with open(analysis) as analysis_json:
+		data = json.load(analysis_json, cls=fragment.FragmentDecoder)
+		return data
