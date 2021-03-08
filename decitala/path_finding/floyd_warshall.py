@@ -1,30 +1,30 @@
 # -*- coding: utf-8 -*-
 ####################################################################################################
 # File:     floyd_warshall.py
-# Purpose:  Implementation of the Floyd-Warshall Algorithm for path-finding. 
-# 
+# Purpose:  Implementation of the Floyd-Warshall Algorithm for path-finding.
+#
 # Author:   Luke Poeppel
 #
 # Location: NYC, 2021
 ####################################################################################################
 """
-Implementation of the Floyd-Warshall Algorithm (path of minimal cost). 
+Implementation of the Floyd-Warshall Algorithm (path of minimal cost).
 """
 import numpy as np
 
-from progress.bar import Bar
-
 def cost(
-		vertex_1, 
-		vertex_2, 
+		vertex_1,
+		vertex_2,
 		weights
 	):
 	"""
-	Cost function used in the Floyd-Warshall Algorithm. 
+	Cost function used in the Floyd-Warshall Algorithm.
 
-	:param `~decitala.fragment.GeneralFragment` vertex_1: an object inheriting from :obj:`~decitala.fragment.GeneralFragment`.
-	:param `~decitala.fragment.GeneralFragment` vertex_2: an object inheriting from :obj:`~decitala.fragment.GeneralFragment`.
-	:param dict weights: weights used in the model. Must sum to 1. Requires "gap" and "onsets" values. 
+	:param `~decitala.fragment.GeneralFragment` vertex_1: an object inheriting from
+			:obj:`~decitala.fragment.GeneralFragment`.
+	:param `~decitala.fragment.GeneralFragment` vertex_2: an object inheriting from
+			:obj:`~decitala.fragment.GeneralFragment`.
+	:param dict weights: weights used in the model. Must sum to 1. Requires "gap" and "onsets" values.
 	:return: cost of moving from ``vertex_1`` to ``vertex_2``.
 	:rtype: float
 	"""
@@ -34,23 +34,24 @@ def cost(
 	return cost
 
 def floyd_warshall(
-		data, 
+		data,
 		weights
 	):
 	"""
 	Calculates the distance and next matrices of the Floyd-Warshall path-finding algorithm.
 
 	:param list data: data from :obj:`~decitala.search.rolling_search`.
-	:param dict weights: weights to be used in the cost function. Must sum to 1. Requires "gap" and "onsets" values.
-	:return: two matrices of size len(data) x len(data): first is the weighted adjacency matrix, the 
-			second is the matrix used for path reconstruction. 
+	:param dict weights: weights to be used in the cost function. Must sum to 1. Requires "gap"
+			and "onsets" values.
+	:return: two matrices of size len(data) x len(data): first is the weighted adjacency matrix, the
+			second is the matrix used for path reconstruction.
 	:rtype: tuple
 	"""
 	dist_matrix = np.full(shape=(len(data), len(data)), fill_value=np.inf)
 	next_matrix = np.full(shape=(len(data), len(data)), fill_value=None)
 	iterator = np.nditer(
-		[dist_matrix, next_matrix], 
-		flags=['multi_index', 'refs_ok'], 
+		[dist_matrix, next_matrix],
+		flags=['multi_index', 'refs_ok'],
 		op_flags=['readwrite'],
 	)
 	while not iterator.finished:
@@ -70,25 +71,27 @@ def floyd_warshall(
 				dist_matrix[iterator.multi_index] = cost_
 				next_matrix[iterator.multi_index] = data[iterator.multi_index[1]]
 		iterator.iternext()
-	
-	#with Bar("Building matrices...", max=len(data), check_tty=False, hide_cursor=False) as bar:
+
+	# with Bar("Building matrices...", max=len(data), check_tty=False, hide_cursor=False) as bar:
 	for k in range(0, len(data)):
 		for i in range(0, len(data)):
 			for j in range(0, len(data)):
 				if dist_matrix[i][j] > dist_matrix[i][k] + dist_matrix[k][j]:
 					dist_matrix[i][j] = dist_matrix[i][k] + dist_matrix[k][j]
 					next_matrix[i][j] = next_matrix[i][k]
-		#bar.next()
-	
+		# bar.next()
+
 	return dist_matrix, next_matrix
 
 def get_path(start, end, next_matrix, data):
 	"""
-	Function for retriving the best path extracted from :obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.
+	Function for retriving the best path extracted from
+		:obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.
 
 	:param `~decitala.fragment.GeneralFragment` start: starting fragment in the path.
 	:param `~decitala.fragment.GeneralFragment` end: ending fragment in the path.
-	:param numpy.array next_matrix: second matrix from :obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.
+	:param numpy.array next_matrix: second matrix from
+			:obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.
 	:param list data: data from :obj:`~decitala.search.rolling_search``.
 	:return: best path extracted using the Floyd-Warshall algorithm.
 	:rtype: list
