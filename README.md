@@ -13,8 +13,15 @@ _"To introduce the tālas gradually, their characteristics––having been prom
 ### Documentation
 Available at: https://luke-poeppel.github.io/decitala/.
 
-### Version
-Check with ``decitala --version``. 
+### Installation
+```
+>>> cd # Navigate to home directory
+>>> git clone https://github.com/Luke-Poeppel/decitala
+>>> cd decitala
+>>> pip3 install -e .
+>>> pre-commit install
+>>> decitala --version # Check for proper installation.
+```
 
 ### Requirements
 - This package requires music21 which is available here:  https://github.com/cuthbertLab/music21. 
