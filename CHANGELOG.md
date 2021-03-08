@@ -3,11 +3,13 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.7.4] ???
-- WIP: Finished applying flake8 to modules. 
-- TODO: #83 (missing modules in setup.py)
+## [v0.7.4] March 8, 2021 (Kent)
+### Fixed
+- Finished applying flake8 to modules. 
+- Fixed #83 (missing modules in setup.py)
 
 ## [v0.7.3] March 8, 2021 (Kent)
+### Fixed
 - Re-gitignored ``local_docs``. 
 
 ## [v0.7.2] March 8, 2021 (Kent)

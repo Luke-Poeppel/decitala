@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.path_finding.pofp &mdash; decitala 0.7.3 documentation</title>
+  <title>decitala.path_finding.pofp &mdash; decitala 0.7.4 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.7.3
+                0.7.4
               </div>
             
           
@@ -169,42 +169,38 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="c1">####################################################################################################</span>
 <span class="c1"># File:     po_non_overlapping_onsets.py</span>
-<span class="c1"># Purpose:  M. Raynards technique for solving the non-overlapping onset ranges problem using </span>
+<span class="c1"># Purpose:  M. Raynards technique for solving the non-overlapping onset ranges problem using</span>
 <span class="c1">#           Pareto optimal frontiers of sequences.</span>
-<span class="c1"># </span>
+<span class="c1">#</span>
 <span class="c1"># Author:   Luke Poeppel</span>
 <span class="c1">#</span>
 <span class="c1"># Location: Kent, CT 2020</span>
 <span class="c1">####################################################################################################</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">**NOTE**: M. Raynard helpfully provided a technique for solving the given problem (an iterative approach</span>
-<span class="sd">to the end-overlapping indices problem) in a StackOverflow post from Summer, 2020. The link to the </span>
-<span class="sd">original post is: https://stackoverflow.com/questions/62734114/iterative-solution-to-end-overlapping-indices.</span>
+<span class="sd">**NOTE**: M. Raynard helpfully provided a technique for solving the given problem (an iterative</span>
+<span class="sd">approach to the end-overlapping indices problem) in a StackOverflow post from Summer, 2020. The link</span>
+<span class="sd">to the original post is:</span>
+<span class="sd">https://stackoverflow.com/questions/62734114/iterative-solution-to-end-overlapping-indices.</span>
 
-<span class="sd">Once we have retrieved :math:`n` talas in a part, we want to check whether or not they align. </span>
-<span class="sd">If a tala :math:`T_1` ranges from onsets :math:`X_i` to :math:`Y_i` and a tala :math:`T_2` ranges from </span>
-<span class="sd">onsets :math:`X_j` to :math:`Y_j`, if :math:`X_j &lt; Y_i`, we can&#39;t satisfactorily align :math:`T_1` and</span>
-<span class="sd">:math:`T_2`; this means that one (or both) of these talas was not intentionally included, and simply </span>
-<span class="sd">exists as a sub-tala or cyclic rotation. Multiple possible alignments exist, so we calculate them all</span>
-<span class="sd">using an iterative solution to the end-overlapping indices problem using a Pareto frontier of paths. </span>
+<span class="sd">Once we have retrieved :math:`n` talas in a part, we want to check whether or not they align.</span>
+<span class="sd">If a tala :math:`T_1` ranges from onsets :math:`X_i` to :math:`Y_i` and a tala :math:`T_2` ranges</span>
+<span class="sd">from onsets :math:`X_j` to :math:`Y_j`, if :math:`X_j &lt; Y_i`, we can&#39;t satisfactorily align</span>
+<span class="sd">:math:`T_1` and :math:`T_2`; this means that one (or both) of these talas was not intentionally</span>
+<span class="sd">included, and simply exists as a sub-tala or cyclic rotation. Multiple possible alignments exist,</span>
+<span class="sd">so we calculate them all using an iterative solution to the end-overlapping indices problem using</span>
+<span class="sd">a Pareto frontier of paths.</span>
 
-<span class="sd">The output to the alignment function, :obj:`decitala.pofp.get_pareto_optimal_longest_paths`, may be exponential </span>
-<span class="sd">in size with respect to the input. As such, we use the observation that there often exist &quot;break points&quot; in the</span>
-<span class="sd">data collected from rolling search: points at which there exists no overlap. We divide the data by each of </span>
-<span class="sd">these regions (if they exist) and generate the longest paths separately. </span>
+<span class="sd">The output to the alignment function, :obj:`decitala.pofp.get_pareto_optimal_longest_paths`, may be</span>
+<span class="sd">exponential in size with respect to the input. As such, we use the observation that there often</span>
+<span class="sd">exist &quot;break points&quot; in the data collected from rolling search: points at which there exists no</span>
+<span class="sd">overlap. We divide the data by each of these regions (if they exist) and generate the longest</span>
+<span class="sd">paths separately.</span>
 
-<span class="sd">Several of the functions below have the parameter ``data``. This parameter is of the form returned </span>
-<span class="sd">by :obj:`~decitala.trees.rolling_search` and corresponds to a list of dictionaries, each holding information</span>
-<span class="sd">about the fragment, modification, onset-range, and spanning data. </span>
+<span class="sd">Several of the functions below have the parameter ``data``. This parameter is of the form returned</span>
+<span class="sd">by :obj:`~decitala.trees.rolling_search` and corresponds to a list of dictionaries, each holding</span>
+<span class="sd">information about the fragment, modification, onset-range, and spanning data.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">import</span> <span class="nn">pytest</span>
-
-<span class="kn">from</span> <span class="nn">..fragment</span> <span class="kn">import</span> <span class="p">(</span>
-	<span class="n">GeneralFragment</span><span class="p">,</span>
-	<span class="n">GreekFoot</span>
-<span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
 	<span class="s2">&quot;check_break_point&quot;</span><span class="p">,</span>
@@ -215,13 +211,13 @@
 
 <div class="viewcode-block" id="check_break_point"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.pofp.check_break_point">[docs]</a><span class="k">def</span> <span class="nf">check_break_point</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Helper function for :obj:`~decitala.pofp.get_break_points`. Checks index i of the onset_list that all values </span>
-<span class="sd">	prior to it are less than or equal to :math:`b_i` and :math:`s_i`. If True, this means that </span>
-<span class="sd">	the data at index i is &gt;= all previous.</span>
+<span class="sd">	Helper function for :obj:`~decitala.pofp.get_break_points`. Checks index i of the onset_list that</span>
+<span class="sd">	all values prior to it are less than or equal to :math:`b_i` and :math:`s_i`. If True, this means</span>
+<span class="sd">	that the data at index i is &gt;= all previous.</span>
 
 <span class="sd">	:param list data: data from :obj:`~decitala.trees.rolling_search`.</span>
-<span class="sd">	:param int i: index of the data to check. </span>
-<span class="sd">	:return: whether or not the queried index is a break point. </span>
+<span class="sd">	:param int i: index of the data to check.</span>
+<span class="sd">	:return: whether or not the queried index is a break point.</span>
 <span class="sd">	:rtype: bool</span>
 
 <span class="sd">	&gt;&gt;&gt; data = [</span>
@@ -245,7 +241,7 @@
 			<span class="n">check</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">check</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-	
+
 	<span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">check</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="mi">1</span><span class="p">}:</span>
 		<span class="k">return</span> <span class="kc">True</span>
 	<span class="k">else</span><span class="p">:</span>
@@ -254,7 +250,7 @@
 <div class="viewcode-block" id="get_break_points"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.pofp.get_break_points">[docs]</a><span class="k">def</span> <span class="nf">get_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	:param list data: data from :obj:`~decitala.trees.rolling_search`.</span>
-<span class="sd">	:return: every index in the input at which the data is at most end-overlapping. </span>
+<span class="sd">	:return: every index in the input at which the data is at most end-overlapping.</span>
 <span class="sd">	:rtype: list</span>
 
 <span class="sd">	&gt;&gt;&gt; data = [</span>
@@ -274,14 +270,14 @@
 	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 		<span class="k">if</span> <span class="n">check_break_point</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
 			<span class="n">break_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-			
+
 		<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-	
+
 	<span class="k">return</span> <span class="n">break_points</span></div>
 
 <div class="viewcode-block" id="partition_data_by_break_points"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.pofp.partition_data_by_break_points">[docs]</a><span class="k">def</span> <span class="nf">partition_data_by_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Partitions the input data according to all calculated breakpoints. </span>
+<span class="sd">	Partitions the input data according to all calculated breakpoints.</span>
 
 <span class="sd">	&gt;&gt;&gt; data = [</span>
 <span class="sd">	...		{&quot;fragment&quot;: &quot;info1&quot;, &quot;mod&quot;: (&quot;r&quot;, 1.0), &quot;onset_range&quot;: (0.0, 2.0)},</span>
@@ -294,7 +290,7 @@
 <span class="sd">	... ]</span>
 <span class="sd">	&gt;&gt;&gt; for this_partition in partition_data_by_break_points(data):</span>
 <span class="sd">	...    print(this_partition)</span>
-<span class="sd">	[{&#39;fragment&#39;: &#39;info1&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (0.0, 2.0)}, {&#39;fragment&#39;: &#39;info2&#39;, &#39;mod&#39;: (&#39;r&#39;, 2.0), &#39;onset_range&#39;: (0.0, 4.0)}, {&#39;fragment&#39;: &#39;info3&#39;, &#39;mod&#39;: (&#39;d&#39;, 0.25), &#39;onset_range&#39;: (2.0, 4.0)}, {&#39;fragment&#39;: &#39;info4&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (2.0, 5.75)}, {&#39;fragment&#39;: &#39;info5&#39;, &#39;mod&#39;: (&#39;r&#39;, 3.0), &#39;onset_range&#39;: (2.5, 4.5)}, {&#39;fragment&#39;: &#39;info6&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (4.0, 5.5)}]</span>
+<span class="sd">	[{&#39;fragment&#39;: &#39;info1&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (0.0, 2.0)}, {&#39;fragment&#39;: &#39;info2&#39;, &#39;mod&#39;: (&#39;r&#39;, 2.0), &#39;onset_range&#39;: (0.0, 4.0)}, {&#39;fragment&#39;: &#39;info3&#39;, &#39;mod&#39;: (&#39;d&#39;, 0.25), &#39;onset_range&#39;: (2.0, 4.0)}, {&#39;fragment&#39;: &#39;info4&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (2.0, 5.75)}, {&#39;fragment&#39;: &#39;info5&#39;, &#39;mod&#39;: (&#39;r&#39;, 3.0), &#39;onset_range&#39;: (2.5, 4.5)}, {&#39;fragment&#39;: &#39;info6&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (4.0, 5.5)}] # noqa</span>
 <span class="sd">	[{&#39;fragment&#39;: &#39;info7&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (6.0, 7.25)}]</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">break_points</span> <span class="o">=</span> <span class="n">get_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -306,12 +302,12 @@
 <span class="k">def</span> <span class="nf">_min_successor_to_elem</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">all_min_successors</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	&gt;&gt;&gt; all_min_successors = [</span>
-<span class="sd">	...		[{&#39;fragment&#39;: &#39;info1&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (0.0, 2.0), &#39;id&#39;: 1}, {&#39;fragment&#39;: &#39;info3&#39;, &#39;mod&#39;: (&#39;d&#39;, 0.25), &#39;onset_range&#39;: (2.0, 4.0), &#39;id&#39;: 3}], </span>
-<span class="sd">	... 	[{&#39;fragment&#39;: &#39;info2&#39;, &#39;mod&#39;: (&#39;r&#39;, 2.0), &#39;onset_range&#39;: (0.0, 4.0), &#39;id&#39;: 2}, {&#39;fragment&#39;: &#39;info6&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (4.0, 5.5), &#39;id&#39;: 6}], </span>
-<span class="sd">	... 	[{&#39;fragment&#39;: &#39;info3&#39;, &#39;mod&#39;: (&#39;d&#39;, 0.25), &#39;onset_range&#39;: (2.0, 4.0), &#39;id&#39;: 3}, {&#39;fragment&#39;: &#39;info6&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (4.0, 5.5), &#39;id&#39;: 6}], </span>
-<span class="sd">	... 	[{&#39;fragment&#39;: &#39;info4&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (2.0, 5.75), &#39;id&#39;: 4}, {&#39;fragment&#39;: &#39;info7&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (6.0, 7.25), &#39;id&#39;: 7}], </span>
-<span class="sd">	... 	[{&#39;fragment&#39;: &#39;info5&#39;, &#39;mod&#39;: (&#39;r&#39;, 3.0), &#39;onset_range&#39;: (2.5, 4.5), &#39;id&#39;: 5}, {&#39;fragment&#39;: &#39;info7&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (6.0, 7.25), &#39;id&#39;: 7}], </span>
-<span class="sd">	... 	[{&#39;fragment&#39;: &#39;info6&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (4.0, 5.5), &#39;id&#39;: 6}, {&#39;fragment&#39;: &#39;info7&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (6.0, 7.25), &#39;id&#39;: 7}]</span>
+<span class="sd">	...		[{&#39;fragment&#39;: &#39;info1&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (0.0, 2.0), &#39;id&#39;: 1}, {&#39;fragment&#39;: &#39;info3&#39;, &#39;mod&#39;: (&#39;d&#39;, 0.25), &#39;onset_range&#39;: (2.0, 4.0), &#39;id&#39;: 3}], # noqa</span>
+<span class="sd">	... 	[{&#39;fragment&#39;: &#39;info2&#39;, &#39;mod&#39;: (&#39;r&#39;, 2.0), &#39;onset_range&#39;: (0.0, 4.0), &#39;id&#39;: 2}, {&#39;fragment&#39;: &#39;info6&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (4.0, 5.5), &#39;id&#39;: 6}], # noqa</span>
+<span class="sd">	... 	[{&#39;fragment&#39;: &#39;info3&#39;, &#39;mod&#39;: (&#39;d&#39;, 0.25), &#39;onset_range&#39;: (2.0, 4.0), &#39;id&#39;: 3}, {&#39;fragment&#39;: &#39;info6&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (4.0, 5.5), &#39;id&#39;: 6}], # noqa</span>
+<span class="sd">	... 	[{&#39;fragment&#39;: &#39;info4&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (2.0, 5.75), &#39;id&#39;: 4}, {&#39;fragment&#39;: &#39;info7&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (6.0, 7.25), &#39;id&#39;: 7}], # noqa</span>
+<span class="sd">	... 	[{&#39;fragment&#39;: &#39;info5&#39;, &#39;mod&#39;: (&#39;r&#39;, 3.0), &#39;onset_range&#39;: (2.5, 4.5), &#39;id&#39;: 5}, {&#39;fragment&#39;: &#39;info7&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (6.0, 7.25), &#39;id&#39;: 7}], # noqa</span>
+<span class="sd">	... 	[{&#39;fragment&#39;: &#39;info6&#39;, &#39;mod&#39;: (&#39;r&#39;, 1.0), &#39;onset_range&#39;: (4.0, 5.5), &#39;id&#39;: 6}, {&#39;fragment&#39;: &#39;info7&#39;, &#39;mod&#39;: (&#39;rd&#39;, 0.25), &#39;onset_range&#39;: (6.0, 7.25), &#39;id&#39;: 7}] # noqa</span>
 <span class="sd">	... ]</span>
 <span class="sd">	&gt;&gt;&gt; elem = all_min_successors[2][0]</span>
 <span class="sd">	&gt;&gt;&gt; elem</span>
@@ -342,11 +338,11 @@
 <span class="sd">	[(0.0, 2.0), (2.5, 4.5), (6.0, 7.25)]</span>
 <span class="sd">	[(0.0, 4.0), (4.0, 5.5), (6.0, 7.25)]</span>
 <span class="sd">	&gt;&gt;&gt; data_2 = [</span>
-<span class="sd">	... 	{&#39;fragment&#39;: GreekFoot(&quot;Spondee&quot;), &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &quot;id&quot;:1},</span>
-<span class="sd">	... 	{&#39;fragment&#39;: GeneralFragment([0.25, 0.25], name=&quot;cs-test1&quot;), &#39;mod&#39;: (&#39;cs&#39;, 2.0), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &quot;id&quot;:2},</span>
-<span class="sd">	... 	{&#39;fragment&#39;: GreekFoot(&quot;Trochee&quot;), &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,)], &quot;id&quot;:3},</span>
-<span class="sd">	... 	{&#39;fragment&#39;: GeneralFragment([0.25, 0.125], name=&quot;cs-test2&quot;), &#39;mod&#39;: (&#39;cs&#39;, 2.0), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &quot;id&quot;:4},</span>
-<span class="sd">	... 	{&#39;fragment&#39;: GreekFoot(&quot;Dactyl&quot;), &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.5, 1.0), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,), (85,)], &quot;id&quot;:5}</span>
+<span class="sd">	... 	{&#39;fragment&#39;: GreekFoot(&quot;Spondee&quot;), &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &quot;id&quot;:1}, # noqa</span>
+<span class="sd">	... 	{&#39;fragment&#39;: GeneralFragment([0.25, 0.25], name=&quot;cs-test1&quot;), &#39;mod&#39;: (&#39;cs&#39;, 2.0), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &quot;id&quot;:2}, # noqa</span>
+<span class="sd">	... 	{&#39;fragment&#39;: GreekFoot(&quot;Trochee&quot;), &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,)], &quot;id&quot;:3}, # noqa</span>
+<span class="sd">	... 	{&#39;fragment&#39;: GeneralFragment([0.25, 0.125], name=&quot;cs-test2&quot;), &#39;mod&#39;: (&#39;cs&#39;, 2.0), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &quot;id&quot;:4}, # noqa</span>
+<span class="sd">	... 	{&#39;fragment&#39;: GreekFoot(&quot;Dactyl&quot;), &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.5, 1.0), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,), (85,)], &quot;id&quot;:5} # noqa</span>
 <span class="sd">	... ]</span>
 <span class="sd">	&gt;&gt;&gt; for path in get_pareto_optimal_longest_paths(data_2):</span>
 <span class="sd">	... 	for fragment in path:</span>
@@ -365,21 +361,21 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)]</span>
 	<span class="n">sinks</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)]</span>
-	
+
 	<span class="n">all_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
 	<span class="n">sink_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sinks</span><span class="p">]</span>
 	<span class="n">remaining</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">all_ids</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">sink_ids</span><span class="p">)</span>
-	<span class="n">filtered_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">remaining</span><span class="p">]</span>	
+	<span class="n">filtered_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">remaining</span><span class="p">]</span>
 
 	<span class="n">min_successors</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">filtered_data</span><span class="p">:</span>
-		<span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">y</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span><span class="c1"># and y[&quot;onset_range&quot;] != x[&quot;onset_range&quot;]]</span>
+		<span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">y</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="c1"># noqa and y[&quot;onset_range&quot;] != x[&quot;onset_range&quot;]]  </span>
 		<span class="n">min_successor</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 		<span class="n">min_successors</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">min_successor</span><span class="p">])</span>
 
 	<span class="n">successors</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-		<span class="n">successor</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">_min_successor_to_elem</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">min_successors</span><span class="p">)[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span>
+		<span class="n">successor</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">y</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">_min_successor_to_elem</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">min_successors</span><span class="p">)[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span> <span class="c1"># noqa</span>
 		<span class="n">successors</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">successor</span><span class="p">])</span>
 
 	<span class="k">def</span> <span class="nf">print_path_rec</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>

@@ -1,6 +1,6 @@
 [flake8]
 max-line-length = 100
-exclude = tests
+exclude = tests, local_docs
 ignore =
     W191, # indentation contains tabs
     W292, # no newline at end of file

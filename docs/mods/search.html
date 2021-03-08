@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>search &mdash; decitala 0.7.3 documentation</title>
+  <title>search &mdash; decitala 0.7.4 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.7.3
+                0.7.4
               </div>
             
           
@@ -175,17 +175,18 @@
 <dl class="py function">
 <dt id="decitala.search.get_by_ql_array">
 <code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">get_by_ql_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ql_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio_tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference_tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_modifications</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['r',</span> <span class="pre">'rr',</span> <span class="pre">'d',</span> <span class="pre">'rd',</span> <span class="pre">'sr',</span> <span class="pre">'rsr']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_unnamed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#get_by_ql_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.get_by_ql_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Searches a given ratio and/or difference tree for a given fragment. Supports fragments with grace notes.</p>
+<dd><p>Searches a given ratio and/or difference tree for a given fragment. Allows grace notes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ql_array</strong> (<em>numpy.array</em>) – fragment to be searched.</p></li>
 <li><p><strong>ratio_tree</strong> (<a class="reference internal" href="trees.html#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><em>FragmentTree</em></a>) – tree storing ratio representations.</p></li>
 <li><p><strong>difference_tree</strong> (<a class="reference internal" href="trees.html#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><em>FragmentTree</em></a>) – tree storing difference representations.</p></li>
-<li><p><strong>allowed_modifications</strong> (<em>list</em>) – possible ways for a fragment to be modified. 
+<li><p><strong>allowed_modifications</strong> (<em>list</em>) – possible ways for a fragment to be modified.
 Current possibilities are <code class="docutils literal notranslate"><span class="pre">r</span></code>, <code class="docutils literal notranslate"><span class="pre">rr</span></code>, <code class="docutils literal notranslate"><span class="pre">d</span></code>, <code class="docutils literal notranslate"><span class="pre">rd</span></code>, <code class="docutils literal notranslate"><span class="pre">sr</span></code>, and <code class="docutils literal notranslate"><span class="pre">rsr</span></code>.
 <em>NOTE</em>: the order of <code class="docutils literal notranslate"><span class="pre">allowed_modifications</span></code> is the order of the search.</p></li>
-<li><p><strong>allow_unnamed</strong> (<em>bool</em>) – whether or not to allow the retrieval of unnamed paths. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>allow_unnamed</strong> (<em>bool</em>) – whether or not to allow the retrieval of unnamed paths. The
+default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -213,21 +214,24 @@ are the lengths of fragments in the decitala dataset.</p>
 <li><p><strong>ratio_tree</strong> (<a class="reference internal" href="trees.html#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><em>FragmentTree</em></a>) – tree storing ratio representations.</p></li>
 <li><p><strong>difference_tree</strong> (<a class="reference internal" href="trees.html#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><em>FragmentTree</em></a>) – tree storing difference representations.</p></li>
 <li><p><strong>allowed_modifications</strong> (<em>list</em>) – see <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_by_ql_array</span></code>.</p></li>
-<li><p><strong>try_contiguous_summation</strong> (<em>bool</em>) – ties together all elements of equal pitch and duration and searches. See <a class="reference internal" href="utils.html#decitala.utils.contiguous_summation" title="decitala.utils.contiguous_summation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contiguous_summation</span></code></a>.</p></li>
+<li><p><strong>try_contiguous_summation</strong> (<em>bool</em>) – ties together all elements of equal pitch and duration 
+and searches. See <a class="reference internal" href="utils.html#decitala.utils.contiguous_summation" title="decitala.utils.contiguous_summation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contiguous_summation</span></code></a>.</p></li>
 <li><p><strong>windows</strong> (<em>list</em>) – possible lengths of the search frames.</p></li>
-<li><p><strong>allow_unnamed</strong> (<em>bool</em>) – whether or not to include unnamed fragments (in the fragment tree(s)) in the return.</p></li>
+<li><p><strong>allow_unnamed</strong> (<em>bool</em>) – whether or not to include unnamed fragments (in the fragment tree(s)) 
+in the return.</p></li>
 <li><p><strong>logger</strong> (<em>bool</em>) – logger object (see <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_logger</span></code>).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>list holding dictionaries, each of which holds fragment, modifiation, onset-range, and spanning data.</p>
+<dd class="field-even"><p>list holding dictionaries, each of which holds fragment, modifiation, onset-range, and 
+spanning data.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span> <span class="c1"># noqa</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ex</span> <span class="o">=</span> <span class="s2">&quot;./tests/static/Shuffled_Transcription_2.xml&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tala_data</span> <span class="ow">in</span> <span class="n">rolling_search</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">,</span> <span class="n">allowed_modifications</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">tala_data</span><span class="p">)</span>

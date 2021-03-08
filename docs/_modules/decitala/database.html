@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.database &mdash; decitala 0.7.3 documentation</title>
+  <title>decitala.database &mdash; decitala 0.7.4 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.7.3
+                0.7.4
               </div>
             
           
@@ -169,35 +169,29 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="c1">####################################################################################################</span>
 <span class="c1"># File:     database.py</span>
-<span class="c1"># Purpose:  Data structure for creating and representing databases using sqlite. </span>
-<span class="c1"># </span>
+<span class="c1"># Purpose:  Data structure for creating and representing databases using sqlite.</span>
+<span class="c1">#</span>
 <span class="c1"># Author:   Luke Poeppel</span>
 <span class="c1">#</span>
 <span class="c1"># Location: Kent, CT 2020 / Frankfurt, DE 2020 / NYC, 2021</span>
 <span class="c1">####################################################################################################</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Tools for creating SQLite databases of extracted rhythmic data from Messiaen&#39;s music.  </span>
+<span class="sd">Tools for creating SQLite databases of extracted rhythmic data from Messiaen&#39;s music.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
-<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">timeout_decorator</span>
-<span class="kn">import</span> <span class="nn">timeit</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
 
 <span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">literal_eval</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">groupby</span>
 <span class="kn">from</span> <span class="nn">progress.bar</span> <span class="kn">import</span> <span class="n">Bar</span>
-<span class="kn">from</span> <span class="nn">progress.spinner</span> <span class="kn">import</span> <span class="n">Spinner</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span>
 
-<span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">declarative_base</span> 
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">create_engine</span><span class="p">,</span>
 	<span class="n">MetaData</span><span class="p">,</span>
@@ -207,33 +201,27 @@
 	<span class="n">String</span><span class="p">,</span>
 	<span class="n">Float</span><span class="p">,</span>
 	<span class="n">Boolean</span><span class="p">,</span>
-	<span class="n">PickleType</span><span class="p">,</span>
-	<span class="n">ARRAY</span><span class="p">,</span>
 	<span class="n">select</span>
 <span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">converter</span>
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span>
-<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">stream</span>
 
 <span class="kn">from</span> <span class="nn">.fragment</span> <span class="kn">import</span> <span class="p">(</span>
-	<span class="n">GeneralFragment</span><span class="p">,</span>
 	<span class="n">Decitala</span><span class="p">,</span>
 	<span class="n">GreekFoot</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
-	<span class="n">get_object_indices</span><span class="p">,</span>
 	<span class="n">successive_ratio_array</span><span class="p">,</span>
 	<span class="n">successive_difference_array</span><span class="p">,</span>
 	<span class="n">filter_single_anga_class_fragments</span><span class="p">,</span>
 	<span class="n">filter_sub_fragments</span><span class="p">,</span>
 	<span class="n">pitch_content_to_contour</span><span class="p">,</span>
-	<span class="n">contour_to_prime_contour</span><span class="p">,</span> 
+	<span class="n">contour_to_prime_contour</span><span class="p">,</span>
 	<span class="n">get_logger</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.trees</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">FragmentTree</span><span class="p">,</span>
-	<span class="n">filter_data</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.search</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">rolling_search</span><span class="p">,</span>
@@ -249,7 +237,6 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
 	<span class="s2">&quot;create_database&quot;</span><span class="p">,</span>
 	<span class="s2">&quot;DBParser&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;create_fragment_database&quot;</span>
 <span class="p">]</span>
 
 <span class="c1"># Fragments</span>
@@ -257,7 +244,6 @@
 <span class="n">decitala_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/Fragments/Decitalas&quot;</span>
 <span class="n">greek_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/Fragments/Greek_Metrics/XML&quot;</span>
 
-<span class="c1">############### EXCEPTIONS ###############</span>
 <span class="k">class</span> <span class="nc">DatabaseException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 	<span class="k">pass</span>
 
@@ -265,19 +251,19 @@
 <span class="k">def</span> <span class="nf">remove_cross_corpus_duplicates</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	&gt;&gt;&gt; fake_data = [</span>
-<span class="sd">	... 	{&#39;fragment&#39;: GreekFoot(&quot;Spondee&quot;), &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &quot;id&quot;:1},</span>
-<span class="sd">	... 	{&#39;fragment&#39;: GeneralFragment([0.25, 0.25], name=&quot;cs-test1&quot;), &#39;mod&#39;: (&#39;cs&#39;, 2.0), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &quot;id&quot;:2},</span>
-<span class="sd">	... 	{&#39;fragment&#39;: GreekFoot(&quot;Trochee&quot;), &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,)], &quot;id&quot;:3},</span>
-<span class="sd">	... 	{&#39;fragment&#39;: GeneralFragment([0.25, 0.125], name=&quot;cs-test2&quot;), &#39;mod&#39;: (&#39;cs&#39;, 2.0), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &quot;id&quot;:4},</span>
-<span class="sd">	... 	{&#39;fragment&#39;: GreekFoot(&quot;Dactyl&quot;), &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.5, 1.0), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,), (85,)], &quot;id&quot;:5},</span>
-<span class="sd">	... 	{&#39;fragment&#39;: Decitala(&quot;Pratitala&quot;), &#39;mod&#39;: (&#39;d&#39;, 2.0), &#39;onset_range&#39;: (0.5, 1.0), &#39;is_spanned_by_slur&#39; : False, &#39;pitch_content&#39;: [(91,), (78,), (85,)], &quot;id&quot;:6}</span>
+<span class="sd">	... 	{&#39;fragment&#39;: GreekFoot(&quot;Spondee&quot;), &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &quot;id&quot;:1}, # noqa</span>
+<span class="sd">	... 	{&#39;fragment&#39;: GeneralFragment([0.25, 0.25], name=&quot;cs-test1&quot;), &#39;mod&#39;: (&#39;cs&#39;, 2.0), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &quot;id&quot;:2}, # noqa</span>
+<span class="sd">	... 	{&#39;fragment&#39;: GreekFoot(&quot;Trochee&quot;), &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,)], &quot;id&quot;:3}, # noqa</span>
+<span class="sd">	... 	{&#39;fragment&#39;: GeneralFragment([0.25, 0.125], name=&quot;cs-test2&quot;), &#39;mod&#39;: (&#39;cs&#39;, 2.0), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &quot;id&quot;:4}, # noqa</span>
+<span class="sd">	... 	{&#39;fragment&#39;: GreekFoot(&quot;Dactyl&quot;), &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.5, 1.0), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,), (85,)], &quot;id&quot;:5}, # noqa</span>
+<span class="sd">	... 	{&#39;fragment&#39;: Decitala(&quot;Pratitala&quot;), &#39;mod&#39;: (&#39;d&#39;, 2.0), &#39;onset_range&#39;: (0.5, 1.0), &#39;is_spanned_by_slur&#39; : False, &#39;pitch_content&#39;: [(91,), (78,), (85,)], &quot;id&quot;:6} # noqa</span>
 <span class="sd">	... ]</span>
 
 <span class="sd">	This returns the following: (not evaluated because of random element...)</span>
 <span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Spondee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &#39;id&#39;: 1}</span>
-<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GeneralFragment cs-test1: [0.25 0.25]&gt;, &#39;mod&#39;: (&#39;cs&#39;, 2.0), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &#39;id&#39;: 2}</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GeneralFragment cs-test1: [0.25 0.25]&gt;, &#39;mod&#39;: (&#39;cs&#39;, 2.0), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &#39;id&#39;: 2} # noqa</span>
 <span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Trochee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,)], &#39;id&#39;: 3}</span>
-<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GeneralFragment cs-test2: [0.25  0.125]&gt;, &#39;mod&#39;: (&#39;cs&#39;, 2.0), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &#39;id&#39;: 4}</span>
+<span class="sd">	{&#39;fragment&#39;: &lt;fragment.GeneralFragment cs-test2: [0.25  0.125]&gt;, &#39;mod&#39;: (&#39;cs&#39;, 2.0), &#39;onset_range&#39;: (0.25, 0.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &#39;id&#39;: 4} # noqa</span>
 <span class="sd">	{&#39;fragment&#39;: &lt;fragment.GreekFoot Dactyl&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.5, 1.0), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(91,), (78,), (85,)], &#39;id&#39;: 5}</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">onset_keyfunc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">]</span>
@@ -301,45 +287,43 @@
 	<span class="k">return</span> <span class="n">x</span>
 
 <span class="c1">####################################################################################################</span>
-<span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
-<span class="k">class</span> <span class="nc">Fragment</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
-	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;Fragments&quot;</span>
+<span class="c1"># class Fragment(Base): # noqa TODO: add declarative_base</span>
+<span class="c1"># 	__tablename__ = &quot;Fragments&quot;</span>
 
-	<span class="n">onset_start</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">)</span>
-	<span class="n">onset_stop</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">)</span>
-	<span class="n">fragment</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-	<span class="n">mod</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
-	<span class="n">fod</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">)</span>
-	<span class="n">pitch_content</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
-	<span class="n">contour</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
-	<span class="n">prime_contour</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
-	<span class="n">is_slurred</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Boolean</span><span class="p">)</span>
+<span class="c1"># 	onset_start = Column(Float)</span>
+<span class="c1"># 	onset_stop = Column(Float)</span>
+<span class="c1"># 	fragment = Column(String, primary_key=True)</span>
+<span class="c1"># 	mod = Column(String)</span>
+<span class="c1"># 	fod = Column(Float)</span>
+<span class="c1"># 	pitch_content = Column(String)</span>
+<span class="c1"># 	contour = Column(String)</span>
+<span class="c1"># 	prime_contour = Column(String)</span>
+<span class="c1"># 	is_slurred = Column(Boolean)</span>
 
-	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-			<span class="bp">self</span><span class="p">,</span> 
-			<span class="n">onset_start</span><span class="p">,</span> 
-			<span class="n">onset_stop</span><span class="p">,</span>
-			<span class="n">fragment</span><span class="p">,</span>
-			<span class="n">mod</span><span class="p">,</span>
-			<span class="n">fod</span><span class="p">,</span>
-			<span class="n">pitch_content</span><span class="p">,</span>
-			<span class="n">contour</span><span class="p">,</span>
-			<span class="n">prime_contour</span><span class="p">,</span>
-			<span class="n">is_slurred</span>
-		<span class="p">):</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">onset_start</span> <span class="o">=</span> <span class="n">onset_start</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">onset_stop</span> <span class="o">=</span> <span class="n">onset_stop</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">fragment</span> <span class="o">=</span> <span class="n">fragment</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">mod</span> <span class="o">=</span> <span class="n">mod</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">fod</span> <span class="o">=</span> <span class="n">fod</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">pitch_content</span> <span class="o">=</span> <span class="n">pitch_content</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">contour</span> <span class="o">=</span> <span class="n">contour</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">prime_contour</span> <span class="o">=</span> <span class="n">prime_contour</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">is_slurred</span> <span class="o">=</span> <span class="n">is_slurred</span>
-	
-	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="k">pass</span>
-		<span class="c1">#return json.dumps()</span>
+<span class="c1"># 	def __init__(</span>
+<span class="c1"># 			self,</span>
+<span class="c1"># 			onset_start,</span>
+<span class="c1"># 			onset_stop,</span>
+<span class="c1"># 			fragment,</span>
+<span class="c1"># 			mod,</span>
+<span class="c1"># 			fod,</span>
+<span class="c1"># 			pitch_content,</span>
+<span class="c1"># 			contour,</span>
+<span class="c1"># 			prime_contour,</span>
+<span class="c1"># 			is_slurred</span>
+<span class="c1"># 		):</span>
+<span class="c1"># 		self.onset_start = onset_start</span>
+<span class="c1"># 		self.onset_stop = onset_stop</span>
+<span class="c1"># 		self.fragment = fragment</span>
+<span class="c1"># 		self.mod = mod</span>
+<span class="c1"># 		self.fod = fod</span>
+<span class="c1"># 		self.pitch_content = pitch_content</span>
+<span class="c1"># 		self.contour = contour</span>
+<span class="c1"># 		self.prime_contour = prime_contour</span>
+<span class="c1"># 		self.is_slurred = is_slurred</span>
+
+<span class="c1"># 	def __repr__(self):</span>
+<span class="c1"># 		pass</span>
 
 <span class="k">def</span> <span class="nf">_prepare_fragment_data</span><span class="p">(</span>
 		<span class="n">filepath</span><span class="p">,</span>
@@ -362,9 +346,15 @@
 		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Making fragment tree(s) (and searching) for frag_type: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">this_frag_type</span><span class="p">))</span>
 
 		<span class="k">if</span> <span class="s2">&quot;ratio&quot;</span> <span class="ow">in</span> <span class="n">rep_types</span><span class="p">:</span>
-			<span class="n">curr_ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="n">this_frag_type</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span><span class="p">)</span>
+			<span class="n">curr_ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span>
+				<span class="n">frag_type</span><span class="o">=</span><span class="n">this_frag_type</span><span class="p">,</span>
+				<span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span>
+			<span class="p">)</span>
 		<span class="k">if</span> <span class="s2">&quot;difference&quot;</span> <span class="ow">in</span> <span class="n">rep_types</span><span class="p">:</span>
-			<span class="n">curr_difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="n">this_frag_type</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;difference&quot;</span><span class="p">)</span>
+			<span class="n">curr_difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span>
+				<span class="n">frag_type</span><span class="o">=</span><span class="n">this_frag_type</span><span class="p">,</span>
+				<span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;difference&quot;</span>
+			<span class="p">)</span>
 
 		<span class="n">data</span> <span class="o">=</span> <span class="n">rolling_search</span><span class="p">(</span>
 			<span class="n">filepath</span><span class="p">,</span>
@@ -381,7 +371,7 @@
 		<span class="n">ALL_DATA</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{}</span><span class="s2"> fragments extracted&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)))</span>
-	
+
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing cross-corpus duplicates...&quot;</span><span class="p">)</span>
 	<span class="n">ALL_DATA</span> <span class="o">=</span> <span class="n">remove_cross_corpus_duplicates</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> fragments remaining.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)))</span>
@@ -390,7 +380,7 @@
 		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing all single anga class fragments...&quot;</span><span class="p">)</span>
 		<span class="n">ALL_DATA</span> <span class="o">=</span> <span class="n">filter_single_anga_class_fragments</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)</span>
 		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> fragments remaining.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)))</span>
-	
+
 	<span class="k">if</span> <span class="n">filter_found_sub_fragments</span><span class="p">:</span>
 		<span class="n">ALL_DATA</span> <span class="o">=</span> <span class="n">filter_sub_fragments</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">)</span>
 		<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Removing all sub fragments...&quot;</span><span class="p">)</span>
@@ -415,7 +405,7 @@
 		<span class="n">Column</span><span class="p">(</span><span class="s2">&quot;is_slurred&quot;</span><span class="p">,</span> <span class="n">Boolean</span><span class="p">)</span>
 	<span class="p">)</span>
 	<span class="n">FragmentTable</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
-	
+
 	<span class="n">cur</span> <span class="o">=</span> <span class="n">FragmentTable</span><span class="o">.</span><span class="n">insert</span><span class="p">()</span>
 	<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
 		<span class="n">pitch_content</span> <span class="o">=</span> <span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;pitch_content&quot;</span><span class="p">]</span>
@@ -441,7 +431,7 @@
 	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_partition</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">partitioned_data</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 		<span class="n">pareto_optimal_paths</span> <span class="o">=</span> <span class="n">get_pareto_optimal_longest_paths</span><span class="p">(</span><span class="n">this_partition</span><span class="p">)</span>
 		<span class="n">longest_path</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">pareto_optimal_paths</span><span class="p">])</span>
-		
+
 		<span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">Column</span><span class="p">(</span><span class="s2">&quot;onset_range_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">Integer</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">longest_path</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
 		<span class="n">subpath_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="s2">&quot;SubPath_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">metadata</span><span class="p">,</span> <span class="o">*</span><span class="n">columns</span><span class="p">)</span>
 		<span class="n">subpath_table</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
@@ -450,9 +440,9 @@
 			<span class="k">for</span> <span class="n">this_fragment_data</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
 				<span class="n">data</span> <span class="o">=</span> <span class="n">this_fragment_data</span>
 				<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fragment_rows</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-					<span class="k">if</span> <span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]):</span>
+					<span class="k">if</span> <span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]):</span> <span class="c1"># noqa</span>
 						<span class="n">fragment_row_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
-			
+
 			<span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">subpath_table</span><span class="o">.</span><span class="n">insert</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">fragment_row_ids</span><span class="p">))</span>
 	<span class="k">return</span>
 
@@ -464,11 +454,11 @@
 		<span class="n">frag_types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;decitala&quot;</span><span class="p">],</span>
 		<span class="n">rep_types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;difference&quot;</span><span class="p">],</span>
 		<span class="n">allowed_modifications</span><span class="o">=</span><span class="p">[</span>
-			<span class="s2">&quot;r&quot;</span><span class="p">,</span> 
-			<span class="s2">&quot;rr&quot;</span><span class="p">,</span> 
-			<span class="s2">&quot;d&quot;</span><span class="p">,</span> 
-			<span class="s2">&quot;rd&quot;</span><span class="p">,</span> 
-			<span class="s2">&quot;sr&quot;</span><span class="p">,</span> 
+			<span class="s2">&quot;r&quot;</span><span class="p">,</span>
+			<span class="s2">&quot;rr&quot;</span><span class="p">,</span>
+			<span class="s2">&quot;d&quot;</span><span class="p">,</span>
+			<span class="s2">&quot;rd&quot;</span><span class="p">,</span>
+			<span class="s2">&quot;sr&quot;</span><span class="p">,</span>
 			<span class="s2">&quot;rsr&quot;</span>
 		<span class="p">],</span>
 		<span class="n">try_contiguous_summation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -481,17 +471,19 @@
 		<span class="n">write_logs_to_file</span><span class="o">=</span><span class="kc">False</span>
 	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	This function generates an sqlite3 database for storing extracted rhythmic data from :obj:`decitala.trees.rolling_search`.</span>
-<span class="sd">	The database holds has one page for storing all extracted fragments, their onsets/offsets of occurrence, and their </span>
-<span class="sd">	modification data. </span>
+<span class="sd">	This function generates an sqlite3 database for storing extracted rhythmic data from</span>
+<span class="sd">	:obj:`decitala.trees.rolling_search`. The database holds has one page for storing all</span>
+<span class="sd">	extracted fragments, their onsets/offsets of occurrence, and their modification data.</span>
 
-<span class="sd">	:param str db_path: path where the .db file will be written. </span>
+<span class="sd">	:param str db_path: path where the .db file will be written.</span>
 <span class="sd">	:param str filepath: path to score.</span>
-<span class="sd">	:param int part_num: part number in the score. </span>
-<span class="sd">	:param bool filter_single_anga_class: whether or not to remove single-anga class fragments from the data in rolling_search. </span>
-<span class="sd">	:param bool filter_found_sub_fragments: whether or not to remove sub-fragments from the dataset. </span>
-<span class="sd">	:param bool verbose: whether or not to log information about the database creation process (including data from rolling search). </span>
-<span class="sd">	</span>
+<span class="sd">	:param int part_num: part number in the score.</span>
+<span class="sd">	:param bool filter_single_anga_class: whether or not to remove single-anga class fragments</span>
+<span class="sd">										from the data in rolling_search.</span>
+<span class="sd">	:param bool filter_found_sub_fragments: whether to remove sub-fragments from the dataset.</span>
+<span class="sd">	:param bool verbose: whether or not to log information about the database creation process</span>
+<span class="sd">						(including data from rolling search).</span>
+
 <span class="sd">	:return: sqlite3 database</span>
 <span class="sd">	:rtype: .db file</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -504,10 +496,10 @@
 	<span class="k">if</span> <span class="n">write_logs_to_file</span><span class="p">:</span>
 		<span class="n">log_filepath</span> <span class="o">=</span> <span class="n">db_path</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.log&quot;</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="n">log_filepath</span><span class="o">=</span><span class="kc">None</span>
+		<span class="n">log_filepath</span> <span class="o">=</span> <span class="kc">None</span>
 
 	<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">print_to_console</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">write_to_file</span><span class="o">=</span><span class="n">log_filepath</span><span class="p">)</span>
-	
+
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Preparing database...&quot;</span><span class="p">)</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;File: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Part: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">part_num</span><span class="p">))</span>
@@ -524,7 +516,7 @@
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Connected to database at: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">db_path</span><span class="p">))</span>
 
 	<span class="n">metadata</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
-	
+
 	<span class="n">UNFILTERED_DATA</span><span class="p">,</span> <span class="n">ALL_DATA</span> <span class="o">=</span> <span class="n">_prepare_fragment_data</span><span class="p">(</span>
 		<span class="n">filepath</span><span class="p">,</span>
 		<span class="n">part_num</span><span class="p">,</span>
@@ -539,17 +531,31 @@
 		<span class="n">keep_grace_notes</span><span class="p">,</span>
 		<span class="n">logger</span>
 	<span class="p">)</span>
-	<span class="n">sorted_onset_ranges</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
-	<span class="n">sorted_onset_ranges_two</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">UNFILTERED_DATA</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+	<span class="n">sorted_onset_ranges</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">ALL_DATA</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+	<span class="n">sorted_onset_ranges_two</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">UNFILTERED_DATA</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Making the (unfiltered) fragment table...&quot;</span><span class="p">)</span>
-	<span class="n">fragment_table</span> <span class="o">=</span> <span class="n">_make_fragment_table</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;UnfilteredFragments&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">sorted_onset_ranges_two</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
+	<span class="n">fragment_table</span> <span class="o">=</span> <span class="n">_make_fragment_table</span><span class="p">(</span>
+		<span class="n">name</span><span class="o">=</span><span class="s2">&quot;UnfilteredFragments&quot;</span><span class="p">,</span>
+		<span class="n">data</span><span class="o">=</span><span class="n">sorted_onset_ranges_two</span><span class="p">,</span>
+		<span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span>
+	<span class="p">)</span>
 	<span class="n">partitioned_data</span> <span class="o">=</span> <span class="n">partition_data_by_break_points</span><span class="p">(</span><span class="n">sorted_onset_ranges</span><span class="p">)</span>
 
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Making the (filtered) fragment table...&quot;</span><span class="p">)</span>
-	<span class="n">fragment_table</span> <span class="o">=</span> <span class="n">_make_fragment_table</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Fragments&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">sorted_onset_ranges</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
+	<span class="n">fragment_table</span> <span class="o">=</span> <span class="n">_make_fragment_table</span><span class="p">(</span>
+		<span class="n">name</span><span class="o">=</span><span class="s2">&quot;Fragments&quot;</span><span class="p">,</span>
+		<span class="n">data</span><span class="o">=</span><span class="n">sorted_onset_ranges</span><span class="p">,</span>
+		<span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span>
+	<span class="p">)</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done ✔&quot;</span><span class="p">)</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Calculating pareto optimal paths...&quot;</span><span class="p">)</span>
-	<span class="n">_make_subpath_table</span><span class="p">(</span><span class="n">partitioned_data</span><span class="o">=</span><span class="n">partitioned_data</span><span class="p">,</span> <span class="n">fragment_table</span><span class="o">=</span><span class="n">fragment_table</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span> <span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+	<span class="n">_make_subpath_table</span><span class="p">(</span>
+		<span class="n">partitioned_data</span><span class="o">=</span><span class="n">partitioned_data</span><span class="p">,</span>
+		<span class="n">fragment_table</span><span class="o">=</span><span class="n">fragment_table</span><span class="p">,</span>
+		<span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
+		<span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">,</span>
+		<span class="n">logger</span><span class="o">=</span><span class="n">logger</span>
+	<span class="p">)</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done ✔&quot;</span><span class="p">)</span>
 	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done preparing ✔&quot;</span><span class="p">)</span></div>
 
@@ -558,7 +564,7 @@
 <span class="k">def</span> <span class="nf">_num_subpath_tables</span><span class="p">(</span><span class="n">conn</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Returns the number of Path tables in a database db.</span>
-<span class="sd">	</span>
+
 <span class="sd">	&gt;&gt;&gt; example_data = &quot;./databases/liturgie_3.db&quot;</span>
 <span class="sd">	&gt;&gt;&gt; conn = sqlite3.connect(example_data)</span>
 <span class="sd">	&gt;&gt;&gt; _num_subpath_tables(conn)</span>
@@ -573,7 +579,7 @@
 <span class="k">def</span> <span class="nf">_num_rows_in_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Returns the number of rows in a given table.</span>
-<span class="sd">	</span>
+
 <span class="sd">	&gt;&gt;&gt; example_data = &quot;./databases/liturgie_3.db&quot;</span>
 <span class="sd">	&gt;&gt;&gt; conn = sqlite3.connect(example_data)</span>
 <span class="sd">	&gt;&gt;&gt; _num_rows_in_table(&quot;SubPath_1&quot;, conn)</span>
@@ -582,7 +588,7 @@
 	<span class="n">QUERY_STRING</span> <span class="o">=</span> <span class="s2">&quot;SELECT COUNT(*) FROM </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
 	<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">QUERY_STRING</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
 	<span class="n">num_rows</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;COUNT(*)&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-	
+
 	<span class="k">return</span> <span class="n">num_rows</span>
 
 <div class="viewcode-block" id="DBParser"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser">[docs]</a><span class="k">class</span> <span class="nc">DBParser</span><span class="p">:</span>
@@ -614,10 +620,10 @@
 <span class="sd">	66.0377358490566</span>
 <span class="sd">	&gt;&gt;&gt; lit_db.subpath_onset_percentile(11, 5)</span>
 <span class="sd">	11.904761904761905</span>
-<span class="sd">	&gt;&gt;&gt; # the model requires weights (for table num &gt; 1, 2 values). </span>
+<span class="sd">	&gt;&gt;&gt; # the model requires weights (for table num &gt; 1, 2 values).</span>
 <span class="sd">	&gt;&gt;&gt; lit_db.intra_subpath_model_score(11, 5, weights=[0.7, 0.3])</span>
 <span class="sd">	49.79784366576819</span>
-<span class="sd">	&gt;&gt;&gt; # for table num == 1, it requires 3 weights: </span>
+<span class="sd">	&gt;&gt;&gt; # for table num == 1, it requires 3 weights:</span>
 <span class="sd">	&gt;&gt;&gt; lit_db.intra_subpath_model_score(1, 1, weights=[0.5, 0.3, 0.2])</span>
 <span class="sd">	90.83333333333334</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -637,7 +643,7 @@
 		<span class="n">fragment_rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
 		<span class="n">fragment_data</span> <span class="o">=</span> <span class="p">[]</span>
 
-		<span class="n">earliest_detected_onset</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># random starting value.</span>
+		<span class="n">earliest_detected_onset</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># random starting value.</span>
 
 		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fragment_rows</span><span class="p">):</span>
 			<span class="n">row_data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -648,7 +654,7 @@
 			<span class="k">else</span><span class="p">:</span>
 				<span class="n">this_fragment</span> <span class="o">=</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="n">fragment_str</span><span class="p">)</span>
 
-			<span class="n">row_data</span><span class="p">[</span><span class="s2">&quot;db_row_index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+			<span class="n">row_data</span><span class="p">[</span><span class="s2">&quot;db_row_index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
 			<span class="n">row_data</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_fragment</span>
 			<span class="n">row_data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 			<span class="n">row_data</span><span class="p">[</span><span class="s2">&quot;mod&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
@@ -658,7 +664,7 @@
 
 			<span class="k">if</span> <span class="n">row_data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">earliest_detected_onset</span><span class="p">:</span>
 				<span class="n">earliest_detected_onset</span> <span class="o">=</span> <span class="n">row_data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-			
+
 			<span class="n">fragment_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_data</span><span class="p">)</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">fragment_data</span> <span class="o">=</span> <span class="n">fragment_data</span>
@@ -678,7 +684,7 @@
 
 <div class="viewcode-block" id="DBParser.fragments"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.fragments">[docs]</a>	<span class="k">def</span> <span class="nf">fragments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		:return: list of all extracted fragments in the database. </span>
+<span class="sd">		:return: list of all extracted fragments in the database.</span>
 <span class="sd">		:rtype: list</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fragment_data</span><span class="p">]</span></div>
@@ -688,7 +694,7 @@
 <span class="sd">		:return: the complete data for the extracted fragments that are slurred.</span>
 <span class="sd">		:rtype: list</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fragment_data</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;is_slurred&quot;</span><span class="p">]</span><span class="o">==</span><span class="kc">True</span><span class="p">]</span></div>
+		<span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fragment_data</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;is_slurred&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="DBParser.onset_ranges"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.onset_ranges">[docs]</a>	<span class="k">def</span> <span class="nf">onset_ranges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
@@ -697,27 +703,26 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fragment_data</span><span class="p">]</span></div>
 
-	<span class="c1">######## Visualization ########</span>
 <div class="viewcode-block" id="DBParser.show_fragments_table"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.show_fragments_table">[docs]</a>	<span class="k">def</span> <span class="nf">show_fragments_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unfiltered</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Displays the Fragments table of the database.</span>
 
-<span class="sd">		:param bool unfiltered: whether to display the unfiltered fragment data. </span>
-<span class="sd">		:return: the fragments table (as a dataframe). </span>
-<span class="sd">		:rtype: pandas.DataFrame </span>
+<span class="sd">		:param bool unfiltered: whether to display the unfiltered fragment data.</span>
+<span class="sd">		:return: the fragments table (as a dataframe).</span>
+<span class="sd">		:rtype: pandas.DataFrame</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">unfiltered</span><span class="p">):</span>
 			<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM Fragments&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM UnfilteredFragments&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">data</span></div>
-	
+
 <div class="viewcode-block" id="DBParser.show_slurred_fragments"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.show_slurred_fragments">[docs]</a>	<span class="k">def</span> <span class="nf">show_slurred_fragments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Displays the slurred fragments in the Fragments table of the database.</span>
-<span class="sd">		</span>
-<span class="sd">		:return: the subset of slurred fragments in the fragments table (as a dataframe). </span>
-<span class="sd">		:rtype: pandas.DataFrame </span>
+
+<span class="sd">		:return: the subset of slurred fragments in the fragments table (as a dataframe).</span>
+<span class="sd">		:rtype: pandas.DataFrame</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM Fragments WHERE is_slurred = 1&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">data</span></div>
@@ -725,70 +730,69 @@
 <div class="viewcode-block" id="DBParser.show_subpath_table"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.show_subpath_table">[docs]</a>	<span class="k">def</span> <span class="nf">show_subpath_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_num</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Displays the queried subpath table. These subpath tables are 1-indexed.</span>
-<span class="sd">		</span>
-<span class="sd">		:param int table_num: 1-indexed table number. </span>
+
+<span class="sd">		:param int table_num: 1-indexed table number.</span>
 <span class="sd">		:return: the queried subpath tale (as a dataframe).</span>
 <span class="sd">		:rtype: pandas.DataFrame</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">assert</span> <span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num must be &gt;= 1.&quot;</span><span class="p">)</span>
-		
+
 		<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM SubPath_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table_num</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">data</span></div>
 
 <div class="viewcode-block" id="DBParser.show_subpath"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.show_subpath">[docs]</a>	<span class="k">def</span> <span class="nf">show_subpath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Displays a queried subpath in one of the tables. </span>
-<span class="sd">		</span>
-<span class="sd">		:param int table_num: 1-indexed table number. </span>
-<span class="sd">		:param int path_num: 1-indexed subpath number. </span>
+<span class="sd">		Displays a queried subpath in one of the tables.</span>
+
+<span class="sd">		:param int table_num: 1-indexed table number.</span>
+<span class="sd">		:param int path_num: 1-indexed subpath number.</span>
 <span class="sd">		:return: the queried subpath table (as a dataframe).</span>
 <span class="sd">		:rtype: pandas.DataFrame</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">assert</span> <span class="p">(</span><span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num and path_num must be &gt;= 1.&quot;</span><span class="p">)</span>
-		
+		<span class="k">assert</span> <span class="p">(</span><span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num and path_num must be &gt;= 1.&quot;</span><span class="p">)</span> <span class="c1"># noqa</span>
+
 		<span class="n">QUERY_STRING</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM SubPath_</span><span class="si">{0}</span><span class="s2"> WHERE rowid = </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">)</span>
 		<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">QUERY_STRING</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">data</span></div>
-	
+
 	<span class="k">def</span> <span class="nf">show_subpath_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">):</span>
-		<span class="k">assert</span> <span class="p">(</span><span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num and path_num must be &gt;= 1.&quot;</span><span class="p">)</span>
+		<span class="k">assert</span> <span class="p">(</span><span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num and path_num must be &gt;= 1.&quot;</span><span class="p">)</span> <span class="c1"># noqa</span>
 
 		<span class="n">fragment_row_ids</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpath</span><span class="p">(</span><span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">))</span>
 		<span class="n">QUERY_STRING</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Fragments WHERE rowid IN </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fragment_row_ids</span><span class="p">)</span>
 		<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">QUERY_STRING</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">data</span>
 
-	<span class="c1">######## Paths Individual ########</span>
 <div class="viewcode-block" id="DBParser.subpath"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.subpath">[docs]</a>	<span class="k">def</span> <span class="nf">subpath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Gets the SQLite rowids for the fragments in a subpath. </span>
-<span class="sd">		</span>
-<span class="sd">		:param int table_num: 1-indexed table number. </span>
-<span class="sd">		:param int path_num: 1-indexed subpath number. </span>
+<span class="sd">		Gets the SQLite rowids for the fragments in a subpath.</span>
+
+<span class="sd">		:param int table_num: 1-indexed table number.</span>
+<span class="sd">		:param int path_num: 1-indexed subpath number.</span>
 <span class="sd">		:return: the rowids (int) for the fragments in a subpath.</span>
 <span class="sd">		:rtype: list</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">assert</span> <span class="p">(</span><span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num and path_num must be &gt;= 1.&quot;</span><span class="p">)</span>
+		<span class="k">assert</span> <span class="p">(</span><span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num and path_num must be &gt;= 1.&quot;</span><span class="p">)</span> <span class="c1"># noqa</span>
 
 		<span class="n">QUERY_STRING</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM SubPath_</span><span class="si">{0}</span><span class="s2"> WHERE rowid = </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">)</span>
 		<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="n">QUERY_STRING</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">)</span>
 		<span class="n">as_ints</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-		
+
 		<span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">as_ints</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="s2">&quot;NULL&quot;</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="DBParser.subpath_data"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.subpath_data">[docs]</a>	<span class="k">def</span> <span class="nf">subpath_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Gets the full extracted fragment data in a given subpath.</span>
-<span class="sd">		</span>
-<span class="sd">		:param int table_num: 1-indexed table number. </span>
-<span class="sd">		:param int path_num: 1-indexed subpath number. </span>
+
+<span class="sd">		:param int table_num: 1-indexed table number.</span>
+<span class="sd">		:param int path_num: 1-indexed subpath number.</span>
 <span class="sd">		:return: the complete fragment data for a subpath</span>
 <span class="sd">		:rtype: list</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">assert</span> <span class="p">(</span><span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num and path_num must be &gt;= 1.&quot;</span><span class="p">)</span>
+		<span class="k">assert</span> <span class="p">(</span><span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num and path_num must be &gt;= 1.&quot;</span><span class="p">)</span> <span class="c1"># noqa</span>
 
 		<span class="n">subpath_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpath</span><span class="p">(</span><span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">)</span>
-		
+
 		<span class="n">fragment_data</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="k">for</span> <span class="n">this_row_id</span> <span class="ow">in</span> <span class="n">subpath_data</span><span class="p">:</span>
 			<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fragment_data</span><span class="p">:</span>
@@ -796,48 +800,49 @@
 					<span class="n">fragment_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_data</span><span class="p">)</span>
 
 		<span class="k">return</span> <span class="n">fragment_data</span></div>
-	
+
 	<span class="c1">#####################################################################################</span>
 <div class="viewcode-block" id="DBParser.table_average_onsets_per_fragment_per_subpath"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.table_average_onsets_per_fragment_per_subpath">[docs]</a>	<span class="k">def</span> <span class="nf">table_average_onsets_per_fragment_per_subpath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_num</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		This is a bit hacky: this method is called in the __init__ and returns the average</span>
 <span class="sd">		number of onsets for each fragment in each subpath of the table. Thus, if a paths</span>
 <span class="sd">		table has 3 rows, this method returns a list of 3 numbers, each of which corresponds</span>
-<span class="sd">		to the average number of onsets in a fragment in that subpath. </span>
+<span class="sd">		to the average number of onsets in a fragment in that subpath.</span>
 
-<span class="sd">		:param int table_num: 1-indexed table number. </span>
-<span class="sd">		:return: list (of length equal to the number of rows in the queried ``SubPath`` table) </span>
-<span class="sd">				holding the average number of onsets (type: float) for a fragment in each subpath. </span>
+<span class="sd">		:param int table_num: 1-indexed table number.</span>
+<span class="sd">		:return: list (of length equal to the number of rows in the queried ``SubPath`` table)</span>
+<span class="sd">				holding the average number of onsets (type: float) for a fragment in each subpath.</span>
 <span class="sd">		:rtype: list</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">assert</span> <span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num must be &gt;= 1.&quot;</span><span class="p">)</span>
-		
+
 		<span class="n">num_rows</span> <span class="o">=</span> <span class="n">_num_rows_in_table</span><span class="p">(</span><span class="s2">&quot;SubPath_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table_num</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">)</span>
 		<span class="n">averages</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_rows</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
 			<span class="n">subpath_fragments</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">num_onsets</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpath_data</span><span class="p">(</span><span class="n">table_num</span><span class="p">,</span> <span class="n">i</span><span class="p">)]</span>
 			<span class="n">averages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">subpath_fragments</span><span class="p">))</span>
-		
+
 		<span class="k">return</span> <span class="n">averages</span></div>
 
 	<span class="c1">#####################################################################################</span>
 	<span class="c1"># Modeling</span>
 <div class="viewcode-block" id="DBParser.subpath_onset_percentile"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.subpath_onset_percentile">[docs]</a>	<span class="k">def</span> <span class="nf">subpath_onset_percentile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Given the data from :obj:`~decitala.database.DBParser.table_average_onsets_per_fragment_per_subpath`, gets the </span>
-<span class="sd">		percentile of a given subpath. </span>
+<span class="sd">		Given the data from</span>
+<span class="sd">		:obj:`~decitala.database.DBParser.table_average_onsets_per_fragment_per_subpath`, gets the</span>
+<span class="sd">		percentile of a given subpath.</span>
 
-<span class="sd">		:param int table_num: 1-indexed table number. </span>
-<span class="sd">		:param int path_num: 1-indexed subpath number. </span>
-<span class="sd">		:return: percentile (0-100) of a given subpath in the context of its full ``Subpath`` table. </span>
+<span class="sd">		:param int table_num: 1-indexed table number.</span>
+<span class="sd">		:param int path_num: 1-indexed subpath number.</span>
+<span class="sd">		:return: percentile (0-100) of a given subpath in the context of its full ``Subpath`` table.</span>
 <span class="sd">		:rtype: float</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">assert</span> <span class="p">(</span><span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num and path_num must be &gt;= 1.&quot;</span><span class="p">)</span>
-		
+		<span class="k">assert</span> <span class="p">(</span><span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num and path_num must be &gt;= 1.&quot;</span><span class="p">)</span> <span class="c1"># noqa</span>
+
 		<span class="n">subpath_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpath_data</span><span class="p">(</span><span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">)</span>
 		<span class="n">subpath_average_onsets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">num_onsets</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">subpath_data</span><span class="p">])</span>
-		
-		<span class="c1"># NOTE: I call metadata instead of the above function as it then doesn&#39;t need to be recalulated. </span>
+
+		<span class="c1"># NOTE: I call metadata instead of the above function as it then doesn&#39;t need to be recalulated.</span>
 		<span class="n">onset_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">table_num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
 		<span class="n">percentile</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">percentileofscore</span><span class="p">(</span><span class="n">onset_data</span><span class="p">,</span> <span class="n">subpath_average_onsets</span><span class="p">)</span>
 
@@ -845,9 +850,10 @@
 
 <div class="viewcode-block" id="DBParser.first_subpath_start_gap_score"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.first_subpath_start_gap_score">[docs]</a>	<span class="k">def</span> <span class="nf">first_subpath_start_gap_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_num</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		:param int path_num: 1-indexed subpath number. </span>
-<span class="sd">		:return: the proportion of the starting gap (i.e. the empty region from the earliest detected onset in the table</span>
-<span class="sd">				to the start of the queried subpath) to the total range of the queried subpath in the first table. </span>
+<span class="sd">		:param int path_num: 1-indexed subpath number.</span>
+<span class="sd">		:return: the proportion of the starting gap (i.e. the empty region from the earliest</span>
+<span class="sd">				detected onset in the table to the start of the queried subpath) to the total</span>
+<span class="sd">				range of the queried subpath in the first table.</span>
 <span class="sd">		:rtype: float</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">first_subpath_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpath_data</span><span class="p">(</span><span class="n">table_num</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">path_num</span><span class="o">=</span><span class="n">path_num</span><span class="p">)</span>
@@ -863,29 +869,30 @@
 <div class="viewcode-block" id="DBParser.subpath_intra_gap_score"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.subpath_intra_gap_score">[docs]</a>	<span class="k">def</span> <span class="nf">subpath_intra_gap_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Gets the proportion of gaps in a subpath.</span>
-<span class="sd">		</span>
-<span class="sd">		:param int table_num: 1-indexed table number. </span>
-<span class="sd">		:param int path_num: 1-indexed subpath number. </span>
-<span class="sd">		:return: proportion of the total gaps between fragments in a subpath to the total range of the subpath. </span>
+
+<span class="sd">		:param int table_num: 1-indexed table number.</span>
+<span class="sd">		:param int path_num: 1-indexed subpath number.</span>
+<span class="sd">		:return: proportion of the total gaps between fragments in a subpath to the total range of</span>
+<span class="sd">				the subpath.</span>
 <span class="sd">		:rtype: float</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">assert</span> <span class="p">(</span><span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num and path_num must be &gt;= 1.&quot;</span><span class="p">)</span>
-		
+		<span class="k">assert</span> <span class="p">(</span><span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num and path_num must be &gt;= 1.&quot;</span><span class="p">)</span> <span class="c1"># noqa</span>
+
 		<span class="n">gaps</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="n">total_range</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="n">subpath_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpath_data</span><span class="p">(</span><span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">)</span>
 		<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
 		<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">subpath_data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
 			<span class="n">curr_data</span> <span class="o">=</span> <span class="n">subpath_data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-			<span class="n">next_data</span><span class="o">=</span> <span class="n">subpath_data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-			
+			<span class="n">next_data</span> <span class="o">=</span> <span class="n">subpath_data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
 			<span class="n">gap</span> <span class="o">=</span> <span class="n">next_data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">curr_data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
 			<span class="n">gaps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gap</span><span class="p">)</span>
 			<span class="n">total_range</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">curr_data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">curr_data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 			<span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">subpath_data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">:</span>
 				<span class="n">total_range</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">next_data</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
 			<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-		
+
 		<span class="n">gaps</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">gaps</span><span class="p">)</span>
 		<span class="n">total_range</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">total_range</span><span class="p">)</span>
 
@@ -893,19 +900,19 @@
 			<span class="n">gap_proportion</span> <span class="o">=</span> <span class="mi">0</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">gap_proportion</span> <span class="o">=</span> <span class="p">(</span><span class="n">gaps</span> <span class="o">/</span> <span class="n">total_range</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
-		
+
 		<span class="n">percentage_gap</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">-</span> <span class="n">gap_proportion</span>
 		<span class="k">return</span> <span class="n">percentage_gap</span></div>
-		
+
 <div class="viewcode-block" id="DBParser.subpath_inter_gap_score"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.subpath_inter_gap_score">[docs]</a>	<span class="k">def</span> <span class="nf">subpath_inter_gap_score</span><span class="p">(</span>
-			<span class="bp">self</span><span class="p">,</span> 
-			<span class="n">table_num_a</span><span class="p">,</span> 
-			<span class="n">path_num_a</span><span class="p">,</span> 
-			<span class="n">table_num_b</span><span class="p">,</span> 
+			<span class="bp">self</span><span class="p">,</span>
+			<span class="n">table_num_a</span><span class="p">,</span>
+			<span class="n">path_num_a</span><span class="p">,</span>
+			<span class="n">table_num_b</span><span class="p">,</span>
 			<span class="n">path_num_b</span>
 		<span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Gets the proportion of the gap between two subpaths to the whole range of the paths. </span>
+<span class="sd">		Gets the proportion of the gap between two subpaths to the whole range of the paths.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">data_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpath_data</span><span class="p">(</span><span class="n">table_num_a</span><span class="p">,</span> <span class="n">path_num_a</span><span class="p">)</span>
 		<span class="n">data_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpath_data</span><span class="p">(</span><span class="n">table_num_b</span><span class="p">,</span> <span class="n">path_num_b</span><span class="p">)</span>
@@ -917,27 +924,27 @@
 		<span class="n">gap_start</span> <span class="o">=</span> <span class="n">data_a</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
 		<span class="n">gap_stop</span> <span class="o">=</span> <span class="n">data_b</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 		<span class="n">gap</span> <span class="o">=</span> <span class="n">gap_stop</span> <span class="o">-</span> <span class="n">gap_start</span>
-		
+
 		<span class="n">inter_gap_score</span> <span class="o">=</span> <span class="p">(</span><span class="n">gap</span> <span class="o">/</span> <span class="n">total_range</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
 		<span class="k">return</span> <span class="mi">100</span> <span class="o">-</span> <span class="n">inter_gap_score</span></div>
 
 	<span class="c1">#####################################################################################</span>
 <div class="viewcode-block" id="DBParser.intra_subpath_model_score"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.intra_subpath_model_score">[docs]</a>	<span class="k">def</span> <span class="nf">intra_subpath_model_score</span><span class="p">(</span>
-			<span class="bp">self</span><span class="p">,</span> 
-			<span class="n">table_num</span><span class="p">,</span> 
-			<span class="n">path_num</span><span class="p">,</span> 
+			<span class="bp">self</span><span class="p">,</span>
+			<span class="n">table_num</span><span class="p">,</span>
+			<span class="n">path_num</span><span class="p">,</span>
 			<span class="n">weights</span>
 		<span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		:param int table_num: 1-indexed table number. </span>
-<span class="sd">		:param int path_num: 1-indexed subpath number. </span>
-<span class="sd">		:param list weights: intra-subpath weights.  </span>
-<span class="sd">		:return: returns the intra-subpath model score. </span>
+<span class="sd">		:param int table_num: 1-indexed table number.</span>
+<span class="sd">		:param int path_num: 1-indexed subpath number.</span>
+<span class="sd">		:param list weights: intra-subpath weights.</span>
+<span class="sd">		:return: returns the intra-subpath model score.</span>
 <span class="sd">		:rtype: float</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">assert</span> <span class="p">(</span><span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num and path_num must be &gt;= 1.&quot;</span><span class="p">)</span>
+		<span class="k">assert</span> <span class="p">(</span><span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">path_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num and path_num must be &gt;= 1.&quot;</span><span class="p">)</span> <span class="c1"># noqa</span>
 		<span class="k">if</span> <span class="n">table_num</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-			<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;For the first table, three weights must be provided.&quot;</span><span class="p">)</span>
+			<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;For the first table, three weights must be provided.&quot;</span><span class="p">)</span> <span class="c1"># noqa</span>
 
 		<span class="n">gap_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpath_intra_gap_score</span><span class="p">(</span><span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">)</span>
 		<span class="n">onset_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpath_onset_percentile</span><span class="p">(</span><span class="n">table_num</span><span class="p">,</span> <span class="n">path_num</span><span class="p">)</span>
@@ -953,20 +960,20 @@
 				<span class="n">model</span> <span class="o">+=</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">score</span>
 
 		<span class="k">return</span> <span class="n">model</span></div>
-	
+
 <div class="viewcode-block" id="DBParser.highest_modeled_subpath"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.highest_modeled_subpath">[docs]</a>	<span class="k">def</span> <span class="nf">highest_modeled_subpath</span><span class="p">(</span>
-			<span class="bp">self</span><span class="p">,</span> 
+			<span class="bp">self</span><span class="p">,</span>
 			<span class="n">table_num</span><span class="p">,</span>
 			<span class="n">weights</span>
 		<span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Gets the highest modeled subpath in the table.</span>
 
-<span class="sd">		:param int table_num: 1-indexed table number. </span>
-<span class="sd">		:param list weights: intra-subpath weights. </span>
+<span class="sd">		:param int table_num: 1-indexed table number.</span>
+<span class="sd">		:param list weights: intra-subpath weights.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">assert</span> <span class="n">table_num</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;The table_num must be &gt;= 1.&quot;</span><span class="p">)</span>
-		
+
 		<span class="n">num_rows</span> <span class="o">=</span> <span class="n">_num_rows_in_table</span><span class="p">(</span><span class="s2">&quot;SubPath_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table_num</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="p">)</span>
 		<span class="n">highest_subpath</span> <span class="o">=</span> <span class="kc">None</span>
 		<span class="n">highest_model_val</span> <span class="o">=</span> <span class="mi">0</span>
@@ -980,17 +987,17 @@
 
 <div class="viewcode-block" id="DBParser.model_full_path"><a class="viewcode-back" href="../../mods/database.html#decitala.database.DBParser.model_full_path">[docs]</a>	<span class="k">def</span> <span class="nf">model_full_path</span><span class="p">(</span>
 			<span class="bp">self</span><span class="p">,</span>
-			<span class="n">start_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> 
-			<span class="n">rest_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> 
-			<span class="n">intra_inter_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span>
+			<span class="n">start_weights</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span>
+			<span class="n">rest_weights</span><span class="o">=</span><span class="p">[</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span>
+			<span class="n">intra_inter_weights</span><span class="o">=</span><span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span>
 			<span class="n">return_data</span><span class="o">=</span><span class="kc">False</span>
 		<span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		Return list of highest modeled subpath nums for each table. </span>
+<span class="sd">		Return list of highest modeled subpath nums for each table.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="n">path</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="n">table_num</span> <span class="o">=</span> <span class="mi">1</span>
-		<span class="k">with</span> <span class="n">Bar</span><span class="p">(</span><span class="s2">&quot;Modeling full path...&quot;</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">check_tty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hide_cursor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">bar</span><span class="p">:</span> <span class="c1"># the latter two arguments allow for displaying in jupyter. </span>
+		<span class="k">with</span> <span class="n">Bar</span><span class="p">(</span><span class="s2">&quot;Modeling full path...&quot;</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">check_tty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hide_cursor</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="k">as</span> <span class="n">bar</span><span class="p">:</span> <span class="c1"># noqa the latter two arguments allow for displaying in jupyter.</span>
 			<span class="k">while</span> <span class="n">table_num</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
 				<span class="k">if</span> <span class="n">table_num</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 					<span class="n">highest_first_subpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">highest_modeled_subpath</span><span class="p">(</span><span class="n">table_num</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">start_weights</span><span class="p">)</span>
@@ -1000,34 +1007,33 @@
 					<span class="n">curr_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">table_num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
 					<span class="n">scores</span> <span class="o">=</span> <span class="p">[]</span>
 					<span class="k">for</span> <span class="n">row_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">curr_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
-						<span class="n">fragments</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpath_data</span><span class="p">(</span><span class="n">table_num</span><span class="p">,</span> <span class="n">row_num</span><span class="p">)]</span>
+						<span class="c1"># fragments = [x[&quot;fragment&quot;] for x in self.subpath_data(table_num, row_num)]</span>
 						<span class="n">intra_model_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">intra_subpath_model_score</span><span class="p">(</span><span class="n">table_num</span><span class="p">,</span> <span class="n">row_num</span><span class="p">,</span> <span class="n">rest_weights</span><span class="p">)</span>
 						<span class="n">inter_subpath_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subpath_inter_gap_score</span><span class="p">(</span><span class="n">table_num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">last</span><span class="p">,</span> <span class="n">table_num</span><span class="p">,</span> <span class="n">row_num</span><span class="p">)</span>
-						<span class="n">combined</span> <span class="o">=</span> <span class="p">(</span><span class="n">intra_inter_weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">intra_model_score</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">intra_inter_weights</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">inter_subpath_score</span><span class="p">)</span>
+						<span class="n">combined</span> <span class="o">=</span> <span class="p">(</span><span class="n">intra_inter_weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">intra_model_score</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">intra_inter_weights</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">inter_subpath_score</span><span class="p">)</span> <span class="c1"># noqa</span>
 						<span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">combined</span><span class="p">)</span>
-					
-					<span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-				
+
+					<span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
 				<span class="n">bar</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
 				<span class="n">table_num</span> <span class="o">+=</span> <span class="mi">1</span>
-			
-			<span class="n">bar</span><span class="o">.</span><span class="n">next</span><span class="p">()</span> <span class="c1"># one extra...</span>
-			
+
+			<span class="n">bar</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>  <span class="c1"># one extra...</span>
+
 		<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">return_data</span><span class="p">):</span>
 			<span class="k">return</span> <span class="n">path</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_data</span><span class="p">(</span><span class="n">row_nums</span><span class="o">=</span><span class="n">path</span><span class="p">)</span></div>
-	
+
 	<span class="k">def</span> <span class="nf">path_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row_nums</span><span class="p">):</span>
 		<span class="n">full_data</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row_num</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row_nums</span><span class="p">):</span>
-			<span class="n">full_data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subpath_data</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">row_num</span><span class="p">))</span>
+			<span class="n">full_data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subpath_data</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">row_num</span><span class="p">))</span>
 		<span class="k">return</span> <span class="n">full_data</span></div>
-	
+
 <span class="c1">####################################################################################################</span>
 <span class="c1"># Fragment Databases</span>
-<span class="sd">&quot;&quot;&quot;The following function is used to create the databases for fragment querying.&quot;&quot;&quot;</span>
-<span class="c1"># Helpers</span>
+<span class="c1"># The following function is used to create the databases for fragment querying.</span>
 <span class="k">def</span> <span class="nf">_get_initial_data</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">log_msg</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Reads the initial data from the input directory.&quot;&quot;&quot;</span>
 	<span class="n">initial_data</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1035,16 +1041,16 @@
 		<span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 			<span class="n">filename</span> <span class="o">=</span> <span class="n">this_file</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
 			<span class="n">converted</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">path</span><span class="p">,</span> <span class="n">this_file</span><span class="p">]))</span>
-			<span class="n">ql_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">this_note</span><span class="o">.</span><span class="n">quarterLength</span> <span class="k">for</span> <span class="n">this_note</span> <span class="ow">in</span> <span class="n">converted</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">getElementsByClass</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">)]</span>
-			
+			<span class="n">ql_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">this_note</span><span class="o">.</span><span class="n">quarterLength</span> <span class="k">for</span> <span class="n">this_note</span> <span class="ow">in</span> <span class="n">converted</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">getElementsByClass</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">)]</span> <span class="c1"># noqa</span>
+
 			<span class="n">frag_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 			<span class="n">frag_dict</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
 			<span class="n">frag_dict</span><span class="p">[</span><span class="s2">&quot;ql_array&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ql_array</span>
 			<span class="n">frag_dict</span><span class="p">[</span><span class="s2">&quot;r_equivalents&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-			<span class="n">frag_dict</span><span class="p">[</span><span class="s2">&quot;r_keep&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># arbitrary starting value</span>
+			<span class="n">frag_dict</span><span class="p">[</span><span class="s2">&quot;r_keep&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># arbitrary starting value</span>
 			<span class="n">frag_dict</span><span class="p">[</span><span class="s2">&quot;d_equivalents&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-			<span class="n">frag_dict</span><span class="p">[</span><span class="s2">&quot;d_keep&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># arbitrary starting value</span>
-			
+			<span class="n">frag_dict</span><span class="p">[</span><span class="s2">&quot;d_keep&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># arbitrary starting value</span>
+
 			<span class="n">initial_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frag_dict</span><span class="p">)</span>
 			<span class="n">bar</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
 	<span class="k">return</span> <span class="n">initial_data</span>
@@ -1059,17 +1065,17 @@
 		<span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
 		<span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset_b</span><span class="p">):</span>
 			<span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span><span class="p">:</span>
-				<span class="k">pass</span> <span class="c1"># i.e. skip curr step. </span>
+				<span class="k">pass</span>  <span class="c1"># i.e. skip curr step.</span>
 			<span class="k">else</span><span class="p">:</span>
 				<span class="n">other_fragment</span> <span class="o">=</span> <span class="n">dataset_b</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
 				<span class="n">other_ql_array</span> <span class="o">=</span> <span class="n">other_fragment</span><span class="p">[</span><span class="s2">&quot;ql_array&quot;</span><span class="p">]</span>
 				<span class="n">other_rarray</span> <span class="o">=</span> <span class="n">successive_ratio_array</span><span class="p">(</span><span class="n">other_ql_array</span><span class="p">)</span>
 				<span class="n">other_darray</span> <span class="o">=</span> <span class="n">successive_difference_array</span><span class="p">(</span><span class="n">other_ql_array</span><span class="p">)</span>
-				
+
 				<span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">curr_rarray</span><span class="p">,</span> <span class="n">other_rarray</span><span class="p">):</span>
 					<span class="n">curr_fragment</span><span class="p">[</span><span class="s2">&quot;r_equivalents&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">dataset_b_frag_type</span><span class="p">,</span> <span class="n">other_fragment</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]))</span>
 				<span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">curr_darray</span><span class="p">,</span> <span class="n">other_darray</span><span class="p">):</span>
-					<span class="n">curr_fragment</span><span class="p">[</span><span class="s2">&quot;d_equivalents&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">dataset_b_frag_type</span><span class="p">,</span> <span class="n">other_fragment</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]))</span>	
+					<span class="n">curr_fragment</span><span class="p">[</span><span class="s2">&quot;d_equivalents&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">dataset_b_frag_type</span><span class="p">,</span> <span class="n">other_fragment</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]))</span>
 			<span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
 		<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
@@ -1112,7 +1118,7 @@
 
 <span class="k">def</span> <span class="nf">_make_table</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">table_name</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Function for creating a fragments table in the connected SQL database.&quot;&quot;&quot;</span>
-	<span class="n">table_string</span> <span class="o">=</span> <span class="s2">&quot;CREATE TABLE </span><span class="si">{}</span><span class="s2"> (Name BLOB, QL_Array BLOB, R_Equivalents BLOB, D_Equivalents BLOB, R_Keep INT, D_Keep INT)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
+	<span class="n">table_string</span> <span class="o">=</span> <span class="s2">&quot;CREATE TABLE </span><span class="si">{}</span><span class="s2"> (Name BLOB, QL_Array BLOB, R_Equivalents BLOB, D_Equivalents BLOB, R_Keep INT, D_Keep INT)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span> <span class="c1"># noqa</span>
 	<span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">table_string</span><span class="p">)</span>
 
 	<span class="k">with</span> <span class="n">Bar</span><span class="p">(</span><span class="s2">&quot;Making </span><span class="si">{}</span><span class="s2"> Table...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table_name</span><span class="p">),</span> <span class="nb">max</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="k">as</span> <span class="n">bar</span><span class="p">:</span>
@@ -1124,57 +1130,69 @@
 			<span class="n">r_keep</span> <span class="o">=</span> <span class="n">this_fragment_data</span><span class="p">[</span><span class="s2">&quot;r_keep&quot;</span><span class="p">]</span>
 			<span class="n">d_keep</span> <span class="o">=</span> <span class="n">this_fragment_data</span><span class="p">[</span><span class="s2">&quot;d_keep&quot;</span><span class="p">]</span>
 
-			<span class="n">fragment_insertion_string</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO </span><span class="si">{0}</span><span class="s2"> VALUES(&#39;</span><span class="si">{1}</span><span class="s2">&#39;, ?, ?, ?, ?, ?)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-			<span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">fragment_insertion_string</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ql_array</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">r_equivalents</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">d_equivalents</span><span class="p">),</span> <span class="n">r_keep</span><span class="p">,</span> <span class="n">d_keep</span><span class="p">))</span>
+			<span class="n">fragment_insertion_string</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO </span><span class="si">{0}</span><span class="s2"> VALUES(&#39;</span><span class="si">{1}</span><span class="s2">&#39;, ?, ?, ?, ?, ?)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="c1"># noqa</span>
+			<span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">fragment_insertion_string</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ql_array</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">r_equivalents</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">d_equivalents</span><span class="p">),</span> <span class="n">r_keep</span><span class="p">,</span> <span class="n">d_keep</span><span class="p">))</span> <span class="c1"># noqa</span>
 			<span class="n">bar</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
 
 <span class="k">def</span> <span class="nf">_create_fragment_database</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;Dataset counts: 130 Decitalas, 26 Greek Metrics.&quot;&quot;&quot;</span>
 	<span class="n">db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/databases/fragment_database.db&quot;</span>
-	
-	<span class="n">decitala_initial_data</span> <span class="o">=</span> <span class="n">_get_initial_data</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">log_msg</span><span class="o">=</span><span class="s2">&quot;Getting initial decitala data...&quot;</span><span class="p">)</span>	
-	<span class="n">greek_metric_initial_data</span> <span class="o">=</span> <span class="n">_get_initial_data</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">greek_path</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">26</span><span class="p">,</span> <span class="n">log_msg</span><span class="o">=</span><span class="s2">&quot;Getting initial greek metric data...&quot;</span><span class="p">)</span>
 
-	<span class="c1">#logging.info(&quot;Tracking intra-level decitala equivalents...&quot;)</span>
+	<span class="n">decitala_initial_data</span> <span class="o">=</span> <span class="n">_get_initial_data</span><span class="p">(</span>
+		<span class="n">path</span><span class="o">=</span><span class="n">decitala_path</span><span class="p">,</span>
+		<span class="n">size</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span>
+		<span class="n">log_msg</span><span class="o">=</span><span class="s2">&quot;Getting initial decitala data...&quot;</span>
+	<span class="p">)</span>
+	<span class="n">greek_metric_initial_data</span> <span class="o">=</span> <span class="n">_get_initial_data</span><span class="p">(</span>
+		<span class="n">path</span><span class="o">=</span><span class="n">greek_path</span><span class="p">,</span>
+		<span class="n">size</span><span class="o">=</span><span class="mi">26</span><span class="p">,</span>
+		<span class="n">log_msg</span><span class="o">=</span><span class="s2">&quot;Getting initial greek metric data...&quot;</span>
+	<span class="p">)</span>
+
+	<span class="c1"># logging.info(&quot;Tracking intra-level decitala equivalents...&quot;)</span>
 	<span class="n">decitala_intra_equivalents</span> <span class="o">=</span> <span class="n">_track_rd_equivalents</span><span class="p">(</span>
-		<span class="n">dataset_a</span><span class="o">=</span><span class="n">decitala_initial_data</span><span class="p">,</span> 
-		<span class="n">dataset_b</span><span class="o">=</span><span class="n">decitala_initial_data</span><span class="p">,</span> 
+		<span class="n">dataset_a</span><span class="o">=</span><span class="n">decitala_initial_data</span><span class="p">,</span>
+		<span class="n">dataset_b</span><span class="o">=</span><span class="n">decitala_initial_data</span><span class="p">,</span>
 		<span class="n">dataset_b_frag_type</span><span class="o">=</span><span class="s2">&quot;decitala&quot;</span>
 	<span class="p">)</span>
-	<span class="c1">#logging.info(&quot;Tracking cross-corpus decitala equivalents...&quot;)</span>
+	<span class="c1"># logging.info(&quot;Tracking cross-corpus decitala equivalents...&quot;)</span>
 	<span class="n">decitala_cross_equivalents</span> <span class="o">=</span> <span class="n">_track_rd_equivalents</span><span class="p">(</span>
-		<span class="n">dataset_a</span><span class="o">=</span><span class="n">decitala_intra_equivalents</span><span class="p">,</span> 
-		<span class="n">dataset_b</span><span class="o">=</span><span class="n">greek_metric_initial_data</span><span class="p">,</span> 
+		<span class="n">dataset_a</span><span class="o">=</span><span class="n">decitala_intra_equivalents</span><span class="p">,</span>
+		<span class="n">dataset_b</span><span class="o">=</span><span class="n">greek_metric_initial_data</span><span class="p">,</span>
 		<span class="n">dataset_b_frag_type</span><span class="o">=</span><span class="s2">&quot;greek_foot&quot;</span>
 	<span class="p">)</span>
 
-	<span class="c1">#logging.info(&quot;Getting keep/ignore decitala data...&quot;)</span>
-	<span class="n">final_decitala_data</span> <span class="o">=</span> <span class="n">_track_keep_vals</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">decitala_cross_equivalents</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s2">&quot;decitala&quot;</span><span class="p">)</span>
+	<span class="c1"># logging.info(&quot;Getting keep/ignore decitala data...&quot;)</span>
+	<span class="n">final_decitala_data</span> <span class="o">=</span> <span class="n">_track_keep_vals</span><span class="p">(</span>
+		<span class="n">data</span><span class="o">=</span><span class="n">decitala_cross_equivalents</span><span class="p">,</span>
+		<span class="n">size</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span>
+		<span class="n">frag_type</span><span class="o">=</span><span class="s2">&quot;decitala&quot;</span>
+	<span class="p">)</span>
 
 	<span class="c1">###############################################################################################</span>
-	<span class="c1">#logging.info(&quot;Tracking intra-level greek metric equivalents...&quot;)</span>
+	<span class="c1"># logging.info(&quot;Tracking intra-level greek metric equivalents...&quot;)</span>
 	<span class="n">greek_intra_equivalents</span> <span class="o">=</span> <span class="n">_track_rd_equivalents</span><span class="p">(</span>
-		<span class="n">dataset_a</span><span class="o">=</span><span class="n">greek_metric_initial_data</span><span class="p">,</span> 
-		<span class="n">dataset_b</span><span class="o">=</span><span class="n">greek_metric_initial_data</span><span class="p">,</span> 
+		<span class="n">dataset_a</span><span class="o">=</span><span class="n">greek_metric_initial_data</span><span class="p">,</span>
+		<span class="n">dataset_b</span><span class="o">=</span><span class="n">greek_metric_initial_data</span><span class="p">,</span>
 		<span class="n">dataset_b_frag_type</span><span class="o">=</span><span class="s2">&quot;greek_foot&quot;</span>
-	<span class="p">)</span>	
-	<span class="c1">#logging.info(&quot;Tracking cross-corpus greek metric equivalents...&quot;)</span>
+	<span class="p">)</span>
+	<span class="c1"># logging.info(&quot;Tracking cross-corpus greek metric equivalents...&quot;)</span>
 	<span class="n">greek_cross_equivalents</span> <span class="o">=</span> <span class="n">_track_rd_equivalents</span><span class="p">(</span>
-		<span class="n">dataset_a</span><span class="o">=</span><span class="n">greek_intra_equivalents</span><span class="p">,</span> 
-		<span class="n">dataset_b</span><span class="o">=</span><span class="n">decitala_initial_data</span><span class="p">,</span> 
+		<span class="n">dataset_a</span><span class="o">=</span><span class="n">greek_intra_equivalents</span><span class="p">,</span>
+		<span class="n">dataset_b</span><span class="o">=</span><span class="n">decitala_initial_data</span><span class="p">,</span>
 		<span class="n">dataset_b_frag_type</span><span class="o">=</span><span class="s2">&quot;decitala&quot;</span>
 	<span class="p">)</span>
 
-	<span class="c1">#logging.info(&quot;Getting keep/ignore greek metric data...&quot;)</span>
+	<span class="c1"># logging.info(&quot;Getting keep/ignore greek metric data...&quot;)</span>
 	<span class="n">final_greek_data</span> <span class="o">=</span> <span class="n">_track_keep_vals</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">greek_cross_equivalents</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">26</span><span class="p">,</span> <span class="n">frag_type</span><span class="o">=</span><span class="s2">&quot;greek_foot&quot;</span><span class="p">)</span>
 
-	<span class="c1">#logging.info(&quot;Creating the fragments tables...&quot;)</span>
+	<span class="c1"># logging.info(&quot;Creating the fragments tables...&quot;)</span>
 	<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
-	
+
 	<span class="n">_make_table</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">final_decitala_data</span><span class="p">,</span> <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;Decitalas&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="o">=</span><span class="n">conn</span><span class="p">)</span>
 	<span class="n">_make_table</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">final_greek_data</span><span class="p">,</span> <span class="n">table_name</span><span class="o">=</span><span class="s2">&quot;Greek_Metrics&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="o">=</span><span class="n">conn</span><span class="p">)</span>
-	
-	<span class="c1">#logging.info(&quot;Done preparing ✔&quot;)</span>
+
+	<span class="c1"># logging.info(&quot;Done preparing ✔&quot;)</span>
 	<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </pre></div>
 

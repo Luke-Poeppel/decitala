@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.fragment &mdash; decitala 0.7.3 documentation</title>
+  <title>decitala.fragment &mdash; decitala 0.7.4 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.7.3
+                0.7.4
               </div>
             
           
@@ -240,7 +240,7 @@
 			<span class="k">return</span> <span class="n">d</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="n">FragmentException</span><span class="p">(</span><span class="s2">&quot;This object is not JSON serializable. File an issue?&quot;</span><span class="p">)</span>
-			
+
 <span class="k">class</span> <span class="nc">FragmentDecoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONDecoder</span><span class="p">):</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 		<span class="n">json</span><span class="o">.</span><span class="n">JSONDecoder</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_hook</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">object_hook</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -248,10 +248,10 @@
 	<span class="k">def</span> <span class="nf">temp_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
 		<span class="n">loaded</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">loaded</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
-	
+
 	<span class="k">def</span> <span class="nf">object_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		This function already runs json.loads invisibly on ``obj``. </span>
+<span class="sd">		This function already runs json.loads invisibly on ``obj``.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">if</span> <span class="n">obj</span><span class="p">[</span><span class="s2">&quot;frag_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;GeneralFragment&quot;</span><span class="p">:</span>
 			<span class="k">return</span> <span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">])</span>
