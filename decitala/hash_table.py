@@ -1,10 +1,10 @@
 ####################################################################################################
 # File:     hash_table.py
-# Purpose:  Hash table lookup algorithm for rhythmic search. 
-# 
+# Purpose:  Hash table lookup algorithm for rhythmic search.
+#
 # Author:   Luke Poeppel
 #
-# Location: NYC, 2021. 
+# Location: NYC, 2021.
 ####################################################################################################
 import sqlite3
 import os
@@ -30,10 +30,10 @@ MODIFICATION_HIERARCHY = [
 
 def parse_hash_table_string(string_):
 	"""
-	In the hash_table classes, we store a string in the value giving both the extracted fragment 
-	as well as its modification type. This function parses that string to get the python objects. 
+	In the hash_table classes, we store a string in the value giving both the extracted fragment
+	as well as its modification type. This function parses that string to get the python objects.
 
-	# if name is more than one word, uses underscores. 
+	# if name is more than one word, uses underscores.
 	>>> s = "decitala-Gajajhampa-r-r:2_d:0"
 	>>> parse_hash_table_string(s)
 	(<fragment.Decitala 77_Gajajhampa>, ('rr', 2.0))
@@ -45,37 +45,37 @@ def parse_hash_table_string(string_):
 	name = split[1]
 	nor = split[2]  # normal or retrograde
 	mod_data = split[3].split("_")
-	
+
 	if frag_type == "decitala":
 		f = Decitala(name)
 	else:
 		f = GreekFoot(name)
-	
+
 	mod_vals = [float(mod_data[0][2:]), float(mod_data[1][2:])]
 	if mod_vals[0] != 1 and mod_vals[1] == 0:
 		mod_vals = [mod_vals[0]]
 		if nor == "n":
-			mod_type="r"
+			mod_type = "r"
 		else:
-			mod_type="rr"
+			mod_type = "rr"
 	elif mod_vals[0] == 1 and mod_vals[1] != 0:
 		mod_vals = [mod_vals[1]]
 		if nor == "n":
-			mod_type="d"
+			mod_type = "d"
 		else:
-			mod_type="rd"
+			mod_type = "rd"
 	else:
 		if nor == "n":
-			mod_type="r+d"
+			mod_type = "r+d"
 		else:
-			mod_type="r(r+d)"
-	
+			mod_type = "r(r+d)"
+
 	return (f, (mod_type, *mod_vals))
 
 def _compare_mods(mod_a, mod_b):
-	return min([mod_a, mod_b], key = lambda x: MODIFICATION_HIERARCHY.index(x))
+	return min([mod_a, mod_b], key=lambda x: MODIFICATION_HIERARCHY.index(x))
 
-def get_all_augmentations( 
+def get_all_augmentations(
 		fragment,
 		dict_in,
 		factors=[0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0],
@@ -87,27 +87,27 @@ def get_all_augmentations(
 		for this_difference in differences:
 			name = fragment[0]
 			ql_array = json.loads(fragment[1])
-			
+
 			searches = [ql_array]
-			if retrograde==True:
+			if retrograde is True:
 				searches.append(ql_array[::-1])
-			
+
 			for i, this_search in enumerate(searches):
-				augmentation = tuple(augment(fragment=ql_array, factor=this_factor, difference=this_difference))            
+				augmentation = tuple(augment(fragment=ql_array, factor=this_factor, difference=this_difference))
 				if any(x < 0 for x in augmentation):
 					continue
-				
+
 				# Parse whether curr augmentation is more or less common.
 				if augmentation in dict_in:
 					value = dict_in[augmentation]
 					data = parse_hash_table_string(value)
-					mod = data[1][0] # already stored                    
-				
+					mod = data[1][0]  # already stored
+
 					if i == 0:
 						nor = ""
 					else:
 						nor = "r"
-					
+
 					if this_factor != 0 and this_difference == 0:
 						curr_mod = nor + "r"
 					elif this_factor == 1 and this_difference != 0:
@@ -117,7 +117,7 @@ def get_all_augmentations(
 							curr_mod = "r+d"
 						else:
 							curr_mod = "r(r+d)"
-										
+
 					if _compare_mods(mod, curr_mod) == mod:
 						continue
 					else:
@@ -129,7 +129,7 @@ def get_all_augmentations(
 						nor = "n"
 					else:
 						nor = "r"
-					
+
 					aug_string = "r:{}_d:{}".format(this_factor, this_difference)
 					full_value = "decitala" + "-" + name + "-" + nor + "-" + aug_string
 					dict_in[augmentation] = full_value
@@ -140,9 +140,9 @@ def DecitalaHashTable(read_from_json=True):
 	decitala_table_string = "SELECT * FROM Decitalas"
 	cur.execute(decitala_table_string)
 	decitala_rows = cur.fetchall()
-	
+
 	dht = dict()
 	for fragment in decitala_rows:
 		get_all_augmentations(dict_in=dht, fragment=fragment)
-		
+
 	return dht
