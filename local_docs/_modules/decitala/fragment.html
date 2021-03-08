@@ -1,0 +1,826 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>decitala.fragment &mdash; decitala 0.1.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="decitala 0.1.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../database.html">database.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fragment.html">fragment.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../paths.html">paths.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pofp.html">pofp.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trees.html">trees.py</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils.html">utils.py</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">decitala</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>decitala.fragment</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for decitala.fragment</h1><div class="highlight"><pre>
+<span></span><span class="c1">####################################################################################################</span>
+<span class="c1"># File:     fragment.py</span>
+<span class="c1"># Purpose:  Representation and tools for dealing with generic rhythmic fragments, as well as those</span>
+<span class="c1">#			used specifically by Messiaen. Includes Decitala and GreekFoot objects. </span>
+<span class="c1"># </span>
+<span class="c1"># Author:   Luke Poeppel</span>
+<span class="c1">#</span>
+<span class="c1"># Location: Kent, CT 2020</span>
+<span class="c1">####################################################################################################</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">converter</span>
+<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span>
+<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">stream</span>
+
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">augment</span><span class="p">,</span>
+	<span class="n">carnatic_string_to_ql_array</span><span class="p">,</span>
+	<span class="n">ql_array_to_carnatic_string</span><span class="p">,</span>
+	<span class="n">ql_array_to_greek_diacritics</span><span class="p">,</span>
+	<span class="n">successive_ratio_array</span><span class="p">,</span>
+	<span class="n">successive_difference_array</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Fragments</span>
+<span class="n">here</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+
+<span class="n">decitala_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/Fragments/Decitalas&quot;</span>
+<span class="n">greek_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/Fragments/Greek_Metrics/XML&quot;</span>
+
+<span class="c1"># ID&#39;s of decitalas with &quot;subtalas&quot;</span>
+<span class="n">subdecitala_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">26</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">68</span><span class="p">])</span>
+
+<span class="c1">############### EXCEPTIONS ###############</span>
+<div class="viewcode-block" id="FragmentException"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.FragmentException">[docs]</a><span class="k">class</span> <span class="nc">FragmentException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+	<span class="k">pass</span></div>
+
+<div class="viewcode-block" id="DecitalaException"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.DecitalaException">[docs]</a><span class="k">class</span> <span class="nc">DecitalaException</span><span class="p">(</span><span class="n">FragmentException</span><span class="p">):</span>
+	<span class="k">pass</span></div>
+
+<div class="viewcode-block" id="GreekFootException"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GreekFootException">[docs]</a><span class="k">class</span> <span class="nc">GreekFootException</span><span class="p">(</span><span class="n">FragmentException</span><span class="p">):</span>
+	<span class="k">pass</span></div>
+
+<div class="viewcode-block" id="GeneralFragment"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment">[docs]</a><span class="k">class</span> <span class="nc">GeneralFragment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Class representing a generic rhythmic fragment. The user must provide either a path to a music21 readable</span>
+<span class="sd">	file or an array of quarter length values. </span>
+
+<span class="sd">	:param data: input data to :obj:`~decitala.fragment.GeneralFragment` (either an array of quarter length values</span>
+<span class="sd">				or a path to a music21 readable file.)</span>
+<span class="sd">	:param str name: optional name argument.</span>
+<span class="sd">	:raises `~decitala.fragment.FragmentException`: when an array and file are provided or neither are provided.</span>
+<span class="sd">	</span>
+<span class="sd">	&gt;&gt;&gt; random_fragment_path = &#39;/Users/lukepoeppel/decitala/Fragments/Decitalas/63_Nandi.xml&#39;</span>
+<span class="sd">	&gt;&gt;&gt; g1 = GeneralFragment(data=random_fragment_path, name=&#39;test&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; g1</span>
+<span class="sd">	&lt;fragment.GeneralFragment test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]&gt;</span>
+<span class="sd">	&gt;&gt;&gt; g1.filename</span>
+<span class="sd">	&#39;63_Nandi.xml&#39;</span>
+<span class="sd">	&gt;&gt;&gt; g1.coolness_level = &#39;pretty cool&#39;</span>
+<span class="sd">	&gt;&gt;&gt; g1.coolness_level</span>
+<span class="sd">	&#39;pretty cool&#39;</span>
+<span class="sd">	&gt;&gt;&gt; g1.num_onsets</span>
+<span class="sd">	7</span>
+<span class="sd">	&gt;&gt;&gt; g1.ql_array()</span>
+<span class="sd">	array([0.5 , 0.25, 0.25, 0.5 , 0.5 , 1.  , 1.  ])</span>
+<span class="sd">	&gt;&gt;&gt; g1.successive_ratio_array()</span>
+<span class="sd">	array([1. , 0.5, 1. , 2. , 1. , 2. , 1. ])</span>
+<span class="sd">	&gt;&gt;&gt; g1.dseg(as_str=True)</span>
+<span class="sd">	&#39;&lt;1 0 0 1 1 2 2&gt;&#39;</span>
+<span class="sd">	&gt;&gt;&gt; g1.std()</span>
+<span class="sd">	0.2901442287369986</span>
+<span class="sd">	&gt;&gt;&gt; for this_cycle in g1.cyclic_permutations():</span>
+<span class="sd">	...     print(this_cycle)</span>
+<span class="sd">	...</span>
+<span class="sd">	[0.5  0.25 0.25 0.5  0.5  1.   1.  ]</span>
+<span class="sd">	[0.25 0.25 0.5  0.5  1.   1.   0.5 ]</span>
+<span class="sd">	[0.25 0.5  0.5  1.   1.   0.5  0.25]</span>
+<span class="sd">	[0.5  0.5  1.   1.   0.5  0.25 0.25]</span>
+<span class="sd">	[0.5  1.   1.   0.5  0.25 0.25 0.5 ]</span>
+<span class="sd">	[1.   1.   0.5  0.25 0.25 0.5  0.5 ]</span>
+<span class="sd">	[1.   0.5  0.25 0.25 0.5  0.5  1.  ]</span>
+<span class="sd">	&gt;&gt;&gt; </span>
+<span class="sd">	&gt;&gt;&gt; # We may also initialize with an array...</span>
+<span class="sd">	&gt;&gt;&gt; GeneralFragment(data=np.array([0.75, 0.75, 0.5, 0.25]))</span>
+<span class="sd">	&lt;fragment.GeneralFragment: [0.75 0.75 0.5  0.25]&gt;</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+			<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">FragmentException</span><span class="p">(</span><span class="s2">&quot;The path provided does not lead to a file.&quot;</span><span class="p">)</span>
+		
+			<span class="bp">self</span><span class="o">.</span><span class="n">creation_type</span> <span class="o">=</span> <span class="s1">&#39;filepath&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">data</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+			<span class="n">stream</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>
+		<span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+			<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span>
+			
+			<span class="bp">self</span><span class="o">.</span><span class="n">creation_type</span> <span class="o">=</span> <span class="s1">&#39;array&#39;</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">temp_ql_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">FragmentException</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is an invalid instantiation.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s1">&#39;&lt;fragment.GeneralFragment: </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s1">&#39;&lt;fragment.GeneralFragment </span><span class="si">{0}</span><span class="s1">: </span><span class="si">{1}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
+	
+	<span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:return: hash of the tala by its name.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:return: whether or not one fragment is equal to another, as defined by its hash.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">():</span>
+			<span class="k">return</span> <span class="kc">True</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+	
+<div class="viewcode-block" id="GeneralFragment.ql_array"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.ql_array">[docs]</a>	<span class="k">def</span> <span class="nf">ql_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retrograde</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:param bool retrograde: whether or not to return the fragment in its original form or in retrograde.</span>
+<span class="sd">		:return: the quarter length array of the fragment. </span>
+<span class="sd">		:rtype: numpy.array</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">creation_type</span> <span class="o">==</span> <span class="s1">&#39;filepath&#39;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">retrograde</span><span class="p">):</span>
+				<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">this_note</span><span class="o">.</span><span class="n">quarterLength</span> <span class="k">for</span> <span class="n">this_note</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">getElementsByClass</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">)])</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">this_note</span><span class="o">.</span><span class="n">quarterLength</span> <span class="k">for</span> <span class="n">this_note</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">getElementsByClass</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">)]))</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">retrograde</span><span class="p">):</span>
+				<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_ql_array</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">temp_ql_array</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GeneralFragment.ql_tuple"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.ql_tuple">[docs]</a>	<span class="k">def</span> <span class="nf">ql_tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retrograde</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:param bool retrograde: whether or not to return the fragment in its original form or in retrograde.</span>
+<span class="sd">		:return: the quarter length array of the fragment (as a tuple).</span>
+<span class="sd">		:rtype: tuple</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">(</span><span class="n">retrograde</span><span class="o">=</span><span class="n">retrograde</span><span class="p">))</span></div>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">num_onsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:return: the number of onsets in the fragment.</span>
+<span class="sd">		:rtype: int</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">num_anga_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:return: the number of anga classes in the fragment (the number of unique rhythmic values).</span>
+<span class="sd">		:rtype: int.</span>
+
+<span class="sd">		&gt;&gt;&gt; GeneralFragment(data=np.array([0.75, 0.75, 0.5, 0.25])).num_anga_classes</span>
+<span class="sd">		3</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()))</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">ql_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:return: the overall duration of the fragment (as expressed in quarter lengths).</span>
+<span class="sd">		:rtype: float</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
+
+<div class="viewcode-block" id="GeneralFragment.dseg"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.dseg">[docs]</a>	<span class="k">def</span> <span class="nf">dseg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">as_str</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:param bool as_str: whether or not to return the d-seg as a string.</span>
+<span class="sd">		:return: the d-seg of the fragment, as introducted in `The Perception of Rhythm in Non-Tonal Music &lt;https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents&gt;`_ (Marvin, 1991). Maps a fragment into a sequence of relative durations. </span>
+<span class="sd">		:rtype: numpy.array</span>
+
+<span class="sd">		&gt;&gt;&gt; g3 = GeneralFragment(np.array([0.25, 0.75, 2.0, 1.0]), name=&#39;marvin-p70&#39;)</span>
+<span class="sd">		&gt;&gt;&gt; g3.dseg()</span>
+<span class="sd">		array([0, 1, 3, 2])</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">dseg_vals</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
+		<span class="n">valueDict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">thisVal</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">dseg_vals</span><span class="p">)))),</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">dseg_vals</span><span class="p">))):</span>
+			<span class="n">valueDict</span><span class="p">[</span><span class="n">thisVal</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">thisValue</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dseg_vals</span><span class="p">):</span>
+			<span class="k">for</span> <span class="n">thisKey</span> <span class="ow">in</span> <span class="n">valueDict</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">thisValue</span> <span class="o">==</span> <span class="n">thisKey</span><span class="p">:</span>
+					<span class="n">dseg_vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">valueDict</span><span class="p">[</span><span class="n">thisKey</span><span class="p">]</span>
+
+		<span class="k">if</span> <span class="n">as_str</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s1">&#39;&lt;&#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">dseg_vals</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">dseg_vals</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="GeneralFragment.reduced_dseg"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.reduced_dseg">[docs]</a>	<span class="k">def</span> <span class="nf">reduced_dseg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">as_str</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:param bool as_str: whether or not to return the reduced d-seg as a string.</span>
+<span class="sd">		:return: d-seg of the fragment with all contiguous equal values reduced to a single instance.</span>
+<span class="sd">		:rtype: numpy.array</span>
+
+<span class="sd">		&gt;&gt;&gt; g4 = GeneralFragment([0.125, 0.125, 1.75, 0.5], name=&#39;marvin-p74-x&#39;)</span>
+<span class="sd">		&gt;&gt;&gt; g4.dseg(as_str=True)</span>
+<span class="sd">		&#39;&lt;0 0 2 1&gt;&#39;</span>
+<span class="sd">		&gt;&gt;&gt; g4.reduced_dseg(as_str=True)</span>
+<span class="sd">		&#39;&lt;0 2 1&gt;&#39;</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">def</span> <span class="nf">_remove_adjacent_equal_elements</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+			<span class="n">as_lst</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+			<span class="n">filtered</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">as_lst</span><span class="p">,</span> <span class="n">as_lst</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="p">[</span><span class="ow">not</span> <span class="n">as_lst</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span> <span class="k">if</span> <span class="n">a</span> <span class="o">!=</span> <span class="n">b</span><span class="p">]</span>
+			<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">filtered</span><span class="p">)</span>
+
+		<span class="n">orig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dseg</span><span class="p">(</span><span class="n">as_str</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+		<span class="n">as_array</span> <span class="o">=</span> <span class="n">_remove_adjacent_equal_elements</span><span class="p">(</span><span class="n">array</span> <span class="o">=</span> <span class="n">orig</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">as_str</span><span class="p">):</span>
+			<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">as_array</span><span class="p">])</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s1">&#39;&lt;&#39;</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">as_array</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;&gt;&#39;</span></div>
+
+<div class="viewcode-block" id="GeneralFragment.successive_ratio_array"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.successive_ratio_array">[docs]</a>	<span class="k">def</span> <span class="nf">successive_ratio_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retrograde</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;See docstring of :obj:`decitala.utils.successive_ratio_array`.&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">retrograde</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">successive_ratio_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">successive_ratio_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">(</span><span class="n">retrograde</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span></div>
+	
+<div class="viewcode-block" id="GeneralFragment.successive_difference_array"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.successive_difference_array">[docs]</a>	<span class="k">def</span> <span class="nf">successive_difference_array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;See docstring of :obj:`decitala.utils.successive_difference_array`.&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">successive_difference_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span></div>
+		
+<div class="viewcode-block" id="GeneralFragment.cyclic_permutations"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.cyclic_permutations">[docs]</a>	<span class="k">def</span> <span class="nf">cyclic_permutations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:return: all cyclic permutations of :meth:`~decitala.fragment.Decitala.ql_array` as in Morris.</span>
+<span class="sd">		:rtype: numpy.array</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">(),</span> <span class="o">-</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_onsets</span><span class="p">)])</span></div>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">is_non_retrogradable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:return: whether or not the given fragment is palindromic (i.e. non-retrogradable.)</span>
+<span class="sd">		:rtype: bool</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">(</span><span class="n">retrograde</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">(</span><span class="n">retrograde</span> <span class="o">=</span> <span class="kc">True</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+
+<div class="viewcode-block" id="GeneralFragment.is_sub_fragment"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.is_sub_fragment">[docs]</a>	<span class="k">def</span> <span class="nf">is_sub_fragment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">try_retrograde</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:param other: a `decitala.fragment.GeneralFragment`, `decitala.fragment.Decitala`, or `decitala.fragment.GreekFoot` object.</span>
+<span class="sd">		:param try_retrograde bool: whether to allow searching in retrograde. </span>
+<span class="sd">		:return: whether or not self is a sub-fragment, meaning its successive_ratio_array exists inorder in the others.</span>
+<span class="sd">		:rtype: bool</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">def</span> <span class="nf">_check</span><span class="p">(</span><span class="n">array_1</span><span class="p">,</span> <span class="n">array_2</span><span class="p">):</span>
+			<span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">array_1</span><span class="p">)</span>
+			<span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">array_2</span><span class="p">)</span>
+			<span class="k">return</span> <span class="nb">any</span><span class="p">((</span><span class="n">array_1</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="n">array_2</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="o">-</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_onsets</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">num_onsets</span><span class="p">:</span>
+			<span class="k">return</span> <span class="kc">False</span>
+
+		<span class="n">res</span> <span class="o">=</span> <span class="n">_check</span><span class="p">(</span><span class="n">array_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">successive_ratio_array</span><span class="p">(</span><span class="n">retrograde</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">array_2</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">successive_ratio_array</span><span class="p">(</span><span class="n">retrograde</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+		<span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">try_retrograde</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">res</span> <span class="o">=</span> <span class="n">_check</span><span class="p">(</span><span class="n">array_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">successive_ratio_array</span><span class="p">(</span><span class="n">retrograde</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">array_2</span><span class="o">=</span><span class="n">other</span><span class="o">.</span><span class="n">successive_ratio_array</span><span class="p">(</span><span class="n">retrograde</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">res</span></div>
+	
+<div class="viewcode-block" id="GeneralFragment.morris_symmetry_class"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.morris_symmetry_class">[docs]</a>	<span class="k">def</span> <span class="nf">morris_symmetry_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:return: the fragment&#39;s form of rhythmic symmetry, as defined by Morris in `Sets, Scales and Rhythmic Cycles. </span>
+<span class="sd">				A Classification of Talas in Indian Music &lt;http://ecmc.rochester.edu/rdm/pdflib/talapaper.pdf&gt;`_ (1999). </span>
+<span class="sd">		:rtype: str</span>
+
+<span class="sd">		- I. Maximally Trivial:				of the form :math:`X` (one onset, one anga class)</span>
+<span class="sd">		- II. Trivial Symmetry: 			of the form :math:`XXXXXX` (multiple onsets, same anga class)</span>
+<span class="sd">		- III. Trivial Dual Symmetry:  		of the form :math:`XY` (two onsets, two anga classes)</span>
+<span class="sd">		- IV. Maximally Trivial Palindrome: of the form :math:`XXX...XYX...XXX` (multiple onsets, two anga classes)</span>
+<span class="sd">		- V. Trivial Dual Palindromic:		of the form :math:`XXX...XYYYX...XXX` (multiple onsets, two anga classes)</span>
+<span class="sd">		- VI. Palindromic: 					of the form :math:`XY...Z...YX` (multiple onsets, :math:`n/2` anga classes)</span>
+<span class="sd">		- VII. Stream:						of the form :math:`XYZ...abc...` (:math:`n` onsets, :math:`n` anga classes)</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">dseg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dseg</span><span class="p">(</span><span class="n">as_str</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+		<span class="n">reduced_dseg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_dseg</span><span class="p">(</span><span class="n">as_str</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;I. Maximally Trivial&quot;</span>
+		<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dseg</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;II. Trivial Symmetry&quot;</span>
+		<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dseg</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;III. Trivial Dual Symmetry&quot;</span>
+		<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dseg</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;IV. Maximally Trivial Palindrome&quot;</span>
+		<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">reduced_dseg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;V. Trivial Dual Palindrome&quot;</span>
+		<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dseg</span><span class="p">))</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;VI. Palindrome&quot;</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;VII. Stream&quot;</span></div>
+
+<div class="viewcode-block" id="GeneralFragment.std"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.std">[docs]</a>	<span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:return: the standard deviation of :func:`~decitala.GeneralFragment.ql_array`.</span>
+<span class="sd">		:rtype: float</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="GeneralFragment.c_score"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.c_score">[docs]</a>	<span class="k">def</span> <span class="nf">c_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:return: the c-score of the fragment, as defined in Povel and Essens (1985).</span>
+<span class="sd">		:rtype: float</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+	
+<div class="viewcode-block" id="GeneralFragment.nPVI"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.nPVI">[docs]</a>	<span class="k">def</span> <span class="nf">nPVI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:return: the nPVI of the fragment (Low, Grabe, &amp; Nolan, 2000).</span>
+<span class="sd">		:rtype: float</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span>
+
+		<span class="n">IOI</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()</span>
+		<span class="n">num_onsets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">IOI</span><span class="p">)</span>
+		<span class="n">summation</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">prev</span> <span class="o">=</span> <span class="n">IOI</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_onsets</span><span class="p">):</span>
+			<span class="n">curr</span> <span class="o">=</span> <span class="n">IOI</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">curr</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">prev</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="n">summation</span> <span class="o">+=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">curr</span> <span class="o">-</span> <span class="n">prev</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">curr</span> <span class="o">+</span> <span class="n">prev</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">pass</span>
+			<span class="n">prev</span> <span class="o">=</span> <span class="n">curr</span>
+
+		<span class="n">final</span> <span class="o">=</span> <span class="n">summation</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">/</span> <span class="p">(</span><span class="n">num_onsets</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+		
+		<span class="k">return</span> <span class="n">final</span></div>
+	
+<div class="viewcode-block" id="GeneralFragment.augment"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GeneralFragment.augment">[docs]</a>	<span class="k">def</span> <span class="nf">augment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method returns a new :obj:`~decitala.fragment.GeneralFragment` object with a ql_array </span>
+<span class="sd">		corresponding to the original fragment augmented by a given ratio and difference. </span>
+
+<span class="sd">		:param factor float: the factor by which the fragment will be augmented.</span>
+<span class="sd">		:param difference float: the difference by which the GeneralFragment will be augmented. </span>
+<span class="sd">		:rtype: :obj:`~decitala.fragment.GeneralFragment` object. </span>
+
+<span class="sd">		&gt;&gt;&gt; pre_augmentation = GeneralFragment([2.0, 2.0], name=&quot;Spondee&quot;)</span>
+<span class="sd">		&gt;&gt;&gt; pre_augmentation</span>
+<span class="sd">		&lt;fragment.GeneralFragment Spondee: [2. 2.]&gt;</span>
+<span class="sd">		&gt;&gt;&gt; pre_augmentation.augment(factor=2.0, difference=0.75)</span>
+<span class="sd">		&lt;fragment.GeneralFragment Spondee/r:2.0/d:0.75: [4.75 4.75]&gt;</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">new_ql_array</span> <span class="o">=</span> <span class="n">augment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">(),</span> <span class="n">factor</span><span class="o">=</span><span class="n">factor</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="n">difference</span><span class="p">)</span>
+		<span class="n">new_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;/r:</span><span class="si">{}</span><span class="s2">/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;d:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">GeneralFragment</span><span class="p">(</span><span class="n">new_ql_array</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span></div>
+	
+	<span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> </div>
+
+<span class="c1">####################################################################################################</span>
+<div class="viewcode-block" id="Decitala"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.Decitala">[docs]</a><span class="k">class</span> <span class="nc">Decitala</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Class defining a Decitala object. The class currently reads from the `Fragments/Decitala`</span>
+<span class="sd">	folder which contains XML files for each fragment. </span>
+
+<span class="sd">	:param str name: Name of the decitala, as is transliterated in the Lavignac, 1921. </span>
+<span class="sd">	:raises `~decitala.fragment.DecitalaException`: when there is an issue with the name.</span>
+<span class="sd">		</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana = Decitala(&#39;Ragavardhana&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana</span>
+<span class="sd">	&lt;fragment.Decitala 93_Ragavardhana&gt;</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana.filename</span>
+<span class="sd">	&#39;93_Ragavardhana.xml&#39;</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana.name</span>
+<span class="sd">	&#39;93_Ragavardhana&#39;</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana.id_num</span>
+<span class="sd">	93</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana.num_onsets</span>
+<span class="sd">	4</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana.ql_array()</span>
+<span class="sd">	array([0.25 , 0.375, 0.25 , 1.5  ])</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana.successive_ratio_array()</span>
+<span class="sd">	array([1.     , 1.5    , 0.66667, 6.     ])</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana.successive_difference_array()</span>
+<span class="sd">	array([ 0.   ,  0.125, -0.125,  1.25 ])</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana.carnatic_string</span>
+<span class="sd">	&#39;o oc o Sc&#39;</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana.is_non_retrogradable</span>
+<span class="sd">	False</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana.dseg(as_str = True)</span>
+<span class="sd">	&#39;&lt;0 1 0 2&gt;&#39;</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana.std()</span>
+<span class="sd">	0.5257063700393976</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana.nPVI()</span>
+<span class="sd">	74.28571428571429</span>
+<span class="sd">	&gt;&gt;&gt; ragavardhana.morris_symmetry_class()</span>
+<span class="sd">	&#39;VII. Stream&#39;</span>
+<span class="sd">	&gt;&gt;&gt; Decitala(&#39;Jaya&#39;).ql_array()</span>
+<span class="sd">	array([0.5 , 1.  , 0.5 , 0.5 , 0.25, 0.25, 1.5 ])</span>
+<span class="sd">	&gt;&gt;&gt; for this_cycle in Decitala(&#39;Jaya&#39;).cyclic_permutations():</span>
+<span class="sd">	...     print(this_cycle)</span>
+<span class="sd">	...</span>
+<span class="sd">	[0.5  1.   0.5  0.5  0.25 0.25 1.5 ]</span>
+<span class="sd">	[1.   0.5  0.5  0.25 0.25 1.5  0.5 ]</span>
+<span class="sd">	[0.5  0.5  0.25 0.25 1.5  0.5  1.  ]</span>
+<span class="sd">	[0.5  0.25 0.25 1.5  0.5  1.   0.5 ]</span>
+<span class="sd">	[0.25 0.25 1.5  0.5  1.   0.5  0.5 ]</span>
+<span class="sd">	[0.25 1.5  0.5  1.   0.5  0.5  0.25]</span>
+<span class="sd">	[1.5  0.5  1.   0.5  0.5  0.25 0.25]</span>
+<span class="sd">	&gt;&gt;&gt; # We can check if a fragment is a sub-fragment of another (meaning its</span>
+<span class="sd">	&gt;&gt;&gt; # successive_ratio_array appears inorder in another with the is_sub_fragment method. </span>
+<span class="sd">	&gt;&gt;&gt; Decitala(&quot;75_Pratapacekhara&quot;).is_sub_fragment(Decitala(&quot;Ragavardhana&quot;), try_retrograde=True)</span>
+<span class="sd">	True</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">decitala_path</span><span class="p">):</span>
+			<span class="n">x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">this_file</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+				<span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_file</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">DecitalaException</span><span class="p">(</span><span class="s2">&quot;No matches were found for name </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+		
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="n">match</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">full_path</span> <span class="o">=</span> <span class="n">decitala_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">match</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">match</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">match</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_path</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">new_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">name</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()])</span>
+			<span class="k">if</span> <span class="n">new_name</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="o">==</span> <span class="s2">&quot;.xml&quot;</span><span class="p">:</span>
+				<span class="k">pass</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">new_name</span> <span class="o">=</span> <span class="n">new_name</span> <span class="o">+</span> <span class="s2">&quot;.xml&quot;</span>
+
+			<span class="k">if</span> <span class="n">new_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;_&quot;</span><span class="p">:</span>
+				<span class="n">new_name</span> <span class="o">=</span> <span class="n">new_name</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+			<span class="n">new_name_split</span> <span class="o">=</span> <span class="n">new_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+			<span class="k">for</span> <span class="n">this_match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+				<span class="n">match_new_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_match</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()])</span>
+				<span class="k">if</span> <span class="n">match_new_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;_&quot;</span><span class="p">:</span>
+					<span class="n">match_new_name</span> <span class="o">=</span> <span class="n">match_new_name</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+				
+				<span class="n">match_split</span> <span class="o">=</span> <span class="n">match_new_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+				<span class="k">if</span> <span class="n">match_split</span> <span class="o">==</span> <span class="n">new_name_split</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">full_path</span> <span class="o">=</span> <span class="n">decitala_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">this_match</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">this_match</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">this_match</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_path</span><span class="p">)</span>
+
+		<span class="k">try</span><span class="p">:</span>
+			<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">full_path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+		<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">DecitalaException</span><span class="p">(</span><span class="s2">&quot;Something is wrong with the name </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span> 
+	
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;fragment.Decitala </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">id_num</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		:return: the ID of the fragment, as given by Lavignac (1921).</span>
+<span class="sd">		:rtype: int</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">idValue</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+		<span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">idValue</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+	
+<div class="viewcode-block" id="Decitala.get_by_id"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.Decitala.get_by_id">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">get_by_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">input_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		A class method which retrieves a :obj:`~decitala.fragment.Decitala` object based on a given ID number. These </span>
+<span class="sd">		numbers are listed in the Lavignac Encyclopédie (1921) and Messiaen Traité. Some talas have (as I&#39;m calling them) </span>
+<span class="sd">		&quot;sub-talas,&quot; meaning that their id is not unique. Querying by those talas is currently not supported.</span>
+
+<span class="sd">		:return: a :obj:`~decitala.fragment.Decitala` object</span>
+<span class="sd">		:param int input_id: id number of the tala (in range 1-120).</span>
+<span class="sd">		:rtype: :obj:`~decitala.fragment.Decitala`</span>
+<span class="sd">		:raises `~decitala.fragment.DecitalaException`: when there is an issue with the `input_id`.</span>
+
+<span class="sd">		&gt;&gt;&gt; Decitala.get_by_id(89)</span>
+<span class="sd">		&lt;fragment.Decitala 89_Lalitapriya&gt;</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">input_id</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span>
+		<span class="k">if</span> <span class="n">input_id</span> <span class="o">&gt;</span> <span class="mi">121</span> <span class="ow">or</span> <span class="n">input_id</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">DecitalaException</span><span class="p">(</span><span class="s1">&#39;Input must be between 1 and 120!&#39;</span><span class="p">)</span>
+		
+		<span class="k">if</span> <span class="n">input_id</span> <span class="ow">in</span> <span class="n">subdecitala_array</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">DecitalaException</span><span class="p">(</span><span class="s1">&#39;There are multiple talas with this ID. Please consult the Lavignac (1921).&#39;</span><span class="p">)</span>
+
+		<span class="k">for</span> <span class="n">thisFile</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">decitala_path</span><span class="p">):</span>
+			<span class="n">x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d+&#39;</span><span class="p">,</span> <span class="n">thisFile</span><span class="p">)</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">==</span> <span class="n">input_id</span><span class="p">:</span>
+					<span class="n">span_end</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">span</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+					<span class="k">return</span> <span class="n">Decitala</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">thisFile</span><span class="p">[</span><span class="n">span_end</span><span class="p">:])</span>
+			<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+				<span class="k">pass</span></div>
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">carnatic_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;See docstring of :obj:`decitala.utils.ql_array_to_carnatic_string`.&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">ql_array_to_carnatic_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">num_matras</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;		</span>
+<span class="sd">		:return: returns the number of matras in the tala (here, the number of eighth notes).</span>
+<span class="sd">		:rtype: int</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_duration</span> <span class="o">/</span> <span class="mf">0.5</span><span class="p">)</span></div>
+	
+<span class="c1">####################################################################################################</span>
+<div class="viewcode-block" id="GreekFoot"><a class="viewcode-back" href="../../fragment.html#decitala.fragment.GreekFoot">[docs]</a><span class="k">class</span> <span class="nc">GreekFoot</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Class that stores greek foot data. Reads from a folder containing all greek feet XML files.</span>
+
+<span class="sd">	&gt;&gt;&gt; bacchius = GreekFoot(&#39;Bacchius&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; bacchius</span>
+<span class="sd">	&lt;fragment.GreekFoot Bacchius&gt;</span>
+<span class="sd">	&gt;&gt;&gt; bacchius.filename</span>
+<span class="sd">	&#39;Bacchius.xml&#39;</span>
+<span class="sd">	&gt;&gt;&gt; bacchius.name</span>
+<span class="sd">	&#39;Bacchius&#39;</span>
+<span class="sd">	&gt;&gt;&gt; bacchius.num_onsets</span>
+<span class="sd">	3</span>
+<span class="sd">	&gt;&gt;&gt; bacchius.ql_array()</span>
+<span class="sd">	array([1., 2., 2.])</span>
+<span class="sd">	&gt;&gt;&gt; bacchius.successive_ratio_array()</span>
+<span class="sd">	array([1., 2., 1.])</span>
+<span class="sd">	&gt;&gt;&gt; bacchius.greek_string</span>
+<span class="sd">	&#39;⏑ –– ––&#39;</span>
+<span class="sd">	&gt;&gt;&gt; bacchius.dseg(as_str = True)</span>
+<span class="sd">	&#39;&lt;0 1 1&gt;&#39;</span>
+<span class="sd">	&gt;&gt;&gt; bacchius.std()</span>
+<span class="sd">	0.4714045207910317</span>
+<span class="sd">	&gt;&gt;&gt; for this_cycle in bacchius.cyclic_permutations():</span>
+<span class="sd">	...     print(this_cycle)</span>
+<span class="sd">	...</span>
+<span class="sd">	[1. 2. 2.]</span>
+<span class="sd">	[2. 2. 1.]</span>
+<span class="sd">	[2. 1. 2.]</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">greek_path</span><span class="p">):</span>
+			<span class="n">x</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">this_file</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+				<span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_file</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">DecitalaException</span><span class="p">(</span><span class="s2">&quot;No matches were found for name </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+		
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="n">match</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">full_path</span> <span class="o">=</span> <span class="n">greek_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">match</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">match</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">match</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_path</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="o">==</span> <span class="s2">&quot;.xml&quot;</span><span class="p">:</span>
+				<span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+			
+			<span class="k">for</span> <span class="n">this_match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">this_match</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">full_path</span> <span class="o">=</span> <span class="n">greek_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">this_match</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">this_match</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">this_match</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_path</span><span class="p">)</span>
+
+		<span class="k">try</span><span class="p">:</span>
+			<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">full_path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+		<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">GreekFootException</span><span class="p">(</span><span class="s2">&quot;Something is wrong with the name </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span> 
+	
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;fragment.GreekFoot </span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+	
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">greek_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;See docstring of :obj:`decitala.utils.ql_array_to_greek_diacritics`.&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">ql_array_to_greek_diacritics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="kn">import</span> <span class="nn">doctest</span>
+	<span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Luke Poeppel.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> and ❤️  using a custom <a href="https://github.com/LinxiFan/Sphinx-theme">theme</a> based on <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/language_data.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

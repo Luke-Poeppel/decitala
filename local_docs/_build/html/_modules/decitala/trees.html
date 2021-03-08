@@ -1,0 +1,932 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>decitala.trees &mdash; decitala 0.7.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/path_finding.html">path_finding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/vis.html">vis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">decitala</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>decitala.trees</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for decitala.trees</h1><div class="highlight"><pre>
+<span></span><span class="c1">####################################################################################################</span>
+<span class="c1"># File:     trees.py</span>
+<span class="c1"># Purpose:  NAry Tree representation of Fragment Trees and Search algorithms.</span>
+<span class="c1"># </span>
+<span class="c1"># Author:   Luke Poeppel</span>
+<span class="c1">#</span>
+<span class="c1"># Location: Kent, 2020 / Frankfurt, 2020</span>
+<span class="c1">####################################################################################################</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">jsonpickle</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.image</span> <span class="k">as</span> <span class="nn">mpimg</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">webbrowser</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">.fragment</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">Decitala</span><span class="p">,</span>
+	<span class="n">GreekFoot</span><span class="p">,</span>
+	<span class="n">GeneralFragment</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">cauchy_schwartz</span><span class="p">,</span>
+	<span class="n">roll_window</span><span class="p">,</span>
+	<span class="n">get_object_indices</span><span class="p">,</span>
+	<span class="n">successive_ratio_array</span><span class="p">,</span>
+	<span class="n">successive_difference_array</span><span class="p">,</span>
+	<span class="n">find_possible_superdivisions</span><span class="p">,</span>
+	<span class="n">contiguous_summation</span><span class="p">,</span>
+	<span class="n">frame_to_ql_array</span><span class="p">,</span>
+	<span class="n">frame_is_spanned_by_slur</span><span class="p">,</span>
+	<span class="n">frame_to_midi</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">vis</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+	<span class="s2">&quot;NaryTree&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;FragmentTree&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;filter_data&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">here</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">decitala_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/Fragments/Decitalas&quot;</span>
+<span class="n">greek_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/Fragments/Greek_Metrics/XML&quot;</span>
+
+<span class="n">fragment_db</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/databases/fragment_database.db&quot;</span>
+
+<span class="c1">############### EXCEPTIONS ###############</span>
+<span class="k">class</span> <span class="nc">TreeException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+	<span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">FragmentTreeException</span><span class="p">(</span><span class="n">TreeException</span><span class="p">):</span>
+	<span class="k">pass</span>
+
+<span class="c1">####################################################################################################</span>
+<div class="viewcode-block" id="NaryTree"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree">[docs]</a><span class="k">class</span> <span class="nc">NaryTree</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A single-rooted nary tree for ratio and difference representations of rhythmic fragments. Nodes are </span>
+<span class="sd">	hashed by their value and are stored in a set. For demonstration, we will create the following tree: </span>
+<span class="sd">	(If a string appears next to a node value, this means the path from the root to that node is an encoded fragment.) </span>
+
+<span class="sd">	&gt;&gt;&gt; root = NaryTree().Node(value = 1.0, name = None) # LEVEL 1</span>
+<span class="sd">	&gt;&gt;&gt; c1 = NaryTree().Node(value = 0.5, name = None) # LEVEL 2				</span>
+<span class="sd">	&gt;&gt;&gt; c2 = NaryTree().Node(value = 1.0, name = None)</span>
+<span class="sd">	&gt;&gt;&gt; c3 = NaryTree().Node(value = 3.0, name = &#39;A&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; c3.value </span>
+<span class="sd">	3.0</span>
+<span class="sd">	&gt;&gt;&gt; gc1 = NaryTree().Node(value = 0.5, name = None) # LEVEL 3</span>
+<span class="sd">	&gt;&gt;&gt; gc2 = NaryTree().Node(value = 3.0, name = &#39;B&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; gc3 = NaryTree().Node(value = 2.0, name = &#39;C&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; ggc = NaryTree().Node(value = 1.0, name = &#39;D&#39;) # LEVEL 4</span>
+<span class="sd">	&gt;&gt;&gt; root.parent = None</span>
+<span class="sd">	&gt;&gt;&gt; root.children = {c1, c2, c3}</span>
+<span class="sd">	&gt;&gt;&gt; root.children</span>
+<span class="sd">	{&lt;NODE: value=0.5, name=None&gt;, &lt;NODE: value=1.0, name=None&gt;, &lt;NODE: value=3.0, name=A&gt;}</span>
+<span class="sd">	&gt;&gt;&gt; c1 in root.children</span>
+<span class="sd">	True</span>
+<span class="sd">	&gt;&gt;&gt; root.ordered_children()</span>
+<span class="sd">	[&lt;NODE: value=0.5, name=None&gt;, &lt;NODE: value=1.0, name=None&gt;, &lt;NODE: value=3.0, name=A&gt;]</span>
+<span class="sd">	&gt;&gt;&gt; c1.add_children([gc1, gc2])</span>
+<span class="sd">	&gt;&gt;&gt; c1.num_children</span>
+<span class="sd">	2</span>
+<span class="sd">	&gt;&gt;&gt; c2.add_child(gc3)</span>
+<span class="sd">	&gt;&gt;&gt; gc1.add_child(ggc)</span>
+<span class="sd">	&gt;&gt;&gt; root.add_path_of_children(path = [root.value, 4.0, 1.0, 0.5, 2.0], final_node_name = &#39;Full Path&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; root.children</span>
+<span class="sd">	{&lt;NODE: value=0.5, name=None&gt;, &lt;NODE: value=1.0, name=None&gt;, &lt;NODE: value=3.0, name=A&gt;, &lt;NODE: value=4.0, name=None&gt;}</span>
+<span class="sd">	&gt;&gt;&gt; # Check for overwriting data...</span>
+<span class="sd">	&gt;&gt;&gt; root.add_path_of_children(path = [root.value, 1.0, 2.0, 1.0], final_node_name = &#39;Test Overwrite&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; # We can access children by referencing a node or by calling to its representative value. </span>
+<span class="sd">	&gt;&gt;&gt; newValue = root.get_child_by_value(4.0)</span>
+<span class="sd">	&gt;&gt;&gt; newValue.children</span>
+<span class="sd">	{&lt;NODE: value=1.0, name=None&gt;}</span>
+<span class="sd">	&gt;&gt;&gt; c2.get_child(gc3)</span>
+<span class="sd">	&lt;NODE: value=2.0, name=C&gt;</span>
+<span class="sd">	&gt;&gt;&gt; c2.get_child_by_value(2.0)</span>
+<span class="sd">	&lt;NODE: value=2.0, name=C&gt;</span>
+<span class="sd">	&gt;&gt;&gt; c2.get_child_by_value(4.0)</span>
+<span class="sd">	&gt;&gt;&gt; TestTree = NaryTree()</span>
+<span class="sd">	&gt;&gt;&gt; TestTree.root = root</span>
+<span class="sd">	&gt;&gt;&gt; TestTree</span>
+<span class="sd">	&lt;trees.NaryTree: nodes=13&gt;</span>
+<span class="sd">	&gt;&gt;&gt; TestTree.is_empty()</span>
+<span class="sd">	False</span>
+<span class="sd">	&gt;&gt;&gt; # Calling the size returns the number of nodes in the tree. </span>
+<span class="sd">	&gt;&gt;&gt; TestTree.size()</span>
+<span class="sd">	13</span>
+<span class="sd">	&gt;&gt;&gt; TestTree.all_possible_paths()</span>
+<span class="sd">	[1.0]</span>
+<span class="sd">	[1.0, 0.5]</span>
+<span class="sd">	[1.0, 0.5, 0.5]</span>
+<span class="sd">	[1.0, 0.5, 0.5, 1.0]</span>
+<span class="sd">	[1.0, 0.5, 3.0]</span>
+<span class="sd">	[1.0, 1.0]</span>
+<span class="sd">	[1.0, 1.0, 2.0]</span>
+<span class="sd">	[1.0, 1.0, 2.0, 1.0]</span>
+<span class="sd">	[1.0, 3.0]</span>
+<span class="sd">	[1.0, 4.0]</span>
+<span class="sd">	[1.0, 4.0, 1.0]</span>
+<span class="sd">	[1.0, 4.0, 1.0, 0.5]</span>
+<span class="sd">	[1.0, 4.0, 1.0, 0.5, 2.0]</span>
+<span class="sd">	&gt;&gt;&gt; # Get paths of a particular length:</span>
+<span class="sd">	&gt;&gt;&gt; for this_path in TestTree.all_named_paths(cutoff = 3):</span>
+<span class="sd">	...     print(this_path)</span>
+<span class="sd">	B</span>
+<span class="sd">	C</span>
+<span class="sd">	&gt;&gt;&gt; # We can search for paths as follows. </span>
+<span class="sd">	&gt;&gt;&gt; TestTree.search_for_path([1.0, 0.5, 0.5, 1.0])</span>
+<span class="sd">	&#39;D&#39;</span>
+<span class="sd">	&gt;&gt;&gt; TestTree.search_for_path([1.0, 0.5, 3.0])</span>
+<span class="sd">	&#39;B&#39;</span>
+<span class="sd">	&gt;&gt;&gt; TestTree.search_for_path([1.0, 2.0, 4.0])</span>
+<span class="sd">	&gt;&gt;&gt; TestTree.search_for_path([1.0, 1.0, 2.0])</span>
+<span class="sd">	&#39;C&#39;</span>
+<span class="sd">	&gt;&gt;&gt; # Allow for unnamed paths to be found.</span>
+<span class="sd">	&gt;&gt;&gt; TestTree.search_for_path([1.0, 0.5, 0.5], allow_unnamed=True)</span>
+<span class="sd">	[1.0, 0.5, 0.5]</span>
+<span class="sd">	&gt;&gt;&gt; # Level order traversal</span>
+<span class="sd">	&gt;&gt;&gt; TestTree.level_order_traversal()</span>
+<span class="sd">	[[1.0], [0.5, 1.0, 3.0, 4.0], [0.5, 3.0, 2.0, 1.0], [1.0, 1.0, 0.5], [2.0]]</span>
+<span class="sd">	&gt;&gt;&gt; # We can serialize an NaryTree as either a native Python type or Javascript type (for using Treant.js).</span>
+<span class="sd">	&gt;&gt;&gt; TestTree.serialize()</span>
+<span class="sd">	&#39;{&quot;root&quot;: {&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: &quot;D&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}, {&quot;value&quot;: 3.0, &quot;name&quot;: &quot;B&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}, {&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 2.0, &quot;name&quot;: &quot;C&quot;, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: &quot;Test Overwrite&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}]}, {&quot;value&quot;: 3.0, &quot;name&quot;: &quot;A&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}, {&quot;value&quot;: 4.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 2.0, &quot;name&quot;: &quot;Full Path&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}]}]}]}}&#39;</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="NaryTree.Node"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.Node">[docs]</a>	<span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		A Node object stores an item and references its parent and children. In an Nary tree, a parent</span>
+<span class="sd">		may have any arbitrary number of children, but each child has only 1 parent. </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+		<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+			<span class="k">return</span> <span class="s1">&#39;&lt;NODE: value=</span><span class="si">{0}</span><span class="s1">, name=</span><span class="si">{1}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+		<span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+			<span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+		<span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+			<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Without this, you can add nodes with the same value to the set of children.</span>
+<span class="sd">			&quot;&quot;&quot;</span>
+			<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> 
+
+		<span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+			<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+		<span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+			<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			TODO: index the node children? </span>
+<span class="sd">			&quot;&quot;&quot;</span>
+			<span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="NaryTree.Node.add_child"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.Node.add_child">[docs]</a>		<span class="k">def</span> <span class="nf">add_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child_node</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">child_node</span><span class="p">)</span>
+			<span class="k">return</span></div>
+
+<div class="viewcode-block" id="NaryTree.Node.add_children"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.Node.add_children">[docs]</a>		<span class="k">def</span> <span class="nf">add_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children_nodes</span> <span class="o">=</span> <span class="p">[]):</span>
+			<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">children_nodes</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span> 
+				<span class="k">raise</span> <span class="n">TreeException</span><span class="p">(</span><span class="s1">&#39;Nodes must be contained in a list.&#39;</span><span class="p">)</span>
+			
+			<span class="k">for</span> <span class="n">this_child</span> <span class="ow">in</span> <span class="n">children_nodes</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">this_child</span><span class="p">)</span>
+			<span class="k">return</span></div>
+
+<div class="viewcode-block" id="NaryTree.Node.add_path_of_children"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.Node.add_path_of_children">[docs]</a>		<span class="k">def</span> <span class="nf">add_path_of_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">final_node_name</span><span class="p">):</span>
+			<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			Adds a path of Nodes through ``self.children``. </span>
+<span class="sd">			&quot;&quot;&quot;</span>
+			<span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="n">TreeException</span><span class="p">(</span><span class="s2">&quot;First value in the path must be self.value.&quot;</span><span class="p">)</span>
+
+			<span class="n">curr</span> <span class="o">=</span> <span class="bp">self</span>
+			<span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+			<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+				<span class="n">check</span> <span class="o">=</span> <span class="n">curr</span><span class="o">.</span><span class="n">get_child_by_value</span><span class="p">(</span><span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+				<span class="k">if</span> <span class="n">check</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="n">curr</span> <span class="o">=</span> <span class="n">check</span>
+					<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+							<span class="n">child</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">name</span> <span class="o">=</span> <span class="n">final_node_name</span><span class="p">)</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="n">child</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+					<span class="n">curr</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+					<span class="n">curr</span> <span class="o">=</span> <span class="n">child</span>
+					<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+			<span class="k">return</span></div>
+
+<div class="viewcode-block" id="NaryTree.Node.remove_child"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.Node.remove_child">[docs]</a>		<span class="k">def</span> <span class="nf">remove_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child_node</span><span class="p">):</span>
+			<span class="k">if</span> <span class="n">child_node</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="n">TreeException</span><span class="p">(</span><span class="s2">&quot;This parent does not have that child!&quot;</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">child_node</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+			<span class="k">return</span></div>
+
+<div class="viewcode-block" id="NaryTree.Node.remove_children"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.Node.remove_children">[docs]</a>		<span class="k">def</span> <span class="nf">remove_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">children_nodes</span><span class="p">):</span>
+			<span class="k">for</span> <span class="n">this_child</span> <span class="ow">in</span> <span class="n">children_nodes</span><span class="p">:</span>
+				<span class="k">try</span><span class="p">:</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">remove_child</span><span class="p">(</span><span class="n">this_child</span><span class="p">)</span>
+				<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+					<span class="k">raise</span> <span class="n">TreeException</span><span class="p">(</span><span class="s2">&quot;One of the values in children_nodes was not found.&quot;</span><span class="p">)</span>
+			<span class="k">return</span></div>
+
+<div class="viewcode-block" id="NaryTree.Node.get_child"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.Node.get_child">[docs]</a>		<span class="k">def</span> <span class="nf">get_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+			<span class="sd">&quot;&quot;&quot;Given another Node, returns the node in the set of children with the same value.&quot;&quot;&quot;</span>
+			<span class="k">for</span> <span class="n">this_child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">this_child</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+					<span class="k">return</span> <span class="n">this_child</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="NaryTree.Node.get_child_by_value"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.Node.get_child_by_value">[docs]</a>		<span class="k">def</span> <span class="nf">get_child_by_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+			<span class="k">for</span> <span class="n">this_child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">this_child</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">value</span><span class="p">:</span>
+					<span class="k">return</span> <span class="n">this_child</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">return</span> <span class="kc">None</span></div>
+
+		<span class="nd">@property</span>
+		<span class="k">def</span> <span class="nf">num_children</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+			<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
+
+		<span class="nd">@property</span>
+		<span class="k">def</span> <span class="nf">has_children</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_children</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NaryTree.Node.ordered_children"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.Node.ordered_children">[docs]</a>		<span class="k">def</span> <span class="nf">ordered_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+			<span class="sd">&quot;&quot;&quot;Returns the children of a node in list format, ordered by value.&quot;&quot;&quot;</span>
+			<span class="k">return</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">child</span> <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="NaryTree.Node.write_to_json"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.Node.write_to_json">[docs]</a>		<span class="k">def</span> <span class="nf">write_to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+			<span class="sd">&quot;&quot;&quot;Used in the Treant.js visualization of Fragment trees.&quot;&quot;&quot;</span>
+			<span class="n">net_children_data</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">this_child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+				<span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;info&quot;</span> <span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span> <span class="p">:</span> <span class="n">this_child</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span> <span class="p">:</span> <span class="n">this_child</span><span class="o">.</span><span class="n">value</span><span class="p">}}</span>
+				<span class="n">net_children_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+			<span class="n">out</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;info&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;children&#39;</span> <span class="p">:</span> <span class="n">net_children_data</span><span class="p">}}</span>
+			<span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">out</span><span class="p">)</span><span class="c1">#, indent=4)</span></div></div>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="kc">None</span>
+
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="s1">&#39;&lt;trees.NaryTree: nodes=</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+
+	<span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Iterates through all named paths in the tree (not nodes), beginning with the shortest paths </span>
+<span class="sd">		and ending with paths that end at the leaves. Ignores paths that do not end with a name. </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">this_named_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_named_paths</span><span class="p">():</span>
+			<span class="k">yield</span> <span class="n">this_named_path</span>
+
+	<span class="k">def</span> <span class="nf">_size_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Helper function for self.size().&quot;&quot;&quot;</span>
+		<span class="n">num_nodes</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+			<span class="n">num_nodes</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_helper</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">num_nodes</span>
+
+<div class="viewcode-block" id="NaryTree.size"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.size">[docs]</a>	<span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Returns the number of nodes in the nary tree.&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_helper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span></div>
+
+	<span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+		<span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+
+	<span class="c1">################################################################################################</span>
+<div class="viewcode-block" id="NaryTree.serialize"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.serialize">[docs]</a>	<span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">for_treant</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;tree=pickled tree will not be needed in the actual tree.&quot;&quot;&quot;</span>
+		<span class="k">def</span> <span class="nf">encapsulate</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+			<span class="n">rv</span> <span class="o">=</span> <span class="p">{}</span>
+			<span class="n">value</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">children</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+			<span class="c1"># Javascript&#39;s JSON.parse has a hard time with nulls. </span>
+			<span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+			<span class="k">if</span> <span class="n">parents</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">parents</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+			<span class="n">rv</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s1">&#39;parents&#39;</span><span class="p">:</span> <span class="n">parents</span><span class="p">}</span>
+			<span class="n">rv</span><span class="p">[</span><span class="s1">&#39;children&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">encapsulate</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">children</span><span class="p">]</span>
+			<span class="k">return</span> <span class="n">rv</span>
+
+		<span class="n">pickled</span> <span class="o">=</span> <span class="n">jsonpickle</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unpicklable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">for_treant</span><span class="p">:</span>
+			<span class="n">loaded</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickled</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">loaded</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">loaded</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickled</span><span class="p">)</span>
+			<span class="n">w_text_field</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;nodeStructure&quot;</span> <span class="p">:</span> <span class="n">encapsulate</span><span class="p">(</span><span class="n">loaded</span><span class="p">[</span><span class="s2">&quot;root&quot;</span><span class="p">])}</span>
+			<span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">w_text_field</span><span class="p">)</span></div>
+
+	<span class="c1">################################################################################################</span>
+	<span class="k">def</span> <span class="nf">_all_possible_paths_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="p">[]):</span>
+		<span class="sd">&quot;&quot;&quot;Helper function for self.all_possible_paths().&quot;&quot;&quot;</span>
+		<span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="k">pass</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">_all_possible_paths_helper</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+		<span class="n">path</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+<div class="viewcode-block" id="NaryTree.all_possible_paths"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.all_possible_paths">[docs]</a>	<span class="k">def</span> <span class="nf">all_possible_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Returns all possible paths from the root node, not all of which are necesarrily named.</span>
+<span class="sd">		Currently returns a numpy error.&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_possible_paths_helper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span></div>
+
+	<span class="k">def</span> <span class="nf">_all_named_paths_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="p">[]):</span>
+		<span class="sd">&quot;&quot;&quot;Helper function for self.all_named_paths().&quot;&quot;&quot;</span>
+		<span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">path</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">cutoff</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="n">cutoff</span><span class="p">:</span>
+					<span class="k">yield</span> <span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;ROOT&#39;</span><span class="p">:</span>
+					<span class="k">pass</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">yield</span> <span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">pass</span>
+
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="k">pass</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+				<span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_named_paths_helper</span><span class="p">(</span><span class="n">node</span> <span class="o">=</span> <span class="n">child</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">)</span>
+
+		<span class="n">path</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+<div class="viewcode-block" id="NaryTree.all_named_paths"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.all_named_paths">[docs]</a>	<span class="k">def</span> <span class="nf">all_named_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Returns all named paths from the root. An optional ``cutoff`` parameter restricts to paths of </span>
+<span class="sd">		length :math:`n`.  </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">this_named_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_named_paths_helper</span><span class="p">(</span><span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="n">cutoff</span><span class="p">):</span>
+			<span class="k">yield</span> <span class="n">this_named_path</span></div>
+
+	<span class="c1"># Sub and super paths</span>
+	<span class="c1"># Should maybe also have sub/super paths by path. </span>
+	<span class="k">def</span> <span class="nf">_subpaths_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span> 
+
+	<span class="k">def</span> <span class="nf">_subpaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Given a name (hopefully attached to a node), returns a list of the subpaths &quot;below&quot; that node.&quot;&quot;&quot;</span>
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+	<span class="k">def</span> <span class="nf">_superpaths_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+	<span class="k">def</span> <span class="nf">_superpaths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Given a name (hopefully attached to a node), returns a list of the subpaths &quot;above&quot; that node.&quot;&quot;&quot;</span>
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+	<span class="c1">################################################################################################</span>
+	<span class="c1"># Level-Order Traversal</span>
+<div class="viewcode-block" id="NaryTree.level_order_traversal"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.level_order_traversal">[docs]</a>	<span class="k">def</span> <span class="nf">level_order_traversal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;Returns the level order traversal of an NaryTree.&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">[]</span>
+		<span class="n">queue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">])</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">queue</span><span class="p">):</span>
+			<span class="n">level_result</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">queue</span><span class="p">)):</span>
+				<span class="n">node</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+				<span class="n">level_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="c1"># or just the node...? </span>
+				<span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+					<span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+			<span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">level_result</span><span class="p">)</span>
+		
+		<span class="k">return</span> <span class="n">result</span></div>
+
+	<span class="c1">################################################################################################</span>
+<div class="viewcode-block" id="NaryTree.search_for_path"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.search_for_path">[docs]</a>	<span class="k">def</span> <span class="nf">search_for_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_from_root</span><span class="p">,</span> <span class="n">allow_unnamed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Searches for ``path_from_root`` through the tree for a continuous path to a node. </span>
+<span class="sd">		</span>
+<span class="sd">		:param numpy.array path_from_root: path to search in tree.</span>
+<span class="sd">		:param bool allow_unnamed: whether or not to allow for unnamed paths to be found. </span>
+<span class="sd">		:return: either the name of the final node or, if ``allow_unnamed=True``, possibly ``path_from_root``.</span>
+<span class="sd">		:raises `~decitala.trees.TreeException`: when an invalid path or representation type is provided.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="n">path_from_root</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">path_from_root</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">TreeException</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is an invalid root value.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_from_root</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+		<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_from_root</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">TreeException</span><span class="p">(</span><span class="s2">&quot;Path provided must be at least 2 values long.&quot;</span><span class="p">)</span>
+
+		<span class="n">curr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
+		<span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_from_root</span><span class="p">):</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">curr</span> <span class="o">=</span> <span class="n">curr</span><span class="o">.</span><span class="n">get_child_by_value</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">path_from_root</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+				<span class="k">if</span> <span class="n">curr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="k">return</span> <span class="kc">None</span>
+			<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+				<span class="k">break</span>
+			
+			<span class="k">if</span> <span class="n">allow_unnamed</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+				<span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_from_root</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">curr</span><span class="o">.</span><span class="n">children</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+					<span class="k">return</span> <span class="n">curr</span><span class="o">.</span><span class="n">name</span>
+				<span class="k">elif</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_from_root</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">curr</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="k">return</span> <span class="n">curr</span><span class="o">.</span><span class="n">name</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">path_from_root</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+					<span class="k">return</span> <span class="n">path_from_root</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="NaryTree.ld_search"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.ld_search">[docs]</a>	<span class="k">def</span> <span class="nf">ld_search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_from_root</span><span class="p">,</span> <span class="n">allow_unnamed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This is a special use-case in :obj:`~decitala.trees.get_by_ql_array` based on the observation </span>
+<span class="sd">		that the difference representation of mixed augmentations are linearly dependent. In this search</span>
+<span class="sd">		tool, rather than checking if a path exists in a tree, we check on a level-order basis </span>
+<span class="sd">		for a node for which the input is linearly dependent. </span>
+
+<span class="sd">		:raises `NotImplementedError`:</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+<span class="k">class</span> <span class="nc">KDTree</span><span class="p">:</span>
+	<span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
+		<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+			<span class="k">pass</span>
+	
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">pass</span>
+
+<span class="c1">####################################################################################################</span>
+<div class="viewcode-block" id="filter_data"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.filter_data">[docs]</a><span class="k">def</span> <span class="nf">filter_data</span><span class="p">(</span><span class="n">raw_data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This function is used in the instantiation of the :class:`~decitala.trees.FragmentTree`.</span>
+
+<span class="sd">	:param list raw_data: a list of :class:`~decitala.fragment.Decitala`, :class:`~decitala.fragment.GreekFoot`, or </span>
+<span class="sd">						:class:`~decitala.fragment.GeneralFragment` objects. </span>
+<span class="sd">	:return: a filtered list that removes single-onset fragments and fragments with equivalent </span>
+<span class="sd">			successive difference representations (see :obj:`~decitala.utils.successive_ratio_array`) </span>
+<span class="sd">			using the Cauchy-Schwartz inequality.</span>
+<span class="sd">	:rtype: list</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">copied</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">raw_data</span><span class="p">)</span>
+	<span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">copied</span><span class="p">)</span>
+
+	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">copied</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="k">del</span> <span class="n">copied</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">pass</span>
+		<span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+			<span class="k">pass</span>
+
+		<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">copied</span><span class="p">):</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span><span class="p">:</span>
+					<span class="k">pass</span>
+				<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">copied</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">copied</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()):</span>
+					<span class="k">pass</span>
+				<span class="k">elif</span> <span class="n">cauchy_schwartz</span><span class="p">(</span><span class="n">copied</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ql_array</span><span class="p">(),</span> <span class="n">copied</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+					<span class="k">pass</span>
+				<span class="k">elif</span> <span class="n">cauchy_schwartz</span><span class="p">(</span><span class="n">copied</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ql_array</span><span class="p">(),</span> <span class="n">copied</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+					<span class="n">firsti</span> <span class="o">=</span> <span class="n">copied</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+					<span class="n">firstj</span> <span class="o">=</span> <span class="n">copied</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+					<span class="c1">#Equality removes the second one by convention</span>
+					<span class="k">if</span> <span class="n">firsti</span> <span class="o">==</span> <span class="n">firstj</span><span class="p">:</span>
+						<span class="k">del</span> <span class="n">copied</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+					<span class="k">elif</span> <span class="n">firsti</span> <span class="o">&gt;</span> <span class="n">firstj</span><span class="p">:</span>
+						<span class="k">del</span> <span class="n">copied</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="k">del</span> <span class="n">copied</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="k">pass</span>
+			<span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+				<span class="k">pass</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+	<span class="k">return</span> <span class="n">copied</span></div>
+
+<div class="viewcode-block" id="FragmentTree"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTree">[docs]</a><span class="k">class</span> <span class="nc">FragmentTree</span><span class="p">(</span><span class="n">NaryTree</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	NaryTree that holds multiplicative or additive representations of a rhythmic dataset. </span>
+
+<span class="sd">	:param str data: either a frag_type/rep_type combo, a path to folder of music21-readable files, or a list of fragments.  </span>
+<span class="sd">	:param str frag_type: determines the class defining the set of fragments. </span>
+<span class="sd">					If the ``frag_type==&#39;decitala&#39;``, creates :class:`~decitala.fragment.Decitala` objects;</span>
+<span class="sd">					if ``frag_type==&#39;greek_foot&#39;``, creates :class:`~decitala.fragment.GreekFoot`.</span>
+<span class="sd">					Otherwise creates :class:`~decitala.fragment.GeneralFragment` (default) objects.</span>
+<span class="sd">	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` (default) and ``difference``.</span>
+<span class="sd">	:raises `~decitala.trees.FragmentTreeException`: when an invalid path or representation type is provided.</span>
+
+<span class="sd">	&gt;&gt;&gt; ratio_tree = FragmentTree.from_frag_type(frag_type=&#39;greek_foot&#39;, rep_type=&#39;ratio&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; ratio_tree</span>
+<span class="sd">	&lt;trees.FragmentTree greek_foot_ratio: nodes=31&gt;</span>
+<span class="sd">	&gt;&gt;&gt; ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0])</span>
+<span class="sd">	&lt;fragment.GreekFoot Peon_II&gt;</span>
+<span class="sd">	&gt;&gt;&gt; # We can also create a FragmentTree object from either a list of GeneralFragment, Decitala, and GreekFoot objects or from a directory of files using the `data` parameter.</span>
+<span class="sd">	&gt;&gt;&gt; # We can also give it a name. </span>
+<span class="sd">	&gt;&gt;&gt; g1 = GeneralFragment([1.0, 1.0, 1.0, 1.0, 1.0], name=&quot;myfragment&quot;)</span>
+<span class="sd">	&gt;&gt;&gt; g2 = Decitala(&quot;Ragavardhana&quot;)</span>
+<span class="sd">	&gt;&gt;&gt; g3 = GreekFoot(&quot;Ionic_Major&quot;)</span>
+<span class="sd">	&gt;&gt;&gt; data = [g1, g2, g3]</span>
+<span class="sd">	&gt;&gt;&gt; mytree = FragmentTree(data = data, rep_type=&quot;difference&quot;, name=&quot;MyCoolTree&quot;)</span>
+<span class="sd">	&gt;&gt;&gt; mytree</span>
+<span class="sd">	&lt;trees.FragmentTree MyCoolTree: nodes=10&gt;</span>
+<span class="sd">	&gt;&gt;&gt; for path in mytree.all_named_paths():</span>
+<span class="sd">	...     print(path)</span>
+<span class="sd">	&lt;fragment.Decitala 93_Ragavardhana&gt;</span>
+<span class="sd">	&lt;fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]&gt;</span>
+<span class="sd">	&lt;fragment.GreekFoot Ionic_Major&gt;</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">rep_type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">skip_filter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="n">rep_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;difference&quot;</span><span class="p">],</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The only possible rep_types are `ratio` and `difference`&quot;</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">=</span> <span class="n">rep_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+		
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+			<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;Invalid path provided.&quot;</span><span class="p">)</span>
+			<span class="n">new_data</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
+				<span class="n">new_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">this_file</span><span class="p">))</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">filtered_data</span> <span class="o">=</span> <span class="n">filter_data</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
+		
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+			<span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;GeneralFragment&quot;</span><span class="p">,</span> <span class="s2">&quot;Decitala&quot;</span><span class="p">,</span> <span class="s2">&quot;GreekFoot&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">),</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The elements of data must be GeneralFragment, Decitala, or GreekFoot objects.&quot;</span><span class="p">)</span>
+			<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">skip_filter</span><span class="p">):</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">filtered_data</span> <span class="o">=</span> <span class="n">filter_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="bp">self</span><span class="o">.</span><span class="n">filtered_data</span> <span class="o">=</span> <span class="n">data</span>
+
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+		
+		<span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filtered_data</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">sorted_data</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filtered_data</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()))</span>
+		<span class="c1"># self.filtered_data = None # Free up memory</span>
+
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
+			<span class="n">root_node</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;ROOT&#39;</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_data</span><span class="p">:</span>
+				<span class="n">root_node</span><span class="o">.</span><span class="n">add_path_of_children</span><span class="p">(</span><span class="n">path</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">successive_ratio_array</span><span class="p">()),</span> <span class="n">final_node_name</span> <span class="o">=</span> <span class="n">this_fragment</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root_node</span>
+		
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;difference&quot;</span><span class="p">:</span>
+			<span class="n">root_node</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;ROOT&#39;</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_data</span><span class="p">:</span>
+				<span class="n">root_node</span><span class="o">.</span><span class="n">add_path_of_children</span><span class="p">(</span><span class="n">path</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">successive_difference_array</span><span class="p">()),</span> <span class="n">final_node_name</span> <span class="o">=</span> <span class="n">this_fragment</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root_node</span>
+		
+		<span class="c1"># self.sorted_data = None # Free up memory</span>
+	
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s1">&#39;&lt;trees.FragmentTree </span><span class="si">{0}</span><span class="s1">: nodes=</span><span class="si">{1}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s1">&#39;&lt;trees.FragmentTree: nodes=</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+	
+<div class="viewcode-block" id="FragmentTree.from_frag_type"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTree.from_frag_type">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">from_frag_type</span><span class="p">(</span>
+		<span class="bp">cls</span><span class="p">,</span>
+		<span class="n">frag_type</span><span class="p">,</span>
+		<span class="n">rep_type</span>
+		<span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Create a fragment tree from the data in fragment_database.db in the databases directory. </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="n">frag_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;decitala&quot;</span><span class="p">,</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">],</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The only possible frag_types are `decitala` and `greek_foot`.&quot;</span><span class="p">)</span>
+		<span class="k">assert</span> <span class="n">rep_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;difference&quot;</span><span class="p">],</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The only possible rep_types are `ratio` and `difference`&quot;</span><span class="p">)</span>
+		
+		<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">fragment_db</span><span class="p">)</span>
+		<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+		
+		<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">if</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;decitala&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
+				<span class="n">decitala_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Decitalas WHERE R_Keep = 1&quot;</span>
+			<span class="k">elif</span> <span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;difference&quot;</span><span class="p">:</span>
+				<span class="n">decitala_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Decitalas WHERE D_Keep = 1&quot;</span>
+
+			<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">decitala_table_string</span><span class="p">)</span>
+			<span class="n">decitala_rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+			<span class="k">for</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="n">decitala_rows</span><span class="p">:</span>
+				<span class="n">name</span> <span class="o">=</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+				<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Decitala</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
+					
+		<span class="k">if</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
+				<span class="n">greek_metric_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Greek_Metrics WHERE R_Keep = 1&quot;</span>
+			<span class="k">elif</span> <span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;difference&quot;</span><span class="p">:</span>
+				<span class="n">greek_metric_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Greek_Metrics WHERE D_Keep = 1&quot;</span>
+			
+			<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">greek_metric_table_string</span><span class="p">)</span>
+			<span class="n">greek_metric_rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+			<span class="k">for</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="n">greek_metric_rows</span><span class="p">:</span>
+				<span class="n">name</span> <span class="o">=</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+				<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GreekFoot</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
+		
+		<span class="k">return</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="n">rep_type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">_</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frag_type</span><span class="p">,</span> <span class="n">rep_type</span><span class="p">),</span> <span class="n">skip_filter</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FragmentTree.from_composition"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTree.from_composition">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">from_composition</span><span class="p">(</span>
+			<span class="bp">cls</span><span class="p">,</span>
+			<span class="n">filepath</span><span class="p">,</span>
+			<span class="n">part</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+			<span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span>
+			<span class="n">windows</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+		<span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Class method for generating a FragmentTree from a composition. </span>
+
+<span class="sd">		:param str filepath: path to file </span>
+<span class="sd">		:param int part: part number</span>
+<span class="sd">		:return: a FragmentTree made from a rolling window of a part in a composition.  </span>
+<span class="sd">		:rtype: :obj:`~decitala.trees.FragmentTree`</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+		<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span>
+		
+		<span class="n">object_list</span> <span class="o">=</span> <span class="n">get_object_indices</span><span class="p">(</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">part_num</span> <span class="o">=</span> <span class="n">part</span><span class="p">)</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">this_window</span> <span class="ow">in</span> <span class="n">windows</span><span class="p">:</span>
+			<span class="n">frames</span> <span class="o">=</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span> <span class="o">=</span> <span class="n">object_list</span><span class="p">,</span> <span class="n">window_length</span> <span class="o">=</span> <span class="n">this_window</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
+				<span class="n">objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_frame</span><span class="p">]</span>
+				<span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_frame</span><span class="p">]</span>
+				<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">isRest</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">):</span> <span class="c1"># Skip any window that has a rest in it.</span>
+					<span class="k">continue</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">as_quarter_lengths</span> <span class="o">=</span> <span class="p">[]</span>
+					<span class="k">for</span> <span class="n">this_obj</span><span class="p">,</span> <span class="n">this_range</span> <span class="ow">in</span> <span class="n">this_frame</span><span class="p">:</span>
+						<span class="n">as_quarter_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)</span>
+					<span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+					<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">as_quarter_lengths</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
+
+		<span class="k">return</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="n">rep_type</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FragmentTree.from_multiple_paths"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTree.from_multiple_paths">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">from_multiple_paths</span><span class="p">(</span>
+			<span class="bp">self</span><span class="p">,</span> 
+			<span class="n">paths</span><span class="p">,</span> 
+			<span class="n">rep_type</span><span class="p">,</span> 
+			<span class="n">name</span><span class="o">=</span><span class="kc">None</span>
+		<span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Create a FragmentTree from a list of paths (each a directory of music21-readable files). </span>
+
+<span class="sd">		:param list paths: list of paths (each a string), each a directory of music21-readable files of rhythmic fragments.</span>
+<span class="sd">		:return: a Fragment tree holding multiple paths of data. </span>
+<span class="sd">		:rtype: :obj:`~decitala.trees.FragmentTree`</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">),</span> <span class="n">TreeException</span><span class="p">(</span><span class="s2">&quot;Not all provided paths are valid.&quot;</span><span class="p">)</span>
+
+		<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">this_path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">this_path</span><span class="p">):</span>
+				<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">this_file</span><span class="p">))</span>
+
+		<span class="k">return</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="n">rep_type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FragmentTree.show"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTree.show">[docs]</a>	<span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		The vis module uses the Treant.js library to create a tree diagram. We then open the index.html</span>
+<span class="sd">		file of the generated diagram in the chrome webbrowser. </span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Function still in development...&quot;</span><span class="p">)</span>
+		<span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">)</span>
+		<span class="n">vis</span><span class="o">.</span><span class="n">create_tree_diagram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+		<span class="n">browser</span> <span class="o">=</span> <span class="n">webbrowser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chrome&quot;</span><span class="p">)</span>
+		<span class="n">browser</span><span class="o">.</span><span class="n">open_new_tab</span><span class="p">(</span><span class="s2">&quot;file://&quot;</span> <span class="o">+</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/index.html&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Luke Poeppel.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

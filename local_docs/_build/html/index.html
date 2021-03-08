@@ -1,0 +1,321 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Decitala Documentation &mdash; decitala 0.7.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="database" href="mods/database.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/path_finding.html">path_finding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/vis.html">vis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">decitala</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Decitala Documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="decitala-documentation">
+<h1>Decitala Documentation<a class="headerlink" href="#decitala-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Tools for automating ethnological rhythmic analysis of Olivier Messiaen’s music. The basic
+pipeline used in this package is Search →→ Path Finding →→ Analysis.</p>
+<p>The version of the <code class="docutils literal notranslate"><span class="pre">decitala</span></code> package can be found with <code class="docutils literal notranslate"><span class="pre">decitala</span> <span class="pre">--version</span></code>.</p>
+</div>
+<div class="section" id="rhythmic-manipulation">
+<h1>Rhythmic Manipulation<a class="headerlink" href="#rhythmic-manipulation" title="Permalink to this headline">¶</a></h1>
+<p>Messiaen often altered rhythmic fragments from the decitala database before including
+them in his composition. But he still establishes a kind of equivalence relation such that
+a fragment <span class="math notranslate nohighlight">\(F\)</span> and a transformed fragment <span class="math notranslate nohighlight">\(T(F)\)</span> are equivalent if there
+exists a special kind (and highly specified) transformation between them. These possible
+transformations include multiplicative augmentation, additive augmentation, mixed augmentation,
+flips into retrograde, and subdivision. Using a n-ary tree-based algorithm, we can
+efficiently search for such modification.</p>
+<p>We define the following representations of a rhythm (see X for the implementation):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 81%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Corresponding Search</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">r</span></code></p></td>
+<td><p>ratio</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rr</span></code></p></td>
+<td><p>retrograde-ratio</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">d</span></code></p></td>
+<td><p>difference</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rd</span></code></p></td>
+<td><p>retrograde-difference</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sr</span></code></p></td>
+<td><p>subdivision-ratio</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rsr</span></code></p></td>
+<td><p>retrograde-subdivision-ratio</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sd</span></code></p></td>
+<td><p>subdivision-difference</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rsd</span></code></p></td>
+<td><p>retrograde-subdivision-difference</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="basic-usage">
+<h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
+<p>Coming soon!</p>
+</div>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<ol class="arabic simple" start="0">
+<li><p>Navigate to home directory with <code class="docutils literal notranslate"><span class="pre">cd</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/Luke-Poeppel/decitala</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">decitala</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pre-commit</span> <span class="pre">install</span></code></p></li>
+</ol>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/path_finding.html">path_finding</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mods/path_finding.html#module-decitala.path_finding.floyd_warshall">floyd_warshall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mods/path_finding.html#module-decitala.path_finding.pofp">pofp</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/vis.html">vis</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="mods/database.html" class="btn btn-neutral float-right" title="database" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Luke Poeppel.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

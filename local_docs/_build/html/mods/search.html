@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>search &mdash; decitala 0.7.2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="trees" href="trees.html" />
+    <link rel="prev" title="fragment" href="fragment.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="path_finding.html">path_finding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vis.html">vis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">decitala</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>search</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/mods/search.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-decitala.search">
+<span id="search"></span><h1>search<a class="headerlink" href="#module-decitala.search" title="Permalink to this headline">¶</a></h1>
+<p>Search algorithms.</p>
+<dl class="py function">
+<dt id="decitala.search.get_by_ql_array">
+<code class="sig-prename descclassname">decitala.search.</code><code class="sig-name descname">get_by_ql_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ql_array</span></em>, <em class="sig-param"><span class="n">ratio_tree</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">difference_tree</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">allowed_modifications</span><span class="o">=</span><span class="default_value">['r', 'rr', 'd', 'rd', 'sr', 'rsr']</span></em>, <em class="sig-param"><span class="n">allow_unnamed</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#get_by_ql_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.search.get_by_ql_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches a given ratio and/or difference tree for a given fragment. Supports fragments with grace notes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ql_array</strong> (<em>numpy.array</em>) – fragment to be searched.</p></li>
+<li><p><strong>ratio_tree</strong> (<a class="reference internal" href="trees.html#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><em>FragmentTree</em></a>) – tree storing ratio representations.</p></li>
+<li><p><strong>difference_tree</strong> (<a class="reference internal" href="trees.html#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><em>FragmentTree</em></a>) – tree storing difference representations.</p></li>
+<li><p><strong>allowed_modifications</strong> (<em>list</em>) – possible ways for a fragment to be modified. 
+Current possibilities are <code class="docutils literal notranslate"><span class="pre">r</span></code>, <code class="docutils literal notranslate"><span class="pre">rr</span></code>, <code class="docutils literal notranslate"><span class="pre">d</span></code>, <code class="docutils literal notranslate"><span class="pre">rd</span></code>, <code class="docutils literal notranslate"><span class="pre">sr</span></code>, and <code class="docutils literal notranslate"><span class="pre">rsr</span></code>.
+<em>NOTE</em>: the order of <code class="docutils literal notranslate"><span class="pre">allowed_modifications</span></code> is the order of the search.</p></li>
+<li><p><strong>allow_unnamed</strong> (<em>bool</em>) – whether or not to allow the retrieval of unnamed paths. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fragment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">allowed_modifications</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="s2">&quot;rr&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_by_ql_array</span><span class="p">(</span><span class="n">fragment</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">,</span> <span class="n">allowed_modifications</span><span class="p">)</span>
+<span class="go">(&lt;fragment.GreekFoot Choriamb&gt;, (&#39;r&#39;, 1.5))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.search.rolling_search">
+<code class="sig-prename descclassname">decitala.search.</code><code class="sig-name descname">rolling_search</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">part_num</span></em>, <em class="sig-param"><span class="n">ratio_tree</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">difference_tree</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">allowed_modifications</span><span class="o">=</span><span class="default_value">['r', 'rr', 'd', 'rd', 'sr', 'rsr']</span></em>, <em class="sig-param"><span class="n">try_contiguous_summation</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">windows</span><span class="o">=</span><span class="default_value">[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]</span></em>, <em class="sig-param"><span class="n">allow_unnamed</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">logger</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#rolling_search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#decitala.search.rolling_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rolling rhythmic search on a music21-readable file on a given part. For search types, see 
+documentation for <code class="xref py py-func docutils literal notranslate"><span class="pre">get_by_ql_array()</span></code>. The default window lengths 
+are the lengths of fragments in the decitala dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – path to file to be searched.</p></li>
+<li><p><strong>part_num</strong> (<em>int</em>) – part in the file to be searched (0-indexed).</p></li>
+<li><p><strong>ratio_tree</strong> (<a class="reference internal" href="trees.html#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><em>FragmentTree</em></a>) – tree storing ratio representations.</p></li>
+<li><p><strong>difference_tree</strong> (<a class="reference internal" href="trees.html#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><em>FragmentTree</em></a>) – tree storing difference representations.</p></li>
+<li><p><strong>allowed_modifications</strong> (<em>list</em>) – see <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_by_ql_array</span></code>.</p></li>
+<li><p><strong>try_contiguous_summation</strong> (<em>bool</em>) – ties together all elements of equal pitch and duration and searches. See <a class="reference internal" href="utils.html#decitala.utils.contiguous_summation" title="decitala.utils.contiguous_summation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contiguous_summation</span></code></a>.</p></li>
+<li><p><strong>windows</strong> (<em>list</em>) – possible lengths of the search frames.</p></li>
+<li><p><strong>allow_unnamed</strong> (<em>bool</em>) – whether or not to include unnamed fragments (in the fragment tree(s)) in the return.</p></li>
+<li><p><strong>logger</strong> (<em>bool</em>) – logger object (see <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_logger</span></code>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list holding dictionaries, each of which holds fragment, modifiation, onset-range, and spanning data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ex</span> <span class="o">=</span> <span class="s2">&quot;./tests/static/Shuffled_Transcription_2.xml&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tala_data</span> <span class="ow">in</span> <span class="n">rolling_search</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">,</span> <span class="n">allowed_modifications</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">tala_data</span><span class="p">)</span>
+<span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Trochee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.375), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(72,), (87,)], &#39;id&#39;: 1}</span>
+<span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Dactyl&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(72,), (87,), (79,)], &#39;id&#39;: 39}</span>
+<span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Spondee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.0625), &#39;onset_range&#39;: (0.25, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(87,), (79,)], &#39;id&#39;: 2}</span>
+<span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Trochee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (1.25, 1.625), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(85,), (80,)], &#39;id&#39;: 3}</span>
+<span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Dactyl&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (1.25, 1.75), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(85,), (80,), (80,)], &#39;id&#39;: 40}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="trees.html" class="btn btn-neutral float-right" title="trees" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="fragment.html" class="btn btn-neutral float-left" title="fragment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Luke Poeppel.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
