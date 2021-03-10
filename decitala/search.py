@@ -22,6 +22,7 @@ from .utils import (
 	frame_is_spanned_by_slur,
 	contiguous_summation,
 	frame_to_midi,
+	loader
 )
 from .hash_table import parse_hash_table_string
 
@@ -418,7 +419,6 @@ def _make_search_dict(data, frame, fragment_id):
 def rolling_hash_search(
 		filepath,
 		part_num,
-		table,
 		allowed_modifications=[
 				"r",
 				"rr",
@@ -430,6 +430,9 @@ def rolling_hash_search(
 		windows=list(range(2, 19)),
 		logger=None
 	):
+	f = "/Users/lukepoeppel/decitala/databases/decitala_modifications.json"
+	table = loader(f, analysis_mode=False)
+
 	object_list = get_object_indices(filepath=filepath, part_num=part_num)
 	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
 	fragment_id = 0 # noqa TODO
@@ -446,11 +449,11 @@ def rolling_hash_search(
 					continue
 
 				try:
-					searched = table[tuple(ql_array)]
+					searched = table[str(tuple(ql_array))]
 					if searched is not None:
-						search_dict = _make_search_dict(data=searched, frame=this_frame)
+						search_dict = _make_search_dict(data=searched, frame=this_frame, fragment_id=fragment_id)
 						fragments_found.append(search_dict)
 				except KeyError:
-					continue
+					continue  # contiguous summation and sr/rsr
 
 	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
