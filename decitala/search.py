@@ -401,7 +401,7 @@ def _make_search_dict(data, frame, fragment_id):
 	# import pdb; pdb.set_trace()
 	fragment_id += 1
 	offset_1 = frame[0][0]
-	offset_2 = frame[1][0]
+	offset_2 = frame[-1][0]
 	is_spanned_by_slur = frame_is_spanned_by_slur(frame)
 	pitch_content = frame_to_midi(frame)
 	
