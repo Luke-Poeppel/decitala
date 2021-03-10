@@ -82,6 +82,7 @@ class DatabaseException(Exception):
 # Helper function
 def remove_cross_corpus_duplicates(data):
 	"""
+	>>> from decitala.fragment import GeneralFragment
 	>>> fake_data = [
 	... 	{'fragment': GreekFoot("Spondee"), 'mod': ('r', 0.125), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], "id":1}, # noqa
 	... 	{'fragment': GeneralFragment([0.25, 0.25], name="cs-test1"), 'mod': ('cs', 2.0), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], "id":2}, # noqa
