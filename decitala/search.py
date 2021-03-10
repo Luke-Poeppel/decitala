@@ -24,7 +24,6 @@ from .utils import (
 	frame_to_midi,
 	loader
 )
-from .hash_table import parse_hash_table_string
 
 __all__ = [
 	"get_by_ql_array",
@@ -399,26 +398,27 @@ def rolling_search(
 ####################################################################################################
 # Hash table search method.
 def _make_search_dict(data, frame, fragment_id):
+	# import pdb; pdb.set_trace()
 	fragment_id += 1
 	offset_1 = frame[0][0]
-	offset_2 = frame[-1][0]
+	offset_2 = frame[1][0]
 	is_spanned_by_slur = frame_is_spanned_by_slur(frame)
 	pitch_content = frame_to_midi(frame)
-	retrieved_search_string = data
-	parsed_search_string = parse_hash_table_string(retrieved_search_string)
-
-	return {
-		"fragment": parsed_search_string[0],
-		"mod": parsed_search_string[1],
+	
+	search_dict = {
+		"fragment": data["fragment"],
+		"mod": data["factor"], # BAD! 
 		"onset_range": (offset_1.offset, offset_2.offset + offset_2.quarterLength),
 		"is_spanned_by_slur": is_spanned_by_slur,
 		"pitch_content": pitch_content,
 		"id": fragment_id
 	}
+	return search_dict
 
 def rolling_hash_search(
 		filepath,
 		part_num,
+		table,
 		allowed_modifications=[
 				"r",
 				"rr",
@@ -430,9 +430,6 @@ def rolling_hash_search(
 		windows=list(range(2, 19)),
 		logger=None
 	):
-	f = "/Users/lukepoeppel/decitala/databases/decitala_modifications.json"
-	table = loader(f, analysis_mode=False)
-
 	object_list = get_object_indices(filepath=filepath, part_num=part_num)
 	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
 	fragment_id = 0 # noqa TODO
