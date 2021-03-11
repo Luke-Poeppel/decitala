@@ -402,7 +402,6 @@ def rolling_search(
 ####################################################################################################
 # Hash table search method.
 def _make_search_dict(data, frame):
-	# import pdb; pdb.set_trace()
 	offset_1 = frame[0][0]
 	offset_2 = frame[-1][0]
 	is_spanned_by_slur = frame_is_spanned_by_slur(frame)
@@ -410,7 +409,7 @@ def _make_search_dict(data, frame):
 	
 	search_dict = {
 		"fragment": Decitala(data["fragment"]),
-		"mod": data["factor"], # BAD! WRONG! STUPID! 
+		"mod": data["factor"], # BAD! WRONG! STUPID! need a function here... 
 		"onset_range": (offset_1.offset, offset_2.offset + offset_2.quarterLength),
 		"is_spanned_by_slur": is_spanned_by_slur,
 		"pitch_content": pitch_content,
@@ -421,16 +420,7 @@ def rolling_hash_search(
 		filepath,
 		part_num,
 		table,
-		allowed_modifications=[
-				"r",
-				"rr",
-				"d",
-				"rd",
-				"sr",
-				"rsr"
-			],
 		windows=list(range(2, 19)),
-		logger=None
 	):
 	object_list = get_object_indices(filepath=filepath, part_num=part_num)
 	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
@@ -455,6 +445,30 @@ def rolling_hash_search(
 						fragment_id += 1
 						fragments_found.append(search_dict)
 				except KeyError:
-					continue  # contiguous summation and sr/rsr
+					pass
+				
+				# if this_win == 6: # superdivisions look right! 
+				# 	import pdb; pdb.set_trace() # DHT is storing the right ragavardhana! just formatting issue probz. 
+				all_superdivisions = find_possible_superdivisions(ql_array)
+				for this_superdivision in all_superdivisions:
+					this_superdivision_retrograde = this_superdivision[::-1]
+					if len(this_superdivision) < 2:
+						continue
+					
+					try:
+						searches = [tuple(this_superdivision), tuple (this_superdivision_retrograde)]
+						for i, this_search in enumerate(searches):
+							searched = table[str(this_superdivision)]
+							if searched is not None:
+								search_dict = _make_search_dict(data=searched, frame=this_frame)
+								search_dict["id"] = fragment_id
+								if i == 0:
+									search_dict["sr"] = True
+								else:
+									search_dict["rsr"] = True
+								fragment_id += 1
+								fragments_found.append(search_dict)
+					except KeyError:
+						pass
 
 	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
