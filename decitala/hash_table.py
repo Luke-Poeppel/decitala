@@ -28,6 +28,7 @@ MODIFICATION_HIERARCHY = {
 
 def get_all_augmentations(
 		fragment,
+		frag_type,
 		dict_in,
 		factors=[0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0],
 		differences=[0.0, 0.25, 0.5, 0.75],
@@ -53,6 +54,7 @@ def get_all_augmentations(
 
 				search_dict = {
 					"fragment": fragment[0],
+					"frag_type": frag_type,
 					"retrograde": retrograde,
 					"factor": this_factor,
 					"difference": 0,
@@ -82,6 +84,7 @@ def get_all_augmentations(
 
 				search_dict = {
 					"fragment": fragment[0],
+					"frag_type": frag_type,
 					"retrograde": retrograde,
 					"factor": this_factor,
 					"difference": 0,
@@ -96,6 +99,7 @@ def get_all_augmentations(
 	else:
 		raise Exception("Mixed augmentation is not yet supported.")
 
+# Need to somehow integrate frag_type... 
 def DecitalaHashTable():
 	conn = sqlite3.connect("/Users/lukepoeppel/decitala/databases/fragment_database.db")
 	cur = conn.cursor()
@@ -105,7 +109,7 @@ def DecitalaHashTable():
 
 	dht = dict()
 	for fragment in decitala_rows:
-		get_all_augmentations(dict_in=dht, fragment=fragment)
+		get_all_augmentations(dict_in=dht, fragment=fragment, frag_type="decitala")
 
 	return dht
 
@@ -118,7 +122,7 @@ def GreekFootHashTable():
 
 	ght = dict()
 	for fragment in greek_rows:
-		get_all_augmentations(dict_in=ght, fragment=fragment)
+		get_all_augmentations(dict_in=ght, fragment=fragment, frag_type="greek_foot")
 
 	return ght
 
@@ -130,11 +134,16 @@ def CombinedHashTable():
 	table_strings = [decitala_table_string, greek_table_string]
 	
 	cht = dict()
-	for this_table_string in table_strings:
+	for i, this_table_string in enumerate(table_strings):
 		cur.execute(this_table_string)
 		rows = cur.fetchall()
 
 		for fragment in rows:
-			get_all_augmentations(dict_in=cht, fragment=fragment)
+			if i == 0:
+				frag_type = "decitala"
+			else:
+				frag_type = "greek_foot"
+			
+			get_all_augmentations(dict_in=cht, fragment=fragment, frag_type=frag_type)
 
 	return cht

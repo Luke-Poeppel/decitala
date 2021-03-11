@@ -407,8 +407,13 @@ def _make_search_dict(data, frame):
 	is_spanned_by_slur = frame_is_spanned_by_slur(frame)
 	pitch_content = frame_to_midi(frame)
 	
+	if data["frag_type"] == "decitala":
+		fragment = Decitala(data["fragment"])
+	else:
+		fragment = GreekFoot(data["fragment"])
+	
 	search_dict = {
-		"fragment": Decitala(data["fragment"]),
+		"fragment": fragment,
 		"mod": data["factor"], # BAD! WRONG! STUPID! need a function here... 
 		"onset_range": (offset_1.offset, offset_2.offset + offset_2.quarterLength),
 		"is_spanned_by_slur": is_spanned_by_slur,
@@ -454,7 +459,7 @@ def rolling_hash_search(
 						fragments_found.append(search_dict)
 				except KeyError:
 					pass
-				
+
 				all_superdivisions = find_possible_superdivisions(ql_array)
 				for i, this_superdivision in enumerate(all_superdivisions):
 					if i == 0:
@@ -462,7 +467,7 @@ def rolling_hash_search(
 					this_superdivision_retrograde = this_superdivision[::-1]
 					if len(this_superdivision) < 2:
 						continue
-					
+
 					try:
 						searches = [tuple(this_superdivision), tuple(this_superdivision_retrograde)]
 						for i, this_search in enumerate(searches):
