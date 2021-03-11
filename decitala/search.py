@@ -447,18 +447,18 @@ def rolling_hash_search(
 				except KeyError:
 					pass
 				
-				# if this_win == 6: # superdivisions look right! 
-				# 	import pdb; pdb.set_trace() # DHT is storing the right ragavardhana! just formatting issue probz. 
 				all_superdivisions = find_possible_superdivisions(ql_array)
-				for this_superdivision in all_superdivisions:
+				for i, this_superdivision in enumerate(all_superdivisions):
+					if i == 0:
+						continue
 					this_superdivision_retrograde = this_superdivision[::-1]
 					if len(this_superdivision) < 2:
 						continue
 					
 					try:
-						searches = [tuple(this_superdivision), tuple (this_superdivision_retrograde)]
+						searches = [tuple(this_superdivision), tuple(this_superdivision_retrograde)]
 						for i, this_search in enumerate(searches):
-							searched = table[str(this_superdivision)]
+							searched = table[str(this_search)]
 							if searched is not None:
 								search_dict = _make_search_dict(data=searched, frame=this_frame)
 								search_dict["id"] = fragment_id
