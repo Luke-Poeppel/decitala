@@ -6,7 +6,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.8.0] ??? 
 ### Added
 - Added a ``loader`` function in utils.py for easy loading of the valid analyses. 
-- Added testing and improved functionality for the hash table creation and ``rolling_hash_search``.
+- Added testing and improved functionality for the hash table creation and ``rolling_hash_search``. This included adding 
+a ``GreekHashTable`` and ``CombinedHashTable`` for a combined database. 
 
 ## [v0.7.4] March 8, 2021 (Kent)
 ### Fixed

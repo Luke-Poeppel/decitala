@@ -11,10 +11,6 @@ import os
 import json
 
 from .utils import augment
-from .fragment import (
-	Decitala,
-	GreekFoot
-)
 
 here = os.path.abspath(os.path.dirname(__file__))
 fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
@@ -46,15 +42,15 @@ def get_all_augmentations(
 			if retrograde is True:
 				searches.append(ql_array[::-1])
 			for i, this_search in enumerate(searches):
-				augmentation=tuple(augment(fragment=this_search, factor=this_factor, difference=0.0))
+				augmentation = tuple(augment(fragment=this_search, factor=this_factor, difference=0.0))
 				if any(x <= 0 for x in augmentation):
 					continue
-				
+
 				if i == 0:
 					retrograde = False
 				else:
 					retrograde = True
-				
+
 				search_dict = {
 					"fragment": fragment[0],
 					"retrograde": retrograde,
@@ -75,21 +71,21 @@ def get_all_augmentations(
 			if retrograde is True:
 				searches.append(ql_array[::-1])
 			for i, this_search in enumerate(searches):
-				augmentation=tuple(augment(fragment=this_search, factor=1.0, difference=this_difference))
+				augmentation = tuple(augment(fragment=this_search, factor=1.0, difference=this_difference))
 				if any(x <= 0 for x in augmentation):
 					continue
-				
+
 				if i == 0:
 					retrograde = False
 				else:
 					retrograde = True
-				
+
 				search_dict = {
 					"fragment": fragment[0],
 					"retrograde": retrograde,
 					"factor": this_factor,
 					"difference": 0,
-					"mod_hierarchy_val": 3 if retrograde == False else 4
+					"mod_hierarchy_val": 3 if retrograde is False else 4
 				}
 				if str(augmentation) in dict_in:
 					existing = dict_in[str(augmentation)]
@@ -100,7 +96,7 @@ def get_all_augmentations(
 	else:
 		raise Exception("Mixed augmentation is not yet supported.")
 
-def DecitalaHashTable(read_from_json=True):
+def DecitalaHashTable():
 	conn = sqlite3.connect("/Users/lukepoeppel/decitala/databases/fragment_database.db")
 	cur = conn.cursor()
 	decitala_table_string = "SELECT * FROM Decitalas"
@@ -113,10 +109,15 @@ def DecitalaHashTable(read_from_json=True):
 
 	return dht
 
-"""
-dht_saved = open("decitala_modifications.json", "w")
-dht_saved.write(json.dumps(dh, cls=FragmentEncoder, indent=4))
-dht_saved.close()
+def GreekFootHashTable():
+	conn = sqlite3.connect("/Users/lukepoeppel/decitala/databases/fragment_database.db")
+	cur = conn.cursor()
+	greek_table_string = "SELECT * FROM Greek_Metrics"
+	cur.execute(greek_table_string)
+	greek_rows = cur.fetchall()
 
-data = loader(f, analysis_mode=False)
-"""
+	ght = dict()
+	for fragment in greek_rows:
+		get_all_augmentations(dict_in=ght, fragment=fragment)
+
+	return ght
