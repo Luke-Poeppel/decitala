@@ -24,6 +24,10 @@ from .utils import (
 	frame_to_midi,
 	loader
 )
+from .fragment import (
+	Decitala,
+	GreekFoot
+)
 
 __all__ = [
 	"get_by_ql_array",
@@ -397,21 +401,19 @@ def rolling_search(
 
 ####################################################################################################
 # Hash table search method.
-def _make_search_dict(data, frame, fragment_id):
+def _make_search_dict(data, frame):
 	# import pdb; pdb.set_trace()
-	fragment_id += 1
 	offset_1 = frame[0][0]
 	offset_2 = frame[-1][0]
 	is_spanned_by_slur = frame_is_spanned_by_slur(frame)
 	pitch_content = frame_to_midi(frame)
 	
 	search_dict = {
-		"fragment": data["fragment"],
-		"mod": data["factor"], # BAD! 
+		"fragment": Decitala(data["fragment"]),
+		"mod": data["factor"], # BAD! WRONG! STUPID! 
 		"onset_range": (offset_1.offset, offset_2.offset + offset_2.quarterLength),
 		"is_spanned_by_slur": is_spanned_by_slur,
 		"pitch_content": pitch_content,
-		"id": fragment_id
 	}
 	return search_dict
 
@@ -448,7 +450,9 @@ def rolling_hash_search(
 				try:
 					searched = table[str(tuple(ql_array))]
 					if searched is not None:
-						search_dict = _make_search_dict(data=searched, frame=this_frame, fragment_id=fragment_id)
+						search_dict = _make_search_dict(data=searched, frame=this_frame)
+						search_dict["id"] = fragment_id
+						fragment_id += 1
 						fragments_found.append(search_dict)
 				except KeyError:
 					continue  # contiguous summation and sr/rsr
