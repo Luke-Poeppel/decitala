@@ -422,6 +422,14 @@ def rolling_hash_search(
 		table,
 		windows=list(range(2, 19)),
 	):
+	"""
+	A different (faster) paradigm than the tree approaches above. Constructs a large dictionary of
+	all possible modifications of the rhythmic datasets.
+
+	:param str filepath: path to file to be searched.
+	:param int part_num: part in the file to be searched (0-indexed).
+	:param dict table: TBD
+	"""
 	object_list = get_object_indices(filepath=filepath, part_num=part_num)
 	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
 	fragment_id = 0 # noqa TODO
