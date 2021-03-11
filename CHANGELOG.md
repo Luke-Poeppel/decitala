@@ -5,7 +5,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.8.0] ??? 
 ### Added
-- Added a ``loader`` function in utils.py for easy loading of the valid analyses. 
+- Added a ``loader`` function in utils.py for easy loading of the valid analyses. Also added additional analysis json files. 
 - Added testing and improved functionality for the hash table creation and ``rolling_hash_search``. This included adding 
 a ``GreekHashTable`` and ``CombinedHashTable`` for a combined database. 
 
