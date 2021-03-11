@@ -121,3 +121,20 @@ def GreekFootHashTable():
 		get_all_augmentations(dict_in=ght, fragment=fragment)
 
 	return ght
+
+def CombinedHashTable():
+	conn = sqlite3.connect("/Users/lukepoeppel/decitala/databases/fragment_database.db")
+	cur = conn.cursor()
+	decitala_table_string = "SELECT * FROM Decitalas"
+	greek_table_string = "SELECT * FROM Greek_Metrics"
+	table_strings = [decitala_table_string, greek_table_string]
+	
+	cht = dict()
+	for this_table_string in table_strings:
+		cur.execute(this_table_string)
+		rows = cur.fetchall()
+
+		for fragment in rows:
+			get_all_augmentations(dict_in=cht, fragment=fragment)
+
+	return cht
