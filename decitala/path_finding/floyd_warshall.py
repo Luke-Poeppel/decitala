@@ -121,3 +121,34 @@ def get_path(start, end, next_matrix, data):
 		start = next_matrix[start_index][end_index]
 		path.append(start)
 	return path
+
+def sources_and_sinks(data):
+	sources = [x for x in data if not any(y["onset_range"][1] <= x["onset_range"][0] for y in data)]
+	sinks = [x for x in data if not any(x["onset_range"][1] <= y["onset_range"][0] for y in data)]
+	
+	return sources, sinks
+
+def best_source_and_sink(data):
+	sources, sinks = sources_and_sinks(data)
+	if len(sources) == 1:
+		best_source = sources[0]
+	elif len(sinks) == 1:
+		best_sink = sinks[0]
+	else:
+		lowest_point = min(sources, key=lambda x: x["onset_range"][0])["onset_range"][0]
+		curr_best_source = sources[0]
+		for source in sources:
+			if source["onset_range"][0] == lowest_point:
+				if source["fragment"].num_onsets > curr_best_source["fragment"].num_onsets:
+					curr_best_source = source
+			else:
+				continue
+		
+		curr_best_sink = sinks[0]
+		for sink in sinks:
+			if sink["fragment"].num_onsets > curr_best_sink["fragment"].num_onsets:
+				curr_best_sink = sink
+			else:
+				continue
+				
+	return curr_best_source, curr_best_sink
