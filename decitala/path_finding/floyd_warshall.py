@@ -41,7 +41,8 @@ def cost(
 
 def floyd_warshall(
 		data,
-		weights
+		weights,
+		verbose=False
 	):
 	"""
 	Calculates the distance and next matrices of the Floyd-Warshall path-finding algorithm.
@@ -60,7 +61,7 @@ def floyd_warshall(
 		flags=['multi_index', 'refs_ok'],
 		op_flags=['readwrite'],
 	)
-	logger.info("Building initial matrix...")
+	# logger.info("Building initial matrix...")
 	while not iterator.finished:
 		if iterator.multi_index[0] == iterator.multi_index[1]:  # diagonal
 			dist_matrix[iterator.multi_index] = 0
@@ -78,17 +79,25 @@ def floyd_warshall(
 				dist_matrix[iterator.multi_index] = cost_
 				next_matrix[iterator.multi_index] = data[iterator.multi_index[1]]
 		iterator.iternext()
-	logger.info("Finished building initial matrix.")
+	# logger.info("Finished building initial matrix.")
 	
-	logger.info("Running Floyd-Warshall Algorithm...")
-	with Bar("Processing...", max=len(data), check_tty=False, hide_cursor=False) as bar:
+	# logger.info("Running Floyd-Warshall Algorithm...")
+	if verbose is True:
+		with Bar("Processing...", max=len(data), check_tty=False, hide_cursor=False) as bar:
+			for k in range(0, len(data)):
+				for i in range(0, len(data)):
+					for j in range(0, len(data)):
+						if dist_matrix[i][j] > dist_matrix[i][k] + dist_matrix[k][j]:
+							dist_matrix[i][j] = dist_matrix[i][k] + dist_matrix[k][j]
+							next_matrix[i][j] = next_matrix[i][k]
+				bar.next()
+	else:
 		for k in range(0, len(data)):
 			for i in range(0, len(data)):
 				for j in range(0, len(data)):
 					if dist_matrix[i][j] > dist_matrix[i][k] + dist_matrix[k][j]:
 						dist_matrix[i][j] = dist_matrix[i][k] + dist_matrix[k][j]
 						next_matrix[i][j] = next_matrix[i][k]
-			bar.next()
 
 	return dist_matrix, next_matrix
 

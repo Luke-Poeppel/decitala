@@ -8,6 +8,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added a ``loader`` function in utils.py for easy loading of the valid analyses. Also added additional analysis json files. 
 - Added testing and improved functionality for the hash table creation and ``rolling_hash_search``. This included adding 
 a ``GreekHashTable`` and ``CombinedHashTable`` for a combined database. 
+- Added an optional progress bar to the Floyd-Warshall
+algorithm. 
 
 ## [v0.7.4] March 8, 2021 (Kent)
 ### Fixed
