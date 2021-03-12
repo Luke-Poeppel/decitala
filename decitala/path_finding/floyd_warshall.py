@@ -12,6 +12,12 @@ Implementation of the Floyd-Warshall Algorithm (path of minimal cost).
 """
 import numpy as np
 
+from progress.bar import Bar
+
+from ..utils import get_logger
+
+logger = get_logger(name=__name__, print_to_console=True)
+
 def cost(
 		vertex_1,
 		vertex_2,
@@ -54,12 +60,13 @@ def floyd_warshall(
 		flags=['multi_index', 'refs_ok'],
 		op_flags=['readwrite'],
 	)
+	logger.info("Building initial matrix...")
 	while not iterator.finished:
-		if iterator.multi_index[0] == iterator.multi_index[1]:
+		if iterator.multi_index[0] == iterator.multi_index[1]:  # diagonal
 			dist_matrix[iterator.multi_index] = 0
 			next_matrix[iterator.multi_index] = data[iterator.multi_index[0]]
 		elif iterator.multi_index[1] < iterator.multi_index[0]:
-			dist_matrix[iterator.multi_index] = np.inf
+			dist_matrix[iterator.multi_index] = np.inf  # good heuristic
 		else:
 			index_1 = iterator.multi_index[0]
 			index_2 = iterator.multi_index[1]
@@ -71,15 +78,17 @@ def floyd_warshall(
 				dist_matrix[iterator.multi_index] = cost_
 				next_matrix[iterator.multi_index] = data[iterator.multi_index[1]]
 		iterator.iternext()
-
-	# with Bar("Building matrices...", max=len(data), check_tty=False, hide_cursor=False) as bar:
-	for k in range(0, len(data)):
-		for i in range(0, len(data)):
-			for j in range(0, len(data)):
-				if dist_matrix[i][j] > dist_matrix[i][k] + dist_matrix[k][j]:
-					dist_matrix[i][j] = dist_matrix[i][k] + dist_matrix[k][j]
-					next_matrix[i][j] = next_matrix[i][k]
-		# bar.next()
+	logger.info("Finished building initial matrix.")
+	
+	logger.info("Running Floyd-Warshall Algorithm...")
+	with Bar("Processing...", max=len(data), check_tty=False, hide_cursor=False) as bar:
+		for k in range(0, len(data)):
+			for i in range(0, len(data)):
+				for j in range(0, len(data)):
+					if dist_matrix[i][j] > dist_matrix[i][k] + dist_matrix[k][j]:
+						dist_matrix[i][j] = dist_matrix[i][k] + dist_matrix[k][j]
+						next_matrix[i][j] = next_matrix[i][k]
+			bar.next()
 
 	return dist_matrix, next_matrix
 
