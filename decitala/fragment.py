@@ -492,8 +492,8 @@ class Decitala(GeneralFragment):
 	"""
 	def __init__(self, name, **kwargs):
 		conn = sqlite3.connect(fragment_db)
-		self.conn = conn
-		cur = self.conn.cursor()
+		conn = conn
+		cur = conn.cursor()
 
 		decitala_table_string = "SELECT * FROM Decitalas"
 		cur.execute(decitala_table_string)

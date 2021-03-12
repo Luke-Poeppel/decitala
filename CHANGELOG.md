@@ -11,6 +11,9 @@ a ``GreekHashTable`` and ``CombinedHashTable`` for a combined database.
 - Added an optional progress bar to the Floyd-Warshall algorithm. 
 - Added function for getting the best source and sink for the best-path calculation after Floyd-Warshall (``floyd_warshall.best_source_and_sink(extracted_data)``). 
 
+### Removed
+- Removed the ``self.conn`` attribute in the ``Decitala`` class; in doing so, we can now use multiprocessing (multiprocessing requires pickling which is impossible on sqlite3 ``Connection`` objects). 
+
 ## [v0.7.4] March 8, 2021 (Kent)
 ### Fixed
 - Finished applying flake8 to modules. 
