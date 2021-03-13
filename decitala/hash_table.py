@@ -31,7 +31,7 @@ def get_all_augmentations(
 		frag_type,
 		dict_in,
 		factors=[0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0],
-		differences=[-0.125, 0.0, 0.25, 0.5, 0.75],
+		differences=[-0.125, 0.0, 0.125, 0.25, 0.5, 0.75],
 		retrograde=True,
 		allow_mixed=False,
 		superdivision_str=None
