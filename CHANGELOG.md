@@ -10,6 +10,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 a ``GreekHashTable`` and ``CombinedHashTable`` for a combined database. 
 - Added an optional progress bar to the Floyd-Warshall algorithm. 
 - Added function for getting the best source and sink for the best-path calculation after Floyd-Warshall (``floyd_warshall.best_source_and_sink(extracted_data)``). 
+- Added option for negative difference augmentation by adding ``-0.125`` to possible differences in ``hash_table.py``.
 
 ### Removed
 - Removed the ``self.conn`` attribute in the ``Decitala`` class; in doing so, we can now use multiprocessing (multiprocessing requires pickling which is impossible on sqlite3 ``Connection`` objects). 
