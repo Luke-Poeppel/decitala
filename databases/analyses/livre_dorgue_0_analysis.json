@@ -1,0 +1,502 @@
+[
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "106_Laya"
+        },
+        [
+            0.0,
+            9.25
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "116_Bhagna"
+        },
+        [
+            9.25,
+            10.625
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "119_Niccanka"
+        },
+        [
+            10.625,
+            20.125
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            21.875,
+            28.125
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            28.125,
+            31.125
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            31.125,
+            32.875
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            32.875,
+            38.5
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            38.5,
+            40.25
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            40.25,
+            45.25
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            45.25,
+            52.25
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            52.25,
+            54.0
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            54.0,
+            59.0
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            59.0,
+            68.0
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            68.0,
+            72.375
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            72.375,
+            74.125
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            74.125,
+            75.875
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            75.875,
+            86.875
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            86.875,
+            90.625
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            90.625,
+            92.375
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            92.375,
+            95.5
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            95.5,
+            108.5
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            108.5,
+            111.625
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            111.625,
+            113.375
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            113.375,
+            117.125
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            117.125,
+            128.125
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            128.125,
+            129.875
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            129.875,
+            131.625
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            131.625,
+            136.0
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            136.0,
+            145.0
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            145.0,
+            150.0
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            150.0,
+            151.75
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            151.75,
+            158.75
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            158.75,
+            163.75
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            163.75,
+            165.5
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            165.5,
+            171.125
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            171.125,
+            172.875
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            172.875,
+            175.875
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            175.875,
+            182.125
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            182.125,
+            185.125
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            185.125,
+            186.875
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            186.875,
+            192.5
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            192.5,
+            194.25
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            194.25,
+            199.25
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            199.25,
+            206.25
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            206.25,
+            208.0
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            208.0,
+            213.0
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "15_Caccari"
+        },
+        [
+            213.0,
+            222.0
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "24_Rangapradipaka"
+        },
+        [
+            222.0,
+            226.375
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            226.375,
+            228.125
+        ]
+    ],
+    [
+        {
+            "frag_type": "Decitala",
+            "name": "53_Sama"
+        },
+        [
+            228.125,
+            229.875
+        ]
+    ]
+]
