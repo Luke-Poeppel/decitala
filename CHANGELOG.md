@@ -10,7 +10,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 a ``GreekHashTable`` and ``CombinedHashTable`` for a combined database. 
 - Added an optional progress bar to the Floyd-Warshall algorithm. 
 - Added function for getting the best source and sink for the best-path calculation after Floyd-Warshall (``floyd_warshall.best_source_and_sink(extracted_data)``). 
-- Added ``+/- 0.125, +/- 0.375, -0.25, 0.875`` as possible difference values in ``hash_table.py``.
+- Added ``+/- 0.125, +/- 0.375, -0.25, 0.875, 1.75, 2.625, 3.5, 4.375`` as possible difference values in ``hash_table.py``.
 - Added the json analysis file for part 0 of Livre d'Orgue (1951-52). 
 
 ### Removed
