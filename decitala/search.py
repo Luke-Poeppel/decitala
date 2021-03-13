@@ -442,6 +442,10 @@ def rolling_hash_search(
 	for this_win in windows:
 		frames = roll_window(array=object_list, window_length=this_win)
 		for this_frame in frames:
+			# If having trouble finding fragment, uncomment the code below:
+			# Then check table[str(tuple(ql_array))]
+			# if this_win == ??? and this_frame[0][1][0] == ??? : # starting onset
+			# 	import pdb; pdb.set_trace()
 			objects = [x[0] for x in this_frame]
 			if any(x.isRest for x in objects):  # Skip any window that has a rest in it.
 				continue
