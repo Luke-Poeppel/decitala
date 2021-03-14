@@ -426,6 +426,7 @@ def rolling_hash_search(
 		part_num,
 		table,
 		windows=list(range(2, 19)),
+		ignore_single_anga_class_fragments=False
 	):
 	"""
 	A different (faster) paradigm than the tree approaches above. Constructs a large dictionary of
@@ -444,7 +445,7 @@ def rolling_hash_search(
 		for this_frame in frames:
 			# If having trouble finding fragment, uncomment the code below:
 			# Then check table[str(tuple(ql_array))]
-			# if this_win == ??? and this_frame[0][1][0] == ??? : # starting onset
+			# if this_win == ??? and this_frame[0][1][0] == ???: # starting onset
 			# 	import pdb; pdb.set_trace()
 			objects = [x[0] for x in this_frame]
 			if any(x.isRest for x in objects):  # Skip any window that has a rest in it.
@@ -453,6 +454,9 @@ def rolling_hash_search(
 				ql_array = frame_to_ql_array(this_frame)
 				if len(ql_array) < 2:
 					continue
+				elif ignore_single_anga_class_fragments is True:
+					if len(set(ql_array)) == 1:
+						continue
 
 				try:
 					searched = table[str(tuple(ql_array))]
