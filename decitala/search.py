@@ -426,6 +426,8 @@ def rolling_hash_search(
 		part_num,
 		table,
 		windows=list(range(2, 19)),
+		allow_subdivision=False,
+		allow_contiguous_summation=False,
 		ignore_single_anga_class_fragments=False
 	):
 	"""
@@ -435,6 +437,8 @@ def rolling_hash_search(
 	:param str filepath: path to file to be searched.
 	:param int part_num: part in the file to be searched (0-indexed).
 	:param dict table: TBD
+	:param bool ignore_single_anga_class_fragments: whether to ignore single-anga class fragments
+												in the search.
 	"""
 	object_list = get_object_indices(filepath=filepath, part_num=part_num)
 	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
@@ -443,12 +447,11 @@ def rolling_hash_search(
 	for this_win in windows:
 		frames = roll_window(array=object_list, window_length=this_win)
 		for this_frame in frames:
-			# If having trouble finding fragment, uncomment the code below:
-			# Then check table[str(tuple(ql_array))]
+			# If having trouble finding fragment, uncomment the code below and check table[str(tuple(ql_array))]. 
 			# if this_win == ??? and this_frame[0][1][0] == ???: # starting onset
 			# 	import pdb; pdb.set_trace()
 			objects = [x[0] for x in this_frame]
-			if any(x.isRest for x in objects):  # Skip any window that has a rest in it.
+			if any(x.isRest for x in objects):
 				continue
 			else:
 				ql_array = frame_to_ql_array(this_frame)
@@ -468,28 +471,42 @@ def rolling_hash_search(
 				except KeyError:
 					pass
 
-				all_superdivisions = find_possible_superdivisions(ql_array)
-				for i, this_superdivision in enumerate(all_superdivisions):
-					if i == 0:
-						continue
-					this_superdivision_retrograde = this_superdivision[::-1]
-					if len(this_superdivision) < 2:
-						continue
+				# TODO: Need to check appearance since this isn't done in preprocessing. 
+				# Otherwise get duplicates! 
+				if allow_subdivision is True:
+					all_superdivisions = find_possible_superdivisions(ql_array)
+					for i, this_superdivision in enumerate(all_superdivisions):
+						if i == 0:
+							continue
+						this_superdivision_retrograde = this_superdivision[::-1]
+						if len(this_superdivision) < 2:
+							continue
 
-					try:
-						searches = [tuple(this_superdivision), tuple(this_superdivision_retrograde)]
-						for i, this_search in enumerate(searches):
-							searched = table[str(this_search)]
-							if searched is not None:
-								search_dict = _make_search_dict(data=searched, frame=this_frame)
-								search_dict["id"] = fragment_id
-								if i == 0:
-									search_dict["sr"] = True
-								else:
-									search_dict["rsr"] = True
-								fragment_id += 1
-								fragments_found.append(search_dict)
-					except KeyError:
-						pass
+						try:
+							searches = [tuple(this_superdivision), tuple(this_superdivision_retrograde)]
+							for i, this_search in enumerate(searches):
+								searched = table[str(this_search)]
+								if searched is not None:
+									search_dict = _make_search_dict(data=searched, frame=this_frame)
+									search_dict["id"] = fragment_id
+									if i == 0:
+										search_dict["sr"] = True
+									else:
+										search_dict["rsr"] = True
+									fragment_id += 1
+									fragments_found.append(search_dict)
+						except KeyError:
+							pass
 
 	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
+
+def path_finder(
+		filepath,
+		part_num,
+		frag_type,
+		windows,
+		slur_constraint,
+		ignore_single_anga_class_fragments
+	):
+	# TODO: CLI should call this function.
+	pass
