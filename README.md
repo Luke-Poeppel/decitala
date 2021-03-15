@@ -28,7 +28,7 @@ If you would like to use the ``vis.create_tree_diagram`` function, it requires t
 ```
 $ npm -v
 ```
-If a version number is returned, simply run 
+If a version number is returned, simply run: 
 ```
 $ npm install -g browserify
 ```
