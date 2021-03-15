@@ -18,6 +18,9 @@ a ``GreekHashTable`` and ``CombinedHashTable`` for a combined database.
 ### Removed
 - Removed the ``self.conn`` attribute in the ``Decitala`` class; in doing so, we can now use multiprocessing (multiprocessing requires pickling which is impossible on sqlite3 ``Connection`` objects). 
 
+### Fixed
+- Missing modification data in ``rolling_hash_search``. 
+
 ## [v0.7.4] March 8, 2021 (Kent)
 ### Fixed
 - Finished applying flake8 to modules. 

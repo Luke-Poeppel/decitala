@@ -401,6 +401,19 @@ def rolling_search(
 
 ####################################################################################################
 # Hash table search method.
+def _get_mod_info(data):
+	if data["factor"] != 1.0 and data["difference"] == 0.0:
+		mod_type = "r"
+		mod_val = data["factor"]
+	elif data["factor"] == 1.0 and data["difference"] != 0.0:
+		mod_type = "d"
+		mod_val = data["difference"]
+
+	if data["retrograde"] is True:
+		mod_type = "r" + mod_type
+	
+	return (mod_type, mod_val)
+
 def _make_search_dict(data, frame):
 	offset_1 = frame[0][0]
 	offset_2 = frame[-1][0]
@@ -414,7 +427,7 @@ def _make_search_dict(data, frame):
 	
 	search_dict = {
 		"fragment": fragment,
-		"mod": data["factor"], # BAD! WRONG! STUPID! need a function here... 
+		"mod": _get_mod_info(data), 
 		"onset_range": (offset_1.offset, offset_2.offset + offset_2.quarterLength),
 		"is_spanned_by_slur": is_spanned_by_slur,
 		"pitch_content": pitch_content,

@@ -99,7 +99,6 @@ def get_all_augmentations(
 	else:
 		raise Exception("Mixed augmentation is not yet supported.")
 
-# Need to somehow integrate frag_type... 
 def DecitalaHashTable():
 	conn = sqlite3.connect("/Users/lukepoeppel/decitala/databases/fragment_database.db")
 	cur = conn.cursor()
