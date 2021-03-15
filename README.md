@@ -15,19 +15,30 @@ _"To introduce the tālas gradually, their characteristics––having been prom
 Available at: https://luke-poeppel.github.io/decitala/.
 
 ### Installation
+- This package requires music21 which is available [here](https://github.com/cuthbertLab/music21). It is recommended you download this library separately as its installation helper will set some useful preferences for you (like default notation software). 
 ```
->>> cd # Navigate to home directory
->>> git clone https://github.com/Luke-Poeppel/decitala
->>> cd decitala
->>> pip3 install -e .
->>> pre-commit install
->>> decitala --version # Check for proper installation.
+$ cd # Navigate to home directory
+$ git clone https://github.com/Luke-Poeppel/decitala
+$ cd decitala
+$ pip3 install -e .
+$ pre-commit install
+$ decitala --version # Check for proper installation.
 ```
-
-### Requirements
-- This package requires music21 which is available here:  https://github.com/cuthbertLab/music21. 
-- To make Treant FragmentTree diagrams within the ``vis.py`` module, you will need the Browserify.js library which can be downloaded by ``npm install -g browserify``. 
-- Also recommended is the following application for viewing SQLite databases, freely available at https://sqlitebrowser.org/. 
+If you would like to use the ``vis.create_tree_diagram`` function, it requires the javascript ``browserify`` library. To install this, you need ``npm``. First, check if you already have ``npm`` installed with
+```
+$ npm -v
+```
+If a version number is returned, simply run 
+```
+$ npm install -g browserify
+```
+and you are done. If it says something like "Command not found," run the following lines:
+```
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+$ brew install node
+$ npm install -g browserify
+```
+It is also recommended that you download the following application for viewing SQLite databases: [sqlite-browser](https://sqlitebrowser.org/). 
 
 ### Why is it called decitala?
 Śārngadeva (शार्ङ्गदेव) compiled a list of 130 rhythmic fragments called desītālas (देसी ताल) in his 13th-century musicological treatise, the Sangītaratnākara (सङ्गीतरत्नाकर). Messiaen used the gallicized "deçi-tâlas" in his writing which has been simplified here to "decitala."
