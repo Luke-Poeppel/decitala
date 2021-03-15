@@ -144,6 +144,7 @@ def get_by_ql_array(
 	:param bool allow_unnamed: whether or not to allow the retrieval of unnamed paths. The
 								default is ``False``.
 
+	>>> from decitala.trees import FragmentTree
 	>>> fragment = np.array([3.0, 1.5, 1.5, 3.0])
 	>>> ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
 	>>> difference_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='difference')
@@ -232,6 +233,7 @@ def rolling_search(
 			spanning data.
 	:rtype: list
 
+	>>> from decitala.trees import FragmentTree
 	>>> ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
 	>>> difference_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='difference') # noqa
 	>>> ex = "./tests/static/Shuffled_Transcription_2.xml"

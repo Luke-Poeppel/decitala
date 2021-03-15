@@ -492,7 +492,6 @@ class Decitala(GeneralFragment):
 	"""
 	def __init__(self, name, **kwargs):
 		conn = sqlite3.connect(fragment_db)
-		conn = conn
 		cur = conn.cursor()
 
 		decitala_table_string = "SELECT * FROM Decitalas"
@@ -621,7 +620,8 @@ class Decitala(GeneralFragment):
 		assert rep_type.lower() in ["ratio", "difference"], DecitalaException("The only possible rep_types are \
 																				`ratio` and `difference`")
 
-		cur = self.conn.cursor()
+		conn = sqlite3.connect(fragment_db)
+		cur = conn.cursor()
 		row_string = "SELECT * FROM Decitalas WHERE Name = '{}'".format(self.name)
 		cur.execute(row_string)
 		row_data = cur.fetchall()
