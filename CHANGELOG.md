@@ -4,6 +4,8 @@ All important changes to the decitala package will be documented here.
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [v0.8.1] ??? 
+### Fixed
+- Github Actions now caching dependencies for faster builds.
 
 ## [v0.8.0] March 15, 2021
 ### Added
