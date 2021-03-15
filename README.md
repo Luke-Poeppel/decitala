@@ -15,7 +15,7 @@ _"To introduce the tālas gradually, their characteristics––having been prom
 Available at: https://luke-poeppel.github.io/decitala/.
 
 ### Installation
-- This package requires music21 which is available [here](https://github.com/cuthbertLab/music21). It is recommended you download this library separately as its installation helper will set some useful preferences for you (like default notation software). 
+This package requires music21 which is available [here](https://github.com/cuthbertLab/music21). It is recommended you download this library separately as its installation helper will set some useful preferences for you (like default notation software). 
 ```
 $ cd # Navigate to home directory
 $ git clone https://github.com/Luke-Poeppel/decitala
