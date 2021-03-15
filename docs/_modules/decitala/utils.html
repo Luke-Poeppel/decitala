@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.utils &mdash; decitala 0.7.4 documentation</title>
+  <title>decitala.utils &mdash; decitala 0.8.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.7.4
+                0.8.0
               </div>
             
           
@@ -175,6 +175,7 @@
 <span class="c1"># Location: Kent, CT 2020 / Frankfurt, DE 2020</span>
 <span class="c1">####################################################################################################</span>
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -184,6 +185,8 @@
 <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">norm</span>
 
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">converter</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">fragment</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
 	<span class="s2">&quot;get_logger&quot;</span><span class="p">,</span>  <span class="c1"># Logging</span>
@@ -214,16 +217,15 @@
 <span class="sd">NOTE: Normally a crescent moon superscript is used. Since it serves the same function as viramas, we</span>
 <span class="sd">use the same notation.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="n">carnatic_symbols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
-	<span class="p">[</span><span class="s1">&#39;Druta&#39;</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span>
-	<span class="p">[</span><span class="s1">&#39;Druta-Virama&#39;</span><span class="p">,</span> <span class="s1">&#39;oc&#39;</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">],</span>
-	<span class="p">[</span><span class="s1">&#39;Laghu&#39;</span><span class="p">,</span> <span class="s1">&#39;|&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
-	<span class="p">[</span><span class="s1">&#39;Laghu-Virama&#39;</span><span class="p">,</span> <span class="s1">&#39;|c&#39;</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">],</span>
-	<span class="p">[</span><span class="s1">&#39;Guru&#39;</span><span class="p">,</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-	<span class="p">[</span><span class="s1">&#39;Pluta&#39;</span><span class="p">,</span> <span class="s1">&#39;Sc&#39;</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span>
+<span class="n">carnatic_symbols</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="s2">&quot;o&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Druta&quot;</span><span class="p">},</span>
+	<span class="s2">&quot;oc&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.375</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Druta-Virama&quot;</span><span class="p">},</span>
+	<span class="s2">&quot;|&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Laghu&quot;</span><span class="p">},</span>
+	<span class="s2">&quot;|c&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Laghu-Virama&quot;</span><span class="p">},</span>
+	<span class="s2">&quot;S&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Guru&quot;</span><span class="p">},</span>
+	<span class="s2">&quot;Sc&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Pluta&quot;</span><span class="p">}</span>
 	<span class="c1"># [&#39;kakapadam&#39;, &#39;8X&#39;, 2.0]</span>
-<span class="p">])</span>
+<span class="p">}</span>
 
 <span class="n">greek_diacritics</span> <span class="o">=</span> <span class="p">[</span>
 	<span class="p">[</span><span class="s1">&#39;breve&#39;</span><span class="p">,</span> <span class="s1">&#39;⏑&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
@@ -266,7 +268,13 @@
 <span class="sd">	array([0.375, 0.25 , 0.5  , 0.5  , 1.5  , 1.   , 0.25 , 0.25 , 0.25 ])</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">split_string</span> <span class="o">=</span> <span class="n">string_</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-	<span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">this_carnatic_val</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="k">for</span> <span class="n">this_token</span> <span class="ow">in</span> <span class="n">split_string</span> <span class="k">for</span> <span class="n">this_carnatic_val</span> <span class="ow">in</span> <span class="n">carnatic_symbols</span> <span class="k">if</span> <span class="p">(</span><span class="n">this_carnatic_val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">this_token</span><span class="p">)]</span>  <span class="c1"># noqa: E501</span>
+	<span class="n">vals</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">split_string</span><span class="p">:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">carnatic_symbols</span><span class="p">[</span><span class="n">token</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">carnatic_symbols</span><span class="p">[</span><span class="n">token</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+		<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+			<span class="k">pass</span>
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ql_array_to_carnatic_string"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.ql_array_to_carnatic_string">[docs]</a><span class="k">def</span> <span class="nf">ql_array_to_carnatic_string</span><span class="p">(</span><span class="n">ql_array</span><span class="p">):</span>
@@ -278,7 +286,12 @@
 <span class="sd">	&gt;&gt;&gt; ql_array_to_carnatic_string([0.5, 0.25, 0.25, 0.375, 1.0, 1.5, 1.0, 0.5, 1.0])</span>
 <span class="sd">	&#39;| o o oc S Sc S | S&#39;</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">this_carnatic_val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">this_val</span> <span class="ow">in</span> <span class="n">ql_array</span> <span class="k">for</span> <span class="n">this_carnatic_val</span> <span class="ow">in</span> <span class="n">carnatic_symbols</span> <span class="k">if</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">this_carnatic_val</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="n">this_val</span><span class="p">)]))</span>  <span class="c1"># noqa: E501</span></div>
+	<span class="n">tokens</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">ql</span> <span class="ow">in</span> <span class="n">ql_array</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">carnatic_symbols</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+			<span class="k">if</span> <span class="n">carnatic_symbols</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ql</span><span class="p">:</span>
+				<span class="n">tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+	<span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ql_array_to_greek_diacritics"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.ql_array_to_greek_diacritics">[docs]</a><span class="k">def</span> <span class="nf">ql_array_to_greek_diacritics</span><span class="p">(</span><span class="n">ql_array</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -1114,6 +1127,23 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector2</span><span class="p">)</span>
 	<span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">vector1</span><span class="p">,</span> <span class="n">vector2</span><span class="p">))</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">vector1</span><span class="p">)</span> <span class="o">*</span> <span class="n">norm</span><span class="p">(</span><span class="n">vector2</span><span class="p">))</span>
+
+<span class="c1">####################################################################################################</span>
+<span class="k">def</span> <span class="nf">loader</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">analysis_mode</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Useful function for loading analyses into native python format (from a json).</span>
+
+<span class="sd">	:param str filepath: path to analysis file in the databases/analyses directory.</span>
+<span class="sd">	:param bool analysis_mode: whether to use the json FragmentDecoder (used in analyses). </span>
+<span class="sd">	:return: analysis in native python types; fragments and their associated onset range.</span>
+<span class="sd">	:rtype: list</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_json</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">analysis_mode</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_json</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">fragment</span><span class="o">.</span><span class="n">FragmentDecoder</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_json</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">data</span>
 </pre></div>
 
            </div>

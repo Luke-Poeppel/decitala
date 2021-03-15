@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.database &mdash; decitala 0.7.4 documentation</title>
+  <title>decitala.database &mdash; decitala 0.8.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.7.4
+                0.8.0
               </div>
             
           
@@ -250,6 +250,7 @@
 <span class="c1"># Helper function</span>
 <span class="k">def</span> <span class="nf">remove_cross_corpus_duplicates</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	&gt;&gt;&gt; from decitala.fragment import GeneralFragment</span>
 <span class="sd">	&gt;&gt;&gt; fake_data = [</span>
 <span class="sd">	... 	{&#39;fragment&#39;: GreekFoot(&quot;Spondee&quot;), &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &quot;id&quot;:1}, # noqa</span>
 <span class="sd">	... 	{&#39;fragment&#39;: GeneralFragment([0.25, 0.25], name=&quot;cs-test1&quot;), &#39;mod&#39;: (&#39;cs&#39;, 2.0), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(80,), (91,)], &quot;id&quot;:2}, # noqa</span>

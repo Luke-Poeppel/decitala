@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>trees &mdash; decitala 0.7.4 documentation</title>
+  <title>trees &mdash; decitala 0.8.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.4
+                0.8.0
               </div>
             
           
@@ -265,11 +265,11 @@ that node is an encoded fragment.)</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Level order traversal</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">level_order_traversal</span><span class="p">()</span>
 <span class="go">[[1.0], [0.5, 1.0, 3.0, 4.0], [0.5, 3.0, 2.0, 1.0], [1.0, 1.0, 0.5], [2.0]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># We can serialize an NaryTree as either a native Python type or Javascript type.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
-<span class="go">&#39;{&quot;root&quot;: {&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: &quot;D&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}, {&quot;value&quot;: 3.0, &quot;name&quot;: &quot;B&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}, {&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 2.0, &quot;name&quot;: &quot;C&quot;, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: &quot;Test Overwrite&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}]}, {&quot;value&quot;: 3.0, &quot;name&quot;: &quot;A&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}, {&quot;value&quot;: 4.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 2.0, &quot;name&quot;: &quot;Full Path&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}]}]}]}}&#39; # noqa</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># We can serialize an NaryTree as either a native Python type or Javascript type using NaryTree.serialize()</span>
 </pre></div>
 </div>
+<p># &gt;&gt;&gt; TestTree.serialize() # noqa
+# ‘{“root”: {“value”: 1.0, “name”: null, “parent”: null, “children”: [{“value”: 0.5, “name”: null, “parent”: null, “children”: [{“value”: 0.5, “name”: null, “parent”: null, “children”: [{“value”: 1.0, “name”: “D”, “parent”: null, “children”: []}]}, {“value”: 3.0, “name”: “B”, “parent”: null, “children”: []}]}, {“value”: 1.0, “name”: null, “parent”: null, “children”: [{“value”: 2.0, “name”: “C”, “parent”: null, “children”: [{“value”: 1.0, “name”: “Test Overwrite”, “parent”: null, “children”: []}]}]}, {“value”: 3.0, “name”: “A”, “parent”: null, “children”: []}, {“value”: 4.0, “name”: null, “parent”: null, “children”: [{“value”: 1.0, “name”: null, “parent”: null, “children”: [{“value”: 0.5, “name”: null, “parent”: null, “children”: [{“value”: 2.0, “name”: “Full Path”, “parent”: null, “children”: []}]}]}]}]}}’ # noqa</p>
 <dl class="py class">
 <dt id="decitala.trees.NaryTree.Node">
 <em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Node</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.Node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.Node" title="Permalink to this definition">¶</a></dt>

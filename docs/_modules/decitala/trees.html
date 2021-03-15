@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.trees &mdash; decitala 0.7.4 documentation</title>
+  <title>decitala.trees &mdash; decitala 0.8.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.7.4
+                0.8.0
               </div>
             
           
@@ -311,9 +311,10 @@
 <span class="sd">	&gt;&gt;&gt; # Level order traversal</span>
 <span class="sd">	&gt;&gt;&gt; TestTree.level_order_traversal()</span>
 <span class="sd">	[[1.0], [0.5, 1.0, 3.0, 4.0], [0.5, 3.0, 2.0, 1.0], [1.0, 1.0, 0.5], [2.0]]</span>
-<span class="sd">	&gt;&gt;&gt; # We can serialize an NaryTree as either a native Python type or Javascript type.</span>
-<span class="sd">	&gt;&gt;&gt; TestTree.serialize()</span>
-<span class="sd">	&#39;{&quot;root&quot;: {&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: &quot;D&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}, {&quot;value&quot;: 3.0, &quot;name&quot;: &quot;B&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}, {&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 2.0, &quot;name&quot;: &quot;C&quot;, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: &quot;Test Overwrite&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}]}, {&quot;value&quot;: 3.0, &quot;name&quot;: &quot;A&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}, {&quot;value&quot;: 4.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 2.0, &quot;name&quot;: &quot;Full Path&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}]}]}]}}&#39; # noqa</span>
+<span class="sd">	&gt;&gt;&gt; # We can serialize an NaryTree as either a native Python type or Javascript type using NaryTree.serialize()</span>
+<span class="sd">	</span>
+<span class="sd">	# &gt;&gt;&gt; TestTree.serialize() # noqa</span>
+<span class="sd">	# &#39;{&quot;root&quot;: {&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: &quot;D&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}, {&quot;value&quot;: 3.0, &quot;name&quot;: &quot;B&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}, {&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 2.0, &quot;name&quot;: &quot;C&quot;, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: &quot;Test Overwrite&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}]}, {&quot;value&quot;: 3.0, &quot;name&quot;: &quot;A&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}, {&quot;value&quot;: 4.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 2.0, &quot;name&quot;: &quot;Full Path&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}]}]}]}}&#39; # noqa</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 <div class="viewcode-block" id="NaryTree.Node"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.Node">[docs]</a>	<span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
 		<span class="sd">&quot;&quot;&quot;</span>

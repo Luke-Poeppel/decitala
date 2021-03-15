@@ -3,13 +3,12 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.8.0] ??? 
+## [v0.8.0] March 15, 2021
 ### Added
-- Added a ``loader`` function in utils.py for easy loading of the valid analyses. Also added additional analysis json files (including parts 0 & 1 of Livre d'Orgue (1951-52) movement V). 
-- Added testing and improved functionality for the hash table creation and ``rolling_hash_search``. This included adding 
-a ``GreekHashTable`` and ``CombinedHashTable`` for a combined database. 
+- Added a ``loader`` function in utils.py for easy loading of Messiaen's analyses (encoded by me). Also added additional analysis json files (including parts 0 & 1 of Livre d'Orgue (1951-52) movement V). 
+- Added testing and improved functionality for the hash table creation and ``rolling_hash_search``. This included adding a ``GreekHashTable`` and ``CombinedHashTable`` for a combined database. 
 - Added an optional progress bar to the Floyd-Warshall algorithm. 
-- Added function for getting the best source and sink for the best-path calculation after Floyd-Warshall (``floyd_warshall.best_source_and_sink(extracted_data)``). 
+- Added function for getting the best source and sink after Floyd-Warshall (``floyd_warshall.best_source_and_sink(data)``). 
 - Added ``+/- 0.125, +/- 0.375, -0.25, 0.875, 1.75, 2.625, 3.5, 4.375`` as possible difference valuess in ``hash_table.py``; also added ``0.125, 0.25`` as a possible ratio values. 
 - Added a ``path_finder`` command line tool that wraps all the functions for analysis via Floyd-Warshall & the hash tables. Used simply as ``decitala path-finder --filepath ... --part_num ... --frag_type ...``. 
 - Added a ``ignore_single_anga_class_fragments`` parameter to ``rolling_hash_search`` (default is False). 
