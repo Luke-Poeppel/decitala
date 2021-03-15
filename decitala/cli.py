@@ -14,7 +14,7 @@ from decitala import __version__
 from .database import create_database
 from .fragment import FragmentEncoder, FragmentDecoder
 from .hash_table import DecitalaHashTable, GreekFootHashTable
-from .search import rolling_hash_search
+from .search import path_finder
 from .path_finding import floyd_warshall
 
 @click.group()
@@ -27,33 +27,13 @@ def decitala():
 @click.option("--filepath", default="", help="Path to filepath parsed for analysis.")
 @click.option("--part_num", default=0, help="Part number.")
 @click.option("--frag_type", default="greek_foot")
-def path_finder(filepath, part_num, frag_type):
-	if frag_type == "decitala":
-		ht = DecitalaHashTable()
-	elif frag_type == "greek_foot":
-		ht = GreekFootHashTable()
-	else:
-		raise Exception("{} is not a valid frag_type.".format(frag_type))
-
-	fragments = rolling_hash_search(
+def pathfinder(filepath, part_num, frag_type):
+	best_path = path_finder(
 		filepath,
 		part_num,
-		ht
+		frag_type
 	)
-	distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
-		fragments,
-		weights={
-			"gap": 0.7,
-			"onsets": 0.3
-		}
-	)
-	best_source, best_sink = floyd_warshall.best_source_and_sink(fragments)
-	best_path = floyd_warshall.get_path(
-		best_source,
-		best_sink,
-		next_matrix,
-		fragments
-	)
+
 	filename = filepath.split("/")[-1][:-4] + "_part_num={0}_frag_type={1}.txt".format(part_num, frag_type)
 	analysis = open(filename, "w")
 	analysis.write(str(best_path))  # json.dumps(json.loads(data_dumped, cls=FragmentDecoder), cls=FragmentEncoder, indent=4))

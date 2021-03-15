@@ -28,6 +28,11 @@ from .fragment import (
 	Decitala,
 	GreekFoot
 )
+from .hash_table import (
+	DecitalaHashTable,
+	GreekFootHashTable
+)
+from .path_finding import floyd_warshall
 
 __all__ = [
 	"get_by_ql_array",
@@ -519,9 +524,35 @@ def path_finder(
 		filepath,
 		part_num,
 		frag_type,
-		windows,
-		slur_constraint,
-		ignore_single_anga_class_fragments
+		windows=list(range(2, 19)),
+		slur_constraint=False,
+		ignore_single_anga_class_fragments=False
 	):
-	# TODO: CLI should call this function.
-	pass
+	if frag_type == "decitala":
+		ht = DecitalaHashTable()
+	elif frag_type == "greek_foot":
+		ht = GreekFootHashTable()
+	else:
+		raise Exception("{} is not a valid frag_type.".format(frag_type))
+
+	fragments = rolling_hash_search(
+		filepath,
+		part_num,
+		ht
+	)
+	distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
+		fragments,
+		weights={
+			"gap": 0.75,
+			"onsets": 0.25
+		}
+	)
+	best_source, best_sink = floyd_warshall.best_source_and_sink(fragments)
+	best_path = floyd_warshall.get_path(
+		best_source,
+		best_sink,
+		next_matrix,
+		fragments,
+		slur_constraint
+	)
+	return best_path
