@@ -13,6 +13,7 @@ a ``GreekHashTable`` and ``CombinedHashTable`` for a combined database.
 - Added ``+/- 0.125, +/- 0.375, -0.25, 0.875, 1.75, 2.625, 3.5, 4.375`` as possible difference valuess in ``hash_table.py``; also added ``0.125, 0.25`` as a possible ratio values. 
 - Added a ``path_finder`` command line tool that wraps all the functions for analysis via Floyd-Warshall & the hash tables. Used simply as ``decitala path-finder --filepath ... --part_num ... --frag_type ...``. 
 - Added a ``ignore_single_anga_class_fragments`` parameter to ``rolling_hash_search`` (default is False). 
+- Added optional ``slur_constraint`` parameter to ``floyd_warshall.best_path`` which constrains the path to require the slurred fragments found (#87). 
 
 ### Removed
 - Removed the ``self.conn`` attribute in the ``Decitala`` class; in doing so, we can now use multiprocessing (multiprocessing requires pickling which is impossible on sqlite3 ``Connection`` objects). 

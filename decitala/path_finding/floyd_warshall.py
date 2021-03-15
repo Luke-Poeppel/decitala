@@ -101,27 +101,6 @@ def floyd_warshall(
 
 	return dist_matrix, next_matrix
 
-def get_path(start, end, next_matrix, data):
-	"""
-	Function for retriving the best path extracted from
-		:obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.
-
-	:param `~decitala.fragment.GeneralFragment` start: starting fragment in the path.
-	:param `~decitala.fragment.GeneralFragment` end: ending fragment in the path.
-	:param numpy.array next_matrix: second matrix from
-			:obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.
-	:param list data: data from :obj:`~decitala.search.rolling_search``.
-	:return: best path extracted using the Floyd-Warshall algorithm.
-	:rtype: list
-	"""
-	path = [start]
-	while start != end:
-		start_index = next((index for (index, d) in enumerate(data) if d["id"] == start["id"]), None)
-		end_index = next((index for (index, d) in enumerate(data) if d["id"] == end["id"]), None)
-		start = next_matrix[start_index][end_index]
-		path.append(start)
-	return path
-
 def sources_and_sinks(data):
 	sources = [x for x in data if not any(y["onset_range"][1] <= x["onset_range"][0] for y in data)]
 	sinks = [x for x in data if not any(x["onset_range"][1] <= y["onset_range"][0] for y in data)]
@@ -131,9 +110,9 @@ def sources_and_sinks(data):
 def best_source_and_sink(data):
 	sources, sinks = sources_and_sinks(data)
 	if len(sources) == 1:
-		best_source = sources[0]
+		curr_best_source = sources[0]
 	elif len(sinks) == 1:
-		best_sink = sinks[0]
+		curr_best_sink = sinks[0]
 	else:
 		lowest_point = min(sources, key=lambda x: x["onset_range"][0])["onset_range"][0]
 		curr_best_source = sources[0]
@@ -152,3 +131,70 @@ def best_source_and_sink(data):
 				continue
 				
 	return curr_best_source, curr_best_sink
+
+def get_path(
+		start,
+		end,
+		next_matrix,
+		data,
+		slur_constraint=False
+	):
+	"""
+	Function for retriving the best path extracted from
+		:obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.
+
+	:param `~decitala.fragment.GeneralFragment` start: starting fragment in the path.
+	:param `~decitala.fragment.GeneralFragment` end: ending fragment in the path.
+	:param numpy.array next_matrix: second matrix from
+			:obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.
+	:param list data: data from :obj:`~decitala.search.rolling_search``.
+	:return: best path extracted using the Floyd-Warshall algorithm.
+	:rtype: list
+	"""
+	path = [start]
+	if slur_constraint is False:
+		while start != end:
+			start_index = next((index for (index, d) in enumerate(data) if d["id"] == start["id"]), None)
+			end_index = next((index for (index, d) in enumerate(data) if d["id"] == end["id"]), None)
+			start = next_matrix[start_index][end_index]
+			path.append(start)
+	else:
+		slurred_fragments_indices = [data.index(x) for x in data if x["is_spanned_by_slur"] is True]
+		start_index = next((index for (index, d) in enumerate(data) if d["id"] == start["id"]), None)
+		end_index = next((index for (index, d) in enumerate(data) if d["id"] == end["id"]), None)
+		
+		if slurred_fragments_indices[0] == start_index:
+			curr_start = data[slurred_fragments_indices[0]]
+		else:
+			curr_start = data[start_index]
+		
+		if slurred_fragments_indices[-1] == end_index:
+			overall_end = data[slurred_fragments_indices[-1]]
+			fragment_slur_is_ending = True
+		else:
+			overall_end = end
+			fragment_slur_is_ending = False
+
+		i = 0
+		while i < len(slurred_fragments_indices) - 1:			
+			if i != 0:
+				curr_start = slurred_fragments_indices[i]
+
+			curr_end = data[slurred_fragments_indices[i+1]]
+			while curr_start != curr_end:
+				curr_start = next_matrix[slurred_fragments_indices[i]][slurred_fragments_indices[i+1]]
+				path.append(curr_start)
+			i += 1
+		
+		# import pdb; pdb.set_trace()
+		if fragment_slur_is_ending is True:
+			pass
+		elif overall_end["onset_range"][0] < path[-1]["onset_range"][1]:
+			pass  # sink input clashes with final slurred fragment. 
+		else:
+			while curr_start != overall_end:
+				start_index = slurred_fragments_indices[-1]
+				curr_start = next_matrix[start_index][end_index]				
+				path.append(curr_start)
+
+	return path
