@@ -13,12 +13,12 @@ import os
 import shutil
 
 from . import trees  # To avoid circular dependency.
+from .utils import get_logger
 
-import logging
-# logging.basicConfig(level=logging.INFO)
+logger = get_logger(name=__name__, print_to_console=True)
 
 here = os.path.abspath(os.path.dirname(__file__))
-treant_templates = here + "/decitala/treant_templates"
+treant_templates = here + "/treant_templates"
 
 __all__ = [
 	"create_tree_diagram",
@@ -41,7 +41,7 @@ def create_tree_diagram(FragmentTree, path):
 			of the provided :obj:`~decitala.trees.FragmentTree`.
 	"""
 	if os.path.isdir(path):
-		logging.info("A FragmentTree diagram already exists at that location ✔")
+		logger.info("A FragmentTree diagram already exists at that location ✔")
 		return
 	stupid_tree = trees.NaryTree()
 	if FragmentTree.rep_type == "ratio":
@@ -58,28 +58,27 @@ def create_tree_diagram(FragmentTree, path):
 	stupid_tree.root = root
 	serialized = stupid_tree.serialize(for_treant=True)
 
-	logging.info("Creating directory and writing tree to JSON...")
+	logger.info("Creating directory and writing tree to JSON...")
 	os.mkdir(path)
 	os.chdir(path)
 	with open("tree.json", "w") as json_file:
 		json.dump(serialized, json_file)
-	logging.info("Done ✔")
 
-	logging.info("Copying .js files...")
-	for this_file in os.listdir(treant_templates):
-		shutil.copyfile(templates + "/" + this_file, path + "/" + this_file)
-	logging.info("Done ✔")
+	logger.info("Copying .js files...")
+	# for this_file in os.listdir(treant_templates):
+	# 	shutil.copyfile(templates + "/" + this_file, path + "/" + this_file)
+	# logging.info("Done ✔")
 
-	logging.info("Running browserify...")
-	parse_data_file = "/".join([path, "parse_data.js"])
-	browserified_file = "/".join([path, "bundle.js"])
+	# logging.info("Running browserify...")
+	# parse_data_file = "/".join([path, "parse_data.js"])
+	# browserified_file = "/".join([path, "bundle.js"])
 
-	os.system("browserify {0} -o {1}".format(parse_data_file, browserified_file))
+	# os.system("browserify {0} -o {1}".format(parse_data_file, browserified_file))
 
-	logging.info("Creating tree...")
-	# execute_js("parse_data.js")
-	logging.info("Done ✔")
-	logging.info("See {}".format(path))
+	# logging.info("Creating tree...")
+	# # execute_js("parse_data.js")
+	# logging.info("Done ✔")
+	# logging.info("See {}".format(path))
 
 def fragment_roll(
 		data,
