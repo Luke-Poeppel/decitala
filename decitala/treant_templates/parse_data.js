@@ -43,5 +43,6 @@ new Treant(chart_config);
 // Uncomment to use save. 
 // html2canvas(document.body).then(function(canvas) {
 //   // document.body.appendChild(canvas);
+//   dpi: 300,
 //   saveAs(canvas.toDataURL(), 'tree-diagram.png');
 // });

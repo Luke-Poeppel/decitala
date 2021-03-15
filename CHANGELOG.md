@@ -9,6 +9,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ### Fixed
 - Github Actions now caching dependencies for faster builds.
+- Fixed bugs in ``vis.create_tree_diagram``. 
 
 ## [v0.8.0] March 15, 2021
 ### Added
