@@ -100,7 +100,7 @@ def get_all_augmentations(
 		raise Exception("Mixed augmentation is not yet supported.")
 
 def DecitalaHashTable():
-	conn = sqlite3.connect("/Users/lukepoeppel/decitala/databases/fragment_database.db")
+	conn = sqlite3.connect(fragment_db)
 	cur = conn.cursor()
 	decitala_table_string = "SELECT * FROM Decitalas"
 	cur.execute(decitala_table_string)
@@ -113,7 +113,7 @@ def DecitalaHashTable():
 	return dht
 
 def GreekFootHashTable():
-	conn = sqlite3.connect("/Users/lukepoeppel/decitala/databases/fragment_database.db")
+	conn = sqlite3.connect(fragment_db)
 	cur = conn.cursor()
 	greek_table_string = "SELECT * FROM Greek_Metrics"
 	cur.execute(greek_table_string)
@@ -126,7 +126,7 @@ def GreekFootHashTable():
 	return ght
 
 def CombinedHashTable():
-	conn = sqlite3.connect("/Users/lukepoeppel/decitala/databases/fragment_database.db")
+	conn = sqlite3.connect(fragment_db)
 	cur = conn.cursor()
 	decitala_table_string = "SELECT * FROM Decitalas"
 	greek_table_string = "SELECT * FROM Greek_Metrics"

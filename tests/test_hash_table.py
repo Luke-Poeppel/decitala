@@ -10,6 +10,7 @@ from decitala.fragment import Decitala
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/fragments/Decitalas"
 greek_path = os.path.dirname(here) + "/fragments/Greek_Metrics/XML"
+fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
 
 @pytest.fixture
 def DHT():
@@ -39,7 +40,7 @@ def retrograde_additive_augmentation(x):
 
 def test_hash_table(DHT):
 	DHT = DecitalaHashTable()
-	conn = sqlite3.connect("/Users/lukepoeppel/decitala/databases/fragment_database.db")
+	conn = sqlite3.connect(fragment_db)
 	cur = conn.cursor()
 	decitala_table_string = "SELECT * FROM Decitalas"
 	cur.execute(decitala_table_string)

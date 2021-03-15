@@ -17,6 +17,9 @@ from . import trees  # To avoid circular dependency.
 import logging
 # logging.basicConfig(level=logging.INFO)
 
+here = os.path.abspath(os.path.dirname(__file__))
+treant_templates = here + "/decitala/treant_templates"
+
 __all__ = [
 	"create_tree_diagram",
 	"fragment_roll"
@@ -63,8 +66,7 @@ def create_tree_diagram(FragmentTree, path):
 	logging.info("Done ✔")
 
 	logging.info("Copying .js files...")
-	templates = "/Users/lukepoeppel/decitala/decitala/treant_templates"
-	for this_file in os.listdir(templates):
+	for this_file in os.listdir(treant_templates):
 		shutil.copyfile(templates + "/" + this_file, path + "/" + this_file)
 	logging.info("Done ✔")
 
