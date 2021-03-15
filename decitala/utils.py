@@ -49,16 +49,15 @@ __all__ = [
 NOTE: Normally a crescent moon superscript is used. Since it serves the same function as viramas, we
 use the same notation.
 """
-
-carnatic_symbols = np.array([
-	['Druta', 'o', 0.25],
-	['Druta-Virama', 'oc', 0.375],
-	['Laghu', '|', 0.5],
-	['Laghu-Virama', '|c', 0.75],
-	['Guru', 'S', 1.0],
-	['Pluta', 'Sc', 1.5],
+carnatic_symbols = {
+	"o": {"value": 0.25, "name": "Druta"},
+	"oc": {"value": 0.375, "name": "Druta-Virama"},
+	"|": {"value": 0.5, "name": "Laghu"},
+	"|c": {"value": 0.75, "name": "Laghu-Virama"},
+	"S": {"value": 1.0, "name": "Guru"},
+	"Sc": {"value": 1.5, "name": "Pluta"}
 	# ['kakapadam', '8X', 2.0]
-])
+}
 
 greek_diacritics = [
 	['breve', '⏑', 1.0],
@@ -101,7 +100,13 @@ def carnatic_string_to_ql_array(string_):
 	array([0.375, 0.25 , 0.5  , 0.5  , 1.5  , 1.   , 0.25 , 0.25 , 0.25 ])
 	"""
 	split_string = string_.split()
-	vals = [float(this_carnatic_val[2]) for this_token in split_string for this_carnatic_val in carnatic_symbols if (this_carnatic_val[1] == this_token)]  # noqa: E501
+	vals = []
+	for token in split_string:
+		try:
+			if carnatic_symbols[token] is not None:
+				vals.append(carnatic_symbols[token]["value"])
+		except KeyError:
+			pass
 	return np.array(vals)
 
 def ql_array_to_carnatic_string(ql_array):
@@ -113,7 +118,12 @@ def ql_array_to_carnatic_string(ql_array):
 	>>> ql_array_to_carnatic_string([0.5, 0.25, 0.25, 0.375, 1.0, 1.5, 1.0, 0.5, 1.0])
 	'| o o oc S Sc S | S'
 	"""
-	return ' '.join(np.array([this_carnatic_val[1] for this_val in ql_array for this_carnatic_val in carnatic_symbols if (float(this_carnatic_val[2]) == this_val)]))  # noqa: E501
+	tokens = []
+	for ql in ql_array:
+		for key, val in carnatic_symbols.items():
+			if carnatic_symbols[key]["value"] == ql:
+				tokens.append(key)
+	return " ".join(tokens)
 
 def ql_array_to_greek_diacritics(ql_array):
 	"""

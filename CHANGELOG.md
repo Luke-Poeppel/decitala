@@ -5,13 +5,12 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.8.0] ??? 
 ### Added
-- Added a ``loader`` function in utils.py for easy loading of the valid analyses. Also added additional analysis json files. 
+- Added a ``loader`` function in utils.py for easy loading of the valid analyses. Also added additional analysis json files (including parts 0 & 1 of Livre d'Orgue (1951-52) movement V). 
 - Added testing and improved functionality for the hash table creation and ``rolling_hash_search``. This included adding 
 a ``GreekHashTable`` and ``CombinedHashTable`` for a combined database. 
 - Added an optional progress bar to the Floyd-Warshall algorithm. 
 - Added function for getting the best source and sink for the best-path calculation after Floyd-Warshall (``floyd_warshall.best_source_and_sink(extracted_data)``). 
 - Added ``+/- 0.125, +/- 0.375, -0.25, 0.875, 1.75, 2.625, 3.5, 4.375`` as possible difference valuess in ``hash_table.py``; also added ``0.125, 0.25`` as a possible ratio values. 
-- Added the json analysis file for parts 0 & 1 of Livre d'Orgue (1951-52) movement V. 
 - Added a ``path_finder`` command line tool that wraps all the functions for analysis via Floyd-Warshall & the hash tables. Used simply as ``decitala path-finder --filepath ... --part_num ... --frag_type ...``. 
 - Added a ``ignore_single_anga_class_fragments`` parameter to ``rolling_hash_search`` (default is False). 
 
