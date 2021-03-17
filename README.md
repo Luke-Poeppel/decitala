@@ -24,19 +24,7 @@ $ pip3 install -e .
 $ pre-commit install
 $ decitala --version # Check for proper installation.
 ```
-If you would like to use the ``vis.create_tree_diagram`` function, it requires the javascript ``browserify`` library. To install this, you need ``npm``. First, check if you already have ``npm`` installed with
-```
-$ npm -v
-```
-If a version number is returned, simply run: 
-```
-$ npm install -g browserify
-```
-and you are done. If it says something like "Command not found," run the following lines:
-```
-$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-$ brew install node
-$ npm install -g browserify
+If you would like to use the ``vis.create_tree_diagram`` function, it requires several additional installation steps. These steps are available in the documentation. 
 ```
 It is also recommended that you download the following application for viewing SQLite databases: [sqlite-browser](https://sqlitebrowser.org/). 
 

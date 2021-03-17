@@ -11,12 +11,15 @@ import json
 import jsonpickle
 import os
 import sqlite3
+import tempfile
 import uuid
 import warnings
 import webbrowser
 
 from collections import deque
 from pathlib import Path
+from wand.image import Image
+from wand.display import display
 
 from .fragment import (
 	Decitala,
@@ -711,13 +714,16 @@ class FragmentTree(NaryTree):
 
 		return FragmentTree(data=data, rep_type=rep_type, name=name)
 
-	def show(self):
+	def show(self, save_path=None, verbose=False):
 		"""
-		The vis module uses the Treant.js library to create a tree diagram. We then open the index.html
-		file of the generated diagram in the chrome webbrowser.
+		The vis module uses the Treant.js library to create a tree diagram. The diagram is 
+		stored in an HTML file, but is saved as a PDF using the R webshot package. This function
+		does not save the directory, but returns a wand.Image object (with optionally saving it). 
 		"""
-		warnings.warn("Function still in development...")
-		path = str(Path.home()) + "/{}".format(uuid.uuid4().hex)
-		vis.create_tree_diagram(self, path)
-		browser = webbrowser.get("chrome")
-		browser.open_new_tab("file://" + path + "/index.html")
+		pdf_filepath = vis.create_tree_diagram(FragmentTree=self, verbose=verbose)
+		img = Image(filename=pdf_filepath)
+		
+		if save_path is not None:
+			img.save(filename=save_path)
+		else:
+			return img
