@@ -11,6 +11,7 @@ import json
 import matplotlib.pyplot as plt
 import os
 import shutil
+import subprocess
 
 from . import trees  # To avoid circular dependency.
 from .utils import get_logger
@@ -58,22 +59,30 @@ def create_tree_diagram(FragmentTree, path):
 	stupid_tree.root = root
 	serialized = stupid_tree.serialize(for_treant=True)
 
-	logger.info("Creating directory and writing tree to JSON...")
+	logger.info("-> Creating directory and writing tree to JSON...")
 	os.mkdir(path)
 	os.chdir(path)
 	with open("tree.json", "w") as json_file:
 		json.dump(serialized, json_file)
 
-	logger.info("Copying .js files...")
+	logger.info("-> Copying .js files...")
 	for this_file in os.listdir(treant_templates):
 		shutil.copyfile(treant_templates + "/" + this_file, path + "/" + this_file)
 
-	logger.info("Running browserify...")
+	logger.info("-> Running browserify...")
 	parse_data_file = "/".join([path, "parse_data.js"])
 	browserified_file = "/".join([path, "bundle.js"])
 	os.system("browserify {0} -o {1}".format(parse_data_file, browserified_file))
 
-	logger.info("Creating tree...")
+	logger.info("-> Creating webshot with R...")
+	webshot_string = "webshot::webshot(url={0}, file={1})".format("'" + path + "/index.html" + "'", "'" + path + "/shot.pdf" + "'")
+	subprocess.call(
+		[
+			"""Rscript -e "{}" """.format(webshot_string),
+		],
+		shell=True
+	)
+
 	logger.info("Done ✔")
 	logger.info("See: {}".format(path))
 

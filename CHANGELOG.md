@@ -6,6 +6,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.8.1] ??? 
 ### Changed
 - The CLI ``pathfinder`` tool now wraps the search.py module's ``path_finder`` function. 
+- The ``create_tree_diagram`` now uses ``webshot`` from R to save to PDF. 
 
 ### Fixed
 - Github Actions now caching dependencies for faster builds.

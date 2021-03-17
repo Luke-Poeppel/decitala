@@ -42,7 +42,10 @@ new Treant(chart_config);
 
 // Uncomment to use save. 
 // html2canvas(document.body).then(function(canvas) {
-//   // document.body.appendChild(canvas);
-//   dpi: 300,
-//   saveAs(canvas.toDataURL(), 'tree-diagram.png');
-// });
+//   // html2pdf(document)
+//   // var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");  // here is the most important part because if you dont replace you will get a DOM 18 exception.
+//   // window.location.href=image; // it will save locally
+// //   // document.body.appendChild(canvas);
+// //   dpi: 300,
+// //   saveAs(canvas.toDataURL(), 'tree-diagram.png');
+// }); 

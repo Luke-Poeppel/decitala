@@ -17,7 +17,6 @@ import os
 import pandas as pd
 import random
 import sqlite3
-import timeout_decorator
 
 from ast import literal_eval
 from itertools import groupby
