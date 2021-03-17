@@ -278,7 +278,7 @@ def _make_subpath_table(partitioned_data, fragment_table, metadata, connection, 
 			connection.execute(subpath_table.insert().values(fragment_row_ids))
 	return
 
-@timeout_decorator.timeout(300)
+# @timeout_decorator.timeout(300)
 def create_database(
 		db_path,
 		filepath,
