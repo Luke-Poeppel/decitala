@@ -467,7 +467,7 @@ def rolling_hash_search(
 	for this_win in windows:
 		frames = roll_window(array=object_list, window_length=this_win)
 		for this_frame in frames:
-			# If having trouble finding fragment, uncomment the code below and check table[str(tuple(ql_array))]. 
+			# If having trouble finding a fragment, uncomment the code below and check table[str(tuple(ql_array))]. 
 			# if this_win == ??? and this_frame[0][1][0] == ???: # starting onset
 			# 	import pdb; pdb.set_trace()
 			objects = [x[0] for x in this_frame]
@@ -536,9 +536,10 @@ def path_finder(
 		raise Exception("{} is not a valid frag_type.".format(frag_type))
 
 	fragments = rolling_hash_search(
-		filepath,
-		part_num,
-		ht
+		filepath=filepath,
+		part_num=part_num,
+		table=ht,
+		ignore_single_anga_class_fragments=ignore_single_anga_class_fragments
 	)
 	distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
 		fragments,
@@ -549,10 +550,10 @@ def path_finder(
 	)
 	best_source, best_sink = floyd_warshall.best_source_and_sink(fragments)
 	best_path = floyd_warshall.get_path(
-		best_source,
-		best_sink,
-		next_matrix,
-		fragments,
-		slur_constraint
+		start=best_source,
+		end=best_sink,
+		next_matrix=next_matrix,
+		data=fragments,
+		slur_constraint=slur_constraint
 	)
 	return best_path

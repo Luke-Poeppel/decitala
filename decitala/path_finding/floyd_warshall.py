@@ -186,7 +186,6 @@ def get_path(
 				path.append(curr_start)
 			i += 1
 		
-		# import pdb; pdb.set_trace()
 		if fragment_slur_is_ending is True:
 			pass
 		elif overall_end["onset_range"][0] < path[-1]["onset_range"][1]:
