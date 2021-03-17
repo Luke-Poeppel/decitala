@@ -24,9 +24,7 @@ $ pip3 install -e .
 $ pre-commit install
 $ decitala --version # Check for proper installation.
 ```
-If you would like to use the ``vis.create_tree_diagram`` function, it requires several additional installation steps. These steps are available in the documentation. 
-```
-It is also recommended that you download the following application for viewing SQLite databases: [sqlite-browser](https://sqlitebrowser.org/). 
+If you would like to use the ``vis.create_tree_diagram`` function, it requires several additional installation steps. These steps are available in the documentation. It is also recommended that you download the following application for viewing SQLite databases: [sqlite-browser](https://sqlitebrowser.org/). 
 
 ### Why is it called decitala?
 Śārngadeva (शार्ङ्गदेव) compiled a list of 130 rhythmic fragments called desītālas (देसी ताल) in his 13th-century musicological treatise, the Sangītaratnākara (सङ्गीतरत्नाकर). Messiaen used the gallicized "deçi-tâlas" in his writing which has been simplified here to "decitala."

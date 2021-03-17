@@ -58,6 +58,7 @@ setup(
 		"sqlalchemy",
 		"scipy",
 		"sphinx_rtd_theme",
+		"Wand"
 	],
 	entry_points={
 		"console_scripts": [
