@@ -44,7 +44,7 @@ def _prepare_docs_and_screenshot(path, serialized_tree, logger):
 	os.system("browserify {0} -o {1}".format(parse_data_file, browserified_file))
 
 	logger.info("-> Creating webshot with R...")
-	webshot_string = "webshot::webshot(url={0}, file={1})".format("'" + path + "/index.html" + "'", "'" + path + "/shot.pdf" + "'")
+	webshot_string = "webshot::webshot(url={0}, file={1})".format("'" + path + "/index.html" + "'", "'" + path + "/shot.png" + "'")
 	subprocess.call(
 		[
 			"""Rscript -e "{}" """.format(webshot_string),
