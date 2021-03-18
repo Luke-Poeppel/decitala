@@ -44,7 +44,7 @@ def _prepare_docs_and_screenshot(path, serialized_tree, logger):
 	os.system("browserify {0} -o {1}".format(parse_data_file, browserified_file))
 
 	logger.info("-> Creating webshot with R...")
-	webshot_string = "webshot::webshot(url={0}, file={1})".format("'" + path + "/index.html" + "'", "'" + path + "/shot.png" + "'")
+	webshot_string = "webshot::webshot(url={0}, file={1}, zoom=3, selector={2})".format("'" + path + "/index.html" + "'", "'" + path + "/shot.png" + "'", "'"+".Treant" + "'")
 	subprocess.call(
 		[
 			"""Rscript -e "{}" """.format(webshot_string),
@@ -102,7 +102,7 @@ def create_tree_diagram(FragmentTree, path=None, pdf_path=None, verbose=False):
 			_prepare_docs_and_screenshot(tmpdir, serialized_tree=serialized, logger=logger)
 			logger.info("Done ✔")
 			with tempfile.NamedTemporaryFile(delete=False) as tmpfile:
-				shutil.copyfile(tmpdir + "/shot.pdf", tmpfile.name)
+				shutil.copyfile(tmpdir + "/shot.png", tmpfile.name)
 				return tmpfile.name
 
 def fragment_roll(

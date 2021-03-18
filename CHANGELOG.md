@@ -6,7 +6,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.8.1] ??? 
 ### Changed
 - The CLI ``pathfinder`` tool now wraps the search.py module's ``path_finder`` function. 
-- The ``create_tree_diagram`` now uses ``webshot`` from R to save to PDF. 
+- The ``create_tree_diagram`` now uses ``webshot`` from R to save to PNG. Can also now effectively do ``FragmentTree.show()`` without opening in the browser. 
 
 ### Fixed
 - Github Actions now caching dependencies for faster builds.
