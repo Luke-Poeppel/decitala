@@ -492,6 +492,8 @@ def roll_window(array, window_length, fn=None):
 		array = [x for x in array if fn(x) is True]
 
 	assert type(window_length) == int
+	if len(array) >= window_length:
+		return [array]
 	windows = list(windowed(seq=array, n=window_length, step=1))
 	return windows
 

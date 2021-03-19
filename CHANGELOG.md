@@ -6,12 +6,13 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.8.1] ??? 
 ### Changed
 - The CLI ``pathfinder`` tool now wraps the search.py module's ``path_finder`` function. 
-- The ``create_tree_diagram`` now uses ``webshot`` from R to save to PNG. Can also now effectively do ``FragmentTree.show()`` without opening in the browser. 
+- The ``create_tree_diagram`` now uses ``webshot`` from R to save to PNG. Can also now effectively do ``FragmentTree.show()`` without opening in the browser using the wand library. 
 
 ### Fixed
-- Github Actions now caching dependencies for faster builds.
+- Github Actions is now caching dependencies for faster builds.
 - Fixed bugs in ``vis.create_tree_diagram``. 
 - Bugfixes in ``path_finder`` related to ``is_spanned_by_slur`` attribute. 
+- The ``utils.roll_window`` now ensures that no ``NoneTypes`` are included if the window size is greater than the input data. WIP: Similarly, in ``rolling_hash_search`` we ensure no searches of size greater than the length of the data. 
 
 ## [v0.8.0] March 15, 2021
 ### Added

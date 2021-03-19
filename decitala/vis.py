@@ -5,7 +5,7 @@
 #
 # Author:   Luke Poeppel
 #
-# Location: Kent, CT, 2020 / NYC, 2021
+# Location: Kent, CT, 2020/21 / NYC, 2021
 ####################################################################################################
 import json
 import matplotlib.pyplot as plt
