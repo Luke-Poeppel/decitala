@@ -165,12 +165,17 @@ def get_path(
 
 		if slurred_fragments_indices[0] <= start_index:
 			curr_start = data[slurred_fragments_indices[0]]
+		elif data[slurred_fragments_indices[0]]["onset_range"][0] < data[start_index]["onset_range"][1]:
+			curr_start = data[slurred_fragments_indices[0]]
 		else:
 			curr_start = data[start_index]
 
 		path = [curr_start]
 
-		if slurred_fragments_indices[-1] == end_index:
+		if slurred_fragments_indices[-1] >= end_index:
+			overall_end = data[slurred_fragments_indices[-1]]
+			fragment_slur_is_ending = True
+		elif data[slurred_fragments_indices[-1]]["onset_range"][0] < data[end_index]["onset_range"][1]:
 			overall_end = data[slurred_fragments_indices[-1]]
 			fragment_slur_is_ending = True
 		else:
@@ -184,9 +189,10 @@ def get_path(
 
 			curr_end = data[slurred_fragments_indices[i + 1]]
 			while curr_start != curr_end:
-				curr_start = next_matrix[slurred_fragments_indices[i]][slurred_fragments_indices[i + 1]]
+				curr_start = next_matrix[slurred_fragments_indices[i + 1]][slurred_fragments_indices[i + 1]]
 				path.append(curr_start)
 			i += 1
+
 
 		if fragment_slur_is_ending is True:
 			pass
