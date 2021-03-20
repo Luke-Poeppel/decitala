@@ -465,9 +465,12 @@ def rolling_hash_search(
 	fragment_id = 0 # noqa TODO
 	fragments_found = []
 
-	# Is this right?
-	max_window_size = len(object_list)
-	windows = windows[0:windows.index(max_window_size) + 1]
+	max_dataset_length = len(max(table, key=len))
+	max_window_size = min(max_dataset_length, len(object_list))
+	closest_window = min(windows, key=lambda x: abs(x - max_window_size))
+	index_of_closest = windows.index(closest_window)
+	windows = windows[0:index_of_closest + 1]
+
 	for this_win in windows:
 		frames = roll_window(array=object_list, window_length=this_win)
 		for this_frame in frames:
