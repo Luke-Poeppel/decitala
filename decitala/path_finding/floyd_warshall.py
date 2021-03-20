@@ -132,6 +132,24 @@ def best_source_and_sink(data):
 
 	return curr_best_source, curr_best_sink
 
+def reconstruct_standard_path(
+		data,
+		next_matrix,
+		start,
+		end
+	):
+	path = [start]
+	if end["onset_range"][0] <= start["onset_range"][-1]:
+		return path
+
+	while start != end:
+		start_index = next((index for (index, d) in enumerate(data) if d["id"] == start["id"]), None)
+		end_index = next((index for (index, d) in enumerate(data) if d["id"] == end["id"]), None)
+		start = next_matrix[start_index][end_index]
+		path.append(start)
+	
+	return path
+
 def get_path(
 		start,
 		end,
@@ -152,19 +170,14 @@ def get_path(
 	:rtype: list
 	"""
 	if slur_constraint is False:
-		path = [start]
-		if end["onset_range"][0] <= start["onset_range"][-1]:
-			return path
-
-		while start != end:
-			start_index = next((index for (index, d) in enumerate(data) if d["id"] == start["id"]), None)
-			end_index = next((index for (index, d) in enumerate(data) if d["id"] == end["id"]), None)
-			start = next_matrix[start_index][end_index]
-			path.append(start)
-		
+		path = reconstruct_standard_path(data, next_matrix, start, end)
 		return path
 	else:
 		slurred_fragments_indices = [data.index(x) for x in data if x["is_spanned_by_slur"] is True]
+		if len(slurred_fragments_indices) == 0:
+			path = reconstruct_standard_path(data, next_matrix, start, end)
+			return path
+		
 		start_index = next((index for (index, d) in enumerate(data) if d["id"] == start["id"]), None)
 		end_index = next((index for (index, d) in enumerate(data) if d["id"] == end["id"]), None)
 
@@ -197,7 +210,6 @@ def get_path(
 				curr_start = next_matrix[slurred_fragments_indices[i + 1]][slurred_fragments_indices[i + 1]]
 				path.append(curr_start)
 			i += 1
-
 
 		if fragment_slur_is_ending is True:
 			pass
