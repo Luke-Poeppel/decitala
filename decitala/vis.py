@@ -44,7 +44,11 @@ def _prepare_docs_and_screenshot(path, serialized_tree, logger):
 	os.system("browserify {0} -o {1}".format(parse_data_file, browserified_file))
 
 	logger.info("-> Creating webshot with R...")
-	webshot_string = "webshot::webshot(url={0}, file={1}, zoom=3, selector={2})".format("'" + path + "/index.html" + "'", "'" + path + "/shot.png" + "'", "'"+".Treant" + "'")
+	webshot_string = "webshot::webshot(url={0}, file={1}, zoom=3, selector={2})".format(
+		"'" + path + "/index.html" + "'",
+		"'" + path + "/shot.png" + "'",
+		"'" + ".Treant" + "'"
+	)
 	subprocess.call(
 		[
 			"""Rscript -e "{}" """.format(webshot_string),
@@ -56,7 +60,7 @@ def create_tree_diagram(FragmentTree, path=None, pdf_path=None, verbose=False):
 	"""
 	This function creates a visualization of a given :obj:`~decitala.trees.FragmentTree`
 	using the Treant.js library. If a path is provided, all the files will be stored there. Otherwise,
-	they will be stored in a tempfile for the display. 
+	they will be stored in a tempfile for the display.
 
 	:param `~decitala.trees.FragmentTree` FragmentTree: A Fragment tree
 	:param str path: path to the folder where the visualization will be stored.
@@ -64,8 +68,7 @@ def create_tree_diagram(FragmentTree, path=None, pdf_path=None, verbose=False):
 			of the provided :obj:`~decitala.trees.FragmentTree`.
 	"""
 	try:
-		if os.path.isdir(path):
-			logger.info("A diagram already exists at that location ✔")
+		raise Exception("A diagram already exists at that location ✔")
 	except TypeError:
 		pass
 

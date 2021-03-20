@@ -22,12 +22,10 @@ from .utils import (
 	frame_is_spanned_by_slur,
 	contiguous_summation,
 	frame_to_midi,
-	loader
 )
 from .fragment import (
 	Decitala,
 	GreekFoot,
-	GeneralFragment
 )
 from .hash_table import (
 	DecitalaHashTable,
@@ -419,7 +417,7 @@ def _get_mod_info(data):
 
 	if data["retrograde"] is True:
 		mod_type = "r" + mod_type
-	
+
 	return (mod_type, mod_val)
 
 def _make_search_dict(data, frame):
@@ -427,8 +425,8 @@ def _make_search_dict(data, frame):
 	offset_2 = frame[-1][0]
 
 	pitch_content = frame_to_midi(frame)
-	
-	# Something is interacting here that I can't explain. Stupid hotfix has been added to rolling_hash_search. 
+
+	# I can't explain this inheritance issue. Stupid hotfix has been added to rolling_hash_search.
 	# d = GeneralFragment([1.0, 1.0, 2.0])
 	# d = Decitala("Gajalila")
 	# if data["frag_type"] == "decitala":
@@ -437,11 +435,11 @@ def _make_search_dict(data, frame):
 	# 	print(GreekFoot(data["fragment"]))
 	# else:
 	# 	raise SearchException("{} is an invalid frag_type".format(frag_type))
-	
+
 	search_dict = {
 		"fragment": data["fragment"],
 		"frag_type": data["frag_type"],
-		"mod": _get_mod_info(data), 
+		"mod": _get_mod_info(data),
 		"onset_range": (offset_1.offset, offset_2.offset + offset_2.quarterLength),
 		"pitch_content": pitch_content,
 	}
@@ -480,8 +478,7 @@ def rolling_hash_search(
 	for this_win in windows:
 		frames = roll_window(array=object_list, window_length=this_win)
 		for this_frame in frames:
-			#print(frame_is_spanned_by_slur(this_frame))
-			# If having trouble finding a fragment, uncomment the code below and check table[str(tuple(ql_array))]. 
+			# If having trouble finding a fragment, uncomment the code below and check table[str(tuple(ql_array))]. # noqa
 			# if this_win == ??? and this_frame[0][1][0] == ???: # starting onset
 			# 	import pdb; pdb.set_trace()
 			objects = [x[0] for x in this_frame]
@@ -510,8 +507,8 @@ def rolling_hash_search(
 				except KeyError:
 					pass
 
-				# TODO: Need to check appearance since this isn't done in preprocessing. 
-				# Otherwise get duplicates! 
+				# TODO: Need to check appearance since this isn't done in preprocessing.
+				# Otherwise get duplicates!
 				if allow_subdivision is True:
 					all_superdivisions = find_possible_superdivisions(ql_array)
 					for i, this_superdivision in enumerate(all_superdivisions):
@@ -542,7 +539,7 @@ def rolling_hash_search(
 			this_search_dict["fragment"] = GreekFoot(this_search_dict["fragment"])
 		elif this_search_dict["frag_type"] == "decitala":
 			this_search_dict["fragment"] = Decitala(this_search_dict["fragment"])
-	
+
 	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
 
 def path_finder(

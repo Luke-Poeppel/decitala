@@ -1,6 +1,6 @@
 [flake8]
 max-line-length = 100
-exclude = tests, local_docs
+exclude = tests, local_docs, build
 doctests = False
 ignore =
     W191, # indentation contains tabs

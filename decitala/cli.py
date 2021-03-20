@@ -7,15 +7,9 @@
 # Location: Frankfurt, DE 2020 / NYC, 2020 / Kent, 2020
 ####################################################################################################
 import click
-import pathlib
-import json
 
 from decitala import __version__
-from .database import create_database
-from .fragment import FragmentEncoder, FragmentDecoder
-from .hash_table import DecitalaHashTable, GreekFootHashTable
 from .search import path_finder
-from .path_finding import floyd_warshall
 
 @click.group()
 @click.version_option(__version__, "--version", "-v", message="%(version)s")
@@ -34,9 +28,9 @@ def pathfinder(filepath, part_num, frag_type):
 		frag_type
 	)
 
-	filename = filepath.split("/")[-1][:-4] + "_part_num={0}_frag_type={1}.txt".format(part_num, frag_type)
+	filename = filepath.split("/")[-1][:-4] + "_part_num={0}_frag_type={1}.txt".format(part_num, frag_type) # noqa
 	analysis = open(filename, "w")
-	analysis.write(str(best_path))  # json.dumps(json.loads(data_dumped, cls=FragmentDecoder), cls=FragmentEncoder, indent=4))
+	analysis.write(str(best_path))  # TODO: this should be done with json!
 	analysis.close()
 
 # @decitala.command()

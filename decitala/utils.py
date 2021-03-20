@@ -968,7 +968,7 @@ def loader(filepath, analysis_mode):
 	Useful function for loading analyses into native python format (from a json).
 
 	:param str filepath: path to analysis file in the databases/analyses directory.
-	:param bool analysis_mode: whether to use the json FragmentDecoder (used in analyses). 
+	:param bool analysis_mode: whether to use the json FragmentDecoder (used in analyses).
 	:return: analysis in native python types; fragments and their associated onset range.
 	:rtype: list
 	"""
