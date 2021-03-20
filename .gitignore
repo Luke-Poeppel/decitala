@@ -5,3 +5,4 @@ build/
 dist/
 *.egg-info/
 local_docs/*
+htmlcov/
