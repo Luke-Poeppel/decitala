@@ -64,6 +64,8 @@ def get_all_augmentations(
 					existing = dict_in[str(augmentation)]
 					if existing["mod_hierarchy_val"] < search_dict["mod_hierarchy_val"]:
 						continue
+					else:
+						dict_in[str(augmentation)] = search_dict
 				else:
 					dict_in[str(augmentation)] = search_dict
 
