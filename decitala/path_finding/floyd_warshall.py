@@ -153,11 +153,16 @@ def get_path(
 	"""
 	if slur_constraint is False:
 		path = [start]
+		if end["onset_range"][0] <= start["onset_range"][-1]:
+			return path
+
 		while start != end:
 			start_index = next((index for (index, d) in enumerate(data) if d["id"] == start["id"]), None)
 			end_index = next((index for (index, d) in enumerate(data) if d["id"] == end["id"]), None)
 			start = next_matrix[start_index][end_index]
 			path.append(start)
+		
+		return path
 	else:
 		slurred_fragments_indices = [data.index(x) for x in data if x["is_spanned_by_slur"] is True]
 		start_index = next((index for (index, d) in enumerate(data) if d["id"] == start["id"]), None)
@@ -204,4 +209,4 @@ def get_path(
 				curr_start = next_matrix[start_index][end_index]
 				path.append(curr_start)
 
-	return path
+		return path
