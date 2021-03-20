@@ -514,8 +514,7 @@ class Decitala(GeneralFragment):
 			self.full_path = decitala_path + "/" + match
 			self.name = match[:-4]
 			self.filename = match
-			self.stream = converter.parse(self.full_path)
-		else:
+		elif len(matches) > 1:
 			new_name = "".join([x for x in name if not x.isdigit()])
 			if new_name[-4:] == ".xml":
 				pass
@@ -537,12 +536,8 @@ class Decitala(GeneralFragment):
 					self.full_path = decitala_path + "/" + this_match
 					self.name = this_match[:-4]
 					self.filename = this_match
-					self.stream = converter.parse(self.full_path)
 
-		try:
-			super().__init__(data=self.full_path, name=self.name)
-		except AttributeError:
-			raise DecitalaException("Something is wrong with the name {}.".format(name))
+		super().__init__(data=self.full_path, name=self.name)
 
 	def __repr__(self):
 		return '<fragment.Decitala {}>'.format(self.name)
@@ -693,7 +688,6 @@ class GreekFoot(GeneralFragment):
 			self.full_path = greek_path + "/" + match
 			self.name = match[:-4]
 			self.filename = match
-			self.stream = converter.parse(self.full_path)
 		else:
 			if name[-4:] == ".xml":
 				name = name[:-4]
@@ -703,12 +697,8 @@ class GreekFoot(GeneralFragment):
 					self.full_path = greek_path + "/" + this_match
 					self.name = this_match[:-4]
 					self.filename = this_match
-					self.stream = converter.parse(self.full_path)
 
-		try:
-			super().__init__(data=self.full_path, name=self.name)
-		except AttributeError:
-			raise GreekFootException("Something is wrong with the name {}.".format(name))
+		super().__init__(data=self.full_path, name=self.name)
 
 	def __repr__(self):
 		return '<fragment.GreekFoot {}>'.format(self.name)

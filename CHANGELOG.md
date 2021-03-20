@@ -14,6 +14,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Bugfixes in ``path_finder`` related to ``is_spanned_by_slur`` attribute. 
 - The ``utils.roll_window`` now ensures that no ``NoneTypes`` are included if the window size is greater than the input data. Similarly, in ``rolling_hash_search`` we ensure no searches of size greater than the length of the data. 
 - Fixed missing Iambs in the GreekFoot hash table (#91). 
+- The ``Decitala`` and ``GreekFoot`` classes included a ``stream`` attribute in their ``__init__`` –– this is already created in the ``super``.
+- Hotfix to extremely strange inheritance bug in the ``GeneralFragment`` child classes. (#)
 
 ## [v0.8.0] March 15, 2021
 ### Added

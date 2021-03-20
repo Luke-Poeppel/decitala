@@ -4,7 +4,7 @@
 #
 # Author:   Luke Poeppel
 #
-# Location: NYC, 2021
+# Location: NYC, 2020-21 / Kent, 2021
 ####################################################################################################
 """
 Search algorithms.
@@ -26,7 +26,8 @@ from .utils import (
 )
 from .fragment import (
 	Decitala,
-	GreekFoot
+	GreekFoot,
+	GeneralFragment
 )
 from .hash_table import (
 	DecitalaHashTable,
@@ -424,19 +425,24 @@ def _get_mod_info(data):
 def _make_search_dict(data, frame):
 	offset_1 = frame[0][0]
 	offset_2 = frame[-1][0]
-	is_spanned_by_slur = frame_is_spanned_by_slur(frame)
+
 	pitch_content = frame_to_midi(frame)
 	
-	if data["frag_type"] == "decitala":
-		fragment = Decitala(data["fragment"])
-	else:
-		fragment = GreekFoot(data["fragment"])
+	# Something is interacting here that I can't explain. Stupid hotfix has been added to rolling_hash_search. 
+	# d = GeneralFragment([1.0, 1.0, 2.0])
+	# d = Decitala("Gajalila")
+	# if data["frag_type"] == "decitala":
+	# 	fragment = Decitala(data["fragment"])
+	# elif data["frag_type"] == "greek_foot":
+	# 	print(GreekFoot(data["fragment"]))
+	# else:
+	# 	raise SearchException("{} is an invalid frag_type".format(frag_type))
 	
 	search_dict = {
-		"fragment": fragment,
+		"fragment": data["fragment"],
+		"frag_type": data["frag_type"],
 		"mod": _get_mod_info(data), 
 		"onset_range": (offset_1.offset, offset_2.offset + offset_2.quarterLength),
-		"is_spanned_by_slur": is_spanned_by_slur,
 		"pitch_content": pitch_content,
 	}
 	return search_dict
@@ -451,7 +457,7 @@ def rolling_hash_search(
 		ignore_single_anga_class_fragments=False
 	):
 	"""
-	A different (faster) paradigm than the tree approaches above. Constructs a large dictionary of
+	A different (faster) paradigm than the tree approaches above. Searches a large dictionary of
 	all possible modifications of the rhythmic datasets.
 
 	:param str filepath: path to file to be searched.
@@ -474,6 +480,7 @@ def rolling_hash_search(
 	for this_win in windows:
 		frames = roll_window(array=object_list, window_length=this_win)
 		for this_frame in frames:
+			#print(frame_is_spanned_by_slur(this_frame))
 			# If having trouble finding a fragment, uncomment the code below and check table[str(tuple(ql_array))]. 
 			# if this_win == ??? and this_frame[0][1][0] == ???: # starting onset
 			# 	import pdb; pdb.set_trace()
@@ -491,7 +498,12 @@ def rolling_hash_search(
 				try:
 					searched = table[str(tuple(ql_array))]
 					if searched is not None:
-						search_dict = _make_search_dict(data=searched, frame=this_frame)
+						search_dict = _make_search_dict(
+							data=searched,
+							frame=this_frame,
+						)
+						is_spanned_by_slur = frame_is_spanned_by_slur(this_frame)
+						search_dict["is_spanned_by_slur"] = is_spanned_by_slur
 						search_dict["id"] = fragment_id
 						fragment_id += 1
 						fragments_found.append(search_dict)
@@ -525,6 +537,12 @@ def rolling_hash_search(
 						except KeyError:
 							pass
 
+	for this_search_dict in fragments_found:
+		if this_search_dict["frag_type"] == "greek_foot":
+			this_search_dict["fragment"] = GreekFoot(this_search_dict["fragment"])
+		elif this_search_dict["frag_type"] == "decitala":
+			this_search_dict["fragment"] = Decitala(this_search_dict["fragment"])
+	
 	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
 
 def path_finder(
