@@ -151,8 +151,8 @@ def get_path(
 	:return: best path extracted using the Floyd-Warshall algorithm.
 	:rtype: list
 	"""
-	path = [start]
 	if slur_constraint is False:
+		path = [start]
 		while start != end:
 			start_index = next((index for (index, d) in enumerate(data) if d["id"] == start["id"]), None)
 			end_index = next((index for (index, d) in enumerate(data) if d["id"] == end["id"]), None)
@@ -163,11 +163,13 @@ def get_path(
 		start_index = next((index for (index, d) in enumerate(data) if d["id"] == start["id"]), None)
 		end_index = next((index for (index, d) in enumerate(data) if d["id"] == end["id"]), None)
 		
-		if slurred_fragments_indices[0] == start_index:
+		if slurred_fragments_indices[0] <= start_index:
 			curr_start = data[slurred_fragments_indices[0]]
 		else:
 			curr_start = data[start_index]
 		
+		path = [curr_start]
+
 		if slurred_fragments_indices[-1] == end_index:
 			overall_end = data[slurred_fragments_indices[-1]]
 			fragment_slur_is_ending = True

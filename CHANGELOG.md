@@ -3,7 +3,7 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.8.1] ??? 
+## [v0.8.1] March 20, 2021
 ### Changed
 - The CLI ``pathfinder`` tool now wraps the search.py module's ``path_finder`` function. 
 - The ``create_tree_diagram`` now uses ``webshot`` from R to save to PNG. Can also now effectively do ``FragmentTree.show()`` without opening in the browser using the wand library. 
@@ -15,7 +15,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - The ``utils.roll_window`` now ensures that no ``NoneTypes`` are included if the window size is greater than the input data. Similarly, in ``rolling_hash_search`` we ensure no searches of size greater than the length of the data. 
 - Fixed missing Iambs in the GreekFoot hash table (#91). 
 - The ``Decitala`` and ``GreekFoot`` classes included a ``stream`` attribute in their ``__init__`` –– this is already created in the ``super``.
-- Hotfix to extremely strange inheritance bug in the ``GeneralFragment`` child classes. (#)
+- Hotfix to extremely strange inheritance bug in the ``GeneralFragment`` child classes. (#92)
+- Bugfix in ``floyd_warshall.get_path``. Function was inserting the given starting point in the path, even if it was overrided by the slur constrain. 
 
 ## [v0.8.0] March 15, 2021
 ### Added
