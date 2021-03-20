@@ -464,6 +464,10 @@ def rolling_hash_search(
 	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
 	fragment_id = 0 # noqa TODO
 	fragments_found = []
+
+	# Is this right?
+	max_window_size = len(object_list)
+	windows = windows[0:windows.index(max_window_size) + 1]
 	for this_win in windows:
 		frames = roll_window(array=object_list, window_length=this_win)
 		for this_frame in frames:
