@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.utils &mdash; decitala 0.8.0 documentation</title>
+  <title>decitala.utils &mdash; decitala 0.8.1 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.8.0
+                0.8.1
               </div>
             
           
@@ -660,6 +660,8 @@
 		<span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">array</span> <span class="k">if</span> <span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">]</span>
 
 	<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">window_length</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span>
+	<span class="c1"># if len(array) &gt;= window_length:</span>
+	<span class="c1"># 	return [array]</span>
 	<span class="n">windows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">windowed</span><span class="p">(</span><span class="n">seq</span><span class="o">=</span><span class="n">array</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">window_length</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 	<span class="k">return</span> <span class="n">windows</span></div>
 
@@ -1134,7 +1136,7 @@
 <span class="sd">	Useful function for loading analyses into native python format (from a json).</span>
 
 <span class="sd">	:param str filepath: path to analysis file in the databases/analyses directory.</span>
-<span class="sd">	:param bool analysis_mode: whether to use the json FragmentDecoder (used in analyses). </span>
+<span class="sd">	:param bool analysis_mode: whether to use the json FragmentDecoder (used in analyses).</span>
 <span class="sd">	:return: analysis in native python types; fragments and their associated onset range.</span>
 <span class="sd">	:rtype: list</span>
 <span class="sd">	&quot;&quot;&quot;</span>

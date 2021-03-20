@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.trees &mdash; decitala 0.8.0 documentation</title>
+  <title>decitala.trees &mdash; decitala 0.8.1 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.8.0
+                0.8.1
               </div>
             
           
@@ -179,12 +179,9 @@
 <span class="kn">import</span> <span class="nn">jsonpickle</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">import</span> <span class="nn">webbrowser</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
 
 <span class="kn">from</span> <span class="nn">.fragment</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">Decitala</span><span class="p">,</span>
@@ -879,16 +876,19 @@
 
 		<span class="k">return</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="n">rep_type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="FragmentTree.show"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTree.show">[docs]</a>	<span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FragmentTree.show"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTree.show">[docs]</a>	<span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">		The vis module uses the Treant.js library to create a tree diagram. We then open the index.html</span>
-<span class="sd">		file of the generated diagram in the chrome webbrowser.</span>
+<span class="sd">		The vis module uses the Treant.js library to create a tree diagram. The diagram is</span>
+<span class="sd">		stored in an HTML file, but is saved as a PDF using the R webshot package. This function</span>
+<span class="sd">		does not save the directory, but returns a wand.Image object (with optionally saving it).</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Function still in development...&quot;</span><span class="p">)</span>
-		<span class="n">path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">)</span>
-		<span class="n">vis</span><span class="o">.</span><span class="n">create_tree_diagram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
-		<span class="n">browser</span> <span class="o">=</span> <span class="n">webbrowser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;chrome&quot;</span><span class="p">)</span>
-		<span class="n">browser</span><span class="o">.</span><span class="n">open_new_tab</span><span class="p">(</span><span class="s2">&quot;file://&quot;</span> <span class="o">+</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;/index.html&quot;</span><span class="p">)</span></div></div>
+		<span class="n">pdf_filepath</span> <span class="o">=</span> <span class="n">vis</span><span class="o">.</span><span class="n">create_tree_diagram</span><span class="p">(</span><span class="n">FragmentTree</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+		<span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">pdf_filepath</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">save_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">save_path</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">img</span></div></div>
 </pre></div>
 
            </div>

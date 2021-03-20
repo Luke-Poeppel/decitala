@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.database &mdash; decitala 0.8.0 documentation</title>
+  <title>decitala.database &mdash; decitala 0.8.1 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.8.0
+                0.8.1
               </div>
             
           
@@ -185,7 +185,6 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">sqlite3</span>
-<span class="kn">import</span> <span class="nn">timeout_decorator</span>
 
 <span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">literal_eval</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">groupby</span>
@@ -447,8 +446,8 @@
 			<span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">subpath_table</span><span class="o">.</span><span class="n">insert</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">fragment_row_ids</span><span class="p">))</span>
 	<span class="k">return</span>
 
-<div class="viewcode-block" id="create_database"><a class="viewcode-back" href="../../mods/database.html#decitala.database.create_database">[docs]</a><span class="nd">@timeout_decorator</span><span class="o">.</span><span class="n">timeout</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span>
+<span class="c1"># @timeout_decorator.timeout(300)</span>
+<div class="viewcode-block" id="create_database"><a class="viewcode-back" href="../../mods/database.html#decitala.database.create_database">[docs]</a><span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span>
 		<span class="n">db_path</span><span class="p">,</span>
 		<span class="n">filepath</span><span class="p">,</span>
 		<span class="n">part_num</span><span class="p">,</span>

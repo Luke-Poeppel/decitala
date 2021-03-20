@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.search &mdash; decitala 0.8.0 documentation</title>
+  <title>decitala.search &mdash; decitala 0.8.1 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.8.0
+                0.8.1
               </div>
             
           
@@ -172,7 +172,7 @@
 <span class="c1">#</span>
 <span class="c1"># Author:   Luke Poeppel</span>
 <span class="c1">#</span>
-<span class="c1"># Location: NYC, 2021</span>
+<span class="c1"># Location: NYC, 2020-21 / Kent, 2021</span>
 <span class="c1">####################################################################################################</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Search algorithms.</span>
@@ -190,12 +190,16 @@
 	<span class="n">frame_is_spanned_by_slur</span><span class="p">,</span>
 	<span class="n">contiguous_summation</span><span class="p">,</span>
 	<span class="n">frame_to_midi</span><span class="p">,</span>
-	<span class="n">loader</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.fragment</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">Decitala</span><span class="p">,</span>
-	<span class="n">GreekFoot</span>
+	<span class="n">GreekFoot</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.hash_table</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">DecitalaHashTable</span><span class="p">,</span>
+	<span class="n">GreekFootHashTable</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.path_finding</span> <span class="kn">import</span> <span class="n">floyd_warshall</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
 	<span class="s2">&quot;get_by_ql_array&quot;</span><span class="p">,</span>
@@ -581,25 +585,30 @@
 
 	<span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;retrograde&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
 		<span class="n">mod_type</span> <span class="o">=</span> <span class="s2">&quot;r&quot;</span> <span class="o">+</span> <span class="n">mod_type</span>
-	
+
 	<span class="k">return</span> <span class="p">(</span><span class="n">mod_type</span><span class="p">,</span> <span class="n">mod_val</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">_make_search_dict</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
 	<span class="n">offset_1</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 	<span class="n">offset_2</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-	<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="n">frame_is_spanned_by_slur</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+
 	<span class="n">pitch_content</span> <span class="o">=</span> <span class="n">frame_to_midi</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-	
-	<span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;frag_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;decitala&quot;</span><span class="p">:</span>
-		<span class="n">fragment</span> <span class="o">=</span> <span class="n">Decitala</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">])</span>
-	<span class="k">else</span><span class="p">:</span>
-		<span class="n">fragment</span> <span class="o">=</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">])</span>
-	
+
+	<span class="c1"># I can&#39;t explain this inheritance issue. Stupid hotfix has been added to rolling_hash_search.</span>
+	<span class="c1"># d = GeneralFragment([1.0, 1.0, 2.0])</span>
+	<span class="c1"># d = Decitala(&quot;Gajalila&quot;)</span>
+	<span class="c1"># if data[&quot;frag_type&quot;] == &quot;decitala&quot;:</span>
+	<span class="c1"># 	fragment = Decitala(data[&quot;fragment&quot;])</span>
+	<span class="c1"># elif data[&quot;frag_type&quot;] == &quot;greek_foot&quot;:</span>
+	<span class="c1"># 	print(GreekFoot(data[&quot;fragment&quot;]))</span>
+	<span class="c1"># else:</span>
+	<span class="c1"># 	raise SearchException(&quot;{} is an invalid frag_type&quot;.format(frag_type))</span>
+
 	<span class="n">search_dict</span> <span class="o">=</span> <span class="p">{</span>
-		<span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="n">fragment</span><span class="p">,</span>
-		<span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="n">_get_mod_info</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> 
+		<span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">],</span>
+		<span class="s2">&quot;frag_type&quot;</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;frag_type&quot;</span><span class="p">],</span>
+		<span class="s2">&quot;mod&quot;</span><span class="p">:</span> <span class="n">_get_mod_info</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
 		<span class="s2">&quot;onset_range&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">offset_1</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">),</span>
-		<span class="s2">&quot;is_spanned_by_slur&quot;</span><span class="p">:</span> <span class="n">is_spanned_by_slur</span><span class="p">,</span>
 		<span class="s2">&quot;pitch_content&quot;</span><span class="p">:</span> <span class="n">pitch_content</span><span class="p">,</span>
 	<span class="p">}</span>
 	<span class="k">return</span> <span class="n">search_dict</span>
@@ -614,7 +623,7 @@
 		<span class="n">ignore_single_anga_class_fragments</span><span class="o">=</span><span class="kc">False</span>
 	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	A different (faster) paradigm than the tree approaches above. Constructs a large dictionary of</span>
+<span class="sd">	A different (faster) paradigm than the tree approaches above. Searches a large dictionary of</span>
 <span class="sd">	all possible modifications of the rhythmic datasets.</span>
 
 <span class="sd">	:param str filepath: path to file to be searched.</span>
@@ -627,10 +636,17 @@
 	<span class="n">object_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">object_list</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
 	<span class="n">fragment_id</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># noqa TODO</span>
 	<span class="n">fragments_found</span> <span class="o">=</span> <span class="p">[]</span>
+
+	<span class="n">max_dataset_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">))</span>
+	<span class="n">max_window_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_dataset_length</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">object_list</span><span class="p">))</span>
+	<span class="n">closest_window</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">windows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">max_window_size</span><span class="p">))</span>
+	<span class="n">index_of_closest</span> <span class="o">=</span> <span class="n">windows</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">closest_window</span><span class="p">)</span>
+	<span class="n">windows</span> <span class="o">=</span> <span class="n">windows</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">index_of_closest</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
 	<span class="k">for</span> <span class="n">this_win</span> <span class="ow">in</span> <span class="n">windows</span><span class="p">:</span>
 		<span class="n">frames</span> <span class="o">=</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">object_list</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="n">this_win</span><span class="p">)</span>
 		<span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
-			<span class="c1"># If having trouble finding fragment, uncomment the code below and check table[str(tuple(ql_array))]. </span>
+			<span class="c1"># If having trouble finding a fragment, uncomment the code below and check table[str(tuple(ql_array))]. # noqa</span>
 			<span class="c1"># if this_win == ??? and this_frame[0][1][0] == ???: # starting onset</span>
 			<span class="c1"># 	import pdb; pdb.set_trace()</span>
 			<span class="n">objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_frame</span><span class="p">]</span>
@@ -647,15 +663,20 @@
 				<span class="k">try</span><span class="p">:</span>
 					<span class="n">searched</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">ql_array</span><span class="p">))]</span>
 					<span class="k">if</span> <span class="n">searched</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-						<span class="n">search_dict</span> <span class="o">=</span> <span class="n">_make_search_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">searched</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">this_frame</span><span class="p">)</span>
+						<span class="n">search_dict</span> <span class="o">=</span> <span class="n">_make_search_dict</span><span class="p">(</span>
+							<span class="n">data</span><span class="o">=</span><span class="n">searched</span><span class="p">,</span>
+							<span class="n">frame</span><span class="o">=</span><span class="n">this_frame</span><span class="p">,</span>
+						<span class="p">)</span>
+						<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="n">frame_is_spanned_by_slur</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
+						<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;is_spanned_by_slur&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">is_spanned_by_slur</span>
 						<span class="n">search_dict</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fragment_id</span>
 						<span class="n">fragment_id</span> <span class="o">+=</span> <span class="mi">1</span>
 						<span class="n">fragments_found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">search_dict</span><span class="p">)</span>
 				<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
 					<span class="k">pass</span>
 
-				<span class="c1"># TODO: Need to check appearance since this isn&#39;t done in preprocessing. </span>
-				<span class="c1"># Otherwise get duplicates! </span>
+				<span class="c1"># TODO: Need to check appearance since this isn&#39;t done in preprocessing.</span>
+				<span class="c1"># Otherwise get duplicates!</span>
 				<span class="k">if</span> <span class="n">allow_subdivision</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
 					<span class="n">all_superdivisions</span> <span class="o">=</span> <span class="n">find_possible_superdivisions</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)</span>
 					<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_superdivision</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_superdivisions</span><span class="p">):</span>
@@ -681,18 +702,51 @@
 						<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
 							<span class="k">pass</span>
 
+	<span class="k">for</span> <span class="n">this_search_dict</span> <span class="ow">in</span> <span class="n">fragments_found</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">this_search_dict</span><span class="p">[</span><span class="s2">&quot;frag_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">:</span>
+			<span class="n">this_search_dict</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="n">this_search_dict</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">])</span>
+		<span class="k">elif</span> <span class="n">this_search_dict</span><span class="p">[</span><span class="s2">&quot;frag_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;decitala&quot;</span><span class="p">:</span>
+			<span class="n">this_search_dict</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Decitala</span><span class="p">(</span><span class="n">this_search_dict</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">])</span>
+
 	<span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">fragments_found</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span></div>
 
 <span class="k">def</span> <span class="nf">path_finder</span><span class="p">(</span>
 		<span class="n">filepath</span><span class="p">,</span>
 		<span class="n">part_num</span><span class="p">,</span>
 		<span class="n">frag_type</span><span class="p">,</span>
-		<span class="n">windows</span><span class="p">,</span>
-		<span class="n">slur_constraint</span><span class="p">,</span>
-		<span class="n">ignore_single_anga_class_fragments</span>
+		<span class="n">windows</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">19</span><span class="p">)),</span>
+		<span class="n">slur_constraint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+		<span class="n">ignore_single_anga_class_fragments</span><span class="o">=</span><span class="kc">False</span>
 	<span class="p">):</span>
-	<span class="c1"># TODO: CLI should call this function.</span>
-	<span class="k">pass</span>
+	<span class="k">if</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;decitala&quot;</span><span class="p">:</span>
+		<span class="n">ht</span> <span class="o">=</span> <span class="n">DecitalaHashTable</span><span class="p">()</span>
+	<span class="k">elif</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">:</span>
+		<span class="n">ht</span> <span class="o">=</span> <span class="n">GreekFootHashTable</span><span class="p">()</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a valid frag_type.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frag_type</span><span class="p">))</span>
+
+	<span class="n">fragments</span> <span class="o">=</span> <span class="n">rolling_hash_search</span><span class="p">(</span>
+		<span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span>
+		<span class="n">part_num</span><span class="o">=</span><span class="n">part_num</span><span class="p">,</span>
+		<span class="n">table</span><span class="o">=</span><span class="n">ht</span><span class="p">,</span>
+		<span class="n">ignore_single_anga_class_fragments</span><span class="o">=</span><span class="n">ignore_single_anga_class_fragments</span>
+	<span class="p">)</span>
+	<span class="n">distance_matrix</span><span class="p">,</span> <span class="n">next_matrix</span> <span class="o">=</span> <span class="n">floyd_warshall</span><span class="o">.</span><span class="n">floyd_warshall</span><span class="p">(</span>
+		<span class="n">fragments</span><span class="p">,</span>
+		<span class="n">weights</span><span class="o">=</span><span class="p">{</span>
+			<span class="s2">&quot;gap&quot;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span>
+			<span class="s2">&quot;onsets&quot;</span><span class="p">:</span> <span class="mf">0.25</span>
+		<span class="p">}</span>
+	<span class="p">)</span>
+	<span class="n">best_source</span><span class="p">,</span> <span class="n">best_sink</span> <span class="o">=</span> <span class="n">floyd_warshall</span><span class="o">.</span><span class="n">best_source_and_sink</span><span class="p">(</span><span class="n">fragments</span><span class="p">)</span>
+	<span class="n">best_path</span> <span class="o">=</span> <span class="n">floyd_warshall</span><span class="o">.</span><span class="n">get_path</span><span class="p">(</span>
+		<span class="n">start</span><span class="o">=</span><span class="n">best_source</span><span class="p">,</span>
+		<span class="n">end</span><span class="o">=</span><span class="n">best_sink</span><span class="p">,</span>
+		<span class="n">next_matrix</span><span class="o">=</span><span class="n">next_matrix</span><span class="p">,</span>
+		<span class="n">data</span><span class="o">=</span><span class="n">fragments</span><span class="p">,</span>
+		<span class="n">slur_constraint</span><span class="o">=</span><span class="n">slur_constraint</span>
+	<span class="p">)</span>
+	<span class="k">return</span> <span class="n">best_path</span>
 </pre></div>
 
            </div>
