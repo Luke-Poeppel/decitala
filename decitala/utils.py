@@ -78,14 +78,15 @@ multiplicative_augmentations = [
 # Logging
 def get_logger(name, print_to_console=True, write_to_file=None):
 	logger = logging.getLogger(name)
-	logger.setLevel(logging.INFO)
+	if not len(logger.handlers):
+		logger.setLevel(logging.INFO)
 
-	if write_to_file is not None:
-		file_handler = logging.FileHandler(write_to_file)
-		logger.addHandler(file_handler)
-	if print_to_console:
-		stdout_handler = logging.StreamHandler(sys.stdout)
-		logger.addHandler(stdout_handler)
+		if write_to_file is not None:
+			file_handler = logging.FileHandler(write_to_file)
+			logger.addHandler(file_handler)
+		if print_to_console:
+			stdout_handler = logging.StreamHandler(sys.stdout)
+			logger.addHandler(stdout_handler)
 
 	return logger
 

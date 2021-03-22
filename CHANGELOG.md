@@ -13,7 +13,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Improved ``fragment.py``'s ``FragmentEncoder`` and ``FragmentDecoder`` classes with better logic; this fixes #99: incorrect ``frag_type`` in the JSON encoding. 
 
 ### Fixed
-- Missing import bug in ``vis.annotate_score``.
+- Missing import bug in ``vis.annotate_score``. 
+- Issues #53: duplicates in logs caused by saved handlers; 
 
 ## [v0.8.4] March 22, 2021
 ### Fixed
