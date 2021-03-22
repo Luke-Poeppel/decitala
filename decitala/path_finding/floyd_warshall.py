@@ -158,8 +158,7 @@ def get_path(
 		slur_constraint=False
 	):
 	"""
-	Function for retriving the best path extracted from
-		:obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.
+	Function for retriving the best path extracted from the Floyd-Warshall algorithm. 
 
 	:param `~decitala.fragment.GeneralFragment` start: starting fragment in the path.
 	:param `~decitala.fragment.GeneralFragment` end: ending fragment in the path.

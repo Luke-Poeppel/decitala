@@ -12,8 +12,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ### Fixed
 - Additional bugfixes for slur constraint in ``get_path`` (causing infinite runtime). 
-- Issue #19: referenced a fault Nary tree size. It appears to be fixed, but I added a test. 
-- Issue #95: the ``pathfinder`` command line tool now writes to JSON. 
+- Issues #19: referenced a fault Nary tree size. It appears to be fixed, but I added a test; #95: the ``pathfinder`` command line tool now writes to JSON; #94: minor formatting error in ``floyd_warshall.py``.
 
 ## [v0.8.1] March 20, 2021
 ### Added
