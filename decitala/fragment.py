@@ -54,19 +54,19 @@ class FragmentEncoder(json.JSONEncoder):
 	def default(self, obj):
 		if type(obj).__name__ == "GeneralFragment":
 			d = {
-				"frag_type": "GeneraFragment",
+				"frag_type": "general_fragment",
 				"data": obj.data
 			}
 			return d
 		elif type(obj).__name__ == "Decitala":
 			d = {
-				"frag_type": "Decitala",
+				"frag_type": "decitala",
 				"name": obj.name
 			}
 			return d
 		elif type(obj).__name__ == "GreekFoot":
 			d = {
-				"frag_type": "GreekFoot",
+				"frag_type": "greek_foot",
 				"name": obj.name
 			}
 			return d
@@ -85,14 +85,17 @@ class FragmentDecoder(json.JSONDecoder):
 		"""
 		This function already runs json.loads invisibly on ``obj``.
 		"""
-		if obj["frag_type"] == "GeneralFragment":
-			return GeneralFragment(data=obj["data"])
-		elif obj["frag_type"] == "Decitala":
-			return Decitala(obj["name"])
-		elif obj["frag_type"] == "GreekFoot":
-			return GreekFoot(obj["name"])
-		else:
-			raise FragmentException("This object is not JSON deserializable. File an issue?")
+		try:
+			if obj["frag_type"] == "GeneralFragment" and obj["name"] is not None:
+				return GeneralFragment(data=obj["data"])
+			elif obj["frag_type"] == "decitala" and obj["name"] is not None:
+				return Decitala(obj["name"])
+			elif obj["frag_type"] == "greek_foot" and obj["name"] is not None:
+				return GreekFoot(obj["name"])
+			else:
+				raise FragmentException("This object is not JSON deserializable. File an issue?")
+		except KeyError:
+			return obj
 
 class GeneralFragment:
 	"""

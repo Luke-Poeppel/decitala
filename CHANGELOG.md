@@ -7,6 +7,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Added
 - Function for annotating a score with the extracted data: ``vis.annotate_score``.
 
+### Changed
+- Improved ``fragment.py``'s ``FragmentEncoder`` and ``FragmentDecoder`` classes with better logic; this fixes #99: incorrect ``frag_type`` in the JSON encoding. 
+
 ## [v0.8.4] March 22, 2021
 ### Fixed
 - Added the missing Zenodo badge to the README.md file.
