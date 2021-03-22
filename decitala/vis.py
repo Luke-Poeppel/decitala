@@ -155,3 +155,26 @@ def fragment_roll(
 	if save:
 		plt.savefig(save, dpi=300)
 	return plt
+
+def annotate_score(
+		data,
+		filein,
+		part_num,
+	):
+	"""
+	Function for annotating a score with data. 
+
+	:param list data: output of the form from a rolling search. 
+	:param str filein: input file to convert. 
+	:param int part_num: part number. 
+	"""
+	converted = converter.parse(filein)
+	for this_fragment in data:
+		for this_obj in converted.flat.iter.notes:
+			if this_obj.offset == this_fragment["onset_range"][0]:
+				this_obj.lyric = this_fragment["fragment"].name
+				this_obj.style.color = "green"
+			elif this_obj.offset == this_fragment["onset_range"][-1] - this_obj.quarterLength:
+				this_obj.style.color = "red"
+
+	return converted
