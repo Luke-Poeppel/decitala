@@ -7,9 +7,11 @@
 # Location: Frankfurt, DE 2020 / NYC, 2020 / Kent, 2020
 ####################################################################################################
 import click
+import json
 
 from decitala import __version__
 from .search import path_finder
+from .fragment import FragmentEncoder
 
 @click.group()
 @click.version_option(__version__, "--version", "-v", message="%(version)s")
@@ -23,15 +25,13 @@ def decitala():
 @click.option("--frag_type", default="greek_foot")
 def pathfinder(filepath, part_num, frag_type):
 	best_path = path_finder(
-		filepath,
-		part_num,
-		frag_type
+		filepath=filepath,
+		part_num=part_num,
+		frag_type=frag_type
 	)
-
 	filename = filepath.split("/")[-1][:-4] + "_part_num={0}_frag_type={1}.txt".format(part_num, frag_type) # noqa
-	analysis = open(filename, "w")
-	analysis.write(str(best_path))  # TODO: this should be done with json!
-	analysis.close()
+	with open(filename, "w") as output:
+		json.dump(obj=best_path, fp=output, cls=FragmentEncoder, indent=4)
 
 # @decitala.command()
 # @click.option("--filepath", default="", help="Path to filepath parsed for the database.")

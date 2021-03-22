@@ -4,12 +4,16 @@ All important changes to the decitala package will be documented here.
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [v0.8.2] ???
+### Added
+- WIP: A ``.coveragerc`` file for excluding the tests and CLI tools from coverage reports. 
+
 ### Changed
 - Refactored ``get_path`` to include a ``reconstruct_standard_path`` helper function. 
 
 ### Fixed
 - Additional bugfixes for slur constraint in ``get_path`` (causing infinite runtime). 
-- Issue #19 referenced a fault Nary tree size. It appears to be fixed, but I added a test. 
+- Issue #19: referenced a fault Nary tree size. It appears to be fixed, but I added a test. 
+- Issue #95: the ``pathfinder`` command line tool now writes to JSON. 
 
 ## [v0.8.1] March 20, 2021
 ### Added
@@ -27,7 +31,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Fixed missing Iambs in the GreekFoot hash table (#91). 
 - The ``Decitala`` and ``GreekFoot`` classes included a ``stream`` attribute in their ``__init__`` –– this is already created in the ``super``.
 - Hotfix to extremely strange inheritance bug in the ``GeneralFragment`` child classes. (#92)
-- Bugfix in ``floyd_warshall.get_path``. Function was inserting the given starting point in the path, even if it was overrided by the slur constrain. 
+- Bugfix in ``floyd_warshall.get_path``. Function was inserting the given starting point in the path, even if it was overrided by the slur constraint. 
 
 ## [v0.8.0] March 15, 2021
 ### Added
