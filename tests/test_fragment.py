@@ -61,3 +61,20 @@ def test_all_greek_foot_names():
 		new_name = random.choice(funcs)(this_file)
 		this_greek_foot = GreekFoot(new_name)
 		assert this_greek_foot.full_path == greek_path + "/" + this_file
+
+def test_get_by_id():
+	random_nums = [71, 23, 14, 91, 108, 44]
+	for this_id in random_nums:
+		assert Decitala.get_by_id(this_id) is not None
+
+def test_id_num():
+	for i in range(0, 121, 20):
+		if i == 0:
+			assert Decitala("Aditala").id_num == i + 1
+		else:
+			assert Decitala.get_by_id(i).id_num == i
+
+def test_decitala_carnatic_string():
+	rajacudamani = Decitala("Rajacudamani")
+	predicted = "o o | | | o o | S"
+	assert rajacudamani.carnatic_string == predicted 

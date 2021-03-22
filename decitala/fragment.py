@@ -574,8 +574,8 @@ class Decitala(GeneralFragment):
 		if input_id > 121 or input_id < 1:
 			raise DecitalaException("Input must be between 1 and 120.")
 		elif input_id in subdecitala_array:
-			raise DecitalaException("There are multiple talas with this ID. \
-									Please consult the Lavignac (1921).")
+			raise DecitalaException("There are multiple talas with id: {}. \
+									Please consult the Lavignac (1921).".format(input_id))
 
 		conn = sqlite3.connect(fragment_db)
 		cur = conn.cursor()
