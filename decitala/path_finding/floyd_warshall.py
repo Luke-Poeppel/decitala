@@ -147,7 +147,7 @@ def reconstruct_standard_path(
 		end_index = next((index for (index, d) in enumerate(data) if d["id"] == end["id"]), None)
 		start = next_matrix[start_index][end_index]
 		path.append(start)
-	
+
 	return path
 
 def get_path(
@@ -158,7 +158,7 @@ def get_path(
 		slur_constraint=False
 	):
 	"""
-	Function for retriving the best path extracted from the Floyd-Warshall algorithm. 
+	Function for retriving the best path extracted from the Floyd-Warshall algorithm.
 
 	:param `~decitala.fragment.GeneralFragment` start: starting fragment in the path.
 	:param `~decitala.fragment.GeneralFragment` end: ending fragment in the path.
@@ -176,7 +176,7 @@ def get_path(
 		if len(slurred_fragments_indices) == 0:
 			path = reconstruct_standard_path(data, next_matrix, start, end)
 			return path
-		
+
 		start_index = next((index for (index, d) in enumerate(data) if d["id"] == start["id"]), None)
 		end_index = next((index for (index, d) in enumerate(data) if d["id"] == end["id"]), None)
 
