@@ -5,7 +5,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.8.2] ???
 ### Added
-- WIP: A ``.coveragerc`` file for excluding the tests and CLI tools from coverage reports. 
+- Added a ``.coveragerc`` file for excluding the tests and CLI tools from coverage reports. 
 
 ### Changed
 - Refactored ``get_path`` to include a ``reconstruct_standard_path`` helper function. 
