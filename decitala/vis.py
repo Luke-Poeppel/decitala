@@ -14,6 +14,8 @@ import shutil
 import subprocess
 import tempfile
 
+from music21 import converter
+
 from . import trees  # To avoid circular dependency.
 from .utils import get_logger
 
@@ -22,7 +24,8 @@ treant_templates = here + "/treant_templates"
 
 __all__ = [
 	"create_tree_diagram",
-	"fragment_roll"
+	"fragment_roll",
+	"annotate_score"
 ]
 
 FONTNAME = 'Times'

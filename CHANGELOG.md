@@ -7,10 +7,13 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Added
 - Function for annotating a score with the extracted data: ``vis.annotate_score``. 
 - Added private ``remake_analysis_files.py`` for remaking the analysis files in each release. 
-- Added testing to improve coverage (46%-). 
+- WIP: Added testing to improve coverage (46%-). 
 
 ### Changed
 - Improved ``fragment.py``'s ``FragmentEncoder`` and ``FragmentDecoder`` classes with better logic; this fixes #99: incorrect ``frag_type`` in the JSON encoding. 
+
+### Fixed
+- Missing import bug in ``vis.annotate_score``.
 
 ## [v0.8.4] March 22, 2021
 ### Fixed
