@@ -9,6 +9,9 @@ from music21 import converter
 from music21 import note
 
 from decitala.utils import (
+	carnatic_string_to_ql_array,
+	ql_array_to_carnatic_string,
+	ql_array_to_greek_diacritics,
 	contiguous_summation,
 	frame_to_ql_array,
 	filter_single_anga_class_fragments,
@@ -78,6 +81,21 @@ def example_frame():
 		(note.Note("F#"), (4.0, 4.25))
 	)
 	return frame
+
+def test_carnatic_string_to_ql_array():
+	ex = "Sc S | | Sc S o |c Sc o oc o | S"
+	converted = np.array([1.5, 1.0, 0.5, 0.5, 1.5, 1.0, 0.25, 0.75, 1.5, 0.25, 0.375, 0.25, 0.5, 1.0])
+	assert np.array_equal(carnatic_string_to_ql_array(ex), converted)
+
+def test_ql_array_to_carnatic_string():
+	ex = np.array([0.25, 0.25, 1.5, 0.75, 1.0, 0.375, 0.25, 0.375, 1.0, 1.5, 0.5])
+	cstring = "o o Sc |c S oc o oc S Sc |"
+	assert np.array_equal(ql_array_to_carnatic_string(ex), cstring)
+
+def test_ql_array_to_greek_diacritics():
+	ex = [0.25, 0.5, 0.5, 0.25, 0.5, 0.5, 0.25, 0.5, 0.25]
+	gstring = "⏑ –– –– ⏑ –– –– ⏑ –– ⏑"
+	assert np.array_equal(ql_array_to_greek_diacritics(ex), gstring)
 
 def test_contiguous_summation_same_chord(gc2_example_data):
 	res = contiguous_summation(gc2_example_data)
