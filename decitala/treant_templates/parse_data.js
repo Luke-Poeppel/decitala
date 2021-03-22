@@ -16,8 +16,6 @@ function removeProps(obj,keys){
   }
 
 require("./Treant.min.js"); 
-const html2canvas = require("./html2canvas.min.js");
-const saveAs = require("./FileSaver.min.js");
 
 var tree_data = require("./tree.json");
 var tree = JSON.parse(tree_data);
@@ -39,13 +37,3 @@ var chart_config = {
 }
 
 new Treant(chart_config);
-
-// Uncomment to use save. 
-// html2canvas(document.body).then(function(canvas) {
-//   // html2pdf(document)
-//   // var image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");  // here is the most important part because if you dont replace you will get a DOM 18 exception.
-//   // window.location.href=image; // it will save locally
-// //   // document.body.appendChild(canvas);
-// //   dpi: 300,
-// //   saveAs(canvas.toDataURL(), 'tree-diagram.png');
-// }); 
