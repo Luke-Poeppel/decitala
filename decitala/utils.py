@@ -42,7 +42,8 @@ __all__ = [
 	"filter_single_anga_class_fragments",  # Data helpers
 	"filter_sub_fragments",
 	"pitch_content_to_contour",  # Pitch Content
-	"contour_to_prime_contour"
+	"contour_to_prime_contour",
+	"loader"
 ]
 
 """
@@ -963,18 +964,14 @@ def cauchy_schwartz(vector1, vector2):
 	return abs(np.dot(vector1, vector2)) < (norm(vector1) * norm(vector2))
 
 ####################################################################################################
-def loader(filepath, analysis_mode):
+def loader(filepath):
 	"""
 	Useful function for loading analyses into native python format (from a json).
 
 	:param str filepath: path to analysis file in the databases/analyses directory.
-	:param bool analysis_mode: whether to use the json FragmentDecoder (used in analyses).
-	:return: analysis in native python types; fragments and their associated onset range.
+	:return: analysis in native python types. Fragments and their associated onset range.
 	:rtype: list
 	"""
 	with open(filepath) as file_json:
-		if analysis_mode is True:
-			data = json.load(file_json, cls=fragment.FragmentDecoder)
-		else:
-			data = json.load(file_json)
+		data = json.load(file_json, cls=fragment.FragmentDecoder)
 		return data

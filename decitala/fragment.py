@@ -86,14 +86,14 @@ class FragmentDecoder(json.JSONDecoder):
 		This function already runs json.loads invisibly on ``obj``.
 		"""
 		try:
-			if obj["frag_type"] == "GeneralFragment" and obj["name"] is not None:
+			if obj["frag_type"] == "general_fragment" and obj["name"] is not None:
 				return GeneralFragment(data=obj["data"])
 			elif obj["frag_type"] == "decitala" and obj["name"] is not None:
 				return Decitala(obj["name"])
 			elif obj["frag_type"] == "greek_foot" and obj["name"] is not None:
 				return GreekFoot(obj["name"])
 			else:
-				raise FragmentException("This object is not JSON deserializable. File an issue?")
+				raise FragmentException("The {} object is not JSON deserializable. File an issue?".format(obj))
 		except KeyError:
 			return obj
 

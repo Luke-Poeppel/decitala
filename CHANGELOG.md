@@ -5,7 +5,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.9.0] ???
 ### Added
-- Function for annotating a score with the extracted data: ``vis.annotate_score``.
+- Function for annotating a score with the extracted data: ``vis.annotate_score``. 
+- Added private ``remake_analysis_files.py`` for remaking the analysis files in each release. 
 
 ### Changed
 - Improved ``fragment.py``'s ``FragmentEncoder`` and ``FragmentDecoder`` classes with better logic; this fixes #99: incorrect ``frag_type`` in the JSON encoding. 

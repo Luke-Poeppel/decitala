@@ -2,6 +2,8 @@ import numpy as np
 import os
 import pytest
 
+from collections import Counter
+
 from music21 import chord
 from music21 import converter
 from music21 import note
@@ -15,7 +17,8 @@ from decitala.utils import (
 	get_object_indices,
 	frame_is_spanned_by_slur,
 	frame_to_ql_array,
-	contour_to_prime_contour
+	contour_to_prime_contour,
+	loader
 )
 
 from decitala.fragment import (
@@ -23,6 +26,7 @@ from decitala.fragment import (
 )
 
 here = os.path.abspath(os.path.dirname(__file__))
+analysis_filepath = os.path.dirname(here) + "/databases/analyses/livre_dorgue_1_analysis.json"
 
 # Frame data
 @pytest.fixture
@@ -135,3 +139,10 @@ def test_prime_contour():
 
 	assert np.array_equal(contour_to_prime_contour(contour_1), np.array([2, 4, 1, 5, 0, 6, 3]))
 	assert np.array_equal(contour_to_prime_contour(contour_2), np.array([2, 1, 3, 0]))
+
+def test_loader():
+	loaded = loader(analysis_filepath)
+	fragments = set([x[0] for x in loaded])
+	actual = {Decitala("Laya"), Decitala("Bhagna"), Decitala("Niccanka")}
+
+	assert fragments == actual
