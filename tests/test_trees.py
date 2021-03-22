@@ -39,6 +39,15 @@ def greek_difference_tree():
 	return difference_tree
 
 @pytest.fixture
+def small_fragment_tree():
+	frag_1 = GeneralFragment(data=[0.25, 0.25, 0.25])
+	frag_2 = GeneralFragment(data=[0.5, 1.0, 0.5])
+	frag_3 = GeneralFragment(data=[1.0, 1.0, 2.0, 3.0])
+	fragments = [frag_1, frag_2, frag_3]
+
+	return FragmentTree(data=fragments, rep_type="ratio")
+
+@pytest.fixture
 def fake_fragment_dataset():
 	g1 = GeneralFragment([3.0, 1.5, 1.5, 0.75, 0.75])
 	g2 = GeneralFragment([1.5, 1.0])
@@ -98,6 +107,9 @@ def test_greek_metric_tree_instantiation(greek_ratio_tree, greek_difference_tree
 
 	assert not(any(x == None for x in found_rtree))
 	assert not(any(x == None for x in found_dtree))
+
+def test_fragment_tree_size(small_fragment_tree):
+	assert small_fragment_tree.size() == 7
 
 def test_filter(fake_fragment_dataset):
 	filtered = filter_data(fake_fragment_dataset)

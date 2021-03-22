@@ -9,6 +9,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ### Fixed
 - Additional bugfixes for slur constraint in ``get_path`` (causing infinite runtime). 
+- Issue #19 referenced a fault Nary tree size. It appears to be fixed, but I added a test. 
 
 ## [v0.8.1] March 20, 2021
 ### Added
