@@ -109,13 +109,13 @@ def sources_and_sinks(data):
 
 def best_source_and_sink(data):
 	sources, sinks = sources_and_sinks(data)
+	curr_best_source = sources[0]
+	curr_best_sink = sinks[0]
+	
 	if len(sources) == 1:
-		curr_best_source = sources[0]
-	elif len(sinks) == 1:
-		curr_best_sink = sinks[0]
+		pass
 	else:
 		lowest_point = min(sources, key=lambda x: x["onset_range"][0])["onset_range"][0]
-		curr_best_source = sources[0]
 		for source in sources:
 			if source["onset_range"][0] == lowest_point:
 				if source["fragment"].num_onsets > curr_best_source["fragment"].num_onsets:
@@ -123,7 +123,9 @@ def best_source_and_sink(data):
 			else:
 				continue
 
-		curr_best_sink = sinks[0]
+	if len(sinks) == 1:
+		pass
+	else:
 		for sink in sinks:
 			if sink["fragment"].num_onsets > curr_best_sink["fragment"].num_onsets:
 				curr_best_sink = sink

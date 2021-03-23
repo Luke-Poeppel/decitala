@@ -14,7 +14,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ### Fixed
 - Missing import bug in ``vis.annotate_score``. 
-- Issues #53: duplicates in logs caused by saved handlers; 
+- Issues #53: duplicates in logs caused by saved handlers; #100: `path_finder` bug related to `curr_best_sink`; 
 
 ## [v0.8.4] March 22, 2021
 ### Fixed

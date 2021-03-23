@@ -70,11 +70,6 @@ def create_tree_diagram(FragmentTree, path=None, pdf_path=None, verbose=False):
 	:return: folder at the provided path containing an index.html file which has a visualization
 			of the provided :obj:`~decitala.trees.FragmentTree`.
 	"""
-	try:
-		raise Exception("A diagram already exists at that location ✔")
-	except TypeError:
-		pass
-
 	if verbose:
 		logger = get_logger(name=__name__, print_to_console=True)
 	else:
