@@ -77,9 +77,9 @@ multiplicative_augmentations = [
 	['Triple', 4],
 ]
 
- PRIMES = [
+PRIMES = [
 	2, 3, 5, 7, 11,
- 	13, 17, 19, 23,
+	13, 17, 19, 23,
 	29, 31, 37, 41,
 	43, 47, 53, 59,
 	61, 67, 71, 73,
@@ -753,7 +753,7 @@ def measure_by_measure_time_signatures(filepath):
 	Returns list of meter.TimeSignature objects from music21 for each measure of an input
 	stream. 
 	"""
-	converted = converter.parse(f)
+	converted = converter.parse(filepath)
 	p = converted.parts[0]
 	ts = []
 	for i, this_measure in enumerate(p.getElementsByClass(stream.Measure), start=1):
@@ -764,6 +764,7 @@ def measure_by_measure_time_signatures(filepath):
 			pass
 		else:
 			ts.append(ts[-1])
+	return ts
 
 ####################################################################################################
 # Pitch Contour
