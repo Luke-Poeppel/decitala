@@ -17,6 +17,8 @@ from more_itertools import consecutive_groups, windowed, powerset
 from scipy.linalg import norm
 
 from music21 import converter
+from music21 import stream
+from music21.meter import TimeSignature
 
 from . import fragment
 
@@ -43,7 +45,8 @@ __all__ = [
 	"filter_sub_fragments",
 	"pitch_content_to_contour",  # Pitch Content
 	"contour_to_prime_contour",
-	"loader"
+	"loader",
+	"measure_by_measure_time_signatures"
 ]
 
 """
@@ -72,6 +75,15 @@ multiplicative_augmentations = [
 	['Classique', 2],
 	['Double', 3],
 	['Triple', 4],
+]
+
+ PRIMES = [
+	2, 3, 5, 7, 11,
+ 	13, 17, 19, 23,
+	29, 31, 37, 41,
+	43, 47, 53, 59,
+	61, 67, 71, 73,
+	79, 83, 89, 97
 ]
 
 ####################################################################################################
@@ -735,6 +747,23 @@ def filter_sub_fragments(data, filter_in_retrograde=True):
 
 	filtered_names = [x.name for x in just_fragments if not(_check_all(x))]
 	return [x for x in data if x["fragment"].name in filtered_names]
+
+def measure_by_measure_time_signatures(filepath):
+	"""
+	Returns list of meter.TimeSignature objects from music21 for each measure of an input
+	stream. 
+	"""
+	converted = converter.parse(f)
+	p = converted.parts[0]
+	ts = []
+	for i, this_measure in enumerate(p.getElementsByClass(stream.Measure), start=1):
+		for this_obj in this_measure.recurse().iter:
+			if type(this_obj) == TimeSignature:
+				ts.append(this_obj)
+		if i == len(ts):
+			pass
+		else:
+			ts.append(ts[-1])
 
 ####################################################################################################
 # Pitch Contour
