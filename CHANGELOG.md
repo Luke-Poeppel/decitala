@@ -9,6 +9,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added private ``remake_analysis_files.py`` for remaking the analysis files in each release. 
 - WIP: Added testing to improve coverage (46%-). 
 - Added `utils.measure_by_measure_time_signatures` function for for extracting measure-by-measure time signatures. 
+- Added `utils.is_octatonic_collection` function for checking if pitch content belongs to one of the two octatonic collections. 
 
 ### Changed
 - Improved ``fragment.py``'s ``FragmentEncoder`` and ``FragmentDecoder`` classes with better logic; this fixes #99: incorrect ``frag_type`` in the JSON encoding. 

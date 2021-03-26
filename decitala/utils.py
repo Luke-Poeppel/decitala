@@ -46,7 +46,8 @@ __all__ = [
 	"pitch_content_to_contour",  # Pitch Content
 	"contour_to_prime_contour",
 	"loader",
-	"measure_by_measure_time_signatures"
+	"measure_by_measure_time_signatures",
+	"is_octatonic_collection"
 ]
 
 """
@@ -960,6 +961,15 @@ def contour_to_prime_contour(contour, include_depth=False):
 		return pitch_content_to_contour(prime_contour)
 	else:
 		return (pitch_content_to_contour(prime_contour), depth)
+
+def is_octatonic_collection(pitch_content):
+	"""
+	Function for checking if pitch content belongs to one of the two octatonic collections. 
+	"""
+	o1 = [x.pitchClass for x in scale.OctatonicScale(tonic=pitch.Pitch(pitch_content[0]), mode=1).getPitches()]
+	o2 = [x.pitchClass for x in scale.OctatonicScale(tonic=pitch.Pitch(pitch_content[0]), mode=2).getPitches()]
+	
+	return all(pitch.Pitch(x).pitchClass in o1 or pitch.Pitch(x).pitchClass in o2 for x in pitch_content)
 
 ####################################################################################################
 # Math helpers
