@@ -17,6 +17,8 @@ from more_itertools import consecutive_groups, windowed, powerset
 from scipy.linalg import norm
 
 from music21 import converter
+from music21 import pitch
+from music21 import scale
 from music21 import stream
 from music21.meter import TimeSignature
 
@@ -965,11 +967,22 @@ def contour_to_prime_contour(contour, include_depth=False):
 def is_octatonic_collection(pitch_content):
 	"""
 	Function for checking if pitch content belongs to one of the two octatonic collections. 
+
+	>>> is_octatonic_collection([60, 62, 64, 66, 68])
+	False
+	>>> is_octatonic_collection([60, 61, 63, 64, 66])
+	True
 	"""
-	o1 = [x.pitchClass for x in scale.OctatonicScale(tonic=pitch.Pitch(pitch_content[0]), mode=1).getPitches()]
+	o1 = set([x.pitchClass for x in scale.OctatonicScale(tonic=pitch.Pitch(pitch_content[0]), mode=1).getPitches()])
 	o2 = [x.pitchClass for x in scale.OctatonicScale(tonic=pitch.Pitch(pitch_content[0]), mode=2).getPitches()]
 	
-	return all(pitch.Pitch(x).pitchClass in o1 or pitch.Pitch(x).pitchClass in o2 for x in pitch_content)
+	pc_set = set([pitch.Pitch(x).pitchClass for x in pitch_content])
+	if pc_set.issubset(o1):
+		return True
+	elif pc_set.issubset(o2):
+		return True
+	else:
+		return False
 
 ####################################################################################################
 # Math helpers
