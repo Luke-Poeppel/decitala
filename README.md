@@ -9,9 +9,9 @@ The ``decitala`` package aims to make rhythmic analysis of Olivier Messiaen's mu
 
 <img src="sangitaa_image.png" height="350" width="660" style="border: 2px solid">
 
-**Page introducting the desītālas in** _Tālādhyāya_ **of the Saṅgītaratnākara**. 
+**The Kalānidhih commentary on the opening of Śārngadeva's desītāla definitions (appearing in the** _Tālādhyāya_ **of the Saṅgītaratnākara**. 
 
-_"To introduce the tālas gradually, their characteristics––having been promised––are thus explained –– lightly: One laghu (|) āditāla (1) two drutas, one laghu (o o |) the dvitiya tāla (2) one druta, two druta viramas (o oc oc) the tṛtīya tāla (3) two laghus, one druta (| | o) the caturtha tāla (4) both of them drutas (o o) pacchamaḥ (5) two plutas, two gurus, one laghu (Sc Sc S S |) niḥśaṅkalīla (6) |"_ (Translation by Luke Poeppel)
+-_"From the Sūtra beginning with 'laghu': having promised the tālas definition, he explains them sequentially. One laghu (|) āditāla (1) two drutas, one laghu (o o |) the dvitiya tāla (2) one druta, two druta viramas (o oc oc) the tṛtīya tāla (3) two laghus, one druta (| | o) the caturtha tāla (4) both of them drutas (o o) pacchamaḥ (5) two plutas, two gurus, one laghu (Sc Sc S S |) niḥśaṅkalīlaḥ (6) |"_ (Translation by Luke Poeppel)
 
 ### Documentation
 Available at: https://luke-poeppel.github.io/decitala/.
