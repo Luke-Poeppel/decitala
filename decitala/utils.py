@@ -48,6 +48,7 @@ __all__ = [
 	"pitch_content_to_contour",  # Pitch Content
 	"contour_to_prime_contour",
 	"loader",
+	"write_analysis", 
 	"measure_by_measure_time_signatures",
 	"is_octatonic_collection"
 ]
@@ -1029,3 +1030,12 @@ def loader(filepath):
 	with open(filepath) as file_json:
 		data = json.load(file_json, cls=fragment.FragmentDecoder)
 		return data
+
+def write_analysis(data, filepath):
+	"""
+	Function for writing an `analysis` to JSON. 
+
+	:param list data: 
+	"""
+	with open(filename, "w") as output:
+		json.dump(obj=data, fp=output, cls=fragment.FragmentEncoder, ensure_ascii=False, indent=4)
