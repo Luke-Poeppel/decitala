@@ -1037,5 +1037,5 @@ def write_analysis(data, filepath):
 
 	:param list data: 
 	"""
-	with open(filename, "w") as output:
+	with open(filepath, "w") as output:
 		json.dump(obj=data, fp=output, cls=fragment.FragmentEncoder, ensure_ascii=False, indent=4)
