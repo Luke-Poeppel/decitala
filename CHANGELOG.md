@@ -8,11 +8,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Function for annotating a score with the extracted data: ``vis.annotate_score``. 
 - Added private ``remake_analysis_files.py`` for remaking the analysis files in each release. 
 - WIP: Added testing to improve coverage (46%-). 
-- Added `utils.measure_by_measure_time_signatures` function for for extracting measure-by-measure time signatures. 
-- Added `utils.is_octatonic_collection` function for checking if pitch content belongs to one of the two octatonic collections. 
-- Added `utils.write_analysis` for writing analysis files. 
-- Added `utils.net_ql_array` for returning all quarter length values in a given composition as a vector. 
-- Added `utils.transform_to_time_scale` for getting the time-scale notation of quarter length array. 
+- Added various utility functions: `utils.measure_by_measure_time_signatures` (for for extracting measure-by-measure time signatures); `utils.is_octatonic_collection` (for checking if pitch content belongs to one of the two octatonic collections); `utils.write_analysis` (for writing analysis JSON files); `utils.net_ql_array` (for returning all quarter length values in a given composition as a vector); `utils.transform_to_time_scale` (for getting the time-scale notation of quarter length array).
+- Added `PRIMES` variable to `utils.py` for storing primes <100.  
 
 ### Changed
 - Improved ``fragment.py``'s ``FragmentEncoder`` and ``FragmentDecoder`` classes with better logic; this fixes #99: incorrect ``frag_type`` in the JSON encoding. 
