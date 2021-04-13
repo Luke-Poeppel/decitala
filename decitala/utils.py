@@ -4,7 +4,7 @@
 #
 # Author:   Luke Poeppel
 #
-# Location: Kent, CT 2020 / Frankfurt, DE 2020
+# Location: Kent, CT 2020 / Frankfurt, DE 2020 / NYC, 2021
 ####################################################################################################
 import copy
 import json
@@ -93,7 +93,8 @@ PRIMES = [
 ]
 
 ####################################################################################################
-# Logging
+# LOGGING
+####################################################################################################
 def get_logger(name, print_to_console=True, write_to_file=None):
 	logger = logging.getLogger(name)
 	if not len(logger.handlers):
@@ -109,7 +110,8 @@ def get_logger(name, print_to_console=True, write_to_file=None):
 	return logger
 
 ####################################################################################################
-# Notational Conversion Functions
+# NOTATION CONVERSION
+####################################################################################################
 def carnatic_string_to_ql_array(string_):
 	"""
 	:param str string_: string of carnatic durations separated by spaces.
@@ -175,7 +177,8 @@ def ql_array_to_greek_diacritics(ql_array):
 	return ' '.join(greek_string_lst)
 
 ####################################################################################################
-# Rhythm helpers
+# RHYTHM
+####################################################################################################
 def augment(fragment, factor=1.0, difference=0.0):
 	"""
 	Returns an augmentation in the style of Messiaen. If difference is set to 0.0, then the
@@ -337,7 +340,8 @@ def removeAddedValuesFromList(lst):
 	return lst
 
 ####################################################################################################
-# Subdivision
+# SUBDIVISION
+####################################################################################################
 def find_clusters(input_, data_mode=False):
 	"""
 	Finds the regions with consecutive equal elements.
@@ -533,7 +537,8 @@ def transform_to_time_scale(ql_array):
 	return np.array(result_out)
 
 ####################################################################################################
-# Windowing
+# WINDOWING / PARTITIONING
+####################################################################################################
 def roll_window(array, window_length, fn=None):
 	"""
 	Takes in a list and returns a numpy vstack holding rolling windows of length ``window_length``.
@@ -596,7 +601,8 @@ def power_list(data):
 	return [x for x in power_list if len(x) != 0]
 
 ####################################################################################################
-# Score helpers
+# SCORE HELPERS
+####################################################################################################
 def get_object_indices(filepath, part_num):
 	"""
 	Returns data of the form [(object, (start, end)), ...] for a given file path and part number.
@@ -827,7 +833,8 @@ def measure_by_measure_time_signatures(filepath):
 	return ts
 
 ####################################################################################################
-# Pitch Contour
+# PITCH CONTOUR
+####################################################################################################
 def pitch_content_to_contour(pitch_content, as_str=False):
 	"""
 	This function calculates the pitch contour information from data out of rolling_search.
@@ -1042,7 +1049,8 @@ def is_octatonic_collection(pitch_content):
 		return False
 
 ####################################################################################################
-# Math helpers
+# MATH HELPERS
+####################################################################################################
 def cauchy_schwartz(vector1, vector2):
 	"""
 	Tests the Cauchy-Schwartz inequality on two vectors. Namely, if the absolute value of
@@ -1074,6 +1082,8 @@ def cauchy_schwartz(vector1, vector2):
 	assert len(vector1) == len(vector2)
 	return abs(np.dot(vector1, vector2)) < (norm(vector1) * norm(vector2))
 
+####################################################################################################
+# JSON WRITING / LOADING
 ####################################################################################################
 def loader(filepath):
 	"""

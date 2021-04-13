@@ -9,6 +9,7 @@
 ####################################################################################################
 import json
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import os
 import shutil
 import subprocess
@@ -31,6 +32,8 @@ __all__ = [
 FONTNAME = 'Times'
 FONTSIZE_TITLE = 14
 FONTSIZE_LABEL = 14
+
+mpl.style.use("seaborn")
 
 ####################################################################################################
 def _prepare_docs_and_screenshot(path, serialized_tree, logger):
@@ -176,3 +179,30 @@ def annotate_score(
 				this_obj.style.color = "red"
 
 	return converted
+
+def result_bar_plot(
+		data_in, 
+		title=None,
+		save_filepath=None
+	):
+	if type(data_in) == list:
+		fragments = [x["fragment"].name for x in data_in]
+	elif type(data_in) == str:
+		assert os.path.isfile(data_in)
+		loaded = loader(data_in)
+		fragments = [x[0].name for x in loaded]
+	
+	counter = Counter(fragments)
+
+	if title:
+		plt.title(title, fontname="Times", fontsize=14)
+	
+	plt.xlabel("Fragment", fontname="Times", fontsize=12)
+	plt.ylabel("Count (n)", fontname="Times", fontsize=12)
+	plt.yticks(list(range(0, max(counter.values())+1)))
+	
+	if len(counter.keys()) == 2:
+		plt.xlim(-0.5,1.5)
+		
+	plt.bar(counter.keys(), counter.values(), width=0.3, color="k")
+	return plt
