@@ -3,3 +3,7 @@ omit =
     tests/*
     decitala/cli.py
     decitala/vis.py
+    remake_analysis_files.py
+    setup.py
+
+source = .
