@@ -33,6 +33,7 @@ __all__ = [
 	"successive_ratio_array",
 	"successive_difference_array",
 	"get_added_values",
+	"net_ql_array",
 	"find_clusters",  # Misc.
 	"find_possible_superdivisions",
 	"roll_window",
@@ -475,6 +476,22 @@ def find_possible_superdivisions(array):
 		possible_super_divisions.append(superdivision)
 
 	return possible_super_divisions
+
+def net_ql_array(filepath, part_num, include_rests=False):
+	"""
+	Function for retrieving an array 
+	"""
+	converted = converter.parse(filepath)
+	stripped = converted.parts[part_num].flat.stripTies()
+	qls = []
+	if not(include_rests):
+		for obj in stripped.iter.notes:
+			qls.append(obj.quarterLength)
+	else:
+		for obj in stripped.iter.notesAndRests:
+			qls.append(obj.quarterLength)
+
+	return np.array(qls)
 
 ####################################################################################################
 # Windowing
