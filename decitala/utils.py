@@ -477,9 +477,9 @@ def find_possible_superdivisions(array):
 
 	return possible_super_divisions
 
-def net_ql_array(filepath, part_num, include_rests=False):
+def net_ql_array(filepath, part_num, include_rests=False, ignore_grace_notes=True):
 	"""
-	Function for retrieving an array 
+	Function for retrieving all quarter lengths from a part number in a filepath. 
 	"""
 	converted = converter.parse(filepath)
 	stripped = converted.parts[part_num].flat.stripTies()
@@ -490,6 +490,9 @@ def net_ql_array(filepath, part_num, include_rests=False):
 	else:
 		for obj in stripped.iter.notesAndRests:
 			qls.append(obj.quarterLength)
+
+	if ignore_grace_notes is True:
+		qls = [x for x in qls if x != 0]
 
 	return np.array(qls)
 
