@@ -12,6 +12,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added `utils.is_octatonic_collection` function for checking if pitch content belongs to one of the two octatonic collections. 
 - Added `utils.write_analysis` for writing analysis files. 
 - Added `utils.net_ql_array` for returning all quarter length values in a given composition as a vector. 
+- Added `utils.transform_to_time_scale` for getting the time-scale notation of quarter length array. 
 
 ### Changed
 - Improved ``fragment.py``'s ``FragmentEncoder`` and ``FragmentDecoder`` classes with better logic; this fixes #99: incorrect ``frag_type`` in the JSON encoding. 

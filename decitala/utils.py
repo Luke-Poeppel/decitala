@@ -34,6 +34,7 @@ __all__ = [
 	"successive_difference_array",
 	"get_added_values",
 	"net_ql_array",
+	"transform_to_time_scale",
 	"find_clusters",  # Misc.
 	"find_possible_superdivisions",
 	"roll_window",
@@ -495,6 +496,41 @@ def net_ql_array(filepath, part_num, include_rests=False, ignore_grace_notes=Tru
 		qls = [x for x in qls if x != 0]
 
 	return np.array(qls)
+
+def transform_to_time_scale(ql_array):
+	"""
+	Transforms a quarter length array to time-scale (binary) notation. 
+
+	>>> udikshana = Decitala("Udikshana")
+	>>> transform_to_time_scale(ql_array=udikshana.ql_array())
+	array([1, 1, 0, 0, 1, 1, 1, 0])
+	"""
+	total_durations = []
+	shortest_value = min(ql_array)
+	if all(map(lambda x: x % shortest_value == 0, ql_array)):
+		total_durations = np.array([(x / shortest_value) for x in ql_array])
+	else:
+		i = 2
+		# This upper bound is arbitrary; something between 4 and 10 should suffice.
+		while i < 6: 
+			if all(map(lambda x: (x % (shortest_value / i)).is_integer(), ql_array)):
+				total_durations = np.array([(x / (shortest_value / i)) for x in ql_array])
+				break
+			else:
+				i += 1
+
+	if len(total_durations) == 0:
+		raise Exception("Something is wrong with the input quarter lengths!")
+
+	result_out = []
+	for this_elem in total_durations:
+		if this_elem == 1.0:
+			result_out.extend([1])
+		else:
+			result_out.extend([1])
+			result_out.extend([0] * (int(this_elem) - 1))
+
+	return np.array(result_out)
 
 ####################################################################################################
 # Windowing
