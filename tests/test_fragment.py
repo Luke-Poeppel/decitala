@@ -1,5 +1,6 @@
 import os
 import random
+import numpy as np
 
 from decitala.fragment import (
 	Decitala,
@@ -77,4 +78,9 @@ def test_id_num():
 def test_decitala_carnatic_string():
 	rajacudamani = Decitala("Rajacudamani")
 	predicted = "o o | | | o o | S"
-	assert rajacudamani.carnatic_string == predicted 
+	assert rajacudamani.carnatic_string == predicted
+
+def test_dseg():
+	frag = GeneralFragment([1.0, 1.0, 2.0, 2.0, 3.0, 0.125, 1.0, 0.5, 4.0])
+	predicted = np.array([2, 2, 3, 3, 4, 0, 2, 1, 5])
+	assert np.array_equal(predicted, frag.dseg())
