@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>utils &mdash; decitala 0.8.4 documentation</title>
+  <title>utils &mdash; decitala 0.9.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.8.4
+                0.9.0
               </div>
             
           
@@ -299,6 +299,25 @@ we set the first value to 1.0.</p>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">successive_difference_array</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">])</span>
 <span class="go">array([ 0.  ,  0.  ,  0.5 ,  0.  , -0.25,  0.5 ,  0.5 ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.net_ql_array">
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">net_ql_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_rests</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_grace_notes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#net_ql_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.net_ql_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for retrieving all quarter lengths from a part number in a filepath.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.transform_to_time_scale">
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">transform_to_time_scale</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ql_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#transform_to_time_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.transform_to_time_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a quarter length array to time-scale (binary) notation.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">udikshana</span> <span class="o">=</span> <span class="n">fragment</span><span class="o">.</span><span class="n">Decitala</span><span class="p">(</span><span class="s2">&quot;Udikshana&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">udikshana</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()</span>
+<span class="go">array([0.5, 0.5, 1. ])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">transform_to_time_scale</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="n">udikshana</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
+<span class="go">array([1, 1, 1, 0])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -677,6 +696,48 @@ are flagged as maxima or minima.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">contour_d</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour_d</span><span class="p">,</span> <span class="n">include_depth</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="go">array([0, 1, 1])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.loader">
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">loader</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#loader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Useful function for loading analyses into native python format (from a json).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filepath</strong> (<em>str</em>) – path to analysis file in the databases/analyses directory.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>analysis in native python types. Fragments and their associated onset range.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.write_analysis">
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">write_analysis</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#write_analysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.write_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for writing an <cite>analysis</cite> to JSON.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.measure_by_measure_time_signatures">
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">measure_by_measure_time_signatures</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#measure_by_measure_time_signatures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.measure_by_measure_time_signatures" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns list of meter.TimeSignature objects from music21 for each measure of an input
+stream.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.is_octatonic_collection">
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">is_octatonic_collection</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pitch_content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#is_octatonic_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.is_octatonic_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for checking if pitch content belongs to one of the two octatonic collections.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">is_octatonic_collection</span><span class="p">([</span><span class="mi">60</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="mi">68</span><span class="p">])</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">is_octatonic_collection</span><span class="p">([</span><span class="mi">60</span><span class="p">,</span> <span class="mi">61</span><span class="p">,</span> <span class="mi">63</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">66</span><span class="p">])</span>
+<span class="go">True</span>
 </pre></div>
 </div>
 </dd></dl>

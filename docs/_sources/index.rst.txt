@@ -53,7 +53,25 @@ We define the following representations of a rhythm:
 
 Basic Usage
 ====================================
-Coming soon! 
+Normally, this package is used to find "paths" of rhythms through a given composition, the rhythms
+coming from a dataset. To calculate a path, you can simply use the following:
+.. code-block:: python
+
+   >>> composition = "/Users/lukepoeppel/decitala/tests/static/Shuffled_Transcription_1.xml"
+   >>> from decitala.search import path_finder
+   >>> path = path_finder(
+   ...   filename=composition,
+   ...   part_num=0,
+   ...   frag_type="greek_foot",
+   ...   slur_constraint=True
+   ... )
+   >>> for fragment in path:
+   ...   print(fragment["fragment"], fragment["onset_range"])
+   ...
+   <fragment.GreekFoot Peon_IV> (0.0, 0.625)
+   <fragment.GreekFoot Iamb> (0.875, 1.25)
+   <fragment.GreekFoot Peon_IV> (1.25, 1.875)
+   <fragment.GreekFoot Peon_IV> (2.375, 3.0)
 
 .. toctree::
    :maxdepth: 2

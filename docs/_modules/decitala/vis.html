@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.vis &mdash; decitala 0.8.4 documentation</title>
+  <title>decitala.vis &mdash; decitala 0.9.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.8.4
+                0.9.0
               </div>
             
           
@@ -177,25 +177,33 @@
 <span class="c1">####################################################################################################</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">converter</span>
+
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">trees</span>  <span class="c1"># To avoid circular dependency.</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">get_logger</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">get_logger</span><span class="p">,</span> <span class="n">loader</span>
 
 <span class="n">here</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
 <span class="n">treant_templates</span> <span class="o">=</span> <span class="n">here</span> <span class="o">+</span> <span class="s2">&quot;/treant_templates&quot;</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
 	<span class="s2">&quot;create_tree_diagram&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;fragment_roll&quot;</span>
+	<span class="s2">&quot;fragment_roll&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;annotate_score&quot;</span>
 <span class="p">]</span>
 
 <span class="n">FONTNAME</span> <span class="o">=</span> <span class="s1">&#39;Times&#39;</span>
 <span class="n">FONTSIZE_TITLE</span> <span class="o">=</span> <span class="mi">14</span>
 <span class="n">FONTSIZE_LABEL</span> <span class="o">=</span> <span class="mi">14</span>
+
+<span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;seaborn&quot;</span><span class="p">)</span>
 
 <span class="c1">####################################################################################################</span>
 <span class="k">def</span> <span class="nf">_prepare_docs_and_screenshot</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">serialized_tree</span><span class="p">,</span> <span class="n">logger</span><span class="p">):</span>
@@ -235,11 +243,6 @@
 <span class="sd">	:return: folder at the provided path containing an index.html file which has a visualization</span>
 <span class="sd">			of the provided :obj:`~decitala.trees.FragmentTree`.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">try</span><span class="p">:</span>
-		<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;A diagram already exists at that location ✔&quot;</span><span class="p">)</span>
-	<span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-		<span class="k">pass</span>
-
 	<span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
 		<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">print_to_console</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 	<span class="k">else</span><span class="p">:</span>
@@ -323,6 +326,56 @@
 	<span class="k">if</span> <span class="n">save</span><span class="p">:</span>
 		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">plt</span></div>
+
+<div class="viewcode-block" id="annotate_score"><a class="viewcode-back" href="../../mods/vis.html#decitala.vis.annotate_score">[docs]</a><span class="k">def</span> <span class="nf">annotate_score</span><span class="p">(</span>
+		<span class="n">data</span><span class="p">,</span>
+		<span class="n">filein</span><span class="p">,</span>
+		<span class="n">part_num</span><span class="p">,</span>
+	<span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for annotating a score with data.</span>
+
+<span class="sd">	:param list data: output of the form from a rolling search.</span>
+<span class="sd">	:param str filein: input file to convert.</span>
+<span class="sd">	:param int part_num: part number.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">converted</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">filein</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">this_obj</span> <span class="ow">in</span> <span class="n">converted</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notes</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+				<span class="n">this_obj</span><span class="o">.</span><span class="n">lyric</span> <span class="o">=</span> <span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+				<span class="n">this_obj</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>
+			<span class="k">elif</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="n">this_fragment</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">:</span>
+				<span class="n">this_obj</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
+
+	<span class="k">return</span> <span class="n">converted</span></div>
+
+<span class="k">def</span> <span class="nf">result_bar_plot</span><span class="p">(</span>
+		<span class="n">data_in</span><span class="p">,</span>
+		<span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+		<span class="n">save_filepath</span><span class="o">=</span><span class="kc">None</span>
+	<span class="p">):</span>
+	<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">data_in</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+		<span class="n">fragments</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data_in</span><span class="p">]</span>
+	<span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">data_in</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+		<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">data_in</span><span class="p">)</span>
+		<span class="n">loaded</span> <span class="o">=</span> <span class="n">loader</span><span class="p">(</span><span class="n">data_in</span><span class="p">)</span>
+		<span class="n">fragments</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">loaded</span><span class="p">]</span>
+
+	<span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">fragments</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">title</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+
+	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Fragment&quot;</span><span class="p">,</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Count (n)&quot;</span><span class="p">,</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">)</span>
+
+	<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">counter</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">plt</span>
 </pre></div>
 
            </div>
