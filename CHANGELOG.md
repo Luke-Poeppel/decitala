@@ -3,21 +3,22 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.9.0] ???
+## [v0.9.0] April 14, 2021
 ### Added
 - Function for annotating a score with the extracted data: ``vis.annotate_score``. 
 - Added private ``remake_analysis_files.py`` for remaking the analysis files in each release. 
-- WIP: Added testing to improve coverage (46%-). 
+- Added testing to improve coverage (46%-50%). 
 - Added various utility functions: `utils.measure_by_measure_time_signatures` (for for extracting measure-by-measure time signatures); `utils.is_octatonic_collection` (for checking if pitch content belongs to one of the two octatonic collections); `utils.write_analysis` (for writing analysis JSON files); `utils.net_ql_array` (for returning all quarter length values in a given composition as a vector); `utils.transform_to_time_scale` (for getting the time-scale notation of quarter length array).
 - Added `PRIMES` variable to `utils.py` for storing primes <100. 
 - Added `vis.result_bar_plot` for plotting the counts of the extracted fragments in a `path_finder` list or analysis JSON (#105).
-- WIP: Added `Theorie_Karnatique` dataset to the optional fragments. 
+- Added the first class of the `Theorie_Karnatique` dataset (Tiśra) to the `fragments` directory. These are not yet integrated into the `fragments` module.  
 
 ### Changed
 - Improved ``fragment.py``'s ``FragmentEncoder`` and ``FragmentDecoder`` classes with better logic; this fixes #99: incorrect ``frag_type`` in the JSON encoding. 
 
 ### Fixed
 - Missing import bug in ``vis.annotate_score``. 
+- README: incorrect installation notes in README, improved translation to the commentary. 
 - Issues #53: duplicates in logs caused by saved handlers; #100: `path_finder` bug related to `curr_best_sink`; 
 
 ## [v0.8.4] March 22, 2021
