@@ -505,9 +505,11 @@ def transform_to_time_scale(ql_array):
 	"""
 	Transforms a quarter length array to time-scale (binary) notation. 
 
-	>>> udikshana = Decitala("Udikshana")
+	>>> udikshana = fragment.Decitala("Udikshana")
+	>>> udikshana.ql_array()
+	array([0.5, 0.5, 1. ])
 	>>> transform_to_time_scale(ql_array=udikshana.ql_array())
-	array([1, 1, 0, 0, 1, 1, 1, 0])
+	array([1, 1, 1, 0])
 	"""
 	total_durations = []
 	shortest_value = min(ql_array)
