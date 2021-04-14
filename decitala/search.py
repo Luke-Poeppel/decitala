@@ -563,6 +563,9 @@ def path_finder(
 		table=ht,
 		ignore_single_anga_class_fragments=ignore_single_anga_class_fragments
 	)
+	if not fragments:
+		return None
+
 	distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
 		fragments,
 		weights={
