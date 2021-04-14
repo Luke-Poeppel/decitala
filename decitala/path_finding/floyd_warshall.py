@@ -111,7 +111,7 @@ def best_source_and_sink(data):
 	sources, sinks = sources_and_sinks(data)
 	curr_best_source = sources[0]
 	curr_best_sink = sinks[0]
-	
+
 	if len(sources) == 1:
 		pass
 	else:

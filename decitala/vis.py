@@ -15,10 +15,12 @@ import shutil
 import subprocess
 import tempfile
 
+from collections import Counter
+
 from music21 import converter
 
 from . import trees  # To avoid circular dependency.
-from .utils import get_logger
+from .utils import get_logger, loader
 
 here = os.path.abspath(os.path.dirname(__file__))
 treant_templates = here + "/treant_templates"
@@ -163,11 +165,11 @@ def annotate_score(
 		part_num,
 	):
 	"""
-	Function for annotating a score with data. 
+	Function for annotating a score with data.
 
-	:param list data: output of the form from a rolling search. 
-	:param str filein: input file to convert. 
-	:param int part_num: part number. 
+	:param list data: output of the form from a rolling search.
+	:param str filein: input file to convert.
+	:param int part_num: part number.
 	"""
 	converted = converter.parse(filein)
 	for this_fragment in data:
@@ -181,7 +183,7 @@ def annotate_score(
 	return converted
 
 def result_bar_plot(
-		data_in, 
+		data_in,
 		title=None,
 		save_filepath=None
 	):
@@ -191,18 +193,18 @@ def result_bar_plot(
 		assert os.path.isfile(data_in)
 		loaded = loader(data_in)
 		fragments = [x[0].name for x in loaded]
-	
+
 	counter = Counter(fragments)
 
 	if title:
 		plt.title(title, fontname="Times", fontsize=14)
-	
+
 	plt.xlabel("Fragment", fontname="Times", fontsize=12)
 	plt.ylabel("Count (n)", fontname="Times", fontsize=12)
-	plt.yticks(list(range(0, max(counter.values())+1)))
-	
+	plt.yticks(list(range(0, max(counter.values()) + 1)))
+
 	if len(counter.keys()) == 2:
-		plt.xlim(-0.5,1.5)
-		
+		plt.xlim(-0.5, 1.5)
+
 	plt.bar(counter.keys(), counter.values(), width=0.3, color="k")
 	return plt

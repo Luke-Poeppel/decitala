@@ -50,7 +50,7 @@ __all__ = [
 	"pitch_content_to_contour",  # Pitch Content
 	"contour_to_prime_contour",
 	"loader",
-	"write_analysis", 
+	"write_analysis",
 	"measure_by_measure_time_signatures",
 	"is_octatonic_collection"
 ]
@@ -484,7 +484,7 @@ def find_possible_superdivisions(array):
 
 def net_ql_array(filepath, part_num, include_rests=False, ignore_grace_notes=True):
 	"""
-	Function for retrieving all quarter lengths from a part number in a filepath. 
+	Function for retrieving all quarter lengths from a part number in a filepath.
 	"""
 	converted = converter.parse(filepath)
 	stripped = converted.parts[part_num].flat.stripTies()
@@ -503,7 +503,7 @@ def net_ql_array(filepath, part_num, include_rests=False, ignore_grace_notes=Tru
 
 def transform_to_time_scale(ql_array):
 	"""
-	Transforms a quarter length array to time-scale (binary) notation. 
+	Transforms a quarter length array to time-scale (binary) notation.
 
 	>>> udikshana = fragment.Decitala("Udikshana")
 	>>> udikshana.ql_array()
@@ -518,7 +518,7 @@ def transform_to_time_scale(ql_array):
 	else:
 		i = 2
 		# This upper bound is arbitrary; something between 4 and 10 should suffice.
-		while i < 6: 
+		while i < 6:
 			if all(map(lambda x: (x % (shortest_value / i)).is_integer(), ql_array)):
 				total_durations = np.array([(x / (shortest_value / i)) for x in ql_array])
 				break
@@ -819,7 +819,7 @@ def filter_sub_fragments(data, filter_in_retrograde=True):
 def measure_by_measure_time_signatures(filepath):
 	"""
 	Returns list of meter.TimeSignature objects from music21 for each measure of an input
-	stream. 
+	stream.
 	"""
 	converted = converter.parse(filepath)
 	p = converted.parts[0]
@@ -1032,16 +1032,16 @@ def contour_to_prime_contour(contour, include_depth=False):
 
 def is_octatonic_collection(pitch_content):
 	"""
-	Function for checking if pitch content belongs to one of the two octatonic collections. 
+	Function for checking if pitch content belongs to one of the two octatonic collections.
 
 	>>> is_octatonic_collection([60, 62, 64, 66, 68])
 	False
 	>>> is_octatonic_collection([60, 61, 63, 64, 66])
 	True
 	"""
-	o1 = set([x.pitchClass for x in scale.OctatonicScale(tonic=pitch.Pitch(pitch_content[0]), mode=1).getPitches()])
-	o2 = [x.pitchClass for x in scale.OctatonicScale(tonic=pitch.Pitch(pitch_content[0]), mode=2).getPitches()]
-	
+	o1 = set([x.pitchClass for x in scale.OctatonicScale(tonic=pitch.Pitch(pitch_content[0]), mode=1).getPitches()]) # noqa 
+	o2 = set([x.pitchClass for x in scale.OctatonicScale(tonic=pitch.Pitch(pitch_content[0]), mode=2).getPitches()]) # noqa
+
 	pc_set = set([pitch.Pitch(x).pitchClass for x in pitch_content])
 	if pc_set.issubset(o1):
 		return True
@@ -1101,9 +1101,7 @@ def loader(filepath):
 
 def write_analysis(data, filepath):
 	"""
-	Function for writing an `analysis` to JSON. 
-
-	:param list data: 
+	Function for writing an `analysis` to JSON.
 	"""
 	with open(filepath, "w") as output:
 		json.dump(obj=data, fp=output, cls=fragment.FragmentEncoder, ensure_ascii=False, indent=4)
