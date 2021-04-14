@@ -1,3 +1,26 @@
+import numpy as np
+
+def cost(
+		vertex_1,
+		vertex_2,
+		weights
+	):
+	"""
+	Cost function used in the Floyd-Warshall Algorithm.
+
+	:param `~decitala.fragment.GeneralFragment` vertex_1: an object inheriting from
+			:obj:`~decitala.fragment.GeneralFragment`.
+	:param `~decitala.fragment.GeneralFragment` vertex_2: an object inheriting from
+			:obj:`~decitala.fragment.GeneralFragment`.
+	:param dict weights: weights used in the model. Must sum to 1. Requires "gap" and "onsets" values.
+	:return: cost of moving from ``vertex_1`` to ``vertex_2``.
+	:rtype: float
+	"""
+	gap = vertex_2["onset_range"][0] - vertex_1["onset_range"][1]
+	onsets = 1 / (vertex_1["fragment"].num_onsets + vertex_2["fragment"].num_onsets)
+	cost = (weights["gap"] * gap) + (weights["onsets"] * onsets)
+	return cost
+
 def floyd_warshall(
 		data,
 		weights,
@@ -41,21 +64,12 @@ def floyd_warshall(
 	# logger.info("Finished building initial matrix.")
 
 	# logger.info("Running Floyd-Warshall Algorithm...")
-	if verbose is True:
-		with Bar("Processing...", max=len(data), check_tty=False, hide_cursor=False) as bar:
-			for k in range(0, len(data)):
-				for i in range(0, len(data)):
-					for j in range(0, len(data)):
-						if dist_matrix[i][j] > dist_matrix[i][k] + dist_matrix[k][j]:
-							dist_matrix[i][j] = dist_matrix[i][k] + dist_matrix[k][j]
-							next_matrix[i][j] = next_matrix[i][k]
-				bar.next()
-	else:
-		for k in range(0, len(data)):
-			for i in range(0, len(data)):
-				for j in range(0, len(data)):
-					if dist_matrix[i][j] > dist_matrix[i][k] + dist_matrix[k][j]:
-						dist_matrix[i][j] = dist_matrix[i][k] + dist_matrix[k][j]
-						next_matrix[i][j] = next_matrix[i][k]
+
+	for k in range(0, len(data)):
+		for i in range(0, len(data)):
+			for j in range(0, len(data)):
+				if dist_matrix[i][j] > dist_matrix[i][k] + dist_matrix[k][j]:
+					dist_matrix[i][j] = dist_matrix[i][k] + dist_matrix[k][j]
+					next_matrix[i][j] = next_matrix[i][k]
 
 	return dist_matrix, next_matrix

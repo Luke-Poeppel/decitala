@@ -65,5 +65,6 @@ setup(
 		"console_scripts": [
 			"decitala = decitala.cli:decitala"
 		]
-	}
+	},
+	ext_modules=cythonize("decitala/path_finding/floyd_warshall_cython.pyx")
 )
