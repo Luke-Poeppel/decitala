@@ -408,12 +408,14 @@ def rolling_search(
 ####################################################################################################
 # Hash table search method.
 def _get_mod_info(data):
-	if data["factor"] != 1.0 and data["difference"] == 0.0:
+	if data["factor"] != 0 and data["difference"] == 0.0:
 		mod_type = "r"
 		mod_val = data["factor"]
 	elif data["factor"] == 1.0 and data["difference"] != 0.0:
 		mod_type = "d"
 		mod_val = data["difference"]
+	else:
+		raise Exception("Something is wrong. Please file an issue at https://github.com/Luke-Poeppel/decitala/issues.") # noqa
 
 	if data["retrograde"] is True:
 		mod_type = "r" + mod_type
