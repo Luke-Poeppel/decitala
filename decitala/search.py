@@ -548,7 +548,8 @@ def path_finder(
 		frag_type,
 		windows=list(range(2, 19)),
 		slur_constraint=False,
-		ignore_single_anga_class_fragments=False
+		ignore_single_anga_class_fragments=False,
+		verbose=False
 	):
 	if frag_type == "decitala":
 		ht = DecitalaHashTable()
@@ -571,7 +572,8 @@ def path_finder(
 		weights={
 			"gap": 0.75,
 			"onsets": 0.25
-		}
+		},
+		verbose=verbose
 	)
 	best_source, best_sink = floyd_warshall.best_source_and_sink(fragments)
 	best_path = floyd_warshall.get_path(
