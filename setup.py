@@ -9,7 +9,6 @@
 import os
 
 from setuptools import setup, find_packages
-from Cython.Build import cythonize
 
 with open(os.path.join("decitala", "VERSION")) as version:
 	__version__ = version.readline()
@@ -66,5 +65,4 @@ setup(
 			"decitala = decitala.cli:decitala"
 		]
 	},
-	ext_modules=cythonize("decitala/path_finding/floyd_warshall_cython.pyx")
 )
