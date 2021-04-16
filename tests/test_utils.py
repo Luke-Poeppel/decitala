@@ -160,7 +160,7 @@ def test_prime_contour():
 
 def test_loader():
 	loaded = loader(analysis_filepath)
-	fragments = set([x[0] for x in loaded])
+	fragments = set([x["fragment"] for x in loaded])
 	actual = {Decitala("Laya"), Decitala("Bhagna"), Decitala("Niccanka")}
 
 	assert fragments == actual
