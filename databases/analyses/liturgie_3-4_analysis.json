@@ -1,292 +1,292 @@
 [
-    [
-        {
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "93_Ragavardhana"
         },
-        [
+        "onset_range": [
             2.0,
             6.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "105_Candrakala"
         },
-        [
+        "onset_range": [
             6.75,
             10.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "88_Lakskmica"
         },
-        [
+        "onset_range": [
             10.75,
             15.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "93_Ragavardhana"
         },
-        [
+        "onset_range": [
             15.0,
             19.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "105_Candrakala"
         },
-        [
+        "onset_range": [
             19.75,
             23.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "88_Lakskmica"
         },
-        [
+        "onset_range": [
             23.75,
             28.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "93_Ragavardhana"
         },
-        [
+        "onset_range": [
             28.0,
             32.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "105_Candrakala"
         },
-        [
+        "onset_range": [
             32.75,
             36.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "88_Lakskmica"
         },
-        [
+        "onset_range": [
             36.75,
             41.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "93_Ragavardhana"
         },
-        [
+        "onset_range": [
             41.0,
             45.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "105_Candrakala"
         },
-        [
+        "onset_range": [
             45.75,
             49.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "88_Lakskmica"
         },
-        [
+        "onset_range": [
             49.75,
             54.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "93_Ragavardhana"
         },
-        [
+        "onset_range": [
             54.0,
             58.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "105_Candrakala"
         },
-        [
+        "onset_range": [
             58.75,
             62.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "88_Lakskmica"
         },
-        [
+        "onset_range": [
             62.75,
             67.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "93_Ragavardhana"
         },
-        [
+        "onset_range": [
             67.0,
             71.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "105_Candrakala"
         },
-        [
+        "onset_range": [
             71.75,
             75.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "88_Lakskmica"
         },
-        [
+        "onset_range": [
             75.75,
             80.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "93_Ragavardhana"
         },
-        [
+        "onset_range": [
             80.0,
             84.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "105_Candrakala"
         },
-        [
+        "onset_range": [
             84.75,
             88.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "88_Lakskmica"
         },
-        [
+        "onset_range": [
             88.75,
             93.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "93_Ragavardhana"
         },
-        [
+        "onset_range": [
             93.0,
             97.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "105_Candrakala"
         },
-        [
+        "onset_range": [
             97.75,
             101.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "88_Lakskmica"
         },
-        [
+        "onset_range": [
             101.75,
             106.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "93_Ragavardhana"
         },
-        [
+        "onset_range": [
             106.0,
             110.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "105_Candrakala"
         },
-        [
+        "onset_range": [
             110.75,
             114.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "88_Lakskmica"
         },
-        [
+        "onset_range": [
             114.75,
             119.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "93_Ragavardhana"
         },
-        [
+        "onset_range": [
             119.0,
             123.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "105_Candrakala"
         },
-        [
+        "onset_range": [
             123.75,
             127.75
         ]
-    ]
+    }
 ]

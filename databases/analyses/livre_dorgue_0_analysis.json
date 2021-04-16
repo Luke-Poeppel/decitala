@@ -1,502 +1,502 @@
 [
-    [
-        {
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "106_Laya"
         },
-        [
+        "onset_range": [
             0.0,
             9.25
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "116_Bhagna"
         },
-        [
+        "onset_range": [
             9.25,
             10.625
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "119_Niccanka"
         },
-        [
+        "onset_range": [
             10.625,
             20.125
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             21.875,
             28.125
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             28.125,
             31.125
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             31.125,
             32.875
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             32.875,
             38.5
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             38.5,
             40.25
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             40.25,
             45.25
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             45.25,
             52.25
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             52.25,
             54.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             54.0,
             59.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             59.0,
             68.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             68.0,
             72.375
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             72.375,
             74.125
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             74.125,
             75.875
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             75.875,
             86.875
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             86.875,
             90.625
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             90.625,
             92.375
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             92.375,
             95.5
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             95.5,
             108.5
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             108.5,
             111.625
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             111.625,
             113.375
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             113.375,
             117.125
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             117.125,
             128.125
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             128.125,
             129.875
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             129.875,
             131.625
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             131.625,
             136.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             136.0,
             145.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             145.0,
             150.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             150.0,
             151.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             151.75,
             158.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             158.75,
             163.75
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             163.75,
             165.5
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             165.5,
             171.125
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             171.125,
             172.875
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             172.875,
             175.875
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             175.875,
             182.125
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             182.125,
             185.125
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             185.125,
             186.875
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             186.875,
             192.5
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             192.5,
             194.25
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             194.25,
             199.25
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             199.25,
             206.25
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             206.25,
             208.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             208.0,
             213.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "15_Caccari"
         },
-        [
+        "onset_range": [
             213.0,
             222.0
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "24_Rangapradipaka"
         },
-        [
+        "onset_range": [
             222.0,
             226.375
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             226.375,
             228.125
         ]
-    ],
-    [
-        {
+    },
+    {
+        "fragment": {
             "frag_type": "decitala",
             "name": "53_Sama"
         },
-        [
+        "onset_range": [
             228.125,
             229.875
         ]
-    ]
+    }
 ]
