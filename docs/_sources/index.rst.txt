@@ -11,10 +11,9 @@ pipeline used in this package is Search →→ Path Finding →→ Analysis.
 
 Installation
 ====================================
-.. code-block:: python
 
    >>> cd # Navigate to home directory
-   >>> git clone https://github.com/Luke-Poeppel/decitala
+   >>> git clone https://github.com/Luke-Poeppel/decitala.git
    >>> cd decitala
    >>> pip3 install -e .
    >>> pre-commit install
@@ -55,7 +54,6 @@ Basic Usage
 ====================================
 Normally, this package is used to find "paths" of rhythms through a given composition, the rhythms
 coming from a dataset. To calculate a path, you can simply use the following:
-.. code-block:: python
 
    >>> composition = "/Users/lukepoeppel/decitala/tests/static/Shuffled_Transcription_1.xml"
    >>> from decitala.search import path_finder

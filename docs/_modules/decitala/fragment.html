@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.fragment &mdash; decitala 0.9.0 documentation</title>
+  <title>decitala.fragment &mdash; decitala 0.9.1 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.9.0
+                0.9.1
               </div>
             
           
@@ -520,8 +520,8 @@
 <span class="sd">		:rtype: str</span>
 
 <span class="sd">		- I. Maximally Trivial:	of the form :math:`X` (one onset, one anga class)</span>
-<span class="sd">		- II. Trivial Symmetry: 			of the form :math:`XXXXXX`</span>
-<span class="sd">		- III. Trivial Dual Symmetry:  		of the form :math:`XY`</span>
+<span class="sd">		- II. Trivial Dual Symmetry:  		of the form :math:`XY`</span>
+<span class="sd">		- III. Trivial Symmetry: 			of the form :math:`XXXXXX`</span>
 <span class="sd">		- IV. Maximally Trivial Palindrome: of the form :math:`XXX...XYX...XXX`</span>
 <span class="sd">		- V. Trivial Dual Palindromic:		of the form :math:`XXX...XYYYX...XXX`</span>
 <span class="sd">		- VI. Palindromic: 					of the form :math:`XY...Z...YX`</span>
@@ -532,9 +532,9 @@
 
 		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 			<span class="k">return</span> <span class="s2">&quot;I. Maximally Trivial&quot;</span>
-		<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dseg</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-			<span class="k">return</span> <span class="s2">&quot;II. Trivial Symmetry&quot;</span>
 		<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dseg</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;II. Trivial Symmetry&quot;</span>
+		<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dseg</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 			<span class="k">return</span> <span class="s2">&quot;III. Trivial Dual Symmetry&quot;</span>
 		<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dseg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">dseg</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
 			<span class="k">return</span> <span class="s2">&quot;IV. Maximally Trivial Palindrome&quot;</span>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>vis &mdash; decitala 0.9.0 documentation</title>
+  <title>vis &mdash; decitala 0.9.1 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.9.0
+                0.9.1
               </div>
             
           
@@ -215,9 +215,24 @@ of the provided <a class="reference internal" href="trees.html#decitala.trees.Fr
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>list</em>) – output of the form from a rolling search.</p></li>
+<li><p><strong>data</strong> (<em>list</em>) – output of the form from a rolling search or path finder.</p></li>
 <li><p><strong>filein</strong> (<em>str</em>) – input file to convert.</p></li>
 <li><p><strong>part_num</strong> (<em>int</em>) – part number.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.vis.result_bar_plot">
+<code class="sig-prename descclassname"><span class="pre">decitala.vis.</span></code><code class="sig-name descname"><span class="pre">result_bar_plot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/vis.html#result_bar_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.vis.result_bar_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a bar plot of input data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>list</em>) – output of the form from a rolling search or path finder.</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – title to add to the plot.</p></li>
+<li><p><strong>save_filepath</strong> (<em>str</em>) – path to save plot.</p></li>
 </ul>
 </dd>
 </dl>
