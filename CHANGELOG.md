@@ -6,6 +6,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.10.0] ???
 ### Added
 - Added `non_retrogradable_measures` function to `utils.py` for finding all palindromic measures in a given filepath and part number. 
+- WIP: Implemented Dijekstra's Algorithm for path finding. 
 
 ## [v0.9.1] April 16, 2021
 ### Added
