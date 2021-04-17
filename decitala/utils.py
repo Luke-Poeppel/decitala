@@ -17,6 +17,7 @@ from more_itertools import consecutive_groups, windowed, powerset
 from scipy.linalg import norm
 
 from music21 import converter
+from music21 import note
 from music21 import pitch
 from music21 import scale
 from music21 import stream
@@ -344,7 +345,7 @@ def non_retrogradable_measures(filepath, part_num):
 	Function for retrieving all non-retrogradable measures in a given filepath and part number. 
 	"""
 	converted = converter.parse(filepath)
-	p = converter.parse[part_num]
+	p = converted.parts[part_num]
 	non_retrogradable_measures = []
 	for this_measure in p.getElementsByClass(stream.Measure):
 		ql_array = []
