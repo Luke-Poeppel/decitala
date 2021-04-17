@@ -13,22 +13,9 @@ from setuptools import setup, find_packages
 with open(os.path.join("decitala", "VERSION")) as version:
 	__version__ = version.readline()
 
-__MODULES__ = [
-	"decitala.cli",
-	"decitala.database",
-	"decitala.fragment",
-	"decitala.hash_table",
-	"decitala.path_finding",
-	"decitala.search",
-	"decitala.trees",
-	"decitala.utils",
-	"decitala.vis",
-]
-
 setup(
 	name="decitala",
 	version=__version__,
-	py_modules=__MODULES__,
 	author="Luke Poeppel",
 	author_email="luke.poeppel@gmail.com",
 	description="Automated ethnological analysis of Olivier Messiaen's music.",

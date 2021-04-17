@@ -9,6 +9,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Typo in Documentation installation instructions. 
 - Missing documentation for `vis.result_bar_plot`. 
 
+### Removed
+- Removed `py_modules` from `setup.py`. 
+
 ## [v0.9.0] April 14, 2021
 ### Added
 - Function for annotating a score with the extracted data: ``vis.annotate_score``. 
