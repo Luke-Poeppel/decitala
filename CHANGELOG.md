@@ -4,10 +4,14 @@ All important changes to the decitala package will be documented here.
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [v0.9.1] ???
+### Added
+- WIP: Added testing to improve coverage (50%-)
+
 ### Fixed
 - Issues #102: empty numpy iterator for cases with no extracted fragments; #109: missing verbose argument in `search.path_finder`; #111: UnboundLocalError for Bach chorale –– this also resolves #101; #106: reformatted analysis JSON files to match the output of `search.path_finder` (every extraction is a dictionary). 
 - Typo in Documentation installation instructions. 
 - Missing documentation for `vis.result_bar_plot`. 
+- Fixed incorrect order of Morris Symmetry Classes (1999). 
 
 ### Removed
 - Removed `py_modules` from `setup.py`. 

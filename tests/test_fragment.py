@@ -1,11 +1,14 @@
 import os
 import random
 import numpy as np
+import json
 
 from decitala.fragment import (
 	Decitala,
 	GreekFoot,
-	GeneralFragment
+	GeneralFragment,
+	FragmentEncoder,
+	FragmentDecoder
 )
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -75,6 +78,12 @@ def test_id_num():
 		else:
 			assert Decitala.get_by_id(i).id_num == i
 
+##### JSON ENCODING / DECODING
+def test_decitala_encoding():
+	ragavardhana = Decitala("Ragavardhana")
+	encoded = '{"frag_type": "decitala", "name": "93_Ragavardhana"}'
+	assert json.dumps(ragavardhana, cls=FragmentEncoder) == encoded
+
 def test_decitala_carnatic_string():
 	rajacudamani = Decitala("Rajacudamani")
 	predicted = "o o | | | o o | S"
@@ -89,3 +98,35 @@ def test_reduced_dseg():
 	frag = GeneralFragment([1.0, 1.0, 2.0, 2.0, 3.0, 0.125, 1.0, 0.5, 4.0])
 	predicted = np.array([2, 3, 4, 0, 2, 1, 5])
 	assert np.array_equal(predicted, frag.reduced_dseg())
+
+def test_fragment_augment():
+	f1 = GeneralFragment([4.0, 1.0, 2.0], name="myfragment")
+	f1a = f1.augment(factor=2, difference=0.25)
+	assert f1a.name == "myfragment/r:2/d:0.25"
+
+def test_decitala_repr():
+	name_in = "Gajalila"
+	frag_id = Decitala(name_in).id_num
+	assert Decitala(name_in).__repr__() == "<fragment.Decitala {0}_{1}>".format(frag_id, name_in)
+
+def test_decitala_equivalents():
+	example_frag = Decitala("Tribhangi")
+	r_equivalents = [Decitala("Crikirti"), Decitala("Kudukka"), Decitala("Ratilila"), GreekFoot("Ionic_Minor")]
+	d_equivalents = [Decitala("Crikirti"), Decitala("Ratilila")]
+	
+	assert example_frag.equivalents(rep_type="ratio") == r_equivalents
+	assert example_frag.equivalents(rep_type="difference") == d_equivalents
+
+def test_decitala_num_matras():
+	frag = Decitala("Rajatala") # [1.0, 1.5, 0.25, 0.25, 1.0, 0.5, 1.5]
+	assert frag.num_matras == 12
+	
+class TestMorrisSymmetryClass():
+	
+	def test_class_one(self): # X
+		aditala = Decitala("Aditala")
+		assert aditala.morris_symmetry_class() == "I. Maximally Trivial"
+
+	def test_class_two(self): # XY
+		iamb = GreekFoot("Iamb")
+		assert iamb.morris_symmetry_class() == "II. Trivial Symmetry"

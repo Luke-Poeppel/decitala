@@ -352,8 +352,8 @@ class GeneralFragment:
 		:rtype: str
 
 		- I. Maximally Trivial:	of the form :math:`X` (one onset, one anga class)
-		- II. Trivial Symmetry: 			of the form :math:`XXXXXX`
-		- III. Trivial Dual Symmetry:  		of the form :math:`XY`
+		- II. Trivial Dual Symmetry:  		of the form :math:`XY`
+		- III. Trivial Symmetry: 			of the form :math:`XXXXXX`
 		- IV. Maximally Trivial Palindrome: of the form :math:`XXX...XYX...XXX`
 		- V. Trivial Dual Palindromic:		of the form :math:`XXX...XYYYX...XXX`
 		- VI. Palindromic: 					of the form :math:`XY...Z...YX`
@@ -364,9 +364,9 @@ class GeneralFragment:
 
 		if len(dseg) == 1:
 			return "I. Maximally Trivial"
-		elif len(dseg) > 1 and len(np.unique(dseg)) == 1:
-			return "II. Trivial Symmetry"
 		elif len(dseg) == 2 and len(np.unique(dseg)) == 2:
+			return "II. Trivial Symmetry"
+		elif len(dseg) > 1 and len(np.unique(dseg)) == 1:
 			return "III. Trivial Dual Symmetry"
 		elif len(dseg) > 2 and len(np.unique(dseg)) == 2:
 			return "IV. Maximally Trivial Palindrome"
