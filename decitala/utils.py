@@ -623,7 +623,7 @@ def power_list(data):
 ####################################################################################################
 # SCORE HELPERS
 ####################################################################################################
-def get_object_indices(filepath, part_num):
+def get_object_indices(filepath, part_num, measure_dividers=False):
 	"""
 	Returns data of the form [(object, (start, end)), ...] for a given file path and part number.
 	(Supports rests and grace notes.)
@@ -632,8 +632,16 @@ def get_object_indices(filepath, part_num):
 	part = score.parts[part_num]
 	data_out = []
 	stripped = part.stripTies(retainContainers=True)
-	for this_obj in stripped.recurse().stream().iter.notesAndRests:
-		data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
+	if not measure_dividers:
+		for this_obj in stripped.recurse().stream().iter.notesAndRests:
+			data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
+	else:
+		for this_measure in stripped.getElementsByClass(stream.Measure):
+			measure_objects = []
+			for this_obj in this_measure.recurse().stream().iter.notesAndRests:
+				measure_objects.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
+			
+			data_out.append(measure_objects)
 
 	return data_out
 
