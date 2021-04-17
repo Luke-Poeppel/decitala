@@ -30,6 +30,7 @@ setup(
 	],
 	python_requires='>=3.7',
 	include_package_data=True,
+	package_data={"decitala": ["VERSION"]},
 	install_requires=[
 		"click",
 		"flake8",
