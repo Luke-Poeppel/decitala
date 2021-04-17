@@ -28,7 +28,8 @@ treant_templates = here + "/treant_templates"
 __all__ = [
 	"create_tree_diagram",
 	"fragment_roll",
-	"annotate_score"
+	"annotate_score",
+	"result_bar_plot"
 ]
 
 FONTNAME = 'Times'
@@ -167,9 +168,9 @@ def annotate_score(
 	"""
 	Function for annotating a score with data.
 
-	:param list data: output of the form from a rolling search.
+	:param list data: output of the form from a rolling search or path finder. 
 	:param str filein: input file to convert.
-	:param int part_num: part number.
+	:param int part_num: part number. 
 	"""
 	converted = converter.parse(filein)
 	for this_fragment in data:
@@ -183,16 +184,23 @@ def annotate_score(
 	return converted
 
 def result_bar_plot(
-		data_in,
+		data,
 		title=None,
 		save_filepath=None
 	):
-	if type(data_in) == list:
-		fragments = [x["fragment"].name for x in data_in]
-	elif type(data_in) == str:
-		assert os.path.isfile(data_in)
-		loaded = loader(data_in)
-		fragments = [x[0].name for x in loaded]
+	"""
+	Returns a bar plot of input data. 
+
+	:param list data: output of the form from a rolling search or path finder. 
+	:param str title: title to add to the plot. 
+	:param str save_filepath: path to save plot.
+	"""
+	if type(data) == list:
+		fragments = [x["fragment"].name for x in data]
+	elif type(data) == str:
+		assert os.path.isfile(data)
+		loaded = loader(data)
+		fragments = [x["fragment"] for x in loaded]
 
 	counter = Counter(fragments)
 

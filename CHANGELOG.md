@@ -6,6 +6,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.9.1] ???
 ### Fixed
 - Issues #102: empty numpy iterator for cases with no extracted fragments; #109: missing verbose argument in `search.path_finder`; #111: UnboundLocalError for Bach chorale –– this also resolves #101; #106: reformatted analysis JSON files to match the output of `search.path_finder` (every extraction is a dictionary). 
+- Typo in Documentation installation instructions. 
+- Missing documentation for `vis.result_bar_plot`. 
 
 ## [v0.9.0] April 14, 2021
 ### Added
