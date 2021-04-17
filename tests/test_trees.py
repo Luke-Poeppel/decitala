@@ -17,6 +17,7 @@ from music21 import note
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/fragments/Decitalas"
 greek_path = os.path.dirname(here) + "/fragments/Greek_Metrics/XML"
+transcription_example = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
 
 @pytest.fixture
 def tala_ratio_tree():
@@ -142,3 +143,6 @@ def test_varied_ragavardhana(tala_ratio_tree):
 	
 def test_contiguous_summation(tala_ratio_tree, tala_difference_tree):
 	pass
+
+def test_tree_from_composition():
+	tree_from_composition = FragmentTree.from_composition(transcription_example, 0)
