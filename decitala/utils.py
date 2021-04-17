@@ -337,7 +337,24 @@ def removeAddedValuesFromList(lst):
 	for i in added_val_indices:
 		del lst[i]
 
-	return lst
+	return 
+	
+def non_retrogradable_measures(filepath, part_num):
+	"""
+	Function for retrieving all non-retrogradable measures in a given filepath and part number. 
+	"""
+	converted = converter.parse(filepath)
+	p = converter.parse[part_num]
+	non_retrogradable_measures = []
+	for this_measure in p.getElementsByClass(stream.Measure):
+		ql_array = []
+		for this_note in this_measure.flat.stripTies().getElementsByClass(note.Note):
+			ql_array.append(this_note.quarterLength)
+		
+		if ql_array == ql_array[::-1]:
+			non_retrogradable_measures.append(this_measure.number)
+	
+	return non_retrogradable_measures
 
 ####################################################################################################
 # SUBDIVISION
