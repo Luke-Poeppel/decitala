@@ -8,6 +8,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added `non_retrogradable_measures` function to `utils.py` for finding all palindromic measures in a given filepath and part number. 
 - WIP: Implemented Dijekstra's Algorithm for path finding. 
 
+### Fixed
+- Issues #116: missing result logging from `decitala.cli.pathfinder`; 
+
 ## [v0.9.1] April 16, 2021
 ### Added
 - Added testing to improve coverage (50%-52%)
