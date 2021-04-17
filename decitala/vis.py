@@ -168,9 +168,9 @@ def annotate_score(
 	"""
 	Function for annotating a score with data.
 
-	:param list data: output of the form from a rolling search or path finder. 
+	:param list data: output of the form from a rolling search or path finder.
 	:param str filein: input file to convert.
-	:param int part_num: part number. 
+	:param int part_num: part number.
 	"""
 	converted = converter.parse(filein)
 	for this_fragment in data:
@@ -189,10 +189,10 @@ def result_bar_plot(
 		save_filepath=None
 	):
 	"""
-	Returns a bar plot of input data. 
+	Returns a bar plot of input data.
 
-	:param list data: output of the form from a rolling search or path finder. 
-	:param str title: title to add to the plot. 
+	:param list data: output of the form from a rolling search or path finder.
+	:param str title: title to add to the plot.
 	:param str save_filepath: path to save plot.
 	"""
 	if type(data) == list:
