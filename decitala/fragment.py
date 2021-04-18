@@ -363,19 +363,19 @@ class GeneralFragment:
 		reduced_dseg = self.reduced_dseg(as_str=False)
 
 		if len(dseg) == 1:
-			return "I. Maximally Trivial"
+			return 1
 		elif len(dseg) == 2 and len(np.unique(dseg)) == 2:
-			return "II. Trivial Symmetry"
+			return 2
 		elif len(dseg) > 1 and len(np.unique(dseg)) == 1:
-			return "III. Trivial Dual Symmetry"
+			return 3
 		elif len(dseg) > 2 and len(np.unique(dseg)) == 2:
-			return "IV. Maximally Trivial Palindrome"
+			return 4
 		elif len(dseg) > 2 and len(reduced_dseg) == 3:
-			return "V. Trivial Dual Palindrome"
+			return 5
 		elif len(dseg) > 2 and len(np.unique(dseg)) == len(dseg) // 2:
-			return "VI. Palindrome"
+			return 6
 		else:
-			return "VII. Stream"
+			return 7
 
 	def std(self):
 		"""

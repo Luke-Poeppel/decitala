@@ -9,6 +9,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - WIP: Implemented Dijkstra's Algorithm for path finding. 
 - Added optional `measure_dividers` parameter to `utils.get_object_indices` which returns the same objects, divided into lists of measures. 
 
+### Changed
+- The `fragment.morris_symmetry_class` function now returns integers representing the classes (instead of string describing them). The meaning of each class is given in the documentation. 
+
 ### Fixed
 - Issues #116: missing result logging from `decitala.cli.pathfinder`; 
 
