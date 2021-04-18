@@ -15,29 +15,9 @@ import numpy as np
 from progress.bar import Bar
 
 from ..utils import get_logger
+from .path_finding_utils import cost
 
 logger = get_logger(name=__name__, print_to_console=True)
-
-def cost(
-		vertex_1,
-		vertex_2,
-		weights
-	):
-	"""
-	Cost function used in the Floyd-Warshall Algorithm.
-
-	:param `~decitala.fragment.GeneralFragment` vertex_1: an object inheriting from
-			:obj:`~decitala.fragment.GeneralFragment`.
-	:param `~decitala.fragment.GeneralFragment` vertex_2: an object inheriting from
-			:obj:`~decitala.fragment.GeneralFragment`.
-	:param dict weights: weights used in the model. Must sum to 1. Requires "gap" and "onsets" values.
-	:return: cost of moving from ``vertex_1`` to ``vertex_2``.
-	:rtype: float
-	"""
-	gap = vertex_2["onset_range"][0] - vertex_1["onset_range"][1]
-	onsets = 1 / (vertex_1["fragment"].num_onsets + vertex_2["fragment"].num_onsets)
-	cost = (weights["gap"] * gap) + (weights["onsets"] * onsets)
-	return cost
 
 def floyd_warshall(
 		data,

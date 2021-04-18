@@ -125,8 +125,8 @@ class TestMorrisSymmetryClass():
 	
 	def test_class_one(self): # X
 		aditala = Decitala("Aditala")
-		assert aditala.morris_symmetry_class() == "I. Maximally Trivial"
+		assert aditala.morris_symmetry_class() == 1
 
 	def test_class_two(self): # XY
 		iamb = GreekFoot("Iamb")
-		assert iamb.morris_symmetry_class() == "II. Trivial Symmetry"
+		assert iamb.morris_symmetry_class() == 2

@@ -11,6 +11,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ### Changed
 - The `fragment.morris_symmetry_class` function now returns integers representing the classes (instead of string describing them). The meaning of each class is given in the documentation. 
+- Refactored `path_finding.floyd_warshall` and added helper functions for all path-finding algorithms to `path_finding_utils.py`. 
 
 ### Fixed
 - Issues #116: missing result logging from `decitala.cli.pathfinder`; 
