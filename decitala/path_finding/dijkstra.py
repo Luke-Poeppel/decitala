@@ -21,13 +21,13 @@ def dijkstra(
 	vertices = []
 	dist = [np.inf] * len(data)
 	prev = [None] * len(data)
-	
+
 	source_index = 0
 	for i, fragment_data in enumerate(data):
 		if fragment_data == source:
 			source_index = i
 		vertices.append(fragment_data)
-	
+
 	dist[source_index] = 0
 
 	while vertices:
@@ -45,13 +45,21 @@ def dijkstra(
 			if alt < dist[other_vertex_index]:
 				dist[other_vertex_index] = alt
 				prev[other_vertex_index] = curr_vertex
-	
+
 	return dist, prev
 
-	
+def reconstruct_standard_path(
+		data,
+		dist,
+		prev,
+		source,
+		target
+	):
+	path = []
+	target_index = data.index(target)
+	if prev[target_index] is not None or target == source:
+		while target is not None:
+			path.insert(0, target)
+			target = prev[target_index]
 
-
-
-
-
-
+	return path
