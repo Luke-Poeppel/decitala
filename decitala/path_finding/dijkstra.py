@@ -31,20 +31,21 @@ def dijkstra(
 	dist[source_index] = 0
 
 	while vertices:
-		curr_vertex = min(dist)
-		del vertices[dist.index(u)]
+		curr_vertex_index = dist.index(min(dist))
+		curr_vertex = vertices[curr_vertex_index] # vertex with minimum distance (source at the start). 
+		
+		del vertices[curr_vertex_index]
 
-		if u == target:
+		if curr_vertex == target:
 			break
 
-		for v in vertices:
-			alt = dist[u] + cost(u, v, weights=weights)
-			# if alt < dist[v]:
-			# 	dist[v] = alt
-			# 	prev[v] = u
-		
-		break
-
+		for other_vertex in vertices:
+			other_vertex_index = vertices.index(other_vertex)
+			alt = dist[curr_vertex_index] + cost(curr_vertex, other_vertex, weights=weights)
+			if alt < dist[other_vertex_index]:
+				dist[other_vertex_index] = alt
+				prev[other_vertex_index] = curr_vertex
+	
 	return dist, prev
 
 	
