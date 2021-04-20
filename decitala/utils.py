@@ -636,7 +636,8 @@ def get_object_indices(filepath, part_num, measure_divider_mode=None):
 		for this_obj in stripped.recurse().stream().iter.notesAndRests:
 			data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
 	else:
-		for this_measure in stripped.getElementsByClass(stream.Measure):
+		ms = stripped.getElementsByClass(stream.Measure)
+		for this_measure in ms:
 			if mode == "list":
 				measure_objects = []
 				for this_obj in this_measure.recurse().stream().iter.notesAndRests:
@@ -645,7 +646,11 @@ def get_object_indices(filepath, part_num, measure_divider_mode=None):
 			elif mode == "string":
 				for this_obj in this_measure.recuse().stream().iter.notesAndRests:
 					data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
-				data_out.append("B")
+				
+				if not this_measure.number == ms[-1].number:
+					data_out.append("B")
+			else:
+				raise Exception("Only allowed modes are `string` and `list`.")
 
 	return data_out
 
