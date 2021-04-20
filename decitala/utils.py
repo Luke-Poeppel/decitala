@@ -644,7 +644,7 @@ def get_object_indices(filepath, part_num, measure_divider_mode=None):
 					measure_objects.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
 				data_out.append(measure_objects)
 			elif measure_divider_mode == "string":
-				for this_obj in this_measure.recuse().stream().iter.notesAndRests:
+				for this_obj in this_measure.recurse().stream().iter.notesAndRests:
 					data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
 				
 				if not this_measure.number == ms[-1].number:
