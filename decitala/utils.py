@@ -662,20 +662,25 @@ def ts_to_reduced_ts(ts):
 	:return: a new time signature that is fully reduced by removing all possible powers of 2. 
 	:rtype: music21.meter.TimeSignature	
 	"""
-	numerator = ts.numerator
-	denominator = ts.denominator
-	factor = 0
-	while numerator % 2 == 0:
-		numerator = numerator / 2
-		factor += 1
-	
-	if factor == 0:
-		reduced_denominator = 32
-	else:
-		reduced_denominator = 32 / (2**factor)
-	
-	reduced_ts_str = "{}/{}".format(int(numerator), int(reduced_denominator))
-	return TimeSignature(reduced_ts_str)
+    numerator = ts.numerator
+    denominator = ts.denominator
+    factor = 0
+    while numerator % 2 == 0:
+        numerator = numerator / 2
+        factor += 1
+    
+    if factor == 0:
+        reduced_denominator = 32
+    else:
+        if factor < 6: # can't divide further or the denominator becomes a float. 
+            reduced_denominator = 32 / (2**factor)
+        else:
+            diff = factor - 6
+            numerator = 2**(diff + 1) # raise it to the lowest possible reduction. 
+            reduced_denominator = 1 # lowest possible denominator
+            
+    reduced_ts_str = "{}/{}".format(int(numerator), int(reduced_denominator))
+    return TimeSignature(reduced_ts_str)
 
 def contiguous_summation(data):
 	"""
