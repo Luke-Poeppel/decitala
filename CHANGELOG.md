@@ -8,6 +8,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added `non_retrogradable_measures` function to `utils.py` for finding all palindromic measures in a given filepath and part number. 
 - WIP: Implemented Dijkstra's Algorithm for path finding. 
 - Added optional `measure_divider_mode` parameter to `utils.get_object_indices` which returns the same objects, divided into lists of measures or objects divided by a string. 
+- Added `utils.ts_to_reduced_ts` function for fully reducing time signatures. 
 
 ### Changed
 - The `fragment.morris_symmetry_class` function now returns integers representing the classes (instead of string describing them). The meaning of each class is given in the documentation. 

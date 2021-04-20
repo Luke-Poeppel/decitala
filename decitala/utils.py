@@ -654,6 +654,29 @@ def get_object_indices(filepath, part_num, measure_divider_mode=None):
 
 	return data_out
 
+def ts_to_reduced_ts(ts):
+	"""
+	Function for fully reducing a `music21.meter.TimeSignature` object (lowest denominator of 1). 
+	
+	:param ts: a music21.meter.TimeSignature object. 
+	:return: a new time signature that is fully reduced by removing all possible powers of 2. 
+	:rtype: music21.meter.TimeSignature	
+	"""
+	numerator = ts.numerator
+	denominator = ts.denominator
+	factor = 0
+	while numerator % 2 == 0:
+		numerator = numerator / 2
+		factor += 1
+	
+	if factor == 0:
+		reduced_denominator = 32
+	else:
+		reduced_denominator = 32 / (2**factor)
+	
+	reduced_ts_str = "{}/{}".format(int(numerator), int(reduced_denominator))
+	return TimeSignature(reduced_ts_str)
+
 def contiguous_summation(data):
 	"""
 	Given some ``data`` from :obj:`~decitala.utils.get_object_indices`, finds every location
