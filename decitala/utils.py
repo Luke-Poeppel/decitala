@@ -637,14 +637,14 @@ def get_object_indices(filepath, part_num, measure_divider_mode=None):
 			data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
 	else:
 		for this_measure in stripped.getElementsByClass(stream.Measure):
-			if mode="list":
+			if mode == "list":
 				measure_objects = []
 				for this_obj in this_measure.recurse().stream().iter.notesAndRests:
 					measure_objects.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
 				data_out.append(measure_objects)
-			elif mode="string":
+			elif mode == "string":
 				for this_obj in this_measure.recuse().stream().iter.notesAndRests:
-					data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength))
+					data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
 				data_out.append("B")
 
 	return data_out

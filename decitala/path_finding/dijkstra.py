@@ -9,7 +9,7 @@
 ####################################################################################################
 import numpy as np
 
-from .path_finding_utils import cost
+from . import path_finding_utils
 
 def dijkstra(
 		data,
@@ -30,18 +30,25 @@ def dijkstra(
 
 	dist[source_index] = 0
 
+	# Everything above is right! 
 	while vertices:
 		curr_vertex_index = dist.index(min(dist))
-		curr_vertex = vertices[curr_vertex_index] # vertex with minimum distance (source at the start). 
+		curr_vertex = vertices[curr_vertex_index]
 		
 		del vertices[curr_vertex_index]
 
 		if curr_vertex == target:
 			break
-
+		
 		for other_vertex in vertices:
 			other_vertex_index = vertices.index(other_vertex)
-			alt = dist[curr_vertex_index] + cost(curr_vertex, other_vertex, weights=weights)
+			cost_pre = path_finding_utils.cost(curr_vertex, other_vertex, weights=weights)
+			if cost_pre < 0:
+				cost = cost_pre + 10000  # Random large number. 
+			else:
+				cost = cost_pre
+
+			alt = dist[curr_vertex_index] + cost
 			if alt < dist[other_vertex_index]:
 				dist[other_vertex_index] = alt
 				prev[other_vertex_index] = curr_vertex
@@ -56,10 +63,10 @@ def reconstruct_standard_path(
 		target
 	):
 	path = []
-	target_index = data.index(target)
-	if prev[target_index] is not None or target == source:
+	target_index = prev.index(target)
+	if prev[target_index] is not None or target == source:		
 		while target is not None:
 			path.insert(0, target)
 			target = prev[target_index]
-
+	
 	return path

@@ -11,7 +11,6 @@
 Tools for creating SQLite databases of extracted rhythmic data from Messiaen's music.
 """
 import json
-import matplotlib as mpl
 import numpy as np
 import os
 import pandas as pd
@@ -62,8 +61,6 @@ from .path_finding.pofp import (
 	partition_data_by_break_points,
 	get_pareto_optimal_longest_paths
 )
-
-mpl.style.use("seaborn")
 
 __all__ = [
 	"create_database",
