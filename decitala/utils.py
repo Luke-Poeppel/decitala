@@ -626,7 +626,12 @@ def power_list(data):
 ####################################################################################################
 # SCORE HELPERS
 ####################################################################################################
-def get_object_indices(filepath, part_num, measure_divider_mode=None):
+def get_object_indices(
+		filepath,
+		part_num,
+		measure_divider_mode=None,
+		ignore_grace=False
+	):
 	"""
 	Returns data of the form [(object, (start, end)), ...] for a given file path and part number.
 	(Supports rests and grace notes.)
@@ -686,12 +691,14 @@ def ts_to_reduced_ts(ts):
 			reduced_denominator = denominator / (2 ** factor)
 		else:
 			diff = factor - 6
-			numerator = 2**(diff + 1) # raise it to the lowest possible reduction. 
+			numerator = 2 ** (diff + 1) # raise it to the lowest possible reduction. 
 			reduced_denominator = 1 # lowest possible denominator
 			
 	if numerator == 0:
 		raise UtilsException(f"{numerator}/{reduced_denominator} is an invalid TimeSignature")
-	
+	elif reduced_denominator not in {1, 2, 4, 8, 16, 32, 64, 128}:
+		raise UtilsException(f"{numerator}/{reduced_denominator} is an invalid TimeSignature")
+
 	reduced_ts_str = f"{int(numerator)}/{reduced_denominator}"
 	return TimeSignature(reduced_ts_str)
 
