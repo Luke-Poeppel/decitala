@@ -93,6 +93,9 @@ PRIMES = [
 	79, 83, 89, 97
 ]
 
+class UtilsException(Exception):
+	pass
+
 ####################################################################################################
 # LOGGING
 ####################################################################################################
@@ -686,7 +689,10 @@ def ts_to_reduced_ts(ts):
 			numerator = 2**(diff + 1) # raise it to the lowest possible reduction. 
 			reduced_denominator = 1 # lowest possible denominator
 			
-	reduced_ts_str = "{}/{}".format(int(numerator), int(reduced_denominator))
+	if numerator == 0:
+		raise UtilsException(f"{numerator}/{reduced_denominator} is an invalid TimeSignature")
+	
+	reduced_ts_str = f"{int(numerator)}/{reduced_denominator}"
 	return TimeSignature(reduced_ts_str)
 
 def contiguous_summation(data):

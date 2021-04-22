@@ -116,43 +116,43 @@ def as_native_type(x):
 	return x
 
 ####################################################################################################
-# class Fragment(Base): # noqa TODO: add declarative_base
-# 	__tablename__ = "Fragments"
+class Fragment(Base):
+	__tablename__ = "Fragments"
 
-# 	onset_start = Column(Float)
-# 	onset_stop = Column(Float)
-# 	fragment = Column(String, primary_key=True)
-# 	mod = Column(String)
-# 	fod = Column(Float)
-# 	pitch_content = Column(String)
-# 	contour = Column(String)
-# 	prime_contour = Column(String)
-# 	is_slurred = Column(Boolean)
+	id = Column(Integer, primary_key=True)
 
-# 	def __init__(
-# 			self,
-# 			onset_start,
-# 			onset_stop,
-# 			fragment,
-# 			mod,
-# 			fod,
-# 			pitch_content,
-# 			contour,
-# 			prime_contour,
-# 			is_slurred
-# 		):
-# 		self.onset_start = onset_start
-# 		self.onset_stop = onset_stop
-# 		self.fragment = fragment
-# 		self.mod = mod
-# 		self.fod = fod
-# 		self.pitch_content = pitch_content
-# 		self.contour = contour
-# 		self.prime_contour = prime_contour
-# 		self.is_slurred = is_slurred
+	onset_start = Column(Float)
+	onset_stop = Column(Float)
+	fragment_type = Column(String)
+	fragment_name = Column(String)
+	mod_type = Column(String)
+	ratio = Column(Float)
+	difference = Column(Float)
+	pitch_content = Column(String)
+	is_slurred = Column(Boolean)
 
-# 	def __repr__(self):
-# 		pass
+	def __init__(
+			self,
+			onset_start,
+			onset_stop,
+			fragment_type,
+			fragment_name,
+			mod_type,
+			ratio,
+			difference,
+			ratio_or_difference,
+			pitch_content,
+			is_slurred
+		):
+		self.onset_start = onset_start
+		self.onset_stop = onset_stop
+		self.fragment_type = fragment_type
+		self.fragment_name = fragment_name
+		self.mod_type = mod_type
+		self.ratio = ratio
+		self.difference = difference
+		self.pitch_content = pitch_content
+		self.is_slurred = is_slurred
 
 def _prepare_fragment_data(
 		filepath,
