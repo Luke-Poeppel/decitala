@@ -15,7 +15,7 @@ import numpy as np
 from progress.bar import Bar
 
 from ..utils import get_logger
-from .path_finding_utils import cost
+from decitala.path_finding_utils import cost
 
 logger = get_logger(name=__name__, print_to_console=True)
 
