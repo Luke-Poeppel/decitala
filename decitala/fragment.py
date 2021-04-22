@@ -475,7 +475,7 @@ class Decitala(GeneralFragment):
 	>>> ragavardhana.nPVI()
 	74.28571428571429
 	>>> ragavardhana.morris_symmetry_class()
-	'VII. Stream'
+	7
 	>>> Decitala('Jaya').ql_array()
 	array([0.5 , 1.  , 0.5 , 0.5 , 0.25, 0.25, 1.5 ])
 	>>> for this_cycle in Decitala('Jaya').cyclic_permutations():

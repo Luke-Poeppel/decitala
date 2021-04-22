@@ -660,10 +660,17 @@ def ts_to_reduced_ts(ts):
 	
 	:param ts: a music21.meter.TimeSignature object. 
 	:return: a new time signature that is fully reduced by removing all possible powers of 2. 
-	:rtype: music21.meter.TimeSignature	
+	:rtype: music21.meter.TimeSignature
+
+	>>> from music21.meter import TimeSignature
+	>>> ts_to_reduced_ts(TimeSignature("4/16"))
+	<music21.meter.TimeSignature 1/4>
+	>>> ts_to_reduced_ts(TimeSignature("4/4"))
+	<music21.meter.TimeSignature 1/1>
 	"""
 	numerator = ts.numerator
 	denominator = ts.denominator
+
 	factor = 0
 	while numerator % 2 == 0:
 		numerator = numerator / 2
@@ -673,7 +680,7 @@ def ts_to_reduced_ts(ts):
 		reduced_denominator = 32
 	else:
 		if factor < 6: # can't divide further or the denominator becomes a float. 
-			reduced_denominator = 32 / (2**factor)
+			reduced_denominator = denominator / (2 ** factor)
 		else:
 			diff = factor - 6
 			numerator = 2**(diff + 1) # raise it to the lowest possible reduction. 

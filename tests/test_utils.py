@@ -21,7 +21,8 @@ from decitala.utils import (
 	frame_is_spanned_by_slur,
 	frame_to_ql_array,
 	contour_to_prime_contour,
-	loader
+	loader,
+	ts_to_reduced_ts
 )
 
 from decitala.fragment import (
