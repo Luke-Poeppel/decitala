@@ -17,6 +17,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Refactored `path_finding.floyd_warshall` and added helper functions for all path-finding algorithms to `path_finding_utils.py`. 
 - The CLI `pathfinder` tool now logs the saved file. 
 - Improved doctest integration by running them within the (pytest) tests directory. 
+- Removed all `# -*- coding: utf-8 -*-` lines. 
 
 ### Fixed
 - Issues #116: missing result logging from `decitala.cli.pathfinder`; 

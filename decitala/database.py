@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ####################################################################################################
 # File:     database.py
 # Purpose:  Data structure for creating and representing databases using sqlite.

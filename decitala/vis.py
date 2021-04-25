@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ####################################################################################################
 # File:     vis.py
 # Purpose:  Histogram, roll visualization, and Treant FragmentTree diagrams.
