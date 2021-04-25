@@ -36,13 +36,15 @@ class CompositionData(Base):
 	"""
 	SQLAlchemy model representing the basic composition data for a composition. 
 	"""
-	__tablename__ == "CompositionData"
+	__tablename__ = "CompositionData"
+
+	id = Column(Integer, primary_key=True)
 
 	name = Column(String)
 	part_num = Column(Integer)
 	local_filepath = Column(String)
 
-	def __init__(self):
+	def __init__(self, name, part_num, local_filepath):
 		self.name = name
 		self.part_num = part_num
 		self.local_filepath = local_filepath
@@ -116,6 +118,13 @@ def create_database(filepath, echo=False):
 	Session = sessionmaker(bind=engine)
 	session = Session()
 
+	c1 = CompositionData(
+		name="BWV66.6",
+		part_num=0,
+		local_filepath="/some/local/dir"
+	)
+	session.add(c1)
+	
 	f1 = Fragment(
 		onset_start=1.0,
 		onset_stop=2.0,
@@ -128,6 +137,9 @@ def create_database(filepath, echo=False):
 		is_slurred=True
 	)
 	session.add(f1)
+
+	c1.composition_data = [f1]
+
 	session.commit()
 
 create_database(filepath="/Users/lukepoeppel/decitala/decitala/tests/{}.db".format(uuid.uuid4().hex), echo=True)
