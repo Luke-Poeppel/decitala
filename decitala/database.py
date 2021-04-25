@@ -7,22 +7,45 @@
 #
 # Location: Kent, CT 2020 / Frankfurt, DE 2020 / NYC, 2021
 ####################################################################################################
+import uuid
 
 from sqlalchemy import (
 	Column,
 	String,
 	Float,
 	Boolean,
-	Integer
+	Integer,
+	ForeignKey,
+	create_engine
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import (
 	sessionmaker,
 	relationship,
-	backref
+	backref,
 )
 
+"""
+:param str composition_data: composition data (backref for simple `CompositionData` model). This is retrieved in the
+							creation of the database. 
+"""
+
 Base = declarative_base()
+
+class CompositionData(Base):
+	"""
+	SQLAlchemy model representing the basic composition data for a composition. 
+	"""
+	__tablename__ == "CompositionData"
+
+	name = Column(String)
+	part_num = Column(Integer)
+	local_filepath = Column(String)
+
+	def __init__(self):
+		self.name = name
+		self.part_num = part_num
+		self.local_filepath = local_filepath
 
 class Fragment(Base):
 	"""
@@ -40,8 +63,6 @@ class Fragment(Base):
 	:param float difference: difference between the fragment's values to the values in the database.
 	:param str pitch_content: pitch content of the extracted fragment.
 	:param bool is_slurred: whether the extracted fragment is spanned by a slur object. 
-	:param str composition_data: composition data (backref for simple `CompositionData` model). This is retrieved in the
-								creation of the database. 
 	"""
 	__tablename__ = "Fragments"
 
@@ -59,7 +80,9 @@ class Fragment(Base):
 	
 	pitch_content = Column(String)
 	is_slurred = Column(Boolean)
-	composition_data = Column(String)
+
+	composition_data_id = Column(Integer, ForeignKey("CompositionData.id"))
+	composition_data = relationship("CompositionData", backref=backref("composition_data"))
 
 	def __init__(
 			self,
@@ -72,7 +95,6 @@ class Fragment(Base):
 			difference,
 			pitch_content,
 			is_slurred,
-			composition_data
 		):
 		self.onset_start = onset_start
 		self.onset_stop = onset_stop
@@ -83,7 +105,29 @@ class Fragment(Base):
 		self.difference = difference
 		self.pitch_content = pitch_content
 		self.is_slurred = is_slurred
-		self.composition_data = composition_data
 
+def create_database(filepath, echo=False):
+	"""
+	Function for creating a database. 
+	"""
+	engine = create_engine(f"sqlite:////{filepath}", echo=echo)
+	Base.metadata.create_all(engine)
 
+	Session = sessionmaker(bind=engine)
+	session = Session()
 
+	f1 = Fragment(
+		onset_start=1.0,
+		onset_stop=2.0,
+		fragment_type="decitala",
+		name="Ragavardhana",
+		mod_type="r",
+		ratio=1.5,
+		difference=0.0,
+		pitch_content="(60, 62, 64, 66, 68)",
+		is_slurred=True
+	)
+	session.add(f1)
+	session.commit()
+
+create_database(filepath="/Users/lukepoeppel/decitala/decitala/tests/{}.db".format(uuid.uuid4().hex), echo=True)
