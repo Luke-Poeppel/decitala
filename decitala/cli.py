@@ -36,9 +36,11 @@ def pathfinder(filepath, part_num, frag_type, verbose):
 	)
 	json_dumped_res = json.dumps(obj=best_path, cls=FragmentEncoder, indent=4)
 	logger.info(json_dumped_res)
-	filename = filepath.split("/")[-1][:-4] + "_part_num={0}_frag_type={1}.json".format(part_num, frag_type) # noqa
+	filename = filepath.split("/")[-1][:-4] + f"_part_num={part_num}_frag_type={frag_type}.json"
 	with open(filename, "w") as output:
 		json.dump(obj=best_path, fp=output, cls=FragmentEncoder, indent=4)
+	logger.info(f"Result saved in: {filename}"
+
 
 # @decitala.command()
 # @click.option("--filepath", default="", help="Path to filepath parsed for the database.")
