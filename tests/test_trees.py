@@ -1,7 +1,9 @@
 import numpy as np
 import os
 import pytest
+import doctest
 
+from decitala import trees
 from decitala.trees import (
 	FragmentTree,
 	filter_data,
@@ -18,6 +20,9 @@ here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/fragments/Decitalas"
 greek_path = os.path.dirname(here) + "/fragments/Greek_Metrics/XML"
 transcription_example = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
+
+def test_doctests():
+	assert doctest.testmod(trees, raise_on_error=True)
 
 @pytest.fixture
 def tala_ratio_tree():

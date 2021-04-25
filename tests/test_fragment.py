@@ -2,7 +2,9 @@ import os
 import random
 import numpy as np
 import json
+import doctest
 
+from decitala import fragment
 from decitala.fragment import (
 	Decitala,
 	GreekFoot,
@@ -14,6 +16,9 @@ from decitala.fragment import (
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/fragments/Decitalas"
 greek_path = os.path.dirname(here) + "/fragments/Greek_Metrics/XML"
+
+def test_doctests():
+	assert doctest.testmod(fragment, raise_on_error=True)
 
 # Possible manipulations for Decitalas and GreekFoot objects. 
 full_name = lambda x: x

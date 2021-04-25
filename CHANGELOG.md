@@ -5,6 +5,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.10.0] ???
 ### Added
+- WIP: Revamped the database module. Everything is now ported over to SQLAlchemy and is more easily extendable to broader rhythmic corpora. 
 - Added `non_retrogradable_measures` function to `utils.py` for finding all palindromic measures in a given filepath and part number. 
 - WIP: Implemented Dijkstra's Algorithm for path finding. 
 - Added optional `measure_divider_mode` parameter to `utils.get_object_indices` which returns the same objects, divided into lists of measures or objects divided by a string. 
@@ -15,6 +16,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - The `fragment.morris_symmetry_class` function now returns integers representing the classes (instead of string describing them). The meaning of each class is given in the documentation. 
 - Refactored `path_finding.floyd_warshall` and added helper functions for all path-finding algorithms to `path_finding_utils.py`. 
 - The CLI `pathfinder` tool now logs the saved file. 
+- Improved doctest integration by running them within the (pytest) tests directory. 
 
 ### Fixed
 - Issues #116: missing result logging from `decitala.cli.pathfinder`; 
