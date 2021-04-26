@@ -17,6 +17,7 @@ import re
 import sqlite3
 
 from ast import literal_eval
+from collections import Counter
 
 from music21 import converter
 from music21 import note
@@ -87,11 +88,8 @@ class FragmentDecoder(json.JSONDecoder):
 		This function already runs json.loads invisibly on ``obj``.
 		"""
 		try:
-			if obj["frag_type"] == "general_fragment": # and obj["name"] is not None:
-				if obj["name"] is None:
-					return GeneralFragment(data=obj["data"])
-				else:
-					return GeneralFragment(data=obj["data"], name=obj["name"])
+			if obj["frag_type"] == "general_fragment":
+				return GeneralFragment(data=obj["data"], name=obj["name"])
 			elif obj["frag_type"] == "decitala" and obj["name"] is not None:
 				return Decitala(obj["name"])
 			elif obj["frag_type"] == "greek_foot" and obj["name"] is not None:
@@ -106,20 +104,17 @@ class GeneralFragment:
 	Class representing a generic rhythmic fragment. The user must provide either a path to a music21
 	readable file or an array of quarter length values.
 
-	:param data: either an array of quarter length values or a path to a music21 readable file.
-	:param str name: optional name.
-	:raises `~decitala.fragment.FragmentException`: if an array **and** file are provided or if \
-		neither are provided.
+	:param data: Either an array of quarter length values or a path to a music21 readable file.
+	:param str name: Optional name.
+	:raises `~decitala.fragment.FragmentException`: If an array **and** file are provided or if
+													neither are provided.
 
 	>>> random_fragment_path = "./corpora/Decitalas/63_Nandi.xml"
-	>>> g1 = GeneralFragment(data=random_fragment_path, name='test')
+	>>> g1 = GeneralFragment(data=random_fragment_path, name='MyNandi')
 	>>> g1
-	<fragment.GeneralFragment test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]>
+	<fragment.GeneralFragment MyNandi: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]>
 	>>> g1.filename
 	'63_Nandi.xml'
-	>>> g1.coolness_level = 'pretty cool'
-	>>> g1.coolness_level
-	'pretty cool'
 	>>> g1.num_onsets
 	7
 	>>> g1.ql_array()
@@ -143,25 +138,30 @@ class GeneralFragment:
 	>>> # We may also initialize with an array...
 	>>> GeneralFragment(data=np.array([0.75, 0.75, 0.5, 0.25]))
 	<fragment.GeneralFragment: [0.75 0.75 0.5  0.25]>
+	>>> # We can also set keyword arguments
+	>>> g1.coolness_level = 'pretty cool'
+	>>> g1.coolness_level
+	'pretty cool'
 	"""
-	def __init__(self, data, name=None, **kwargs):
-		self.data = data # not too happy about this... 
+	def __init__(
+			self,
+			data,
+			name=None,
+			ratio_equivalents=None,
+			difference_equivalents=None,
+			filepath=None,
+			**kwargs
+		):
 		if isinstance(data, str):
-			assert os.path.isfile(data), FragmentException("The path provided does not lead to a file.")
-
-			self.creation_type = 'filepath'
+			assert os.path.isfile(data), FragmentException("The input data is not a file.")
 			self.filepath = data
-			self.filename = self.filepath.split('/')[-1]
-
-			stream = converter.parse(self.filepath)
-			self.stream = stream
+			self.filename = self.filepath.split("/")[-1]
+			self.data = data
 		elif isinstance(data, np.ndarray) or isinstance(data, list):
 			assert len(data) >= 1
-
-			self.creation_type = "array"
-			self.temp_ql_array = np.array(data)
+			self.data = np.array(data)
 		else:
-			raise FragmentException(f"{data} is an invalid instantiation.")
+			raise FragmentException(f"{data} is an invalid input to GeneralFragment.")
 
 		self.name = name
 		self.frag_type = "general_fragment"
@@ -173,15 +173,9 @@ class GeneralFragment:
 			return f"<fragment.GeneralFragment {self.name}: {self.ql_array()}>"
 
 	def __hash__(self):
-		"""
-		:return: hash of the tala by its name.
-		"""
 		return hash(self.name)
 
 	def __eq__(self, other):
-		"""
-		:return: whether or not one fragment is equal to another, as defined by its hash.
-		"""
 		if self.__hash__() == other.__hash__():
 			return True
 		else:
@@ -189,29 +183,29 @@ class GeneralFragment:
 
 	def ql_array(self, retrograde=False):
 		"""
-		:param bool retrograde: whether or not to return the fragment in its original form \
-								or in retrograde.
-		:return: the quarter length array of the fragment.
+		:param bool retrograde: Whether to return the fragment in its original form or 
+								in retrograde. 
+		:return: The quarter length array of the fragment.
 		:rtype: numpy.array
 		"""
-		if self.creation_type == 'filepath':
+		if isinstance(self.data, str):
+			converted = converter.parse(self.data)
+			data = np.array([this_note.quarterLength for this_note in converted.flat.getElementsByClass(note.Note)]) # noqa
 			if not(retrograde):
-				data = [this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)]
-				return np.array(data)
+				return data
 			else:
-				data = [this_note.quarterLength for this_note in self.stream.flat.getElementsByClass(note.Note)]
-				return np.flip(np.array(data))
+				return np.flip(data)
 		else:
+			
 			if not(retrograde):
-				return self.temp_ql_array
+				return self.data
 			else:
-				return np.flip(self.temp_ql_array)
+				return np.flip(self.data)
 
 	def ql_tuple(self, retrograde=False):
 		"""
-		:param bool retrograde: whether or not to return the fragment in its original form \
-								or in retrograde.
-		:return: the quarter length array of the fragment (as a tuple).
+		:param bool retrograde: Whether to return the fragment in retrograde.
+		:return: the quarter length array of the fragment as a tuple.
 		:rtype: tuple
 		"""
 		return tuple(self.ql_array(retrograde=retrograde))
@@ -219,7 +213,7 @@ class GeneralFragment:
 	@property
 	def num_onsets(self):
 		"""
-		:return: the number of onsets in the fragment.
+		:return: The number of onsets in the fragment.
 		:rtype: int
 		"""
 		return len(self.ql_array())
@@ -227,7 +221,7 @@ class GeneralFragment:
 	@property
 	def num_anga_classes(self):
 		"""
-		:return: the number of anga classes in the fragment (the number of unique rhythmic values).
+		:return: The number of anga classes in the fragment (the number of unique rhythmic values).
 		:rtype: int
 
 		>>> GeneralFragment(data=np.array([0.75, 0.75, 0.5, 0.25])).num_anga_classes
@@ -238,44 +232,45 @@ class GeneralFragment:
 	@property
 	def ql_duration(self):
 		"""
-		:return: the overall duration of the fragment (as expressed in quarter lengths).
+		:return: The overall duration of the fragment (expressed in quarter lengths).
 		:rtype: float
 		"""
 		return sum(self.ql_array())
 
 	def dseg(self, as_str=False):
 		"""
-		:param bool as_str: whether or not to return the d-seg as a string.
-		:return: the d-seg of the fragment, as introducted in `The Perception of Rhythm \
-		in Non-Tonal Music <https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents>`_ \
-		(Marvin, 1991). Maps a fragment into a sequence of relative durations.
-		:rtype: numpy.array (or string if ``as_str=True``)
+		:param bool as_str: Whether to make the return type a string. 
+		:return: the d-seg of the fragment, as introducted in `The Perception of Rhythm
+				in Non-Tonal Music 
+				<https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents>`_
+				(Marvin, 1991). Maps a fragment into a sequence of relative durations.
+		:rtype: numpy.array (or string if `as_str=True`). 
 
 		>>> g3 = GeneralFragment(np.array([0.25, 0.75, 2.0, 1.0]), name='marvin-p70')
 		>>> g3.dseg()
 		array([0, 1, 3, 2])
 		"""
 		dseg_vals = copy.copy(self.ql_array())
-		valueDict = dict()
+		value_dict = dict()
 
-		for i, thisVal in zip(range(0, len(sorted(set(dseg_vals)))), sorted(set(dseg_vals))):
-			valueDict[thisVal] = str(i)
+		for i, this_val in zip(range(0, len(sorted(set(dseg_vals)))), sorted(set(dseg_vals))):
+			value_dict[this_val] = str(i)
 
-		for i, thisValue in enumerate(dseg_vals):
-			for thisKey in valueDict:
-				if thisValue == thisKey:
-					dseg_vals[i] = valueDict[thisKey]
+		for i, this_val in enumerate(dseg_vals):
+			for key in value_dict:
+				if this_val == key:
+					dseg_vals[i] = value_dict[key]
 
 		if as_str is True:
-			return '<' + ' '.join([str(int(val)) for val in dseg_vals]) + '>'
+			return "<" + " ".join([str(int(val)) for val in dseg_vals]) + ">"
 		else:
 			return np.array([int(val) for val in dseg_vals])
 
 	def reduced_dseg(self, as_str=False):
 		"""
-		:param bool as_str: whether or not to return the reduced d-seg as a string.
+		:param bool as_str: Whether to return the reduced d-seg as a string.
 		:return: d-seg of the fragment with all contiguous equal values reduced to a single instance.
-		:rtype: numpy.array (or string if ``as_str=True``)
+		:rtype: numpy.array (or string if `as_str=True`)
 
 		>>> g4 = GeneralFragment([0.125, 0.125, 1.75, 0.5], name='marvin-p74-x')
 		>>> g4.dseg(as_str=True)
@@ -294,22 +289,19 @@ class GeneralFragment:
 		if not(as_str):
 			return np.array([int(val) for val in as_array])
 		else:
-			return '<' + ' '.join([str(int(val)) for val in as_array]) + '>'
+			return "<" + " ".join([str(int(val)) for val in as_array]) + ">"
 
 	def successive_ratio_array(self, retrograde=False):
 		"""See docstring of :obj:`decitala.utils.successive_ratio_array`."""
-		if not retrograde:
-			return utils.successive_ratio_array(self.ql_array())
-		else:
-			return utils.successive_ratio_array(self.ql_array(retrograde=True))
+		return utils.successive_ratio_array(retrograde=retrograde)
 
-	def successive_difference_array(self):
+	def successive_difference_array(self, retrograde=False):
 		"""See docstring of :obj:`decitala.utils.successive_difference_array`."""
-		return utils.successive_difference_array(self.ql_array())
+		return utils.successive_difference_array(self.ql_array(retrograde=retrograde))
 
 	def cyclic_permutations(self):
 		"""
-		:return: all cyclic permutations of :meth:`~decitala.fragment.Decitala.ql_array` as in Morris.
+		:return: All cyclic permutations of :obj:`~decitala.fragment.Decitala.ql_array`, as in Morris (1998).
 		:rtype: numpy.array
 		"""
 		return np.array([np.roll(self.ql_array(), -i) for i in range(self.num_onsets)])
@@ -321,6 +313,13 @@ class GeneralFragment:
 		:rtype: bool
 		"""
 		return (self.ql_array(retrograde=False) == self.ql_array(retrograde=True)).all()
+
+	def anga_class_counter(self):
+		"""
+		:return: A counter of the elements from `:meth:decitala.fragment.ql_array`. 
+		:rtype: collections.Counter
+		"""
+		return Counter(self.ql_array())
 
 	def is_sub_fragment(self, other, try_retrograde=True):
 		"""
@@ -357,7 +356,7 @@ class GeneralFragment:
 				Music <http://ecmc.rochester.edu/rdm/pdflib/talapaper.pdf>`_ (1999).
 		:rtype: str
 
-		- I. Maximally Trivial:	of the form :math:`X` (one onset, one anga class)
+		- I. Maximally Trivial:				of the form :math:`X` (one onset, one anga class)
 		- II. Trivial Dual Symmetry:  		of the form :math:`XY`
 		- III. Trivial Symmetry: 			of the form :math:`XXXXXX`
 		- IV. Maximally Trivial Palindrome: of the form :math:`XXX...XYX...XXX`
@@ -365,20 +364,20 @@ class GeneralFragment:
 		- VI. Palindromic: 					of the form :math:`XY...Z...YX`
 		- VII. Stream:						of the form :math:`XYZ...abc...`
 		"""
-		dseg = self.dseg(as_str=False)
-		reduced_dseg = self.reduced_dseg(as_str=False)
+		dseg = list(self.dseg())
+		centrish_element = self.ql_array()[self.num_onsets // 2] 
 
-		if len(dseg) == 1:
+		if self.num_onsets == 1:
 			return 1
-		elif len(dseg) == 2 and len(np.unique(dseg)) == 2:
+		if self.num_onsets == 2 and self.num_anga_classes == 2:
 			return 2
-		elif len(dseg) > 1 and len(np.unique(dseg)) == 1:
+		elif self.num_anga_classes == 1 and self.num_onsets > 1:
 			return 3
-		elif len(dseg) > 2 and len(np.unique(dseg)) == 2:
+		elif dseg == dseg[::-1] and self.anga_class_counter()[centrish_element] == 1:
 			return 4
-		elif len(dseg) > 2 and len(reduced_dseg) == 3:
+		elif dseg == dseg[::-1] and self.anga_class_counter()[centrish_element] > 1:
 			return 5
-		elif len(dseg) > 2 and len(np.unique(dseg)) == len(dseg) // 2:
+		elif self.is_non_retrogradable:
 			return 6
 		else:
 			return 7
@@ -439,6 +438,12 @@ class GeneralFragment:
 		new_ql_array = utils.augment(self.ql_array(), factor=factor, difference=difference)
 		new_name = self.name + "/r:{}/".format(factor) + "d:{}".format(difference)
 		return GeneralFragment(new_ql_array, new_name)
+
+	def ratio_equivalents(self):
+		return self.ratio_equivalents
+
+	def difference_equivalents(self):
+		return self.difference_equivalents
 
 	def show(self):
 		if self.stream:

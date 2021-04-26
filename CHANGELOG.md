@@ -25,7 +25,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Renamed `trees.rolling_search` to `trees.rolling_tree_search` to be consistent with the other rolling search type(s) (#114).  
 
 ### Fixed
-- Issues #116: missing result logging from `decitala.cli.pathfinder`; 
+- Issues #116: missing result logging from `decitala.cli.pathfinder`; #115: incorrect results from Morris symmetry classes; 
 - Incorrect serialization condition for `GeneralFragment` –– forced incorrect parsing to and from analysis files. 
 
 ## [v0.9.1] April 16, 2021
