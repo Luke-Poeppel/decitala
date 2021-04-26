@@ -150,8 +150,14 @@ def CombinedHashTable():
 	return cht
 
 class FragmentHashTable:
-	def __init__(self, frag_types=[], fragment=[]):
+	def __init__(self, frag_types=[], fragments=[]):
 		"""
 		Provide list of frag_types and list of fragment objects. Interally does the modification filtering. 
 		"""
+		pass
+
+	def load(self):
+		pass
+
+	def data():
 		pass

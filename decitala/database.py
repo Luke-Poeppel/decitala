@@ -245,13 +245,13 @@ def create_database(
 			f = Fragment(
 				onset_start=this_fragment["onset_range"][0],
 				onset_stop=this_fragment["onset_range"][1],
-				fragment_type="decitala",
-				name="Tritiya",
-				mod_type="r",
-				ratio=1.5,
-				difference=0.0,
+				fragment_type=this_fragment["frag_type"],
+				name=this_fragment["fragment"].name,
+				mod_type=this_fragment["mod"][0],
+				ratio=1.0,
+				difference=1.0,
 				pitch_content=json.dumps(this_fragment["pitch_content"]),
-				is_slurred=True
+				is_slurred=this_fragment["is_spanned_by_slur"]
 			)
 			fragment_objects.append(f)
 			session.add(f)
