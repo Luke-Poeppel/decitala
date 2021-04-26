@@ -148,3 +148,10 @@ def CombinedHashTable():
 			get_all_augmentations(dict_in=cht, fragment=fragment, frag_type=frag_type)
 
 	return cht
+
+class FragmentHashTable:
+	def __init__(self, frag_types=[], fragment=[]):
+		"""
+		Provide list of frag_types and list of fragment objects. Interally does the modification filtering. 
+		"""
+		pass

@@ -7,6 +7,8 @@
 # Location: Kent, CT 2020 / Frankfurt, DE 2020 / NYC, 2021
 ####################################################################################################
 import uuid
+import os
+import json
 
 from sqlalchemy import (
 	Column,
@@ -24,7 +26,14 @@ from sqlalchemy.orm import (
 	backref,
 )
 
+from .search import rolling_hash_search
+from .utils import get_logger
+from .hash_table import GreekFootHashTable
+
 Base = declarative_base()
+
+class DatabaseException(Exception):
+	pass
 
 class CompositionData(Base):
 	"""
@@ -179,11 +188,12 @@ def create_database_test(filepath, echo=False):
 def create_database(
 		db_path,
 		filepath,
-		datasets, # list of hash tables. 
-		part_nums=[0], # assumes 0 by default
+		datasets,
+		part_nums=[0],
 		windows=list(range(2, 19)),
 		ignore_single_anga_class_fragments=False,
-		extra_filter=None
+		extra_filter=None,
+		echo=False
 	):
 	"""
 	Function for creating a database from a single filepath. 
@@ -195,8 +205,61 @@ def create_database(
 	:param ignore_single_anga_class_fragments: whether to ignore single anga class fragments. 
 											False by default. 
 	:param extra_filter: lambda expression on the extracted fragments. 
+	:param bool echo: whether to echo the SQL calls. False by default. 
 	"""
-	pass
+	assert os.path.isfile(filepath), DatabaseException("✗ The path provided is not a valid file.")
+	assert db_path.endswith(".db"), DatabaseException("✗ The db_path must end with '.db'.")
+	if os.path.isfile(db_path):
+		return "That database already exists ✔"
+
+	logger = get_logger(name=__file__, print_to_console=True)
+	logger.info(f"Preparing database at {db_path}...")
+
+	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
+	Base.metadata.create_all(engine)
+
+	Session = sessionmaker(bind=engine)
+	session = Session()
+
+	filepath_name = filepath.split("/")[-1]
+
+	for this_part in part_nums:
+		data = CompositionData(
+			name=filepath_name,
+			part_num=this_part,
+			local_filepath=filepath
+		)
+		session.add(data)
+
+		res = rolling_hash_search(
+			filepath=filepath,
+			part_num=this_part,
+			table=GreekFootHashTable(), # FragmentHashTable(frag_types=["decitala", "greek_foot"], custom=[MyTable]),
+			windows=windows
+		)
+		if not(res):
+			return "No fragments extracted –– stopping."
+
+		fragment_objects = []
+		for this_fragment in res:
+			f = Fragment(
+				onset_start=this_fragment["onset_range"][0],
+				onset_stop=this_fragment["onset_range"][1],
+				fragment_type="decitala",
+				name="Tritiya",
+				mod_type="r",
+				ratio=1.5,
+				difference=0.0,
+				pitch_content=json.dumps(this_fragment["pitch_content"]),
+				is_slurred=True
+			)
+			fragment_objects.append(f)
+			session.add(f)
+
+		data.composition_data = fragment_objects
+	
+	session.commit()
+	return
 
 def batch_create_database(
 	):

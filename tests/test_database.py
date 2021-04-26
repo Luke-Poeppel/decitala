@@ -1,11 +1,20 @@
 import os
 import pytest
 import tempfile
+import uuid
 
-# from decitala.database import (
-# 	create_database,
-# 	DBParser
-# )
+from decitala.database import (
+	create_database,
+)
+from decitala.hash_table import GreekFootHashTable
+
+print(
+	create_database(
+		db_path=f"/Users/lukepoeppel/decitala/decitala/tests/siff-{uuid.uuid4().hex}.db", 
+		filepath="/Users/lukepoeppel/Messiaen/Oiseaux_De_Nouvelle_Calédonie/2_LOiseau_Moine/A_LOiseau_Moine/XML/LOiseau_Moine_Ex22.xml",
+		datasets=[GreekFootHashTable],
+	)
+)
 
 # here = os.path.abspath(os.path.dirname(__file__))
 
