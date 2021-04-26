@@ -53,20 +53,20 @@ class GreekFootException(FragmentException):
 # Serialization
 class FragmentEncoder(json.JSONEncoder):
 	def default(self, obj):
-		if isinstance(obj, GeneralFragment):
+		if type(obj) == GeneralFragment:
 			d = {
 				"frag_type": "general_fragment",
 				"data": obj.data,
 				"name": obj.name # May be None! 
 			}
 			return d
-		elif isinstance(obj, Decitala):
+		elif type(obj) == Decitala:
 			d = {
 				"frag_type": "decitala",
 				"name": obj.name
 			}
 			return d
-		elif isinstance(obj, GreekFoot):
+		elif type(obj) == GreekFoot:
 			d = {
 				"frag_type": "greek_foot",
 				"name": obj.name
