@@ -117,78 +117,10 @@ class Fragment(Base):
 		self.pitch_content = pitch_content
 		self.is_slurred = is_slurred
 
-def create_database_test(filepath, echo=False):
-	"""
-	Function for creating a database. 
-	"""
-	engine = create_engine(f"sqlite:////{filepath}", echo=echo)
-	Base.metadata.create_all(engine)
-
-	Session = sessionmaker(bind=engine)
-	session = Session()
-
-	c1 = CompositionData(
-		name="BWV66.6",
-		part_num=0,
-		local_filepath="/some/local/dir"
-	)
-	session.add(c1)
-
-	c2 = CompositionData(
-		name="BWV77.7",
-		part_num=0,
-		local_filepath="/some/other/dir"
-	)
-	session.add(c2)
-	
-	f1 = Fragment(
-		onset_start=1.0,
-		onset_stop=2.0,
-		fragment_type="decitala",
-		name="Ragavardhana",
-		mod_type="r",
-		ratio=1.5,
-		difference=0.0,
-		pitch_content="(60, 62, 64, 66, 68)",
-		is_slurred=True
-	)
-	f2 = Fragment(
-		onset_start=1.0,
-		onset_stop=2.0,
-		fragment_type="decitala",
-		name="Dvitiya",
-		mod_type="r",
-		ratio=1.5,
-		difference=0.0,
-		pitch_content="(60, 62, 64, 66, 68)",
-		is_slurred=True
-	)
-	f3 = Fragment(
-		onset_start=1.0,
-		onset_stop=2.0,
-		fragment_type="decitala",
-		name="Tritiya",
-		mod_type="r",
-		ratio=1.5,
-		difference=0.0,
-		pitch_content="(60, 62, 64, 66, 68)",
-		is_slurred=True
-	)
-	session.add(f1)
-	session.add(f2)
-	session.add(f3)
-
-	c1.composition_data = [f1, f2]
-	c2.composition_data = [f3]
-
-	session.commit()
-
-#create_database_test(filepath="/Users/lukepoeppel/decitala/decitala/tests/{}.db".format(uuid.uuid4().hex), echo=True)
-
 def create_database(
 		db_path,
 		filepath,
-		datasets,
+		table,
 		part_nums=[0],
 		windows=list(range(2, 19)),
 		ignore_single_anga_class_fragments=False,
@@ -200,7 +132,7 @@ def create_database(
 
 	:param str db_path: path to the database to be created. 
 	:param str filepath: path to the score to be analyzed.
-	:param list datasets: list of hash table objects from `decitala.hash_table`. 
+	:param list table: a :obj:`decitala.hash_table.FragmentHashTable` object. 
 	:param list part_nums: parts to be analyzed.
 	:param ignore_single_anga_class_fragments: whether to ignore single anga class fragments. 
 											False by default. 
