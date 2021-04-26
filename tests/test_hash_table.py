@@ -4,12 +4,15 @@ import sqlite3
 import json
 import random
 
-from decitala.hash_table import DecitalaHashTable, GreekFootHashTable, get_all_augmentations
-from decitala.fragment import Decitala
+from decitala.hash_table import (
+	DecitalaHashTable,
+	GreekFootHashTable,
+	get_all_augmentations,
+	FragmentHashTable
+)
+from decitala.fragment import Decitala, GeneralFragment
 
 here = os.path.abspath(os.path.dirname(__file__))
-decitala_path = os.path.dirname(here) + "/fragments/Decitalas"
-greek_path = os.path.dirname(here) + "/fragments/Greek_Metrics/XML"
 fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
 
 @pytest.fixture
@@ -93,3 +96,9 @@ def test_greek_foot_hash_table(GFHT):
 		
 		random_modification = str(tuple(random_modification))
 		assert GFHT[random_modification] is not None
+
+d = FragmentHashTable(
+	datasets=["greek_foot"],
+	custom_fragments=[GeneralFragment([3.0, 4.0, 2.0, 1.0], name="my awesome fragment")]
+)
+print(d.try_retrograde)

@@ -29,6 +29,8 @@ MODIFICATION_HIERARCHY = {
 FACTORS = [0.125, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0]
 DIFFERENCES = [-0.375, -0.25, -0.125, 0.0, 0.125, 0.25, 0.375, 0.5, 0.75, 0.875, 1.75, 2.625, 3.5, 4.375] # noqa
 
+TRY_RETROGRADE = True
+
 def get_all_augmentations(
 		fragment,
 		frag_type,
@@ -153,14 +155,58 @@ def CombinedHashTable():
 	return cht
 
 class FragmentHashTable:
-	def __init__(self, frag_types=[], fragments=[]):
-		"""
-		Provide list of frag_types and list of fragment objects. Interally does the modification filtering. 
-		"""
-		pass
+	custom_overrides_datasets = False
 
-	def load(self):
-		pass
+	factors = FACTORS
+	differences = DIFFERENCES
+	try_retrograde = TRY_RETROGRADE
+	modification_hierarchy = MODIFICATION_HIERARCHY
 
-	def data():
-		pass
+	def __init__(
+			self,
+			datasets=[],
+			custom_fragments=[]
+		):
+		"""
+		General object for storing all modifications of rhythmic datasets. Does not load the modifications by default. 
+
+		:param list datasets: optional elements from `decitala`'s built-in datasets. Currently includes `decitala` and `greek_foot`. 
+		:param list custom_fragment: optional list of extra fragments to be included in the datasets. If you wish for the custom fragments
+									to override the dataset fragments, you must create a new class inheriting from `FragmentHashTable` that
+									sets the class attribute `custom_overrides_datasets=True`. 
+		"""
+		self.datasets = datasets
+		self.custom_fragments = custom_fragments
+		self.loaded = False
+		self.data = dict()
+
+	def load_modifications(
+			self,
+			factors=None,
+			differences=None,
+			try_retrograde=None,
+			allow_mixed_augmentation=False,
+			modification_hierarchy=None,
+		):
+		"""
+		Functions for loading all modifications of the input data into the `self.data`. 
+		"""
+		if not(factors):
+			factors = self.factors
+		if not(differences):
+			differences = self.differences
+		if not(modification_hierarchy):
+			modification_hierarchy = self.modification_hierarchy
+		if not(try_retrograde):
+			try_retrograde = self.try_retrograde
+
+		self.loaded = True
+		# Write into self.data. 
+
+	def data(self):
+		"""
+		Returns all modified data. 
+		"""
+		if not self.loaded:
+			self.load_modifications()
+			return self.data

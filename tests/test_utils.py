@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import pytest
+import doctest
 
 from collections import Counter
 
@@ -8,6 +9,7 @@ from music21 import chord
 from music21 import converter
 from music21 import note
 
+from decitala import utils
 from decitala.utils import (
 	carnatic_string_to_ql_array,
 	ql_array_to_carnatic_string,
@@ -31,6 +33,9 @@ from decitala.fragment import (
 
 here = os.path.abspath(os.path.dirname(__file__))
 analysis_filepath = os.path.dirname(here) + "/databases/analyses/livre_dorgue_1_analysis.json"
+
+# def test_doctests():
+# 	assert doctest.testmod(utils, raise_on_error=True)
 
 # Frame data
 @pytest.fixture
