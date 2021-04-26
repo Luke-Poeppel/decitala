@@ -22,10 +22,12 @@ from .utils import (
 	frame_is_spanned_by_slur,
 	contiguous_summation,
 	frame_to_midi,
+	get_logger
 )
 from .fragment import (
 	Decitala,
 	GreekFoot,
+	FragmentEncoder
 )
 from .hash_table import (
 	DecitalaHashTable,
@@ -38,6 +40,8 @@ __all__ = [
 	"rolling_tree_search",
 	"rolling_hash_search"
 ]
+
+logger = get_logger(name=__file__, print_to_console=True)
 
 ####################################################################################################
 class SearchException(Exception):
@@ -551,6 +555,7 @@ def path_finder(
 		windows=list(range(2, 19)),
 		slur_constraint=False,
 		ignore_single_anga_class_fragments=False,
+		save_filepath=None
 		verbose=False
 	):
 	if frag_type == "decitala":
@@ -585,4 +590,9 @@ def path_finder(
 		data=fragments,
 		slur_constraint=slur_constraint
 	)
+	if save_filepath:
+		with open(save_filepath, "w") as output:
+			json.dump(obj=best_path, fp=output, cls=FragmentEncoder, indent=4)
+		logger.info(f"Result saved in: {save_filepath}"
+
 	return best_path
