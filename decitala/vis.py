@@ -49,7 +49,7 @@ def _prepare_docs_and_screenshot(path, serialized_tree, logger):
 	logger.info("-> Running browserify...")
 	parse_data_file = "/".join([path, "parse_data.js"])
 	browserified_file = "/".join([path, "bundle.js"])
-	os.system("browserify {0} -o {1}".format(parse_data_file, browserified_file))
+	os.system(f"browserify {parse_data_file} -o {browserified_file}"
 
 	logger.info("-> Creating webshot with R...")
 	webshot_string = "webshot::webshot(url={0}, file={1}, zoom=3, selector={2})".format(
@@ -59,7 +59,7 @@ def _prepare_docs_and_screenshot(path, serialized_tree, logger):
 	)
 	subprocess.call(
 		[
-			"""Rscript -e "{}" """.format(webshot_string),
+			f"""Rscript -e "{webshot_string}" """
 		],
 		shell=True
 	)

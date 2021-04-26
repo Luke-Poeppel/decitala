@@ -153,18 +153,18 @@ class GeneralFragment:
 		elif isinstance(data, np.ndarray) or isinstance(data, list):
 			assert len(data) >= 1
 
-			self.creation_type = 'array'
+			self.creation_type = "array"
 			self.temp_ql_array = np.array(data)
 		else:
-			raise FragmentException("{} is an invalid instantiation.".format(data))
+			raise FragmentException(f"{data} is an invalid instantiation.")
 
 		self.name = name
 
 	def __repr__(self):
 		if self.name is None:
-			return '<fragment.GeneralFragment: {}>'.format(self.ql_array())
+			return f"<fragment.GeneralFragment: {self.ql_array()}>"
 		else:
-			return '<fragment.GeneralFragment {0}: {1}>'.format(self.name, self.ql_array())
+			return f"<fragment.GeneralFragment {self.name}: {self.ql_array()}>"
 
 	def __hash__(self):
 		"""
@@ -510,7 +510,7 @@ class Decitala(GeneralFragment):
 		matches = [x + ".xml" for x in matches]
 
 		if len(matches) == 0:
-			raise DecitalaException("No matches were found for name {}.".format(name))
+			raise DecitalaException(f"No matches were found for name {name}.")
 
 		if len(matches) == 1:
 			match = matches[0]
@@ -543,7 +543,7 @@ class Decitala(GeneralFragment):
 		super().__init__(data=self.full_path, name=self.name)
 
 	def __repr__(self):
-		return '<fragment.Decitala {}>'.format(self.name)
+		return f"<fragment.Decitala {self.name}>"
 
 	@property
 	def id_num(self):
@@ -574,8 +574,8 @@ class Decitala(GeneralFragment):
 		if input_id > 121 or input_id < 1:
 			raise DecitalaException("Input must be between 1 and 120.")
 		elif input_id in subdecitala_array:
-			raise DecitalaException("There are multiple talas with id: {}. \
-									Please consult the Lavignac (1921).".format(input_id))
+			raise DecitalaException(f"There are multiple talas with id: {input_id}. \
+									Please consult the Lavignac (1921).")
 
 		conn = sqlite3.connect(fragment_db)
 		cur = conn.cursor()
@@ -684,7 +684,7 @@ class GreekFoot(GeneralFragment):
 
 		matches = [x + ".xml" for x in matches]
 		if len(matches) == 0:
-			raise DecitalaException("No matches were found for name {}.".format(name))
+			raise DecitalaException(f"No matches were found for name {name}.")
 
 		if len(matches) == 1:
 			match = matches[0]
@@ -704,7 +704,7 @@ class GreekFoot(GeneralFragment):
 		super().__init__(data=self.full_path, name=self.name)
 
 	def __repr__(self):
-		return '<fragment.GreekFoot {}>'.format(self.name)
+		return f"<fragment.GreekFoot {self.name}>"
 
 	@property
 	def greek_string(self):
