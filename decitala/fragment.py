@@ -164,6 +164,7 @@ class GeneralFragment:
 			raise FragmentException(f"{data} is an invalid instantiation.")
 
 		self.name = name
+		self.frag_type = "general_fragment"
 
 	def __repr__(self):
 		if self.name is None:
@@ -545,6 +546,8 @@ class Decitala(GeneralFragment):
 					self.name = this_match[:-4]
 					self.filename = this_match
 
+		self.frag_type = "decitala"
+
 		super().__init__(data=self.full_path, name=self.name)
 
 	def __repr__(self):
@@ -705,6 +708,8 @@ class GreekFoot(GeneralFragment):
 					self.full_path = greek_path + "/" + this_match
 					self.name = this_match[:-4]
 					self.filename = this_match
+
+		self.frag_type = "greek_foot"
 
 		super().__init__(data=self.full_path, name=self.name)
 
