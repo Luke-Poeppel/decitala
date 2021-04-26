@@ -35,7 +35,7 @@ from .path_finding import floyd_warshall
 
 __all__ = [
 	"get_by_ql_array",
-	"rolling_search",
+	"rolling_tree_search",
 	"rolling_hash_search"
 ]
 
@@ -198,7 +198,7 @@ def get_by_ql_array(
 		return None
 
 ####################################################################################################
-def rolling_search(
+def rolling_tree_search(
 		filepath,
 		part_num,
 		ratio_tree=None,
@@ -241,7 +241,7 @@ def rolling_search(
 	>>> ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
 	>>> difference_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='difference') # noqa
 	>>> ex = "./tests/static/Shuffled_Transcription_2.xml"
-	>>> for tala_data in rolling_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=["r"])[0:5]:
+	>>> for tala_data in rolling_tree_search(ex, 0, ratio_tree, difference_tree, allowed_modifications=["r"])[0:5]:
 	... 	print(tala_data)
 	{'fragment': <fragment.GreekFoot Trochee>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.375), 'is_spanned_by_slur': False, 'pitch_content': [(72,), (87,)], 'id': 1}
 	{'fragment': <fragment.GreekFoot Dactyl>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(72,), (87,), (79,)], 'id': 39}

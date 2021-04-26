@@ -18,6 +18,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - The CLI `pathfinder` tool now logs the saved file. 
 - Improved doctest integration by running them within the (pytest) tests directory. 
 - Removed all `# -*- coding: utf-8 -*-` lines. 
+- Renamed `trees.rolling_search` to `trees.rolling_tree_search` to be consistent with the other rolling search type(s) (#114).  
 
 ### Fixed
 - Issues #116: missing result logging from `decitala.cli.pathfinder`; 
