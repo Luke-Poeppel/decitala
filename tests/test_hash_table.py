@@ -101,4 +101,4 @@ d = FragmentHashTable(
 	datasets=["greek_foot"],
 	custom_fragments=[GeneralFragment([3.0, 4.0, 2.0, 1.0], name="my awesome fragment")]
 )
-print(d.try_retrograde)
+print(d.data())

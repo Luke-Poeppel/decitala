@@ -106,6 +106,7 @@ def get_all_augmentations(
 	else:
 		raise Exception("Mixed augmentation is not yet supported.")
 
+# These should inherit from the general table. 
 def DecitalaHashTable():
 	conn = sqlite3.connect(fragment_db)
 	cur = conn.cursor()
@@ -154,6 +155,9 @@ def CombinedHashTable():
 
 	return cht
 
+def generate_all_augmentations():
+	pass
+
 class FragmentHashTable:
 	custom_overrides_datasets = False
 
@@ -178,7 +182,6 @@ class FragmentHashTable:
 		self.datasets = datasets
 		self.custom_fragments = custom_fragments
 		self.loaded = False
-		self.data = dict()
 
 	def load_modifications(
 			self,
@@ -199,14 +202,25 @@ class FragmentHashTable:
 			modification_hierarchy = self.modification_hierarchy
 		if not(try_retrograde):
 			try_retrograde = self.try_retrograde
+		
+		fht = dict()
 
+		for this_fragment in self.custom_fragments:
+			get_all_augmentations(
+				dict_in=fht,
+				fragment=this_fragment,
+				frag_type=this_fragment.frag_type,
+				#force_override=custom_overrides_datasets
+			)
+		
 		self.loaded = True
-		# Write into self.data. 
+
+		return fht
 
 	def data(self):
 		"""
 		Returns all modified data. 
 		"""
 		if not self.loaded:
-			self.load_modifications()
-			return self.data
+			fht = self.load_modifications()
+			return fht
