@@ -2,6 +2,7 @@ import numpy as np
 import os
 import pytest
 import doctest
+import tempfile
 
 from collections import Counter
 
@@ -10,25 +11,11 @@ from music21 import converter
 from music21 import note
 
 from decitala import utils
-from decitala.utils import (
-	carnatic_string_to_ql_array,
-	ql_array_to_carnatic_string,
-	ql_array_to_greek_diacritics,
-	contiguous_summation,
-	frame_to_ql_array,
-	filter_single_anga_class_fragments,
-	filter_sub_fragments,
-	roll_window,
-	get_object_indices,
-	frame_is_spanned_by_slur,
-	frame_to_ql_array,
-	contour_to_prime_contour,
-	loader,
-	ts_to_reduced_ts
-)
 
 from decitala.fragment import (
-	Decitala
+	Decitala,
+	GreekFoot,
+	GeneralFragment
 )
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -91,20 +78,20 @@ def example_frame():
 def test_carnatic_string_to_ql_array():
 	ex = "Sc S | | Sc S o |c Sc o oc o | S"
 	converted = np.array([1.5, 1.0, 0.5, 0.5, 1.5, 1.0, 0.25, 0.75, 1.5, 0.25, 0.375, 0.25, 0.5, 1.0])
-	assert np.array_equal(carnatic_string_to_ql_array(ex), converted)
+	assert np.array_equal(utils.carnatic_string_to_ql_array(ex), converted)
 
 def test_ql_array_to_carnatic_string():
 	ex = np.array([0.25, 0.25, 1.5, 0.75, 1.0, 0.375, 0.25, 0.375, 1.0, 1.5, 0.5])
 	cstring = "o o Sc |c S oc o oc S Sc |"
-	assert np.array_equal(ql_array_to_carnatic_string(ex), cstring)
+	assert np.array_equal(utils.ql_array_to_carnatic_string(ex), cstring)
 
 def test_ql_array_to_greek_diacritics():
 	ex = [0.25, 0.5, 0.5, 0.25, 0.5, 0.5, 0.25, 0.5, 0.25]
 	gstring = "⏑ –– –– ⏑ –– –– ⏑ –– ⏑"
-	assert np.array_equal(ql_array_to_greek_diacritics(ex), gstring)
+	assert np.array_equal(utils.ql_array_to_greek_diacritics(ex), gstring)
 
 def test_contiguous_summation_same_chord(gc2_example_data):
-	res = contiguous_summation(gc2_example_data)
+	res = utils.contiguous_summation(gc2_example_data)
 	expected = [
 		(chord.Chord(["F#2", "F3"], quarterLength=0.375), (1.625, 2.0)),
 		(chord.Chord(["F#2", "F3"], quarterLength=0.25), (2.0, 2.25))
@@ -126,19 +113,19 @@ def test_qls_not_change_after_cs():
 
 def test_single_anga_class_and_subtala_filtering(decitala_collection):
 	original = decitala_collection
-	filter_a = filter_single_anga_class_fragments(original)
+	filter_a = utils.filter_single_anga_class_fragments(original)
 	assert len(filter_a) == 2
 
-	filter_b = filter_sub_fragments(filter_a)
+	filter_b = utils.filter_sub_fragments(filter_a)
 	assert len(filter_b) == 1
 
 def test_frame_is_spanned_by_slur_a(example_transcriptions):
 	example_transcription_1 = example_transcriptions[0]
 	num_slurs = 0
-	all_objects = get_object_indices(example_transcription_1, 0)
+	all_objects = utils.get_object_indices(example_transcription_1, 0)
 	for this_window_size in [2, 3, 4]:
-		for this_frame in roll_window(all_objects, this_window_size):
-			check = frame_is_spanned_by_slur(this_frame)
+		for this_frame in utils.roll_window(all_objects, this_window_size):
+			check = utils.frame_is_spanned_by_slur(this_frame)
 			if check == True:
 				num_slurs += 1
 	
@@ -147,10 +134,10 @@ def test_frame_is_spanned_by_slur_a(example_transcriptions):
 def test_frame_is_spanned_by_slur_b(example_transcriptions):
 	example_transcription_2 = example_transcriptions[1]
 	num_slurs = 0
-	all_objects = get_object_indices(example_transcription_2, 0)
+	all_objects = utils.get_object_indices(example_transcription_2, 0)
 	for this_window_size in [2, 3, 4]:
-		for this_frame in roll_window(all_objects, this_window_size):
-			check = frame_is_spanned_by_slur(this_frame)
+		for this_frame in utils.roll_window(all_objects, this_window_size):
+			check = utils.frame_is_spanned_by_slur(this_frame)
 			if check == True:
 				num_slurs += 1
 	
@@ -161,12 +148,41 @@ def test_prime_contour():
 	contour_1 = [2, 4, 1, 5, 0, 6, 3]
 	contour_2 = [2, 1, 3, 0]
 
-	assert np.array_equal(contour_to_prime_contour(contour_1), np.array([2, 4, 1, 5, 0, 6, 3]))
-	assert np.array_equal(contour_to_prime_contour(contour_2), np.array([2, 1, 3, 0]))
+	assert np.array_equal(utils.contour_to_prime_contour(contour_1), np.array([2, 4, 1, 5, 0, 6, 3]))
+	assert np.array_equal(utils.contour_to_prime_contour(contour_2), np.array([2, 1, 3, 0]))
 
 def test_loader():
-	loaded = loader(analysis_filepath)
+	loaded = utils.loader(analysis_filepath)
 	fragments = set([x["fragment"] for x in loaded])
 	actual = {Decitala("Laya"), Decitala("Bhagna"), Decitala("Niccanka")}
 
 	assert fragments == actual
+
+def test_write_analysis():
+	f1 = Decitala("Lakskmica")
+	f2 = GreekFoot("Peon_III")
+	f3 = GeneralFragment([4.0, 4.0, 4.0, 1.0], name="weird fragment set")	
+	analysis = [
+		{
+			"fragment": f1,
+			"onset_range": (3.0, 9.0)
+		},
+		{
+			"fragment": f2,
+			"onset_range": (9.5, 12.25)
+		},
+		{
+			"fragment": f3,
+			"onset_range": (12.0, 13.125)
+		}
+	]
+	with tempfile.NamedTemporaryFile() as tmpfile:
+		utils.write_analysis(
+			data=analysis,
+			filepath=tmpfile.name
+		)
+
+		# Reread to check proper serialization. 
+		loaded = utils.loader(tmpfile.name)
+		fragments = [x["fragment"].name for x in loaded]
+		assert set(fragments) == set([f1, f2, f3])

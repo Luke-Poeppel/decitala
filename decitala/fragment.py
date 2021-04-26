@@ -55,7 +55,8 @@ class FragmentEncoder(json.JSONEncoder):
 		if type(obj).__name__ == "GeneralFragment":
 			d = {
 				"frag_type": "general_fragment",
-				"data": obj.data
+				"data": obj.data,
+				"name": obj.name # May be None! 
 			}
 			return d
 		elif type(obj).__name__ == "Decitala":
@@ -86,8 +87,11 @@ class FragmentDecoder(json.JSONDecoder):
 		This function already runs json.loads invisibly on ``obj``.
 		"""
 		try:
-			if obj["frag_type"] == "general_fragment" and obj["name"] is not None:
-				return GeneralFragment(data=obj["data"])
+			if obj["frag_type"] == "general_fragment": # and obj["name"] is not None:
+				if obj["name"] is None:
+					return GeneralFragment(data=obj["data"])
+				else:
+					return GeneralFragment(data=obj["data"], name=obj["name"])
 			elif obj["frag_type"] == "decitala" and obj["name"] is not None:
 				return Decitala(obj["name"])
 			elif obj["frag_type"] == "greek_foot" and obj["name"] is not None:
@@ -141,6 +145,7 @@ class GeneralFragment:
 	<fragment.GeneralFragment: [0.75 0.75 0.5  0.25]>
 	"""
 	def __init__(self, data, name=None, **kwargs):
+		self.data = data # not too happy about this... 
 		if isinstance(data, str):
 			assert os.path.isfile(data), FragmentException("The path provided does not lead to a file.")
 

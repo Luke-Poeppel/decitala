@@ -25,6 +25,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ### Fixed
 - Issues #116: missing result logging from `decitala.cli.pathfinder`; 
+- Incorrect serialization condition for `GeneralFragment` –– forced incorrect parsing to and from analysis files. 
 
 ## [v0.9.1] April 16, 2021
 ### Added
