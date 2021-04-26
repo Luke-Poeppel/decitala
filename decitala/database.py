@@ -82,6 +82,7 @@ class Fragment(Base):
 	onset_start = Column(Float)
 	onset_stop = Column(Float)
 	
+	# TODO: just make this fragment with the JSON output from FragmentEncoder. 
 	fragment_type = Column(String)
 	name = Column(String)
 	

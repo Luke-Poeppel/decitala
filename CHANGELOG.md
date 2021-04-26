@@ -14,6 +14,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - The `search.path_finder` function now has optional `save_filepath` argument for dumping the results to a JSON file. (#97)
 
 ### Changed
+- Renamed the `fragments` directory to `corpora`. Also removed the `.sib` encoding files for the greek metrics to make the package lighter weight. 
+- WIP: The `fragments` module was relying on SQLite in a piecemeal way. `GeneralFragment` objects are now proper SQLAchemy models for consistency with the rest of the package. 
 - The `fragment.morris_symmetry_class` function now returns integers representing the classes (instead of string describing them). The meaning of each class is given in the documentation. 
 - Refactored `path_finding.floyd_warshall` and added helper functions for all path-finding algorithms to `path_finding_utils.py`. 
 - The CLI `pathfinder` tool now logs the saved file. 

@@ -26,12 +26,15 @@ MODIFICATION_HIERARCHY = {
 	"r(r+d)": 8
 }
 
+FACTORS = [0.125, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0]
+DIFFERENCES = [-0.375, -0.25, -0.125, 0.0, 0.125, 0.25, 0.375, 0.5, 0.75, 0.875, 1.75, 2.625, 3.5, 4.375] # noqa
+
 def get_all_augmentations(
 		fragment,
 		frag_type,
 		dict_in,
-		factors=[0.125, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0],
-		differences=[-0.375, -0.25, -0.125, 0.0, 0.125, 0.25, 0.375, 0.5, 0.75, 0.875, 1.75, 2.625, 3.5, 4.375], # noqa
+		factors=FACTORS,
+		differences=DIFFERENCES,
 		retrograde=True,
 		allow_mixed=False,
 		superdivision_str=None
