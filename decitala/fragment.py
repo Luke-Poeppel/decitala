@@ -53,27 +53,25 @@ class GreekFootException(FragmentException):
 # Serialization
 class FragmentEncoder(json.JSONEncoder):
 	def default(self, obj):
-		if type(obj).__name__ == "GeneralFragment":
+		if isinstance(obj, GeneralFragment):
 			d = {
 				"frag_type": "general_fragment",
 				"data": obj.data,
 				"name": obj.name # May be None! 
 			}
 			return d
-		elif type(obj).__name__ == "Decitala":
+		elif isinstance(obj, Decitala):
 			d = {
 				"frag_type": "decitala",
 				"name": obj.name
 			}
 			return d
-		elif type(obj).__name__ == "GreekFoot":
+		elif isinstance(obj, GreekFoot):
 			d = {
 				"frag_type": "greek_foot",
 				"name": obj.name
 			}
 			return d
-		else:
-			raise FragmentException("This object is not JSON serializable. File an issue?")
 
 class FragmentDecoder(json.JSONDecoder):
 	def __init__(self, *args, **kwargs):
@@ -94,8 +92,6 @@ class FragmentDecoder(json.JSONDecoder):
 				return Decitala(obj["name"])
 			elif obj["frag_type"] == "greek_foot" and obj["name"] is not None:
 				return GreekFoot(obj["name"])
-			else:
-				raise FragmentException("The {} object is not JSON deserializable. File an issue?".format(obj))
 		except KeyError:
 			return obj
 
@@ -293,7 +289,7 @@ class GeneralFragment:
 
 	def successive_ratio_array(self, retrograde=False):
 		"""See docstring of :obj:`decitala.utils.successive_ratio_array`."""
-		return utils.successive_ratio_array(retrograde=retrograde)
+		return utils.successive_ratio_array(self.ql_array(retrograde=retrograde))
 
 	def successive_difference_array(self, retrograde=False):
 		"""See docstring of :obj:`decitala.utils.successive_difference_array`."""
@@ -384,14 +380,14 @@ class GeneralFragment:
 
 	def std(self):
 		"""
-		:return: the standard deviation of :func:`~decitala.GeneralFragment.ql_array`.
+		:return: The standard deviation of :func:`~decitala.GeneralFragment.ql_array`.
 		:rtype: float
 		"""
 		return np.std(self.ql_array())
 
 	def c_score(self):
 		"""
-		:return: the c-score of the fragment, as defined in Povel and Essens (1985).
+		:return: The c-score of the fragment, as defined in Povel and Essens (1985).
 		:rtype: float
 		:raises: NotImplementedError
 		"""
@@ -399,16 +395,15 @@ class GeneralFragment:
 
 	def nPVI(self):
 		"""
-		:return: the nPVI of the fragment (Low, Grabe, & Nolan, 2000).
+		:return: The nPVI of the fragment (Low, Grabe, & Nolan, 2000).
 		:rtype: float
 		"""
 		assert len(self.ql_array()) > 1
 
 		IOI = self.ql_array()
-		num_onsets = len(IOI)
 		summation = 0
 		prev = IOI[0]
-		for i in range(1, num_onsets):
+		for i in range(1, self.num_onsets):
 			curr = IOI[i]
 			if curr > 0 and prev > 0:
 				summation += abs(curr - prev) / ((curr + prev) / 2.0)
@@ -416,7 +411,7 @@ class GeneralFragment:
 				pass
 			prev = curr
 
-		final = summation * 100 / (num_onsets - 1)
+		final = summation * 100 / (self.num_onsets - 1)
 
 		return final
 
@@ -425,8 +420,8 @@ class GeneralFragment:
 		This method returns a new :obj:`~decitala.fragment.GeneralFragment` object with a ql_array
 		corresponding to the original fragment augmented by a given ratio and difference.
 
-		:param float factor: the factor by which the GeneralFragment will be augmented.
-		:param float difference: the difference by which the GeneralFragment will be augmented.
+		:param float factor: The factor by which the GeneralFragment will be augmented.
+		:param float difference: The difference by which the GeneralFragment will be augmented.
 		:rtype: :obj:`~decitala.fragment.GeneralFragment` object.
 
 		>>> pre_augmentation = GeneralFragment([2.0, 2.0], name="Spondee")
@@ -446,8 +441,11 @@ class GeneralFragment:
 		return self.difference_equivalents
 
 	def show(self):
-		if self.stream:
-			return self.stream.show()
+		if isinstance(self.data, str):
+			converted = converter.parse(self.data)
+			converted.show()
+		else:
+			FragmentException(f"Can't show {self.data}.")
 
 ####################################################################################################
 class Decitala(GeneralFragment):
