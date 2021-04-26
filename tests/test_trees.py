@@ -17,8 +17,8 @@ from music21 import converter
 from music21 import note
 
 here = os.path.abspath(os.path.dirname(__file__))
-decitala_path = os.path.dirname(here) + "/fragments/Decitalas"
-greek_path = os.path.dirname(here) + "/fragments/Greek_Metrics/XML"
+decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
+greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics/"
 transcription_example = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
 
 def test_doctests():

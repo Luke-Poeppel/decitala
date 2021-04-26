@@ -31,8 +31,8 @@ __all__ = [
 
 # Fragments
 here = os.path.abspath(os.path.dirname(__file__))
-decitala_path = os.path.dirname(here) + "/fragments/Decitalas"
-greek_path = os.path.dirname(here) + "/fragments/Greek_Metrics/XML"
+decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
+greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics/"
 
 fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
 
@@ -107,7 +107,7 @@ class GeneralFragment:
 	:raises `~decitala.fragment.FragmentException`: if an array **and** file are provided or if \
 		neither are provided.
 
-	>>> random_fragment_path = "./fragments/Decitalas/63_Nandi.xml"
+	>>> random_fragment_path = "./corpora/Decitalas/63_Nandi.xml"
 	>>> g1 = GeneralFragment(data=random_fragment_path, name='test')
 	>>> g1
 	<fragment.GeneralFragment test: [0.5  0.25 0.25 0.5  0.5  1.   1.  ]>

@@ -555,7 +555,7 @@ def path_finder(
 		windows=list(range(2, 19)),
 		slur_constraint=False,
 		ignore_single_anga_class_fragments=False,
-		save_filepath=None
+		save_filepath=None,
 		verbose=False
 	):
 	if frag_type == "decitala":
@@ -593,6 +593,6 @@ def path_finder(
 	if save_filepath:
 		with open(save_filepath, "w") as output:
 			json.dump(obj=best_path, fp=output, cls=FragmentEncoder, indent=4)
-		logger.info(f"Result saved in: {save_filepath}"
+		logger.info(f"Result saved in: {save_filepath}")
 
 	return best_path

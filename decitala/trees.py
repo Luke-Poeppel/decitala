@@ -36,8 +36,8 @@ __all__ = [
 ]
 
 here = os.path.abspath(os.path.dirname(__file__))
-decitala_path = os.path.dirname(here) + "/Fragments/Decitalas"
-greek_path = os.path.dirname(here) + "/Fragments/Greek_Metrics/XML"
+decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
+greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics/"
 
 fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
 
