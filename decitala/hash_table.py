@@ -162,7 +162,7 @@ class FragmentHashTable:
 	modification_hierarchy = MODIFICATION_HIERARCHY
 	custom_overrides_datasets = CUSTOM_OVERRIDES_DATASETS
 
-	def __init__(self, datasets: list, custom_fragments: list):
+	def __init__(self, datasets = [], custom_fragments = []):
 		"""
 		General object for storing all modifications of rhythmic datasets. Does not load the 
 		modifications by default. 
@@ -233,7 +233,11 @@ class FragmentHashTable:
 			return self.data
 
 class DecitalaHashTable(FragmentHashTable):
-	pass
+	def __init__(self):
+		super().__init__(datasets=["decitala"])
+		self.load()
 
 class GreekFootHashTable(FragmentHashTable):
-	pass
+	def __init__(self):
+		super().__init__(datasets=["greek_foot"])
+		self.load()
