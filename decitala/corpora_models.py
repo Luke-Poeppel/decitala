@@ -10,6 +10,7 @@
 import uuid
 import json
 import os
+import natsort
 
 from sqlalchemy import (
 	Column,
@@ -46,10 +47,9 @@ class DecitalaData(Base):
 	__tablename__ = "DecitalaData"
 	
 	id = Column(Integer, primary_key=True)
+	full_id = Column(String)
 	name = Column(String)
 	ql_array = Column(String)
-	# ratio_equivalents = Column(String)
-	# difference_equivalents = Column(String)
 
 class GreekFootData(Base):
 	"""
@@ -60,18 +60,24 @@ class GreekFootData(Base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
 	ql_array = Column(String)
-	# ratio_equivalents = Column(String)
-	# difference_equivalents = Column(String)
 
 def _make_corpora_database():
 	abspath_databases_directory = os.path.abspath("./databases/")
 	engine = get_engine(filepath=os.path.join(abspath_databases_directory, "fragment_database.db"), echo=True)
 	session = get_session(engine=engine)
 
-	for this_file in os.listdir(decitala_path):
+	for this_file in natsort.natsorted(os.listdir(decitala_path)):
+		split = this_file.split("_")
+		if len(split) == 2:
+			full_id = split[0]
+		elif len(split) >= 3:
+			if len(split[1]) == 1:# e.g. ["80", "B", "..."]
+				full_id = "_".join([split[0], split[1]])
+
 		converted = converter.parse(os.path.join(decitala_path, this_file))
 		ql_array = json.dumps([x.quarterLength for x in converted.flat.getElementsByClass(note.Note)])
 		decitala = DecitalaData(
+			full_id=full_id,
 			name=this_file[:-4],
 			ql_array=ql_array
 		)
