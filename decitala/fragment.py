@@ -511,22 +511,25 @@ class Decitala(GeneralFragment):
 	True
 	"""
 	def __init__(self, name, **kwargs):
-		conn = sqlite3.connect(fragment_db)
-		cur = conn.cursor()
+		
 
-		decitala_table_string = "SELECT * FROM Decitalas"
-		cur.execute(decitala_table_string)
-		decitala_rows = cur.fetchall()
+		# conn = sqlite3.connect(fragment_db)
+		# cur = conn.cursor()
 
-		matches = []
-		for this_row in decitala_rows:
-			x = re.search(name, this_row[0] + ".xml")
-			if bool(x):
-				matches.append(this_row[0])
+		# decitala_table_string = "SELECT * FROM Decitalas"
+		# cur.execute(decitala_table_string)
+		# decitala_rows = cur.fetchall()
 
+		# matches = []
+		# for this_row in decitala_rows:
+		# 	x = re.search(name, this_row[0] + ".xml")
+		# 	if bool(x):
+		# 		matches.append(this_row[0])
+
+		matches = session.query(Decitala).filter(name == name).all()
 		matches = [x + ".xml" for x in matches]
 
-		if len(matches) == 0:
+		if not matches:
 			raise DecitalaException(f"No matches were found for name {name}.")
 
 		if len(matches) == 1:

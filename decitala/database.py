@@ -29,7 +29,6 @@ from sqlalchemy.orm import (
 from .search import rolling_hash_search
 from .utils import get_logger
 from .hash_table import GreekFootHashTable
-from . import models
 
 Base = declarative_base()
 
