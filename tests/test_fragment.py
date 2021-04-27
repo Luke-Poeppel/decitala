@@ -25,12 +25,12 @@ def test_general_fragment_encoder():
 	dumped_g1 = json.dumps(g1, cls=FragmentEncoder)
 	expected_g1 = """{"frag_type": "general_fragment", "data": [1.0, 2.0, 3.0, 4.0, 5.0], "name": "longerrrr"}""" # noqa
 	
-	g2 = GeneralFragment(data="/Users/lukepoeppel/decitala/corpora/Decitalas/1_Aditala.xml")
-	dumped_g2 = json.dumps(g2, cls=FragmentEncoder)
-	expected_g2 = """{"frag_type": "general_fragment", "data": "/Users/lukepoeppel/decitala/corpora/Decitalas/1_Aditala.xml", "name": null}""" # noqa
+	# g2 = GeneralFragment(data="/Users/lukepoeppel/decitala/corpora/Decitalas/1_Aditala.xml")
+	# dumped_g2 = json.dumps(g2, cls=FragmentEncoder)
+	# expected_g2 = """{"frag_type": "general_fragment", "data": "/Users/lukepoeppel/decitala/corpora/Decitalas/1_Aditala.xml", "name": null}""" # noqa
 
 	assert dumped_g1 == expected_g1
-	assert dumped_g2 == expected_g2
+	# assert dumped_g2 == expected_g2
 
 def test_decitala_fragment_encoder():
 	d = Decitala("Anlarakrida")

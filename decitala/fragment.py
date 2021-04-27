@@ -151,9 +151,9 @@ class GeneralFragment:
 			self,
 			data,
 			name=None,
-			ratio_equivalents=None,
-			difference_equivalents=None,
-			filepath=None,
+			# ratio_equivalents=None,
+			# difference_equivalents=None,
+			# filepath=None,
 			**kwargs
 		):
 		if isinstance(data, str):

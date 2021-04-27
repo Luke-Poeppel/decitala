@@ -8,6 +8,7 @@
 # Location: NYC, 2021
 ####################################################################################################
 import uuid
+import json
 import os
 
 from sqlalchemy import (
@@ -18,6 +19,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+
+from music21 import converter
+from music21 import note
 
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
@@ -44,8 +48,8 @@ class DecitalaData(Base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
 	ql_array = Column(String)
-	ratio_equivalents = Column(String)
-	difference_equivalents = Column(String)
+	# ratio_equivalents = Column(String)
+	# difference_equivalents = Column(String)
 
 class GreekFootData(Base):
 	"""
@@ -56,15 +60,30 @@ class GreekFootData(Base):
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
 	ql_array = Column(String)
-	ratio_equivalents = Column(String)
-	difference_equivalents = Column(String)
+	# ratio_equivalents = Column(String)
+	# difference_equivalents = Column(String)
 
 def _make_corpora_database():
 	abspath_databases_directory = os.path.abspath("./databases/")
-	engine = get_engine(filepath=os.path.join(abspath_databases_directory, "{}.db".format(uuid.uuid4().hex)), echo=False)
+	engine = get_engine(filepath=os.path.join(abspath_databases_directory, "fragment_database.db"), echo=True)
 	session = get_session(engine=engine)
 
 	for this_file in os.listdir(decitala_path):
-		pass
+		converted = converter.parse(os.path.join(decitala_path, this_file))
+		ql_array = json.dumps([x.quarterLength for x in converted.flat.getElementsByClass(note.Note)])
+		decitala = DecitalaData(
+			name=this_file[:-4],
+			ql_array=ql_array
+		)
+		session.add(decitala)
 
+	for this_file in os.listdir(greek_path):
+		converted = converter.parse(os.path.join(greek_path, this_file))
+		ql_array = json.dumps([x.quarterLength for x in converted.flat.getElementsByClass(note.Note)])
+		greek_foot = GreekFootData(
+			name=this_file[:-4],
+			ql_array=ql_array
+		)
+		session.add(greek_foot)
 
+	session.commit()
