@@ -67,12 +67,15 @@ def _make_corpora_database():
 	session = get_session(engine=engine)
 
 	for this_file in natsort.natsorted(os.listdir(decitala_path)):
+		# Will use the utils function evenutally. Annoying bug. 
 		split = this_file.split("_")
 		if len(split) == 2:
 			full_id = split[0]
 		elif len(split) >= 3:
 			if len(split[1]) == 1:# e.g. ["80", "B", "..."]
 				full_id = "_".join([split[0], split[1]])
+			else:
+				full_id = split[0]
 
 		converted = converter.parse(os.path.join(decitala_path, this_file))
 		ql_array = json.dumps([x.quarterLength for x in converted.flat.getElementsByClass(note.Note)])

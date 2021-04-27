@@ -178,7 +178,19 @@ def ql_array_to_greek_diacritics(ql_array):
 			if this_val == this_diacritic_val:
 				greek_string_lst.append(this_diacritic_symbol)
 
-	return ' '.join(greek_string_lst)
+	return " ".join(greek_string_lst)
+
+def _decitala_full_id_from_filename(filename):
+	split = filename.split("_")
+	if len(split) == 2:
+		full_id = split[0]
+	elif len(split) >= 3:
+		if len(split[1]) == 1:# e.g. ["80", "B", "..."]
+			full_id = "_".join([split[0], split[1]])
+		else:
+			full_id = split[0]
+
+	return full_id
 
 ####################################################################################################
 # RHYTHM

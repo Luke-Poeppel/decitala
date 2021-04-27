@@ -23,6 +23,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Improved doctest integration by running them within the (pytest) tests directory. 
 - Removed all `# -*- coding: utf-8 -*-` lines. 
 - Renamed `trees.rolling_search` to `trees.rolling_tree_search` to be consistent with the other rolling search type(s) (#114).  
+- The `Decitala.get_by_id` class method now requires a string as input. 
 
 ### Fixed
 - Issues #116: missing result logging from `decitala.cli.pathfinder`; #115: incorrect results from Morris symmetry classes; #73: default value for `try_contiguous_summation`; 

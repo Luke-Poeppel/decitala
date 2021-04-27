@@ -24,13 +24,8 @@ def test_general_fragment_encoder():
 	g1 = GeneralFragment(data=[1.0, 2.0, 3.0, 4.0, 5.0], name="longerrrr")
 	dumped_g1 = json.dumps(g1, cls=FragmentEncoder)
 	expected_g1 = """{"frag_type": "general_fragment", "data": [1.0, 2.0, 3.0, 4.0, 5.0], "name": "longerrrr"}""" # noqa
-	
-	# g2 = GeneralFragment(data="/Users/lukepoeppel/decitala/corpora/Decitalas/1_Aditala.xml")
-	# dumped_g2 = json.dumps(g2, cls=FragmentEncoder)
-	# expected_g2 = """{"frag_type": "general_fragment", "data": "/Users/lukepoeppel/decitala/corpora/Decitalas/1_Aditala.xml", "name": null}""" # noqa
 
 	assert dumped_g1 == expected_g1
-	# assert dumped_g2 == expected_g2
 
 def test_decitala_fragment_encoder():
 	d = Decitala("Anlarakrida")
@@ -91,22 +86,16 @@ def test_all_greek_foot_names():
 		assert this_greek_foot.full_path == greek_path + "/" + this_file
 
 def test_get_by_id():
-	random_nums = [71, 23, 14, 91, 108, 44]
+	random_nums = [str(x) for x in [71, 23, 14, 91, 108, 44]]
 	for this_id in random_nums:
 		assert Decitala.get_by_id(this_id) is not None
 
 def test_id_num():
 	for i in range(0, 121, 20):
 		if i == 0:
-			assert Decitala("Aditala").id_num == i + 1
+			assert Decitala("Aditala").id_num == str(i + 1)
 		else:
-			assert Decitala.get_by_id(i).id_num == i
-
-##### JSON ENCODING / DECODING
-def test_decitala_encoding():
-	ragavardhana = Decitala("Ragavardhana")
-	encoded = '{"frag_type": "decitala", "name": "93_Ragavardhana"}'
-	assert json.dumps(ragavardhana, cls=FragmentEncoder) == encoded
+			assert Decitala.get_by_id(i).id_num == str(i)
 
 def test_decitala_carnatic_string():
 	rajacudamani = Decitala("Rajacudamani")
@@ -133,13 +122,14 @@ def test_decitala_repr():
 	frag_id = Decitala(name_in).id_num
 	assert Decitala(name_in).__repr__() == "<fragment.Decitala {0}_{1}>".format(frag_id, name_in)
 
-def test_decitala_equivalents():
-	example_frag = Decitala("Tribhangi")
-	r_equivalents = [Decitala("Crikirti"), Decitala("Kudukka"), Decitala("Ratilila"), GreekFoot("Ionic_Minor")]
-	d_equivalents = [Decitala("Crikirti"), Decitala("Ratilila")]
+# Deprecated for v1.0.0
+# def test_decitala_equivalents():
+# 	example_frag = Decitala("Tribhangi")
+# 	r_equivalents = [Decitala("Crikirti"), Decitala("Kudukka"), Decitala("Ratilila"), GreekFoot("Ionic_Minor")]
+# 	d_equivalents = [Decitala("Crikirti"), Decitala("Ratilila")]
 	
-	assert example_frag.equivalents(rep_type="ratio") == r_equivalents
-	assert example_frag.equivalents(rep_type="difference") == d_equivalents
+# 	assert example_frag.equivalents(rep_type="ratio") == r_equivalents
+# 	assert example_frag.equivalents(rep_type="difference") == d_equivalents
 
 def test_decitala_num_matras():
 	frag = Decitala("Rajatala") # [1.0, 1.5, 0.25, 0.25, 1.0, 0.5, 1.5]

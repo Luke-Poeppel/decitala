@@ -14,9 +14,7 @@ import json
 import numpy as np
 import os
 import re
-import sqlite3
 
-from ast import literal_eval
 from collections import Counter
 
 from music21 import converter
@@ -29,12 +27,6 @@ from .corpora_models import (
 	get_engine,
 	get_session
 )
-
-__all__ = [
-	"GeneralFragment",
-	"Decitala",
-	"GreekFoot"
-]
 
 # Fragments
 here = os.path.abspath(os.path.dirname(__file__))
@@ -506,7 +498,7 @@ class Decitala(GeneralFragment):
 	>>> ragavardhana.name
 	'93_Ragavardhana'
 	>>> ragavardhana.id_num
-	93
+	'93'
 	>>> ragavardhana.num_onsets
 	4
 	>>> ragavardhana.ql_array()
@@ -547,14 +539,16 @@ class Decitala(GeneralFragment):
 	def __init__(self, name, **kwargs):
 		if name.endswith(".xml"):
 			name = name[:-4]
-		matches = session.query(DecitalaData).filter(name == name).all()
+		
+		matches = session.query(DecitalaData).filter(DecitalaData.name.contains(name)).all()
 		matches = [x.name + ".xml" for x in matches]
 
 		if not matches:
 			raise DecitalaException(f"No matches were found for name {name}.")
 
 		full_path, name, filename = _process_matches(name, matches, decitala_path)
-
+		self.full_path = full_path
+		self.filename = filename
 		self.frag_type = "decitala"
 
 		super().__init__(data=full_path, name=name)
@@ -568,8 +562,7 @@ class Decitala(GeneralFragment):
 		:return: the ID of the fragment, as given by Lavignac (1921).
 		:rtype: int
 		"""
-		idValue = re.search(r'\d+', self.name)
-		return int(idValue.group(0))
+		return utils._decitala_full_id_from_filename(self.filename)
 
 	@classmethod
 	def get_by_id(cls, input_id):
@@ -577,24 +570,20 @@ class Decitala(GeneralFragment):
 		A class method which retrieves a :obj:`~decitala.fragment.Decitala` object based \
 		on a given ID number. These numbers are listed in the Lavignac Encyclopédie (1921) \
 		and Messiaen Traité. Some talas have "sub-talas," meaning that their id is not \
-		unique. Querying by those talas is currently not supported.
+		unique. 
 
 		:return: a :obj:`~decitala.fragment.Decitala` object
-		:param int input_id: id number of the tala (in range 1-120).
+		:param str input_id: id number of the tala (in range 1-120).
 		:rtype: :obj:`~decitala.fragment.Decitala`
 		:raises `~decitala.fragment.DecitalaException`: when there is an issue with the `input_id`.
 
-		>>> Decitala.get_by_id(89)
+		>>> Decitala.get_by_id("89")
 		<fragment.Decitala 89_Lalitapriya>
 		"""
-		assert type(input_id) == int
-		if input_id > 121 or input_id < 1:
-			raise DecitalaException("Input must be between 1 and 120.")
-		if input_id in subdecitala_array:
-			raise DecitalaException(f"There are multiple talas with id: {input_id}. \
-									Please consult the Lavignac (1921).")
-
-		session.query(DecitalaData).filter(int(name.split("_")[0]) == input_id)
+		res = session.query(DecitalaData).filter(DecitalaData.full_id == input_id).all()
+		if len(res) > 1:
+			raise DecitalaException("Something is wrong. File an issue at https://github.com/Luke-Poeppel/decitala/issues.") # noqa
+		return Decitala(res[0].name)
 
 	@property
 	def carnatic_string(self):
@@ -652,6 +641,7 @@ class GreekFoot(GeneralFragment):
 
 		full_path, name, filename = _process_matches(name, matches, greek_path)
 
+		self.full_path = full_path
 		self.frag_type = "greek_foot"
 
 		super().__init__(data=full_path, name=name)
