@@ -29,6 +29,7 @@ from sqlalchemy.orm import (
 from .search import rolling_hash_search
 from .utils import get_logger
 from .hash_table import GreekFootHashTable
+from . import models
 
 Base = declarative_base()
 
@@ -58,7 +59,7 @@ class CompositionData(Base):
 		self.part_num = part_num
 		self.local_filepath = local_filepath
 
-class Fragment(Base):
+class Extraction(Base):
 	"""
 	SQLAlchemy model representing a fragment extracted from a composition. 
 
@@ -157,13 +158,14 @@ def create_database(
 	filepath_name = filepath.split("/")[-1]
 
 	for this_part in part_nums:
-		data = CompositionData(
+		data = models.CompositionData(
 			name=filepath_name,
 			part_num=this_part,
 			local_filepath=filepath
 		)
 		session.add(data)
 
+		# THIS IS THE WORK IN PROGRESS. 
 		res = rolling_hash_search(
 			filepath=filepath,
 			part_num=this_part,
@@ -175,7 +177,7 @@ def create_database(
 
 		fragment_objects = []
 		for this_fragment in res:
-			f = Fragment(
+			f = models.Extraction(
 				onset_start=this_fragment["onset_range"][0],
 				onset_stop=this_fragment["onset_range"][1],
 				fragment_type=this_fragment["frag_type"],

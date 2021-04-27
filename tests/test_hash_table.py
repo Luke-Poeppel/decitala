@@ -97,8 +97,8 @@ def test_greek_foot_hash_table(GFHT):
 		random_modification = str(tuple(random_modification))
 		assert GFHT[random_modification] is not None
 
-d = FragmentHashTable(
-	datasets=["greek_foot"],
-	custom_fragments=[GeneralFragment([3.0, 4.0, 2.0, 1.0], name="my awesome fragment")]
-)
-print(d.data())
+# d = FragmentHashTable(
+# 	datasets=["greek_foot"],
+# 	custom_fragments=[GeneralFragment([3.0, 4.0, 2.0, 1.0], name="my awesome fragment")]
+# )
+# print(d.data())
