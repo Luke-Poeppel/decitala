@@ -3,6 +3,7 @@ import os
 import pytest
 import doctest
 import tempfile
+import json
 
 from collections import Counter
 
@@ -15,7 +16,8 @@ from decitala import utils
 from decitala.fragment import (
 	Decitala,
 	GreekFoot,
-	GeneralFragment
+	GeneralFragment,
+	FragmentEncoder
 )
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -161,7 +163,7 @@ def test_loader():
 def test_write_analysis():
 	f1 = Decitala("Lakskmica")
 	f2 = GreekFoot("Peon_III")
-	f3 = GeneralFragment([4.0, 4.0, 4.0, 1.0], name="weird fragment set")	
+	f3 = GeneralFragment([4.0, 4.0, 4.0, 1.0], name="weird fragment set")
 	analysis = [
 		{
 			"fragment": f1,

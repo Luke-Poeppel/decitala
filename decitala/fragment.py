@@ -54,11 +54,19 @@ class GreekFootException(FragmentException):
 class FragmentEncoder(json.JSONEncoder):
 	def default(self, obj):
 		if type(obj) == GeneralFragment:
-			d = {
-				"frag_type": "general_fragment",
-				"data": obj.data,
-				"name": obj.name # May be None! 
-			}
+			if isinstance(obj.data, str):
+				d = {
+					"frag_type": "general_fragment",
+					"data": obj.data,
+					"name": obj.name # May be None! 
+				}
+			else:
+				data = list(obj.data) # numpy array is not JSON serializable. 
+				d = {
+					"frag_type": "general_fragment",
+					"data": data,
+					"name": obj.name # May be None! 
+				}
 			return d
 		elif type(obj) == Decitala:
 			d = {
