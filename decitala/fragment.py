@@ -23,6 +23,12 @@ from music21 import converter
 from music21 import note
 
 from . import utils
+from .corpora_models import (
+	DecitalaData,
+	GreekFootData,
+	get_engine,
+	get_session
+)
 
 __all__ = [
 	"GeneralFragment",
@@ -39,6 +45,9 @@ fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
 
 # ID's of decitalas with "subtalas"
 subdecitala_array = np.array([26, 38, 55, 65, 68])
+
+engine = get_engine(fragment_db)
+session = get_session(engine=engine)
 
 ####################################################################################################
 class FragmentException(Exception):
@@ -103,6 +112,37 @@ class FragmentDecoder(json.JSONDecoder):
 		except KeyError:
 			return obj
 
+def _process_matches(name, matches, data_path):
+	if len(matches) == 1:
+		match = matches[0]
+		full_path = data_path + "/" + match
+		name = match[:-4]
+		filename = match
+	elif len(matches) > 1:
+		new_name = "".join([x for x in name if not x.isdigit()])
+		if new_name[-4:] == ".xml":
+			pass
+		else:
+			new_name = new_name + ".xml"
+
+		if new_name[0] == "_":
+			new_name = new_name[1:]
+		new_name_split = new_name.split("_")
+
+		for this_match in matches:
+			match_new_name = "".join([x for x in this_match if not x.isdigit()])
+			if match_new_name[0] == "_":
+				match_new_name = match_new_name[1:]
+
+			match_split = match_new_name.split("_")
+
+			if match_split == new_name_split:
+				full_path = data_path + "/" + this_match
+				name = this_match[:-4]
+				filename = this_match
+
+	return full_path, name, filename
+
 class GeneralFragment:
 	"""
 	Class representing a generic rhythmic fragment. The user must provide either a path to a music21
@@ -151,8 +191,8 @@ class GeneralFragment:
 			self,
 			data,
 			name=None,
-			# ratio_equivalents=None,
-			# difference_equivalents=None,
+			# ratio_equivalents=None, # TODO
+			# difference_equivalents=None, # TODO
 			# filepath=None,
 			**kwargs
 		):
@@ -442,12 +482,6 @@ class GeneralFragment:
 		new_name = self.name + "/r:{}/".format(factor) + "d:{}".format(difference)
 		return GeneralFragment(new_ql_array, new_name)
 
-	def ratio_equivalents(self):
-		return self.ratio_equivalents
-
-	def difference_equivalents(self):
-		return self.difference_equivalents
-
 	def show(self):
 		if isinstance(self.data, str):
 			converted = converter.parse(self.data)
@@ -511,56 +545,19 @@ class Decitala(GeneralFragment):
 	True
 	"""
 	def __init__(self, name, **kwargs):
-		conn = sqlite3.connect(fragment_db)
-		cur = conn.cursor()
-
-		decitala_table_string = "SELECT * FROM Decitalas"
-		cur.execute(decitala_table_string)
-		decitala_rows = cur.fetchall()
-
-		matches = []
-		for this_row in decitala_rows:
-			x = re.search(name, this_row[0] + ".xml")
-			if bool(x):
-				matches.append(this_row[0])
-
-		# matches = session.query(Decitala).filter(name == name).all() # eventual query. 
-		matches = [x + ".xml" for x in matches]
+		if name.endswith(".xml"):
+			name = name[:-4]
+		matches = session.query(DecitalaData).filter(name == name).all()
+		matches = [x.name + ".xml" for x in matches]
 
 		if not matches:
 			raise DecitalaException(f"No matches were found for name {name}.")
 
-		if len(matches) == 1:
-			match = matches[0]
-			self.full_path = decitala_path + "/" + match
-			self.name = match[:-4]
-			self.filename = match
-		elif len(matches) > 1:
-			new_name = "".join([x for x in name if not x.isdigit()])
-			if new_name[-4:] == ".xml":
-				pass
-			else:
-				new_name = new_name + ".xml"
-
-			if new_name[0] == "_":
-				new_name = new_name[1:]
-			new_name_split = new_name.split("_")
-
-			for this_match in matches:
-				match_new_name = "".join([x for x in this_match if not x.isdigit()])
-				if match_new_name[0] == "_":
-					match_new_name = match_new_name[1:]
-
-				match_split = match_new_name.split("_")
-
-				if match_split == new_name_split:
-					self.full_path = decitala_path + "/" + this_match
-					self.name = this_match[:-4]
-					self.filename = this_match
+		full_path, name, filename = _process_matches(name, matches, decitala_path)
 
 		self.frag_type = "decitala"
 
-		super().__init__(data=self.full_path, name=self.name)
+		super().__init__(data=full_path, name=name)
 
 	def __repr__(self):
 		return f"<fragment.Decitala {self.name}>"
@@ -593,22 +590,11 @@ class Decitala(GeneralFragment):
 		assert type(input_id) == int
 		if input_id > 121 or input_id < 1:
 			raise DecitalaException("Input must be between 1 and 120.")
-		elif input_id in subdecitala_array:
+		if input_id in subdecitala_array:
 			raise DecitalaException(f"There are multiple talas with id: {input_id}. \
 									Please consult the Lavignac (1921).")
 
-		conn = sqlite3.connect(fragment_db)
-		cur = conn.cursor()
-		decitala_table_string = "SELECT * FROM Decitalas"
-		cur.execute(decitala_table_string)
-		decitala_rows = cur.fetchall()
-
-		for this_row in decitala_rows:
-			name = this_row[0]
-			split = name.split("_")
-			id_num = int(split[0])
-			if id_num == input_id:
-				return Decitala(name=name)
+		session.query(DecitalaData).filter(int(name.split("_")[0]) == input_id)
 
 	@property
 	def carnatic_string(self):
@@ -622,38 +608,6 @@ class Decitala(GeneralFragment):
 		:rtype: int
 		"""
 		return (self.ql_duration / 0.5)
-
-	def equivalents(self, rep_type="ratio"):
-		"""
-		:return: list of Decitala and Greek foot objects that are equivalent to the given fragment under \
-				the provided ``rep_type``.
-		:rtype: list
-
-		>>> fragment = Decitala("Tritiya")
-		>>> fragment.equivalents(rep_type="ratio")
-		[<fragment.Decitala 95_Anlarakrida>]
-		>>> fragment.equivalents(rep_type="difference")
-		[<fragment.Decitala 76_Jhampa>, <fragment.Decitala 95_Anlarakrida>]
-		"""
-		assert rep_type.lower() in ["ratio", "difference"], DecitalaException("The only possible rep_types are \
-																				`ratio` and `difference`")
-
-		conn = sqlite3.connect(fragment_db)
-		cur = conn.cursor()
-		row_string = "SELECT * FROM Decitalas WHERE Name = '{}'".format(self.name)
-		cur.execute(row_string)
-		row_data = cur.fetchall()
-
-		if rep_type == "ratio":
-			r_equivalents = literal_eval(row_data[0][2])
-			if r_equivalents:
-				fragments = [Decitala(x[1]) if x[0] == "decitala" else GreekFoot(x[1]) for x in r_equivalents]
-				return fragments
-		if rep_type == "difference":
-			d_equivalents = literal_eval(row_data[0][3])
-			if d_equivalents:
-				fragments = [Decitala(x[1]) if x[0] == "decitala" else GreekFoot(x[1]) for x in d_equivalents]
-				return fragments
 
 ####################################################################################################
 class GreekFoot(GeneralFragment):
@@ -688,42 +642,19 @@ class GreekFoot(GeneralFragment):
 	[2. 1. 2.]
 	"""
 	def __init__(self, name, **kwargs):
-		conn = sqlite3.connect(fragment_db)
-		self.conn = conn
-		cur = self.conn.cursor()
+		if name.endswith(".xml"):
+			name = name[:-4]
+		matches = session.query(GreekFootData).filter(name == name).all()
+		matches = [x.name + ".xml" for x in matches]
 
-		greek_metric_table_string = "SELECT * FROM Greek_Metrics"
-		cur.execute(greek_metric_table_string)
-		greek_metric_rows = cur.fetchall()
+		if not matches:
+			raise GreekFootException(f"No matches were found for name {name}.")
 
-		matches = []
-		for this_row in greek_metric_rows:
-			x = re.search(name, this_row[0] + ".xml")
-			if bool(x):
-				matches.append(this_row[0])
-
-		matches = [x + ".xml" for x in matches]
-		if len(matches) == 0:
-			raise DecitalaException(f"No matches were found for name {name}.")
-
-		if len(matches) == 1:
-			match = matches[0]
-			self.full_path = greek_path + "/" + match
-			self.name = match[:-4]
-			self.filename = match
-		else:
-			if name[-4:] == ".xml":
-				name = name[:-4]
-
-			for this_match in matches:
-				if name == this_match[:-4]:
-					self.full_path = greek_path + "/" + this_match
-					self.name = this_match[:-4]
-					self.filename = this_match
+		full_path, name, filename = _process_matches(name, matches, greek_path)
 
 		self.frag_type = "greek_foot"
 
-		super().__init__(data=self.full_path, name=self.name)
+		super().__init__(data=full_path, name=name)
 
 	def __repr__(self):
 		return f"<fragment.GreekFoot {self.name}>"
@@ -732,36 +663,3 @@ class GreekFoot(GeneralFragment):
 	def greek_string(self):
 		"""See docstring of :obj:`decitala.utils.ql_array_to_greek_diacritics`."""
 		return utils.ql_array_to_greek_diacritics(self.ql_array())
-
-	def equivalents(self, rep_type="ratio"):
-		"""
-		:return: list of Decitala and Greek foot objects that are equivalent to the given fragment under \
-				the provided ``rep_type``.
-		:rtype: list
-
-		>>> fragment = GreekFoot("Ionic_Minor")
-		>>> for equivalent in fragment.equivalents(rep_type="ratio"):
-		... 	print(equivalent)
-		<fragment.Decitala 49_Crikirti>
-		<fragment.Decitala 32_Kudukka>
-		<fragment.Decitala 9_Ratilila>
-		<fragment.Decitala 36_Tribhangi>
-		"""
-		assert rep_type.lower() in ["ratio", "difference"], DecitalaException("The only possible rep_types \
-																				are ratio and difference")
-
-		cur = self.conn.cursor()
-		row_string = "SELECT * FROM Greek_Metrics WHERE Name = '{}'".format(self.name)
-		cur.execute(row_string)
-		row_data = cur.fetchall()
-
-		if rep_type == "ratio":
-			r_equivalents = literal_eval(row_data[0][2])
-			if r_equivalents:
-				fragments = [GreekFoot(x[1]) if x[0] == "greek_foot" else Decitala(x[1]) for x in r_equivalents]
-				return fragments
-		if rep_type == "difference":
-			d_equivalents = literal_eval(row_data[0][3])
-			if d_equivalents:
-				fragments = [GreekFoot(x[1]) if x[0] == "greek_foot" else Decitala(x[1]) for x in d_equivalents]
-				return fragments
