@@ -215,7 +215,7 @@ def rolling_tree_search(
 			"sr",
 			"rsr"
 		],
-		try_contiguous_summation=True,
+		try_contiguous_summation=False,
 		windows=list(range(2, 20)),
 		allow_unnamed=False,
 		logger=None
