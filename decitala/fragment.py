@@ -637,7 +637,7 @@ class GreekFoot(GeneralFragment):
 	[2. 2. 1.]
 	[2. 1. 2.]
 	"""
-	
+	frag_type = "greek_foot"
 
 	def __init__(self, name, **kwargs):
 		if name.endswith(".xml"):
