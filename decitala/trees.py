@@ -20,13 +20,17 @@ from .fragment import (
 	GreekFoot,
 	GeneralFragment
 )
-
 from .utils import (
 	cauchy_schwartz,
 	roll_window,
 	get_object_indices,
 )
-
+from .corpora_models import (
+	get_engine,
+	get_session,
+	DecitalaData,
+	GreekFootData
+)
 from . import vis
 
 __all__ = [
@@ -40,6 +44,9 @@ decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
 greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics/"
 
 fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
+
+engine = get_engine(fragment_db)
+session = get_session(engine=engine)
 
 class TreeException(Exception):
 	pass
@@ -610,41 +617,19 @@ class FragmentTree(NaryTree):
 		assert rep_type.lower() in ["ratio", "difference"], FragmentTreeException("The only possible \
 																				rep_types are `ratio` and `difference`")
 
-		conn = sqlite3.connect(fragment_db)
-		cur = conn.cursor()
-
-		data = []
 		if frag_type == "decitala":
-			if rep_type == "ratio":
-				decitala_table_string = "SELECT * FROM Decitalas WHERE R_Keep = 1"
-			elif rep_type == "difference":
-				decitala_table_string = "SELECT * FROM Decitalas WHERE D_Keep = 1"
+			fragment_data = session.query(DecitalaData).all()
+			data = [Decitala(x.name) for x in fragment_data]
+		elif frag_type == "greek_foot":
+			fragment_data = session.query(GreekFootData).all()
+			data = [GreekFoot(x.name) for x in fragment_data]
 
-			cur.execute(decitala_table_string)
-			decitala_rows = cur.fetchall()
-			for this_row in decitala_rows:
-				name = this_row[0]
-				data.append(Decitala(name=name))
-
-		if frag_type == "greek_foot":
-			if rep_type == "ratio":
-				greek_metric_table_string = "SELECT * FROM Greek_Metrics WHERE R_Keep = 1"
-			elif rep_type == "difference":
-				greek_metric_table_string = "SELECT * FROM Greek_Metrics WHERE D_Keep = 1"
-
-			cur.execute(greek_metric_table_string)
-			greek_metric_rows = cur.fetchall()
-			for this_row in greek_metric_rows:
-				name = this_row[0]
-				data.append(GreekFoot(name=name))
-
-		ftree = FragmentTree(
+		return FragmentTree(
 			data=data,
 			rep_type=rep_type,
 			name="{0}_{1}".format(frag_type, rep_type),
 			skip_filter=True
 		)
-		return ftree
 
 	@classmethod
 	def from_composition(
