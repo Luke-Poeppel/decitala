@@ -179,6 +179,8 @@ class GeneralFragment:
 	>>> g1.coolness_level
 	'pretty cool'
 	"""
+	frag_type = "general_fragment"
+
 	def __init__(
 			self,
 			data,
@@ -200,7 +202,6 @@ class GeneralFragment:
 			raise FragmentException(f"{data} is an invalid input to GeneralFragment.")
 
 		self.name = name
-		self.frag_type = "general_fragment"
 
 	def __repr__(self):
 		if self.name is None:
@@ -546,6 +547,8 @@ class Decitala(GeneralFragment):
 	>>> Decitala("75_Pratapacekhara").is_sub_fragment(Decitala("Ragavardhana"), try_retrograde=True)
 	True
 	"""
+	frag_type = "decitala"
+
 	def __init__(self, name, **kwargs):
 		if name.endswith(".xml"):
 			name = name[:-4]
@@ -559,7 +562,6 @@ class Decitala(GeneralFragment):
 		full_path, name, filename = _process_matches(name, matches, decitala_path)
 		self.full_path = full_path
 		self.filename = filename
-		self.frag_type = "decitala"
 
 		super().__init__(data=full_path, name=name)
 
@@ -635,6 +637,8 @@ class GreekFoot(GeneralFragment):
 	[2. 2. 1.]
 	[2. 1. 2.]
 	"""
+	
+
 	def __init__(self, name, **kwargs):
 		if name.endswith(".xml"):
 			name = name[:-4]
@@ -647,9 +651,10 @@ class GreekFoot(GeneralFragment):
 		full_path, name, filename = _process_matches(name, matches, greek_path)
 
 		self.full_path = full_path
-		self.frag_type = "greek_foot"
 
 		super().__init__(data=full_path, name=name)
+		
+		self.frag_type = "greek_foot"
 
 	def __repr__(self):
 		return f"<fragment.GreekFoot {self.name}>"

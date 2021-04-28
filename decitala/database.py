@@ -89,7 +89,7 @@ class Extraction(Base):
 	fragment_type = Column(String)
 	name = Column(String)
 	
-	mod_type = Column(String)
+	mod_hierarchy_val = Column(Float)
 	ratio = Column(Float)
 	difference = Column(Float)
 	
