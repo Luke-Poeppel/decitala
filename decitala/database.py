@@ -157,18 +157,17 @@ def create_database(
 	filepath_name = filepath.split("/")[-1]
 
 	for this_part in part_nums:
-		data = models.CompositionData(
+		data = CompositionData(
 			name=filepath_name,
 			part_num=this_part,
 			local_filepath=filepath
 		)
 		session.add(data)
 
-		# THIS IS THE WORK IN PROGRESS. 
 		res = rolling_hash_search(
 			filepath=filepath,
 			part_num=this_part,
-			table=GreekFootHashTable(), # FragmentHashTable(frag_types=["decitala", "greek_foot"], custom=[MyTable]),
+			table=table,
 			windows=windows
 		)
 		if not(res):
@@ -176,14 +175,14 @@ def create_database(
 
 		fragment_objects = []
 		for this_fragment in res:
-			f = models.Extraction(
+			f = Extraction(
 				onset_start=this_fragment["onset_range"][0],
 				onset_stop=this_fragment["onset_range"][1],
 				fragment_type=this_fragment["frag_type"],
 				name=this_fragment["fragment"].name,
 				mod_type=this_fragment["mod"][0],
-				ratio=1.0,
-				difference=1.0,
+				ratio=this_fragment["factor"],
+				difference=this_fragment["difference"],
 				pitch_content=json.dumps(this_fragment["pitch_content"]),
 				is_slurred=this_fragment["is_spanned_by_slur"]
 			)

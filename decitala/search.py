@@ -31,7 +31,8 @@ from .fragment import (
 )
 from .hash_table import (
 	DecitalaHashTable,
-	GreekFootHashTable
+	GreekFootHashTable,
+	FragmentHashTable
 )
 from .path_finding import floyd_warshall
 
@@ -466,7 +467,7 @@ def rolling_hash_search(
 
 	:param str filepath: path to file to be searched.
 	:param int part_num: part in the file to be searched (0-indexed).
-	:param dict table: TBD
+	:param `decitala.hash_table.FragmentHashTable` table: 
 	:param bool ignore_single_anga_class_fragments: whether to ignore single-anga class fragments
 												in the search.
 	"""
@@ -475,7 +476,13 @@ def rolling_hash_search(
 	fragment_id = 0 # noqa TODO
 	fragments_found = []
 
-	max_dataset_length = len(max(table, key=len))
+	# These tables are already loaded. 
+	if type(table) != FragmentHashTable:
+		pass
+	else:
+		table.load()
+
+	max_dataset_length = len(max(table.data, key=len))
 	max_window_size = min(max_dataset_length, len(object_list))
 	closest_window = min(windows, key=lambda x: abs(x - max_window_size))
 	index_of_closest = windows.index(closest_window)
@@ -499,7 +506,7 @@ def rolling_hash_search(
 						continue
 
 				try:
-					searched = table[str(tuple(ql_array))]
+					searched = table.data[str(tuple(ql_array))]
 					if searched is not None:
 						search_dict = _make_search_dict(
 							data=searched,
@@ -527,7 +534,7 @@ def rolling_hash_search(
 						try:
 							searches = [tuple(this_superdivision), tuple(this_superdivision_retrograde)]
 							for i, this_search in enumerate(searches):
-								searched = table[str(this_search)]
+								searched = table.data[str(this_search)]
 								if searched is not None:
 									search_dict = _make_search_dict(data=searched, frame=this_frame)
 									search_dict["id"] = fragment_id
