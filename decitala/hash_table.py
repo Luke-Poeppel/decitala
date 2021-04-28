@@ -59,17 +59,24 @@ def generate_all_modifications(
 		factors,
 		differences,
 		try_retrograde,
-		allow_mixed_augmentation,
-		force_override
+		allow_mixed_augmentation=False,
+		force_override=False
 	):
 	"""
 	Helper function for generating and storing all possible modifications of an input fragment.
 
 	:param dict dict_in: Dictionary storing all the results. 
-	:param `decitala.fragment.GeneralFragment` fragment:
+	:param `decitala.fragment.GeneralFragment` fragment: Fragment input. 
+	:param list factors: Possible factors for multiplicative augmentation.
+	:param list differences: Possible differences for additive augmentation.
+	:param bool try_retrograde: Whether to also generate modifications for the retrograde of the fragment. 
+	:param bool allow_mixed_augmentation: Whether to allow mixed augmentation as a modification type. Not yet
+										supported. 
+	:param bool force_override: Whether to force the given fragment to override the existing fragment in 
+								the table (if it exists). Not yet supported. 
 	"""
 	if allow_mixed_augmentation or force_override:
-		raise HashTableException("That is not yet supported. Coming soon.")
+		raise HashTableException("These options are not yet supported. Coming soon.")
 
 	qls = fragment.ql_array()
 
@@ -124,8 +131,8 @@ def generate_all_modifications(
 				"fragment": fragment,
 				"frag_type": fragment.frag_type,
 				"retrograde": retrograde,
-				"factor": this_difference,
-				"difference": 0,
+				"factor": 1.0,
+				"difference": this_difference,
 				"mod_hierarchy_val": 3 if retrograde is False else 4
 			}
 			# Lower number -> More likely. 
@@ -138,8 +145,13 @@ def generate_all_modifications(
 
 class FragmentHashTable:
 	"""
-	This class holds all (relevant) modifications of a set of fragments. This, used in conjunction with
-	the input table to rolling_hash_search, allows the user to make more complicated queries. 
+	This class holds all (relevant) modifications of a set of fragments. Currently the only
+	supported input types to ``datasets`` are ``"decitala"`` and ``"greek_foot"``. The
+	``custom_fragments`` parameter allows the addition of any desired fragments; for a search 
+	on a particular set of fragments, use this latter parameter. The factors, differences,
+	and other modification parameters are class attributes. To change them, subclass
+	``FragmentHashTable`` with your own attributes. 
+	
 	>>> fht = FragmentHashTable(
 	... 	datasets=["greek_foot"],
 	... 	custom_fragments=[Decitala("Ragavardhana")]
@@ -182,7 +194,7 @@ class FragmentHashTable:
 
 	def __repr__(self):
 		return f"<decitala.hash_table.FragmentHashTable {len(self.data)} fragments>"
-
+			
 	def load(
 			self,
 			factors=FACTORS,
@@ -233,11 +245,19 @@ class FragmentHashTable:
 			return self.data
 
 class DecitalaHashTable(FragmentHashTable):
+	"""
+	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the datasets
+	parameters set to ``["decitala"]`` and automatically loads.
+	"""
 	def __init__(self):
 		super().__init__(datasets=["decitala"])
 		self.load()
 
 class GreekFootHashTable(FragmentHashTable):
+	"""
+	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the datasets
+	parameters set to ``["greek_foot"]`` and automatically loads.
+	"""
 	def __init__(self):
 		super().__init__(datasets=["greek_foot"])
 		self.load()
