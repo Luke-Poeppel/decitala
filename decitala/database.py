@@ -124,7 +124,6 @@ def create_database(
 		table,
 		part_nums=[0],
 		windows=list(range(2, 19)),
-		ignore_single_anga_class_fragments=False,
 		extra_filter=None,
 		echo=False
 	):
@@ -135,8 +134,6 @@ def create_database(
 	:param str filepath: path to the score to be analyzed.
 	:param list table: a :obj:`decitala.hash_table.FragmentHashTable` object. 
 	:param list part_nums: parts to be analyzed.
-	:param ignore_single_anga_class_fragments: whether to ignore single anga class fragments. 
-											False by default. 
 	:param extra_filter: lambda expression on the extracted fragments. 
 	:param bool echo: whether to echo the SQL calls. False by default. 
 	"""

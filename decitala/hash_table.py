@@ -102,8 +102,8 @@ def generate_all_modifications(
 				"difference": 0,
 				"mod_hierarchy_val": 1 if retrograde is False else 2
 			}
-			if str(augmentation) in dict_in:
-				existing = dict_in[str(augmentation)]
+			if augmentation in dict_in:
+				existing = dict_in[augmentation]
 				# Lower number -> More likely. 
 				if existing["mod_hierarchy_val"] < elem_dict["mod_hierarchy_val"]:
 					continue

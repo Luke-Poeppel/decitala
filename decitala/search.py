@@ -48,6 +48,194 @@ logger = get_logger(name=__file__, print_to_console=True)
 class SearchException(Exception):
 	pass
 
+####################################################################################################
+# Hash table search approach.
+def _get_mod_info(data):
+	if data["factor"] != 0 and data["difference"] == 0.0:
+		mod_type = "r"
+		mod_val = data["factor"]
+	elif data["factor"] == 1.0 and data["difference"] != 0.0:
+		mod_type = "d"
+		mod_val = data["difference"]
+	else:
+		raise Exception("Something is wrong. Please file an issue at https://github.com/Luke-Poeppel/decitala/issues.") # noqa
+
+	if data["retrograde"] is True:
+		mod_type = "r" + mod_type
+
+	return (mod_type, mod_val)
+
+def _make_search_result_dict(data, frame):
+	offset_1 = frame[0][0]
+	offset_2 = frame[-1][0]
+
+	pitch_content = frame_to_midi(frame)
+	"""
+	# 		is_spanned_by_slur = frame_is_spanned_by_slur(this_frame)
+# 		search_dict["is_spanned_by_slur"] = is_spanned_by_slur
+# 		search_dict["id"] = fragment_id
+	"""
+
+	# I can't explain this inheritance issue. Stupid hotfix has been added to rolling_hash_search.
+	# d = GeneralFragment([1.0, 1.0, 2.0])
+	# d = Decitala("Gajalila")
+	# if data["frag_type"] == "decitala":
+	# 	fragment = Decitala(data["fragment"])
+	# elif data["frag_type"] == "greek_foot":
+	# 	print(GreekFoot(data["fragment"]))
+	# else:
+	# 	raise SearchException("{} is an invalid frag_type".format(frag_type))
+
+	search_dict = {
+		"fragment": data["fragment"],
+		"frag_type": data["frag_type"],
+		"onset_range": (offset_1.offset, offset_2.offset + offset_2.quarterLength),
+		"mod": _get_mod_info(data),
+		"pitch_content": pitch_content,
+	}
+	return search_dict
+
+def rolling_hash_search(
+		filepath,
+		part_num,
+		table,
+		windows=list(range(2, 19)),
+		allow_subdivision=False,
+	):
+	"""
+	A different (faster) paradigm than the tree approaches above. Searches a large dictionary of
+	all possible modifications of the rhythmic datasets.
+
+	:param str filepath: path to file to be searched.
+	:param int part_num: part in the file to be searched (0-indexed).
+	:param `decitala.hash_table.FragmentHashTable` table: 
+	:param list windows: Allowed window sizes for search. 
+	:param bool allow_subdivision: Whether to check for subdivisions in the search. 
+	"""
+	object_list = get_object_indices(filepath=filepath, part_num=part_num)
+	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
+	fragment_id = 0 # noqa TODO
+	fragments_found = []
+
+	# These tables are already loaded. 
+	if type(table) == FragmentHashTable:
+		table.load()
+
+	max_dataset_length = len(max(table.data, key=lambda x: len(x)))
+	max_window_size = min(max_dataset_length, len(object_list))
+	closest_window = min(windows, key=lambda x: abs(x - max_window_size))
+	index_of_closest = windows.index(closest_window)
+	windows = windows[0:index_of_closest + 1]
+
+	for this_win in windows:
+		frames = roll_window(array=object_list, window_length=this_win)
+		for this_frame in frames:
+			objects = [x[0] for x in this_frame]
+			if any(x.isRest for x in objects):
+				continue
+			else:
+				ql_array = frame_to_ql_array(this_frame)
+				if len(ql_array) < windows[0]:
+					continue
+				try:
+					searched = table.data[tuple(ql_array)]
+					if searched is not None:
+						search_dict = _make_search_result_dict(
+							table_data=searched,
+							frame=this_frame,
+							fragment_id=fragment_id
+						)
+						fragment_id += 1
+						fragments_found.append(search_dict)
+				except KeyError:
+					pass
+
+				# TODO: Need to check appearance since this isn't done in preprocessing.
+				# Otherwise get duplicates!
+				if allow_subdivision is True:
+					all_superdivisions = find_possible_superdivisions(ql_array)
+					for i, this_superdivision in enumerate(all_superdivisions):
+						if i == 0:
+							continue
+						this_superdivision_retrograde = this_superdivision[::-1]
+						if len(this_superdivision) < 2:
+							continue
+
+						try:
+							searches = [tuple(this_superdivision), tuple(this_superdivision_retrograde)]
+							for i, this_search in enumerate(searches):
+								searched = table.data[str(this_search)]
+								if searched is not None:
+									search_dict = _make_search_dict(data=searched, frame=this_frame)
+									search_dict["id"] = fragment_id
+									if i == 0:
+										search_dict["sr"] = True
+									else:
+										search_dict["rsr"] = True
+									fragment_id += 1
+									fragments_found.append(search_dict)
+						except KeyError:
+							pass
+
+	# for this_search_dict in fragments_found:
+	# 	if this_search_dict["frag_type"] == "greek_foot":
+	# 		this_search_dict["fragment"] = GreekFoot(this_search_dict["fragment"])
+	# 	elif this_search_dict["frag_type"] == "decitala":
+	# 		this_search_dict["fragment"] = Decitala(this_search_dict["fragment"])
+
+	# return sorted(fragments_found, key=lambda x: x["onset_range"][0])
+
+def path_finder(
+		filepath,
+		part_num,
+		frag_type,
+		windows=list(range(2, 19)),
+		slur_constraint=False,
+		ignore_single_anga_class_fragments=False,
+		save_filepath=None,
+		verbose=False
+	):
+	if frag_type == "decitala":
+		ht = DecitalaHashTable()
+	elif frag_type == "greek_foot":
+		ht = GreekFootHashTable()
+	else:
+		raise Exception("{} is not a valid frag_type.".format(frag_type))
+
+	fragments = rolling_hash_search(
+		filepath=filepath,
+		part_num=part_num,
+		table=ht,
+		ignore_single_anga_class_fragments=ignore_single_anga_class_fragments
+	)
+	if not fragments:
+		return None
+
+	distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
+		fragments,
+		weights={
+			"gap": 0.75,
+			"onsets": 0.25
+		},
+		verbose=verbose
+	)
+	best_source, best_sink = floyd_warshall.best_source_and_sink(fragments)
+	best_path = floyd_warshall.get_path(
+		start=best_source,
+		end=best_sink,
+		next_matrix=next_matrix,
+		data=fragments,
+		slur_constraint=slur_constraint
+	)
+	if save_filepath:
+		with open(save_filepath, "w") as output:
+			json.dump(obj=best_path, fp=output, cls=FragmentEncoder, indent=4)
+		logger.info(f"Result saved in: {save_filepath}")
+
+	return best_path
+
+####################################################################################################
+# Tree search method.
 class _SearchConfig():
 	"""Helper class for managing relationship between search ql_arrays and search trees."""
 	def __init__(self, ql_array, ratio_tree=None, difference_tree=None, modifications=[]):
@@ -409,197 +597,3 @@ def rolling_tree_search(
 # 				fragments_found.append(searched)
 
 # 	return fragments_found
-
-####################################################################################################
-# Hash table search method.
-def _get_mod_info(data):
-	if data["factor"] != 0 and data["difference"] == 0.0:
-		mod_type = "r"
-		mod_val = data["factor"]
-	elif data["factor"] == 1.0 and data["difference"] != 0.0:
-		mod_type = "d"
-		mod_val = data["difference"]
-	else:
-		raise Exception("Something is wrong. Please file an issue at https://github.com/Luke-Poeppel/decitala/issues.") # noqa
-
-	if data["retrograde"] is True:
-		mod_type = "r" + mod_type
-
-	return (mod_type, mod_val)
-
-def _make_search_dict(data, frame):
-	offset_1 = frame[0][0]
-	offset_2 = frame[-1][0]
-
-	pitch_content = frame_to_midi(frame)
-
-	# I can't explain this inheritance issue. Stupid hotfix has been added to rolling_hash_search.
-	# d = GeneralFragment([1.0, 1.0, 2.0])
-	# d = Decitala("Gajalila")
-	# if data["frag_type"] == "decitala":
-	# 	fragment = Decitala(data["fragment"])
-	# elif data["frag_type"] == "greek_foot":
-	# 	print(GreekFoot(data["fragment"]))
-	# else:
-	# 	raise SearchException("{} is an invalid frag_type".format(frag_type))
-
-	search_dict = {
-		"fragment": data["fragment"],
-		"frag_type": data["frag_type"],
-		"mod": _get_mod_info(data),
-		"onset_range": (offset_1.offset, offset_2.offset + offset_2.quarterLength),
-		"pitch_content": pitch_content,
-	}
-	return search_dict
-
-def rolling_hash_search(
-		filepath,
-		part_num,
-		table,
-		windows=list(range(2, 19)),
-		allow_subdivision=False,
-		allow_contiguous_summation=False,
-		ignore_single_anga_class_fragments=False
-	):
-	"""
-	A different (faster) paradigm than the tree approaches above. Searches a large dictionary of
-	all possible modifications of the rhythmic datasets.
-
-	:param str filepath: path to file to be searched.
-	:param int part_num: part in the file to be searched (0-indexed).
-	:param `decitala.hash_table.FragmentHashTable` table: 
-	:param bool ignore_single_anga_class_fragments: whether to ignore single-anga class fragments
-												in the search.
-	"""
-	object_list = get_object_indices(filepath=filepath, part_num=part_num)
-	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
-	fragment_id = 0 # noqa TODO
-	fragments_found = []
-
-	# These tables are already loaded. 
-	if type(table) != FragmentHashTable:
-		pass
-	else:
-		table.load()
-
-	max_dataset_length = len(max(table.data, key=len))
-	max_window_size = min(max_dataset_length, len(object_list))
-	closest_window = min(windows, key=lambda x: abs(x - max_window_size))
-	index_of_closest = windows.index(closest_window)
-	windows = windows[0:index_of_closest + 1]
-
-	for this_win in windows:
-		frames = roll_window(array=object_list, window_length=this_win)
-		for this_frame in frames:
-			# If having trouble finding a fragment, uncomment the code below and check table[str(tuple(ql_array))]. # noqa
-			# if this_win == ??? and this_frame[0][1][0] == ???: # starting onset
-			# 	import pdb; pdb.set_trace()
-			objects = [x[0] for x in this_frame]
-			if any(x.isRest for x in objects):
-				continue
-			else:
-				ql_array = frame_to_ql_array(this_frame)
-				if len(ql_array) < 2:
-					continue
-				elif ignore_single_anga_class_fragments is True:
-					if len(set(ql_array)) == 1:
-						continue
-
-				try:
-					searched = table.data[str(tuple(ql_array))]
-					if searched is not None:
-						search_dict = _make_search_dict(
-							data=searched,
-							frame=this_frame,
-						)
-						is_spanned_by_slur = frame_is_spanned_by_slur(this_frame)
-						search_dict["is_spanned_by_slur"] = is_spanned_by_slur
-						search_dict["id"] = fragment_id
-						fragment_id += 1
-						fragments_found.append(search_dict)
-				except KeyError:
-					pass
-
-				# TODO: Need to check appearance since this isn't done in preprocessing.
-				# Otherwise get duplicates!
-				if allow_subdivision is True:
-					all_superdivisions = find_possible_superdivisions(ql_array)
-					for i, this_superdivision in enumerate(all_superdivisions):
-						if i == 0:
-							continue
-						this_superdivision_retrograde = this_superdivision[::-1]
-						if len(this_superdivision) < 2:
-							continue
-
-						try:
-							searches = [tuple(this_superdivision), tuple(this_superdivision_retrograde)]
-							for i, this_search in enumerate(searches):
-								searched = table.data[str(this_search)]
-								if searched is not None:
-									search_dict = _make_search_dict(data=searched, frame=this_frame)
-									search_dict["id"] = fragment_id
-									if i == 0:
-										search_dict["sr"] = True
-									else:
-										search_dict["rsr"] = True
-									fragment_id += 1
-									fragments_found.append(search_dict)
-						except KeyError:
-							pass
-
-	for this_search_dict in fragments_found:
-		if this_search_dict["frag_type"] == "greek_foot":
-			this_search_dict["fragment"] = GreekFoot(this_search_dict["fragment"])
-		elif this_search_dict["frag_type"] == "decitala":
-			this_search_dict["fragment"] = Decitala(this_search_dict["fragment"])
-
-	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
-
-def path_finder(
-		filepath,
-		part_num,
-		frag_type,
-		windows=list(range(2, 19)),
-		slur_constraint=False,
-		ignore_single_anga_class_fragments=False,
-		save_filepath=None,
-		verbose=False
-	):
-	if frag_type == "decitala":
-		ht = DecitalaHashTable()
-	elif frag_type == "greek_foot":
-		ht = GreekFootHashTable()
-	else:
-		raise Exception("{} is not a valid frag_type.".format(frag_type))
-
-	fragments = rolling_hash_search(
-		filepath=filepath,
-		part_num=part_num,
-		table=ht,
-		ignore_single_anga_class_fragments=ignore_single_anga_class_fragments
-	)
-	if not fragments:
-		return None
-
-	distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
-		fragments,
-		weights={
-			"gap": 0.75,
-			"onsets": 0.25
-		},
-		verbose=verbose
-	)
-	best_source, best_sink = floyd_warshall.best_source_and_sink(fragments)
-	best_path = floyd_warshall.get_path(
-		start=best_source,
-		end=best_sink,
-		next_matrix=next_matrix,
-		data=fragments,
-		slur_constraint=slur_constraint
-	)
-	if save_filepath:
-		with open(save_filepath, "w") as output:
-			json.dump(obj=best_path, fp=output, cls=FragmentEncoder, indent=4)
-		logger.info(f"Result saved in: {save_filepath}")
-
-	return best_path
