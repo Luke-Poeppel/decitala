@@ -28,7 +28,7 @@ from sqlalchemy.orm import (
 
 from .search import rolling_hash_search
 from .utils import get_logger
-from .hash_table import GreekFootHashTable
+from .hash_table import GreekFootHashTable, MODIFICATION_HIERARCHY
 
 Base = declarative_base()
 
@@ -102,7 +102,7 @@ class Extraction(Base):
 			onset_stop,
 			fragment_type,
 			name,
-			mod_type,
+			mod_hierarchy_val,
 			ratio,
 			difference,
 			pitch_content,
@@ -112,7 +112,7 @@ class Extraction(Base):
 		self.onset_stop = onset_stop
 		self.fragment_type = fragment_type
 		self.name = name
-		self.mod_type = mod_type
+		self.mod_hierarchy_val = mod_hierarchy_val
 		self.ratio = ratio
 		self.difference = difference
 		self.pitch_content = pitch_content
@@ -177,7 +177,7 @@ def create_database(
 				onset_stop=this_fragment["onset_range"][1],
 				fragment_type=this_fragment["frag_type"],
 				name=this_fragment["fragment"].name,
-				mod_type=this_fragment["mod"][0],
+				mod_hierarchy_val=this_fragment["mod_hierarchy_val"],
 				ratio=this_fragment["factor"],
 				difference=this_fragment["difference"],
 				pitch_content=json.dumps(this_fragment["pitch_content"]),
