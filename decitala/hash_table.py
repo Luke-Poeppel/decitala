@@ -101,9 +101,9 @@ def generate_all_modifications(
 				if existing["mod_hierarchy_val"] < elem_dict["mod_hierarchy_val"]:
 					continue
 				else:
-					dict_in[str(augmentation)] = elem_dict
+					dict_in[augmentation] = elem_dict
 			else:
-				dict_in[str(augmentation)] = elem_dict
+				dict_in[augmentation] = elem_dict
 
 	# Next we form additive augmentations
 	for this_difference in differences:
@@ -129,12 +129,12 @@ def generate_all_modifications(
 				"mod_hierarchy_val": 3 if retrograde is False else 4
 			}
 			# Lower number -> More likely. 
-			if str(augmentation) in dict_in:
-				existing = dict_in[str(augmentation)]
+			if augmentation in dict_in:
+				existing = dict_in[augmentation]
 				if existing["mod_hierarchy_val"] < elem_dict["mod_hierarchy_val"]:
 					continue
 			else:
-				dict_in[str(augmentation)] = elem_dict
+				dict_in[augmentation] = elem_dict
 
 class FragmentHashTable:
 	"""
