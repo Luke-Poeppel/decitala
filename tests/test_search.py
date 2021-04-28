@@ -1,10 +1,14 @@
 import os
+import doctest
 
 from decitala import search, hash_table, utils
 from decitala.fragment import GreekFoot
 
 here = os.path.abspath(os.path.dirname(__file__))
 filepath = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
+
+def test_doctests():
+	assert doctest.testmod(search, raise_on_error=True)
 
 def test_rolling_hash_search():
 	res = search.rolling_hash_search(

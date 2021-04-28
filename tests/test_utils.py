@@ -10,6 +10,7 @@ from collections import Counter
 from music21 import chord
 from music21 import converter
 from music21 import note
+from music21 import meter
 
 from decitala import utils
 
@@ -23,8 +24,8 @@ from decitala.fragment import (
 here = os.path.abspath(os.path.dirname(__file__))
 analysis_filepath = os.path.dirname(here) + "/databases/analyses/livre_dorgue_1_analysis.json"
 
-# def test_doctests():
-# 	assert doctest.testmod(utils, raise_on_error=True)
+def test_doctests():
+	assert doctest.testmod(utils, raise_on_error=True)
 
 # Frame data
 @pytest.fixture
@@ -188,3 +189,24 @@ def test_write_analysis():
 		loaded = utils.loader(tmpfile.name)
 		fragments = [x["fragment"].name for x in loaded]
 		assert set(fragments) == set([f1, f2, f3])
+
+def test_ts_to_reduced_ts():
+	ex1 = meter.TimeSignature("44/32")
+	ex1_res = utils.ts_to_reduced_ts(ex1)
+	expected_ex1 = meter.TimeSignature("11/8")
+	assert ex1_res.ratioEqual(expected_ex1)
+
+	ex2 = meter.TimeSignature("8/2")
+	ex2_res = utils.ts_to_reduced_ts(ex2)
+	expected_ex2 = meter.TimeSignature("4/1")
+	assert ex2_res.ratioEqual(expected_ex2)
+
+	ex3 = meter.TimeSignature("8/8")
+	ex3_res = utils.ts_to_reduced_ts(ex3)
+	expected_ex3 = meter.TimeSignature("1/1")
+	assert ex3_res.ratioEqual(expected_ex3)
+
+	ex4 = meter.TimeSignature("13/2")
+	ex4_res = utils.ts_to_reduced_ts(ex4)
+	expected_ex4 = meter.TimeSignature("13/2")
+	assert ex4_res.ratioEqual(expected_ex4)

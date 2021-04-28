@@ -25,37 +25,6 @@ from music21.meter import TimeSignature
 
 from . import fragment
 
-__all__ = [
-	"get_logger",  # Logging
-	"carnatic_string_to_ql_array",  # Notation
-	"ql_array_to_carnatic_string",
-	"ql_array_to_greek_diacritics",
-	"augment",  # Rhythm helpers
-	"successive_ratio_array",
-	"successive_difference_array",
-	"get_added_values",
-	"net_ql_array",
-	"transform_to_time_scale",
-	"find_clusters",  # Misc.
-	"find_possible_superdivisions",
-	"roll_window",
-	"power_list",
-	"cauchy_schwartz",
-	"get_object_indices",  # Score helpers
-	"contiguous_summation",
-	"frame_to_ql_array",
-	"frame_to_midi",
-	"frame_is_spanned_by_slur",
-	"filter_single_anga_class_fragments",  # Data helpers
-	"filter_sub_fragments",
-	"pitch_content_to_contour",  # Pitch Content
-	"contour_to_prime_contour",
-	"loader",
-	"write_analysis",
-	"measure_by_measure_time_signatures",
-	"is_octatonic_collection"
-]
-
 """
 NOTE: Normally a crescent moon superscript is used. Since it serves the same function as viramas, we
 use the same notation.
@@ -692,26 +661,12 @@ def ts_to_reduced_ts(ts):
 	denominator = ts.denominator
 
 	factor = 0
-	while numerator % 2 == 0:
+	while numerator % 2 == 0 and denominator > 1:
 		numerator = numerator / 2
+		denominator = denominator / 2
 		factor += 1
-	
-	if factor == 0:
-		reduced_denominator = 32
-	else:
-		if factor < 6: # can't divide further or the denominator becomes a float. 
-			reduced_denominator = denominator / (2 ** factor)
-		else:
-			diff = factor - 6
-			numerator = 2 ** (diff + 1) # raise it to the lowest possible reduction. 
-			reduced_denominator = 1 # lowest possible denominator
-			
-	if numerator == 0:
-		raise UtilsException(f"{numerator}/{reduced_denominator} is an invalid TimeSignature")
-	elif reduced_denominator not in {1, 2, 4, 8, 16, 32, 64, 128}:
-		raise UtilsException(f"{numerator}/{reduced_denominator} is an invalid TimeSignature")
 
-	reduced_ts_str = f"{int(numerator)}/{reduced_denominator}"
+	reduced_ts_str = f"{int(numerator)}/{int(denominator)}"
 	return TimeSignature(reduced_ts_str)
 
 def contiguous_summation(data):

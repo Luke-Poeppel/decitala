@@ -5,21 +5,18 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.10.0] ???
 ### Added
-- WIP: Revamped the database module (see #120). Everything is now ported over to SQLAlchemy and is more easily extendable to broader rhythmic corpora. Also added a `database.batch_create_database` function for creating a database from a large set of compositions. 
-- Added `non_retrogradable_measures` function to `utils.py` for finding all palindromic measures in a given filepath and part number. 
+- Revamped the database module (see #120). Everything is now ported over to SQLAlchemy and is more easily extendable to broader rhythmic corpora. Also added a `database.batch_create_database` function for creating a database from a large set of compositions. 
+- New utils functions and additions: a `non_retrogradable_measures` function for finding all palindromic measures in a given filepath and part number; an optional `measure_divider_mode` parameter to `utils.get_object_indices` which returns the same objects, divided into lists of measures or objects divided by a string; a `utils.ts_to_reduced_ts` function for fully reducing time signatures; a `UtilsException` class. 
 - WIP: Implemented Dijkstra's Algorithm for path finding. 
-- Added optional `measure_divider_mode` parameter to `utils.get_object_indices` which returns the same objects, divided into lists of measures or objects divided by a string. 
-- Added `utils.ts_to_reduced_ts` function for fully reducing time signatures. 
-- Added a `UtilsException` class. 
 - The `search.path_finder` function now has optional `save_filepath` argument for dumping the results to a JSON file. (#97)
-- All library classes inheriting from `GeneralFragment` (currently just `Decitala` and `GreekFoot`) as well as `GeneralFragment` itself now have a `frag_type` attribute. This will likely be removed in the future but solves some problems in the full conversion to SQLAlchemy. 
+- All classes inheriting from `GeneralFragment` (currently just `Decitala` and `GreekFoot`) as well as `GeneralFragment` itself now have a `frag_type` class attribute. 
 
 ### Changed
 - Renamed the `fragments` directory to `corpora`. Also removed the `.sib` encoding files for the greek metrics to make the package lighter weight. 
-- WIP: The `fragments` module was relying on SQLite in a piecemeal way. Objects from encoded corpora are now proper SQLAchemy models for consistency with the rest of the package. 
+- The `fragments` module was relying on SQLite in a piecemeal way. Objects from encoded corpora are now proper SQLAchemy models for consistency with the rest of the package. 
 - The `fragment.morris_symmetry_class` function now returns integers representing the classes (instead of string describing them). The meaning of each class is given in the documentation. 
 - Refactored `path_finding.floyd_warshall` and added helper functions for all path-finding algorithms to `path_finding_utils.py`. 
-- The CLI `pathfinder` tool now logs the saved file. 
+- The CLI `path-finder` tool now logs the saved file. 
 - Improved doctest integration by running them within the (pytest) tests directory. 
 - Removed all `# -*- coding: utf-8 -*-` lines. 
 - Renamed `trees.rolling_search` to `trees.rolling_tree_search` to be consistent with the other rolling search type(s) (#114).  
@@ -27,7 +24,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - All `GeneralFragment` objects now have the `carnatic_string` and `greek_string` properties. 
 
 ### Fixed
-- Issues #116: missing result logging from `decitala.cli.pathfinder`; #115: incorrect results from Morris symmetry classes; #73: default value for `try_contiguous_summation`; 
+- Issues #116: missing result logging from `decitala.cli.pathfinder`; #115: incorrect results from Morris symmetry classes; #73: default value for `try_contiguous_summation`. 
 - Incorrect serialization condition for `GeneralFragment` –– forced incorrect parsing to and from analysis files. 
 
 ## [v0.9.1] April 16, 2021

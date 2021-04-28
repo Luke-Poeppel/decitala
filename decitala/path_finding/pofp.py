@@ -34,13 +34,6 @@ information about the fragment, modification, onset-range, and spanning data.
 """
 import itertools
 
-__all__ = [
-	"check_break_point",
-	"get_break_points",
-	"partition_data_by_break_points",
-	"get_pareto_optimal_longest_paths"
-]
-
 def check_break_point(data, i):
 	"""
 	Helper function for :obj:`~decitala.pofp.get_break_points`. Checks index i of the onset_list that

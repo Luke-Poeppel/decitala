@@ -36,12 +36,6 @@ from .hash_table import (
 )
 from .path_finding import floyd_warshall
 
-__all__ = [
-	"get_by_ql_array",
-	"rolling_tree_search",
-	"rolling_hash_search"
-]
-
 logger = get_logger(name=__file__, print_to_console=True)
 
 ####################################################################################################
@@ -154,10 +148,23 @@ def path_finder(
 		table,
 		windows=list(range(2, 19)),
 		slur_constraint=False,
-		ignore_single_anga_class_fragments=False,
 		save_filepath=None,
 		verbose=False
 	):
+	"""
+	This function combines a number of tools for effectively finding a path of fragments
+	through a provided composition and part number. It first runs 
+	:obj:`decitala.search.rolling_hash_search` to extract all fragments from the provided
+	table and then runs the Floyd-Warshall algorithm to get the best path. 
+
+	:param str filepath: path to file to be searched.
+	:param int part_num: part in the file to be searched (0-indexed).
+	:param `decitala.hash_table.FragmentHashTable` table: 
+	:param list windows: Allowed window sizes for search.
+	:param bool slur_constraint: Whether to force Floyd-Warshall to choose slurred fragments. 
+	:param str save_filepath: An optional path to a file (ending in .json) to save the results.
+	:param bool verbose: Whether to log messages. Default is ``False``. 
+	"""
 	fragments = rolling_hash_search(
 		filepath=filepath,
 		part_num=part_num,
