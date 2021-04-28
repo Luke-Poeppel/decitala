@@ -247,6 +247,16 @@ class GeneralFragment:
 		return tuple(self.ql_array(retrograde=retrograde))
 
 	@property
+	def carnatic_string(self):
+		"""See docstring of :obj:`decitala.utils.ql_array_to_carnatic_string`."""
+		return utils.ql_array_to_carnatic_string(self.ql_array())
+
+	@property
+	def greek_string(self):
+		"""See docstring of :obj:`decitala.utils.ql_array_to_greek_diacritics`."""
+		return utils.ql_array_to_greek_diacritics(self.ql_array())
+
+	@property
 	def num_onsets(self):
 		"""
 		:return: The number of onsets in the fragment.
@@ -390,7 +400,7 @@ class GeneralFragment:
 		:return: the fragment's form of rhythmic symmetry, as defined by Morris in \
 				`Sets, Scales and Rhythmic Cycles. A Classification of Talas in Indian \
 				Music <http://ecmc.rochester.edu/rdm/pdflib/talapaper.pdf>`_ (1999).
-		:rtype: str
+		:rtype: int
 
 		- I. Maximally Trivial:				of the form :math:`X` (one onset, one anga class)
 		- II. Trivial Dual Symmetry:  		of the form :math:`XY`
@@ -586,11 +596,6 @@ class Decitala(GeneralFragment):
 		return Decitala(res[0].name)
 
 	@property
-	def carnatic_string(self):
-		"""See docstring of :obj:`decitala.utils.ql_array_to_carnatic_string`."""
-		return utils.ql_array_to_carnatic_string(self.ql_array())
-
-	@property
 	def num_matras(self):
 		"""
 		:return: returns the number of matras in the tala (here, the number of eighth notes).
@@ -648,8 +653,3 @@ class GreekFoot(GeneralFragment):
 
 	def __repr__(self):
 		return f"<fragment.GreekFoot {self.name}>"
-
-	@property
-	def greek_string(self):
-		"""See docstring of :obj:`decitala.utils.ql_array_to_greek_diacritics`."""
-		return utils.ql_array_to_greek_diacritics(self.ql_array())
