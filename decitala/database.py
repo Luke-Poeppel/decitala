@@ -39,11 +39,14 @@ class CompositionData(Base):
 	"""
 	SQLAlchemy model representing the basic composition data for a composition.
 
+	Parameters
+	----------
+
 	:param str name: name of the composition.
 	:param int part_num: part number for the extraction.
 	:param str local_filepath: local filepath for the searched composition. 
 
-	TODO: could add a `search_constraint` column that stores a JSON of the search parameters. 
+	TODO: could add a `search_constraint` column that stores a JSON of the rolling_search parameters. 
 	"""
 	__tablename__ = "CompositionData"
 
@@ -118,41 +121,14 @@ class Extraction(Base):
 		self.pitch_content = pitch_content
 		self.is_slurred = is_slurred
 
-def create_database(
-		db_path,
+def _add_results_to_session(
 		filepath,
+		part_nums,
 		table,
-		part_nums=[0],
-		windows=list(range(2, 19)),
-		extra_filter=None,
-		echo=False
+		windows,
+		session
 	):
-	"""
-	Function for creating a database from a single filepath. 
-
-	:param str db_path: path to the database to be created. 
-	:param str filepath: path to the score to be analyzed.
-	:param list table: a :obj:`decitala.hash_table.FragmentHashTable` object. 
-	:param list part_nums: parts to be analyzed.
-	:param extra_filter: lambda expression on the extracted fragments. 
-	:param bool echo: whether to echo the SQL calls. False by default. 
-	"""
-	assert os.path.isfile(filepath), DatabaseException("✗ The path provided is not a valid file.")
-	assert db_path.endswith(".db"), DatabaseException("✗ The db_path must end with '.db'.")
-	if os.path.isfile(db_path):
-		return "That database already exists ✔"
-
-	logger = get_logger(name=__file__, print_to_console=True)
-	logger.info(f"Preparing database at {db_path}...")
-
-	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
-	Base.metadata.create_all(engine)
-
-	Session = sessionmaker(bind=engine)
-	session = Session()
-
 	filepath_name = filepath.split("/")[-1]
-
 	for this_part in part_nums:
 		data = CompositionData(
 			name=filepath_name,
@@ -187,13 +163,89 @@ def create_database(
 			session.add(f)
 
 		data.composition_data = fragment_objects
+
+def create_database(
+		db_path,
+		filepath,
+		table,
+		part_nums=[0],
+		windows=list(range(2, 19)),
+		echo=False
+	):
+	"""
+	Function for creating a database from a single filepath. 
+
+	:param str db_path: Path to the database to be created. 
+	:param str filepath: Path to the score to be analyzed.
+	:param list table: a :obj:`decitala.hash_table.FragmentHashTable` object. 
+	:param list part_nums: Parts to be analyzed.
+	:param list windows: Possible lengths of the search frames. 
+	:param bool echo: whether to echo the SQL calls. False by default. 
+	"""
+	assert os.path.isfile(filepath), DatabaseException("✗ The path provided is not a valid file.")
+	assert db_path.endswith(".db"), DatabaseException("✗ The db_path must end with '.db'.")
+	if os.path.isfile(db_path):
+		return "That database already exists ✔"
+
+	logger = get_logger(name=__file__, print_to_console=True)
+	logger.info(f"Preparing database at {db_path}...")
+
+	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
+	Base.metadata.create_all(engine)
+
+	Session = sessionmaker(bind=engine)
+	session = Session()
+
+	_add_results_to_session(
+		filepath,
+		part_nums,
+		table,
+		windows,
+		session
+	)
 	
 	session.commit()
 	return
 
 def batch_create_database(
+		db_path,
+		data_in,
+		table,
+		windows,
+		echo=False
 	):
 	"""
-	Provide dictionary of filepath and desired part nums. 
+	This function creates a database from a dictionary of filepaths and desires ``part_nums``
+	to analyze.
+
+	:param str db_path: Path to the database to be created. 
+	:param dict data_in: Dictionary of filepaths (key) and part nums in a list (value). 
+	:param list table: a :obj:`decitala.hash_table.FragmentHashTable` object. 
+	:param list windows: Possible lengths of the search frames. 
+	:param bool echo: whether to echo the SQL calls. False by default. 
 	"""
-	pass
+	assert os.path.isfile(filepath), DatabaseException("✗ The path provided is not a valid file.")
+	assert db_path.endswith(".db"), DatabaseException("✗ The db_path must end with '.db'.")
+	if os.path.isfile(db_path):
+		return "That database already exists ✔"
+
+	logger = get_logger(name=__file__, print_to_console=True)
+	logger.info(f"Preparing database at {db_path}...")
+
+	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
+	Base.metadata.create_all(engine)
+
+	Session = sessionmaker(bind=engine)
+	session = Session()
+	
+	for filepath, part_num in data_in.items():
+		_add_results_to_session(
+			filepath,
+			part_nums,
+			table,
+			windows,
+			session
+		)
+	
+	session.commit()
+	return

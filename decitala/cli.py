@@ -13,6 +13,7 @@ from decitala import __version__
 from .search import path_finder
 from .fragment import FragmentEncoder
 from .utils import get_logger
+from .hash_table import DecitalaHashTable, GreekFootHashTable
 
 logger = get_logger(name=__file__)
 
@@ -27,11 +28,16 @@ def decitala():
 @click.option("--part_num", default=0, help="Part number.")
 @click.option("--frag_type", default="greek_foot")
 @click.option("--verbose", default=True)
-def pathfinder(filepath, part_num, frag_type, verbose):
+def path_finder(filepath, part_num, frag_type, verbose):
+	if frag_type == "decitala":
+		table = DecitalaHashTable()
+	elif frag_type == "greek_foot":
+		table = GreekFootHashTable()
+	
 	best_path = path_finder(
 		filepath=filepath,
 		part_num=part_num,
-		frag_type=frag_type,
+		table=table,
 		verbose=verbose
 	)
 	json_dumped_res = json.dumps(obj=best_path, cls=FragmentEncoder, indent=4)
