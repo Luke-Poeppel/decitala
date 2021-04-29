@@ -15,7 +15,7 @@ import numpy as np
 from progress.bar import Bar
 
 from ..utils import get_logger
-from .path_finding_utils import cost
+from .path_finding_utils import cost, best_source_and_sink
 
 logger = get_logger(name=__name__, print_to_console=True)
 
@@ -80,39 +80,6 @@ def floyd_warshall(
 						next_matrix[i][j] = next_matrix[i][k]
 
 	return dist_matrix, next_matrix
-
-def sources_and_sinks(data):
-	sources = [x for x in data if not any(y["onset_range"][1] <= x["onset_range"][0] for y in data)]
-	sinks = [x for x in data if not any(x["onset_range"][1] <= y["onset_range"][0] for y in data)]
-
-	return sources, sinks
-
-def best_source_and_sink(data):
-	sources, sinks = sources_and_sinks(data)
-	curr_best_source = sources[0]
-	curr_best_sink = sinks[0]
-
-	if len(sources) == 1:
-		pass
-	else:
-		lowest_point = min(sources, key=lambda x: x["onset_range"][0])["onset_range"][0]
-		for source in sources:
-			if source["onset_range"][0] == lowest_point:
-				if source["fragment"].num_onsets > curr_best_source["fragment"].num_onsets:
-					curr_best_source = source
-			else:
-				continue
-
-	if len(sinks) == 1:
-		pass
-	else:
-		for sink in sinks:
-			if sink["fragment"].num_onsets > curr_best_sink["fragment"].num_onsets:
-				curr_best_sink = sink
-			else:
-				continue
-
-	return curr_best_source, curr_best_sink
 
 def reconstruct_standard_path(
 		data,
