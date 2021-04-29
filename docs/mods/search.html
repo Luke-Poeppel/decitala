@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>search &mdash; decitala 0.9.1 documentation</title>
+  <title>search &mdash; decitala 0.10.0 documentation</title>
   
 
   
@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="trees" href="trees.html" />
-    <link rel="prev" title="fragment" href="fragment.html" /> 
+    <link rel="prev" title="path_finding" href="path_finding.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.9.1
+                0.10.0
               </div>
             
           
@@ -91,8 +91,9 @@
               <p class="caption"><span class="caption-text">Modules</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="database.html">database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="path_finding.html">path_finding</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
@@ -172,6 +173,54 @@
   <div class="section" id="module-decitala.search">
 <span id="search"></span><h1>search<a class="headerlink" href="#module-decitala.search" title="Permalink to this headline">¶</a></h1>
 <p>Search algorithms.</p>
+<dl class="py exception">
+<dt id="decitala.search.SearchException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">SearchException</span></code><a class="reference internal" href="../_modules/decitala/search.html#SearchException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.SearchException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.search.rolling_hash_search">
+<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">rolling_hash_search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_subdivision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#rolling_hash_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.rolling_hash_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>A different (faster) paradigm than the tree approaches above. Searches a large dictionary of
+all possible modifications of the rhythmic datasets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – path to file to be searched.</p></li>
+<li><p><strong>part_num</strong> (<em>int</em>) – part in the file to be searched (0-indexed).</p></li>
+<li><p><strong>table</strong> (<a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><em>decitala.hash_table.FragmentHashTable</em></a>) – </p></li>
+<li><p><strong>windows</strong> (<em>list</em>) – Allowed window sizes for search.</p></li>
+<li><p><strong>allow_subdivision</strong> (<em>bool</em>) – Whether to check for subdivisions in the search.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.search.path_finder">
+<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">path_finder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dijkstra'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slur_constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#path_finder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.path_finder" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function combines a number of tools for effectively finding a path of fragments
+through a provided composition and part number. It first runs
+<a class="reference internal" href="#decitala.search.rolling_hash_search" title="decitala.search.rolling_hash_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.rolling_hash_search</span></code></a> to extract all fragments from the provided
+table and then runs the Floyd-Warshall algorithm to get the best path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – path to file to be searched.</p></li>
+<li><p><strong>part_num</strong> (<em>int</em>) – part in the file to be searched (0-indexed).</p></li>
+<li><p><strong>table</strong> (<a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><em>decitala.hash_table.FragmentHashTable</em></a>) – </p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – Path-finding algorithm used. Options are <code class="docutils literal notranslate"><span class="pre">&quot;floyd_warshall&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;dijkstra&quot;</span></code>.
+Default is <code class="docutils literal notranslate"><span class="pre">&quot;dijkstra&quot;</span></code>.</p></li>
+<li><p><strong>windows</strong> (<em>list</em>) – Allowed window sizes for search.</p></li>
+<li><p><strong>slur_constraint</strong> (<em>bool</em>) – Whether to force Floyd-Warshall to choose slurred fragments.</p></li>
+<li><p><strong>save_filepath</strong> (<em>str</em>) – An optional path to a file (ending in .json) to save the results.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Whether to log messages. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt id="decitala.search.get_by_ql_array">
 <code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">get_by_ql_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ql_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio_tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference_tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_modifications</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['r',</span> <span class="pre">'rr',</span> <span class="pre">'d',</span> <span class="pre">'rd',</span> <span class="pre">'sr',</span> <span class="pre">'rsr']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_unnamed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#get_by_ql_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.get_by_ql_array" title="Permalink to this definition">¶</a></dt>
@@ -202,8 +251,8 @@ default is <code class="docutils literal notranslate"><span class="pre">False</s
 </dd></dl>
 
 <dl class="py function">
-<dt id="decitala.search.rolling_search">
-<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">rolling_search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio_tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference_tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_modifications</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['r',</span> <span class="pre">'rr',</span> <span class="pre">'d',</span> <span class="pre">'rd',</span> <span class="pre">'sr',</span> <span class="pre">'rsr']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_contiguous_summation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18,</span> <span class="pre">19]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_unnamed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#rolling_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.rolling_search" title="Permalink to this definition">¶</a></dt>
+<dt id="decitala.search.rolling_tree_search">
+<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">rolling_tree_search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio_tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference_tree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowed_modifications</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['r',</span> <span class="pre">'rr',</span> <span class="pre">'d',</span> <span class="pre">'rd',</span> <span class="pre">'sr',</span> <span class="pre">'rsr']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_contiguous_summation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18,</span> <span class="pre">19]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_unnamed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#rolling_tree_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.rolling_tree_search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rolling rhythmic search on a music21-readable file on a given part. For search types, see 
 documentation for <code class="xref py py-func docutils literal notranslate"><span class="pre">get_by_ql_array()</span></code>. The default window lengths 
 are the lengths of fragments in the decitala dataset.</p>
@@ -235,7 +284,7 @@ spanning data.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">difference_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;difference&#39;</span><span class="p">)</span> <span class="c1"># noqa</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ex</span> <span class="o">=</span> <span class="s2">&quot;./tests/static/Shuffled_Transcription_2.xml&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tala_data</span> <span class="ow">in</span> <span class="n">rolling_search</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">,</span> <span class="n">allowed_modifications</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">tala_data</span> <span class="ow">in</span> <span class="n">rolling_tree_search</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ratio_tree</span><span class="p">,</span> <span class="n">difference_tree</span><span class="p">,</span> <span class="n">allowed_modifications</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;r&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">tala_data</span><span class="p">)</span>
 <span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Trochee&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.375), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(72,), (87,)], &#39;id&#39;: 1}</span>
 <span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Dactyl&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (0.0, 0.5), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(72,), (87,), (79,)], &#39;id&#39;: 39}</span>
@@ -244,24 +293,6 @@ spanning data.</p>
 <span class="go">{&#39;fragment&#39;: &lt;fragment.GreekFoot Dactyl&gt;, &#39;mod&#39;: (&#39;r&#39;, 0.125), &#39;onset_range&#39;: (1.25, 1.75), &#39;is_spanned_by_slur&#39;: False, &#39;pitch_content&#39;: [(85,), (80,), (80,)], &#39;id&#39;: 40}</span>
 </pre></div>
 </div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="decitala.search.rolling_hash_search">
-<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">rolling_hash_search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_subdivision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_contiguous_summation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_single_anga_class_fragments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#rolling_hash_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.rolling_hash_search" title="Permalink to this definition">¶</a></dt>
-<dd><p>A different (faster) paradigm than the tree approaches above. Searches a large dictionary of
-all possible modifications of the rhythmic datasets.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>filepath</strong> (<em>str</em>) – path to file to be searched.</p></li>
-<li><p><strong>part_num</strong> (<em>int</em>) – part in the file to be searched (0-indexed).</p></li>
-<li><p><strong>table</strong> (<em>dict</em>) – TBD</p></li>
-<li><p><strong>ignore_single_anga_class_fragments</strong> (<em>bool</em>) – whether to ignore single-anga class fragments
-in the search.</p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 
 </div>
@@ -273,7 +304,7 @@ in the search.</p></li>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="trees.html" class="btn btn-neutral float-right" title="trees" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="fragment.html" class="btn btn-neutral float-left" title="fragment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="path_finding.html" class="btn btn-neutral float-left" title="path_finding" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

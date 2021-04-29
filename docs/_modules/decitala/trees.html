@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.trees &mdash; decitala 0.9.1 documentation</title>
+  <title>decitala.trees &mdash; decitala 0.10.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.9.1
+                0.10.0
               </div>
             
           
@@ -89,8 +89,9 @@
               <p class="caption"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/database.html">database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/search.html">search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/utils.html">utils</a></li>
@@ -178,7 +179,6 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">jsonpickle</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sqlite3</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
 <span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
@@ -188,32 +188,33 @@
 	<span class="n">GreekFoot</span><span class="p">,</span>
 	<span class="n">GeneralFragment</span>
 <span class="p">)</span>
-
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">cauchy_schwartz</span><span class="p">,</span>
 	<span class="n">roll_window</span><span class="p">,</span>
 	<span class="n">get_object_indices</span><span class="p">,</span>
 <span class="p">)</span>
-
+<span class="kn">from</span> <span class="nn">.corpora_models</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">get_engine</span><span class="p">,</span>
+	<span class="n">get_session</span><span class="p">,</span>
+	<span class="n">DecitalaData</span><span class="p">,</span>
+	<span class="n">GreekFootData</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">vis</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-	<span class="s2">&quot;NaryTree&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;FragmentTree&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;filter_data&quot;</span><span class="p">,</span>
-<span class="p">]</span>
-
 <span class="n">here</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
-<span class="n">decitala_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/Fragments/Decitalas&quot;</span>
-<span class="n">greek_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/Fragments/Greek_Metrics/XML&quot;</span>
+<span class="n">decitala_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/corpora/Decitalas&quot;</span>
+<span class="n">greek_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/corpora/Greek_Metrics/&quot;</span>
 
 <span class="n">fragment_db</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/databases/fragment_database.db&quot;</span>
 
-<span class="k">class</span> <span class="nc">TreeException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-	<span class="k">pass</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="n">fragment_db</span><span class="p">)</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
 
-<span class="k">class</span> <span class="nc">FragmentTreeException</span><span class="p">(</span><span class="n">TreeException</span><span class="p">):</span>
-	<span class="k">pass</span>
+<div class="viewcode-block" id="TreeException"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.TreeException">[docs]</a><span class="k">class</span> <span class="nc">TreeException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+	<span class="k">pass</span></div>
+
+<div class="viewcode-block" id="FragmentTreeException"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTreeException">[docs]</a><span class="k">class</span> <span class="nc">FragmentTreeException</span><span class="p">(</span><span class="n">TreeException</span><span class="p">):</span>
+	<span class="k">pass</span></div>
 
 <span class="c1">####################################################################################################</span>
 <div class="viewcode-block" id="NaryTree"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree">[docs]</a><span class="k">class</span> <span class="nc">NaryTree</span><span class="p">:</span>
@@ -308,10 +309,7 @@
 <span class="sd">	&gt;&gt;&gt; # Level order traversal</span>
 <span class="sd">	&gt;&gt;&gt; TestTree.level_order_traversal()</span>
 <span class="sd">	[[1.0], [0.5, 1.0, 3.0, 4.0], [0.5, 3.0, 2.0, 1.0], [1.0, 1.0, 0.5], [2.0]]</span>
-<span class="sd">	&gt;&gt;&gt; # We can serialize an NaryTree as either a native Python type or Javascript type using NaryTree.serialize()</span>
-<span class="sd">	</span>
-<span class="sd">	# &gt;&gt;&gt; TestTree.serialize() # noqa</span>
-<span class="sd">	# &#39;{&quot;root&quot;: {&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: &quot;D&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}, {&quot;value&quot;: 3.0, &quot;name&quot;: &quot;B&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}, {&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 2.0, &quot;name&quot;: &quot;C&quot;, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: &quot;Test Overwrite&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}]}, {&quot;value&quot;: 3.0, &quot;name&quot;: &quot;A&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}, {&quot;value&quot;: 4.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 1.0, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 0.5, &quot;name&quot;: null, &quot;parent&quot;: null, &quot;children&quot;: [{&quot;value&quot;: 2.0, &quot;name&quot;: &quot;Full Path&quot;, &quot;parent&quot;: null, &quot;children&quot;: []}]}]}]}]}}&#39; # noqa</span>
+<span class="sd">	&gt;&gt;&gt; # We can serialize an NaryTree with NaryTree.serialize()</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 <div class="viewcode-block" id="NaryTree.Node"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.NaryTree.Node">[docs]</a>	<span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
 		<span class="sd">&quot;&quot;&quot;</span>
@@ -778,41 +776,19 @@
 		<span class="k">assert</span> <span class="n">rep_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;difference&quot;</span><span class="p">],</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The only possible </span><span class="se">\</span>
 <span class="s2">																				rep_types are `ratio` and `difference`&quot;</span><span class="p">)</span>
 
-		<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">fragment_db</span><span class="p">)</span>
-		<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
-
-		<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="k">if</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;decitala&quot;</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
-				<span class="n">decitala_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Decitalas WHERE R_Keep = 1&quot;</span>
-			<span class="k">elif</span> <span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;difference&quot;</span><span class="p">:</span>
-				<span class="n">decitala_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Decitalas WHERE D_Keep = 1&quot;</span>
+			<span class="n">fragment_data</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DecitalaData</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">Decitala</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragment_data</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">:</span>
+			<span class="n">fragment_data</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">GreekFootData</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragment_data</span><span class="p">]</span>
 
-			<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">decitala_table_string</span><span class="p">)</span>
-			<span class="n">decitala_rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-			<span class="k">for</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="n">decitala_rows</span><span class="p">:</span>
-				<span class="n">name</span> <span class="o">=</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-				<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Decitala</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
-
-		<span class="k">if</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
-				<span class="n">greek_metric_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Greek_Metrics WHERE R_Keep = 1&quot;</span>
-			<span class="k">elif</span> <span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;difference&quot;</span><span class="p">:</span>
-				<span class="n">greek_metric_table_string</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Greek_Metrics WHERE D_Keep = 1&quot;</span>
-
-			<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">greek_metric_table_string</span><span class="p">)</span>
-			<span class="n">greek_metric_rows</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-			<span class="k">for</span> <span class="n">this_row</span> <span class="ow">in</span> <span class="n">greek_metric_rows</span><span class="p">:</span>
-				<span class="n">name</span> <span class="o">=</span> <span class="n">this_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-				<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GreekFoot</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
-
-		<span class="n">ftree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span>
+		<span class="k">return</span> <span class="n">FragmentTree</span><span class="p">(</span>
 			<span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
 			<span class="n">rep_type</span><span class="o">=</span><span class="n">rep_type</span><span class="p">,</span>
 			<span class="n">name</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">_</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frag_type</span><span class="p">,</span> <span class="n">rep_type</span><span class="p">),</span>
 			<span class="n">skip_filter</span><span class="o">=</span><span class="kc">True</span>
-		<span class="p">)</span>
-		<span class="k">return</span> <span class="n">ftree</span></div>
+		<span class="p">)</span></div>
 
 <div class="viewcode-block" id="FragmentTree.from_composition"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTree.from_composition">[docs]</a>	<span class="nd">@classmethod</span>
 	<span class="k">def</span> <span class="nf">from_composition</span><span class="p">(</span>

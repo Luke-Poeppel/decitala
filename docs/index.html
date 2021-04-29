@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Decitala Documentation &mdash; decitala 0.9.1 documentation</title>
+  <title>Decitala Documentation &mdash; decitala 0.10.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.9.1
+                0.10.0
               </div>
             
           
@@ -91,8 +91,9 @@
               <p class="caption"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="mods/database.html">database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/search.html">search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/utils.html">utils</a></li>
@@ -176,12 +177,13 @@ pipeline used in this package is Search →→ Path Finding →→ Analysis.</p>
 </div>
 <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cd</span> <span class="c1"># Navigate to home directory</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">Luke</span><span class="o">-</span><span class="n">Poeppel</span><span class="o">/</span><span class="n">decitala</span><span class="o">.</span><span class="n">git</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cd</span> <span class="n">decitala</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pip3</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">install</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">decitala</span> <span class="o">--</span><span class="n">version</span> <span class="c1"># Check for proper installation.</span>
+<p>Run the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd # Navigate to home directory
+$ git clone https://github.com/Luke-Poeppel/decitala.git
+$ cd decitala
+$ pip3 install -e .
+$ pre-commit install
+$ decitala --version # Check for proper installation.
 </pre></div>
 </div>
 </div>
@@ -193,44 +195,6 @@ a fragment <span class="math notranslate nohighlight">\(F\)</span> and a transfo
 exists a special kind (and highly specified) transformation between them. These possible
 transformations include multiplicative augmentation, additive augmentation, mixed augmentation,
 flips into retrograde, and subdivision.</p>
-<p>We define the following representations of a rhythm:</p>
-<table class="docutils align-default">
-<colgroup>
-<col style="width: 19%" />
-<col style="width: 81%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Symbol</p></th>
-<th class="head"><p>Corresponding Search</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">r</span></code></p></td>
-<td><p>ratio</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rr</span></code></p></td>
-<td><p>retrograde-ratio</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">d</span></code></p></td>
-<td><p>difference</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rd</span></code></p></td>
-<td><p>retrograde-difference</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sr</span></code></p></td>
-<td><p>subdivision-ratio</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rsr</span></code></p></td>
-<td><p>retrograde-subdivision-ratio</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sd</span></code></p></td>
-<td><p>subdivision-difference</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rsd</span></code></p></td>
-<td><p>retrograde-subdivision-difference</p></td>
-</tr>
-</tbody>
-</table>
 </div>
 <div class="section" id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
@@ -238,10 +202,11 @@ flips into retrograde, and subdivision.</p>
 coming from a dataset. To calculate a path, you can simply use the following:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">composition</span> <span class="o">=</span> <span class="s2">&quot;/Users/lukepoeppel/decitala/tests/static/Shuffled_Transcription_1.xml&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.search</span> <span class="kn">import</span> <span class="n">path_finder</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.hash_table</span> <span class="kn">import</span> <span class="n">GreekFootHashTable</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">path_finder</span><span class="p">(</span>
 <span class="gp">... </span>  <span class="n">filename</span><span class="o">=</span><span class="n">composition</span><span class="p">,</span>
 <span class="gp">... </span>  <span class="n">part_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-<span class="gp">... </span>  <span class="n">frag_type</span><span class="o">=</span><span class="s2">&quot;greek_foot&quot;</span><span class="p">,</span>
+<span class="gp">... </span>  <span class="n">table</span><span class="o">=</span><span class="n">GreekFootHashTable</span><span class="p">(),</span>
 <span class="gp">... </span>  <span class="n">slur_constraint</span><span class="o">=</span><span class="kc">True</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
@@ -259,12 +224,15 @@ coming from a dataset. To calculate a path, you can simply use the following:</p
 <p class="caption"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mods/hash_table.html">hash_table</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/path_finding.html">path_finding</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mods/path_finding.html#module-decitala.path_finding.path_finding_utils">path_finding_utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mods/path_finding.html#module-decitala.path_finding.dijkstra">dijkstra</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mods/path_finding.html#module-decitala.path_finding.floyd_warshall">floyd_warshall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mods/path_finding.html#module-decitala.path_finding.pofp">pofp</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="mods/fragment.html">fragment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/search.html">search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mods/utils.html">utils</a></li>

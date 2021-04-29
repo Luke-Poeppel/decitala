@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.path_finding.pofp &mdash; decitala 0.9.1 documentation</title>
+  <title>decitala.path_finding.pofp &mdash; decitala 0.10.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.9.1
+                0.10.0
               </div>
             
           
@@ -89,8 +89,9 @@
               <p class="caption"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/database.html">database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/search.html">search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/utils.html">utils</a></li>
@@ -181,33 +182,8 @@
 <span class="sd">approach to the end-overlapping indices problem) in a StackOverflow post from Summer, 2020. The link</span>
 <span class="sd">to the original post is:</span>
 <span class="sd">https://stackoverflow.com/questions/62734114/iterative-solution-to-end-overlapping-indices.</span>
-
-<span class="sd">Once we have retrieved :math:`n` talas in a part, we want to check whether or not they align.</span>
-<span class="sd">If a tala :math:`T_1` ranges from onsets :math:`X_i` to :math:`Y_i` and a tala :math:`T_2` ranges</span>
-<span class="sd">from onsets :math:`X_j` to :math:`Y_j`, if :math:`X_j &lt; Y_i`, we can&#39;t satisfactorily align</span>
-<span class="sd">:math:`T_1` and :math:`T_2`; this means that one (or both) of these talas was not intentionally</span>
-<span class="sd">included, and simply exists as a sub-tala or cyclic rotation. Multiple possible alignments exist,</span>
-<span class="sd">so we calculate them all using an iterative solution to the end-overlapping indices problem using</span>
-<span class="sd">a Pareto frontier of paths.</span>
-
-<span class="sd">The output to the alignment function, :obj:`decitala.pofp.get_pareto_optimal_longest_paths`, may be</span>
-<span class="sd">exponential in size with respect to the input. As such, we use the observation that there often</span>
-<span class="sd">exist &quot;break points&quot; in the data collected from rolling search: points at which there exists no</span>
-<span class="sd">overlap. We divide the data by each of these regions (if they exist) and generate the longest</span>
-<span class="sd">paths separately.</span>
-
-<span class="sd">Several of the functions below have the parameter ``data``. This parameter is of the form returned</span>
-<span class="sd">by :obj:`~decitala.trees.rolling_search` and corresponds to a list of dictionaries, each holding</span>
-<span class="sd">information about the fragment, modification, onset-range, and spanning data.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-	<span class="s2">&quot;check_break_point&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;get_break_points&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;partition_data_by_break_points&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;get_pareto_optimal_longest_paths&quot;</span>
-<span class="p">]</span>
 
 <div class="viewcode-block" id="check_break_point"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.pofp.check_break_point">[docs]</a><span class="k">def</span> <span class="nf">check_break_point</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>

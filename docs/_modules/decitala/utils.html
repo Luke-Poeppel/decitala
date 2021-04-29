@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.utils &mdash; decitala 0.9.1 documentation</title>
+  <title>decitala.utils &mdash; decitala 0.10.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.9.1
+                0.10.0
               </div>
             
           
@@ -89,8 +89,9 @@
               <p class="caption"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/database.html">database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/search.html">search</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/utils.html">utils</a></li>
@@ -185,43 +186,13 @@
 <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">norm</span>
 
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">converter</span>
+<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span>
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">pitch</span>
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">scale</span>
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">stream</span>
 <span class="kn">from</span> <span class="nn">music21.meter</span> <span class="kn">import</span> <span class="n">TimeSignature</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">fragment</span>
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-	<span class="s2">&quot;get_logger&quot;</span><span class="p">,</span>  <span class="c1"># Logging</span>
-	<span class="s2">&quot;carnatic_string_to_ql_array&quot;</span><span class="p">,</span>  <span class="c1"># Notation</span>
-	<span class="s2">&quot;ql_array_to_carnatic_string&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;ql_array_to_greek_diacritics&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;augment&quot;</span><span class="p">,</span>  <span class="c1"># Rhythm helpers</span>
-	<span class="s2">&quot;successive_ratio_array&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;successive_difference_array&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;get_added_values&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;net_ql_array&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;transform_to_time_scale&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;find_clusters&quot;</span><span class="p">,</span>  <span class="c1"># Misc.</span>
-	<span class="s2">&quot;find_possible_superdivisions&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;roll_window&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;power_list&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;cauchy_schwartz&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;get_object_indices&quot;</span><span class="p">,</span>  <span class="c1"># Score helpers</span>
-	<span class="s2">&quot;contiguous_summation&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;frame_to_ql_array&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;frame_to_midi&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;frame_is_spanned_by_slur&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;filter_single_anga_class_fragments&quot;</span><span class="p">,</span>  <span class="c1"># Data helpers</span>
-	<span class="s2">&quot;filter_sub_fragments&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;pitch_content_to_contour&quot;</span><span class="p">,</span>  <span class="c1"># Pitch Content</span>
-	<span class="s2">&quot;contour_to_prime_contour&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;loader&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;write_analysis&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;measure_by_measure_time_signatures&quot;</span><span class="p">,</span>
-	<span class="s2">&quot;is_octatonic_collection&quot;</span>
-<span class="p">]</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">NOTE: Normally a crescent moon superscript is used. Since it serves the same function as viramas, we</span>
@@ -259,6 +230,9 @@
 	<span class="mi">61</span><span class="p">,</span> <span class="mi">67</span><span class="p">,</span> <span class="mi">71</span><span class="p">,</span> <span class="mi">73</span><span class="p">,</span>
 	<span class="mi">79</span><span class="p">,</span> <span class="mi">83</span><span class="p">,</span> <span class="mi">89</span><span class="p">,</span> <span class="mi">97</span>
 <span class="p">]</span>
+
+<div class="viewcode-block" id="UtilsException"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.UtilsException">[docs]</a><span class="k">class</span> <span class="nc">UtilsException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+	<span class="k">pass</span></div>
 
 <span class="c1">####################################################################################################</span>
 <span class="c1"># LOGGING</span>
@@ -342,7 +316,19 @@
 			<span class="k">if</span> <span class="n">this_val</span> <span class="o">==</span> <span class="n">this_diacritic_val</span><span class="p">:</span>
 				<span class="n">greek_string_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_diacritic_symbol</span><span class="p">)</span>
 
-	<span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">greek_string_lst</span><span class="p">)</span></div>
+	<span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">greek_string_lst</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">_decitala_full_id_from_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="n">split</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+		<span class="n">full_id</span> <span class="o">=</span> <span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># e.g. [&quot;80&quot;, &quot;B&quot;, &quot;...&quot;]</span>
+			<span class="n">full_id</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">full_id</span> <span class="o">=</span> <span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+	<span class="k">return</span> <span class="n">full_id</span>
 
 <span class="c1">####################################################################################################</span>
 <span class="c1"># RHYTHM</span>
@@ -504,8 +490,24 @@
 	<span class="n">added_val_indices</span> <span class="o">=</span> <span class="n">get_added_values</span><span class="p">(</span><span class="n">ql_lst</span><span class="o">=</span><span class="n">lst</span><span class="p">,</span> <span class="n">print_type</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">added_val_indices</span><span class="p">:</span>
 		<span class="k">del</span> <span class="n">lst</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+	<span class="k">return</span>
 
-	<span class="k">return</span> <span class="n">lst</span>
+<div class="viewcode-block" id="non_retrogradable_measures"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.non_retrogradable_measures">[docs]</a><span class="k">def</span> <span class="nf">non_retrogradable_measures</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">part_num</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for retrieving all non-retrogradable measures in a given filepath and part number.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">converted</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+	<span class="n">p</span> <span class="o">=</span> <span class="n">converted</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="n">part_num</span><span class="p">]</span>
+	<span class="n">non_retrogradable_measures</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">this_measure</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">getElementsByClass</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">Measure</span><span class="p">):</span>
+		<span class="n">ql_array</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">this_note</span> <span class="ow">in</span> <span class="n">this_measure</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">stripTies</span><span class="p">()</span><span class="o">.</span><span class="n">getElementsByClass</span><span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">):</span>
+			<span class="n">ql_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_note</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">ql_array</span> <span class="o">==</span> <span class="n">ql_array</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+			<span class="n">non_retrogradable_measures</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_measure</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">non_retrogradable_measures</span></div>
 
 <span class="c1">####################################################################################################</span>
 <span class="c1"># SUBDIVISION</span>
@@ -773,7 +775,12 @@
 <span class="c1">####################################################################################################</span>
 <span class="c1"># SCORE HELPERS</span>
 <span class="c1">####################################################################################################</span>
-<div class="viewcode-block" id="get_object_indices"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.get_object_indices">[docs]</a><span class="k">def</span> <span class="nf">get_object_indices</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">part_num</span><span class="p">):</span>
+<div class="viewcode-block" id="get_object_indices"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.get_object_indices">[docs]</a><span class="k">def</span> <span class="nf">get_object_indices</span><span class="p">(</span>
+		<span class="n">filepath</span><span class="p">,</span>
+		<span class="n">part_num</span><span class="p">,</span>
+		<span class="n">measure_divider_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+		<span class="n">ignore_grace</span><span class="o">=</span><span class="kc">False</span>
+	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Returns data of the form [(object, (start, end)), ...] for a given file path and part number.</span>
 <span class="sd">	(Supports rests and grace notes.)</span>
@@ -782,10 +789,53 @@
 	<span class="n">part</span> <span class="o">=</span> <span class="n">score</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="n">part_num</span><span class="p">]</span>
 	<span class="n">data_out</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="n">stripped</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">stripTies</span><span class="p">(</span><span class="n">retainContainers</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-	<span class="k">for</span> <span class="n">this_obj</span> <span class="ow">in</span> <span class="n">stripped</span><span class="o">.</span><span class="n">recurse</span><span class="p">()</span><span class="o">.</span><span class="n">stream</span><span class="p">()</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notesAndRests</span><span class="p">:</span>
-		<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">this_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)))</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">measure_divider_mode</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">this_obj</span> <span class="ow">in</span> <span class="n">stripped</span><span class="o">.</span><span class="n">recurse</span><span class="p">()</span><span class="o">.</span><span class="n">stream</span><span class="p">()</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notesAndRests</span><span class="p">:</span>
+			<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">this_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)))</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">ms</span> <span class="o">=</span> <span class="n">stripped</span><span class="o">.</span><span class="n">getElementsByClass</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">Measure</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">this_measure</span> <span class="ow">in</span> <span class="n">ms</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">measure_divider_mode</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
+				<span class="n">measure_objects</span> <span class="o">=</span> <span class="p">[]</span>
+				<span class="k">for</span> <span class="n">this_obj</span> <span class="ow">in</span> <span class="n">this_measure</span><span class="o">.</span><span class="n">recurse</span><span class="p">()</span><span class="o">.</span><span class="n">stream</span><span class="p">()</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notesAndRests</span><span class="p">:</span>
+					<span class="n">measure_objects</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">this_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)))</span>
+				<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">measure_objects</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="n">measure_divider_mode</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">this_obj</span> <span class="ow">in</span> <span class="n">this_measure</span><span class="o">.</span><span class="n">recurse</span><span class="p">()</span><span class="o">.</span><span class="n">stream</span><span class="p">()</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notesAndRests</span><span class="p">:</span>
+					<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">this_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)))</span>
+
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">this_measure</span><span class="o">.</span><span class="n">number</span> <span class="o">==</span> <span class="n">ms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">number</span><span class="p">:</span>
+					<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Only allowed modes are `string` and `list`.&quot;</span><span class="p">)</span>
 
 	<span class="k">return</span> <span class="n">data_out</span></div>
+
+<div class="viewcode-block" id="ts_to_reduced_ts"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.ts_to_reduced_ts">[docs]</a><span class="k">def</span> <span class="nf">ts_to_reduced_ts</span><span class="p">(</span><span class="n">ts</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for fully reducing a `music21.meter.TimeSignature` object (lowest denominator of 1).</span>
+
+<span class="sd">	:param ts: a music21.meter.TimeSignature object.</span>
+<span class="sd">	:return: a new time signature that is fully reduced by removing all possible powers of 2.</span>
+<span class="sd">	:rtype: music21.meter.TimeSignature</span>
+
+<span class="sd">	&gt;&gt;&gt; from music21.meter import TimeSignature</span>
+<span class="sd">	&gt;&gt;&gt; ts_to_reduced_ts(TimeSignature(&quot;4/16&quot;))</span>
+<span class="sd">	&lt;music21.meter.TimeSignature 1/4&gt;</span>
+<span class="sd">	&gt;&gt;&gt; ts_to_reduced_ts(TimeSignature(&quot;4/4&quot;))</span>
+<span class="sd">	&lt;music21.meter.TimeSignature 1/1&gt;</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">numerator</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">numerator</span>
+	<span class="n">denominator</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">denominator</span>
+
+	<span class="n">factor</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">while</span> <span class="n">numerator</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">denominator</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">numerator</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="mi">2</span>
+		<span class="n">denominator</span> <span class="o">=</span> <span class="n">denominator</span> <span class="o">/</span> <span class="mi">2</span>
+		<span class="n">factor</span> <span class="o">+=</span> <span class="mi">1</span>
+
+	<span class="n">reduced_ts_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">numerator</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">denominator</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+	<span class="k">return</span> <span class="n">TimeSignature</span><span class="p">(</span><span class="n">reduced_ts_str</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="contiguous_summation"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.contiguous_summation">[docs]</a><span class="k">def</span> <span class="nf">contiguous_summation</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>

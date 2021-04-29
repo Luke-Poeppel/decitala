@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>decitala.path_finding.path_finding_utils &mdash; decitala 0.10.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.10.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/path_finding.html">path_finding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/vis.html">vis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">decitala</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>decitala.path_finding.path_finding_utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for decitala.path_finding.path_finding_utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">####################################################################################################</span>
+<span class="c1"># File:     path_finding_utils.py</span>
+<span class="c1"># Purpose:  Path finding utility functions used in the various algorithms. Includes the main cost</span>
+<span class="c1">#           function used as the metric on the graphs.</span>
+<span class="c1">#</span>
+<span class="c1"># Author:   Luke Poeppel</span>
+<span class="c1">#</span>
+<span class="c1"># Location: NYC, 2021</span>
+<span class="c1">####################################################################################################</span>
+<div class="viewcode-block" id="cost"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.cost">[docs]</a><span class="k">def</span> <span class="nf">cost</span><span class="p">(</span>
+		<span class="n">vertex_1</span><span class="p">,</span>
+		<span class="n">vertex_2</span><span class="p">,</span>
+		<span class="n">weights</span>
+	<span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Cost function used in the path finding algorithms.</span>
+
+<span class="sd">	:param dict vertex_1: A dictionary holding (at least) a :obj:`~decitala.fragment.GeneralFragment`</span>
+<span class="sd">							object, as well as an ``onset_range``.</span>
+<span class="sd">	:param dict vertex_2: A dictionary holding (at least) a :obj:`~decitala.fragment.GeneralFragment`</span>
+<span class="sd">							object, as well as an ``onset_range``.</span>
+<span class="sd">	:param dict weights: weights used in the model. Must sum to 1. Requires &quot;gap&quot; and &quot;onsets&quot; values.</span>
+<span class="sd">	:return: The cost of moving from ``vertex_1`` to ``vertex_2``.</span>
+<span class="sd">	:rtype: float</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">gap</span> <span class="o">=</span> <span class="n">vertex_2</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">vertex_1</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+	<span class="n">onsets</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">vertex_1</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">num_onsets</span> <span class="o">+</span> <span class="n">vertex_2</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">num_onsets</span><span class="p">)</span>
+	<span class="n">cost</span> <span class="o">=</span> <span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="s2">&quot;gap&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">gap</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="s2">&quot;onsets&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">onsets</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">cost</span></div>
+
+<div class="viewcode-block" id="build_graph"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.build_graph">[docs]</a><span class="k">def</span> <span class="nf">build_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for building a &quot;graph&quot; of nodes and edges from a given set of data (each</span>
+<span class="sd">	vertex of the form as those required in the cost function) extracted from one of the</span>
+<span class="sd">	search algorithms. Requires ``id`` keys in each dictionary input.</span>
+
+<span class="sd">	:param dict weights: weights used in the model. Must sum to 1. Requires &quot;gap&quot; and &quot;onsets&quot; values.</span>
+<span class="sd">	:return: A &quot;graph&quot; holding vertices and the associated cost between all other non-negative edges.</span>
+<span class="sd">	:rtype: dict</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">G</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+		<span class="n">curr</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+		<span class="n">curr_edges</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">other</span> <span class="o">==</span> <span class="n">curr</span><span class="p">:</span>
+				<span class="k">continue</span>
+			<span class="n">edge</span> <span class="o">=</span> <span class="n">cost</span><span class="p">(</span><span class="n">curr</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">edge</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="k">continue</span>
+
+			<span class="n">curr_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">other</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">edge</span><span class="p">))</span>
+
+		<span class="n">G</span><span class="p">[</span><span class="n">curr</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">curr_edges</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+	<span class="k">return</span> <span class="n">G</span></div>
+
+<div class="viewcode-block" id="sources_and_sinks"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.sources_and_sinks">[docs]</a><span class="k">def</span> <span class="nf">sources_and_sinks</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Calculates all sources and sinks in a given dataset.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)]</span>
+	<span class="n">sinks</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)]</span>
+
+	<span class="k">return</span> <span class="n">sources</span><span class="p">,</span> <span class="n">sinks</span></div>
+
+<div class="viewcode-block" id="best_source_and_sink"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.best_source_and_sink">[docs]</a><span class="k">def</span> <span class="nf">best_source_and_sink</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Calculates the &quot;best&quot; source and sink from a dataset based on two simple heuristics: (1) the</span>
+<span class="sd">	fragment with the earliest (or latest, for sink) starting point, (2) the fragment with the</span>
+<span class="sd">	greatest number of onsets.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">sources</span><span class="p">,</span> <span class="n">sinks</span> <span class="o">=</span> <span class="n">sources_and_sinks</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="n">curr_best_source</span> <span class="o">=</span> <span class="n">sources</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">curr_best_sink</span> <span class="o">=</span> <span class="n">sinks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="k">pass</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">lowest_point</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">])[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">source</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">lowest_point</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">source</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">num_onsets</span> <span class="o">&gt;</span> <span class="n">curr_best_source</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">num_onsets</span><span class="p">:</span>
+					<span class="n">curr_best_source</span> <span class="o">=</span> <span class="n">source</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">continue</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sinks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="k">pass</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">sink</span> <span class="ow">in</span> <span class="n">sinks</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">sink</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">num_onsets</span> <span class="o">&gt;</span> <span class="n">curr_best_sink</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">num_onsets</span><span class="p">:</span>
+				<span class="n">curr_best_sink</span> <span class="o">=</span> <span class="n">sink</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">continue</span>
+
+	<span class="k">return</span> <span class="n">curr_best_source</span><span class="p">,</span> <span class="n">curr_best_sink</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Luke Poeppel.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

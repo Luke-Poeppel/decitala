@@ -11,13 +11,14 @@ pipeline used in this package is Search →→ Path Finding →→ Analysis.
 
 Installation
 ====================================
+Run the following::
 
-   >>> cd # Navigate to home directory
-   >>> git clone https://github.com/Luke-Poeppel/decitala.git
-   >>> cd decitala
-   >>> pip3 install -e .
-   >>> pre-commit install
-   >>> decitala --version # Check for proper installation.
+   $ cd # Navigate to home directory
+   $ git clone https://github.com/Luke-Poeppel/decitala.git
+   $ cd decitala
+   $ pip3 install -e .
+   $ pre-commit install
+   $ decitala --version # Check for proper installation.
 
 Rhythmic Manipulation
 ====================================
@@ -28,28 +29,6 @@ exists a special kind (and highly specified) transformation between them. These 
 transformations include multiplicative augmentation, additive augmentation, mixed augmentation, 
 flips into retrograde, and subdivision. 
 
-We define the following representations of a rhythm:
-
-+--------+-----------------------------------+
-| Symbol | Corresponding Search              |
-+========+===================================+
-| ``r``  | ratio                             |
-+--------+-----------------------------------+
-| ``rr`` | retrograde-ratio                  |
-+--------+-----------------------------------+
-| ``d``  | difference                        |
-+--------+-----------------------------------+
-| ``rd`` | retrograde-difference             |
-+--------+-----------------------------------+
-| ``sr`` | subdivision-ratio                 |
-+--------+-----------------------------------+
-| ``rsr``| retrograde-subdivision-ratio      |
-+--------+-----------------------------------+
-| ``sd`` | subdivision-difference            |
-+--------+-----------------------------------+
-| ``rsd``| retrograde-subdivision-difference |
-+--------+-----------------------------------+
-
 Basic Usage
 ====================================
 Normally, this package is used to find "paths" of rhythms through a given composition, the rhythms
@@ -57,10 +36,11 @@ coming from a dataset. To calculate a path, you can simply use the following:
 
    >>> composition = "/Users/lukepoeppel/decitala/tests/static/Shuffled_Transcription_1.xml"
    >>> from decitala.search import path_finder
+   >>> from decitala.hash_table import GreekFootHashTable
    >>> path = path_finder(
    ...   filename=composition,
    ...   part_num=0,
-   ...   frag_type="greek_foot",
+   ...   table=GreekFootHashTable(),
    ...   slur_constraint=True
    ... )
    >>> for fragment in path:
@@ -81,8 +61,9 @@ coming from a dataset. To calculate a path, you can simply use the following:
    :glob:
 
    mods/database
-   mods/path_finding
    mods/fragment
+   mods/hash_table
+   mods/path_finding
    mods/search
    mods/trees
    mods/utils
