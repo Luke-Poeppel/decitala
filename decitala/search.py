@@ -34,7 +34,11 @@ from .hash_table import (
 	GreekFootHashTable,
 	FragmentHashTable
 )
-from .path_finding import floyd_warshall
+from .path_finding import (
+	floyd_warshall,
+	dijkstra,
+	path_finding_utils
+)
 
 logger = get_logger(name=__file__, print_to_console=True)
 
@@ -156,6 +160,7 @@ def path_finder(
 		filepath,
 		part_num,
 		table,
+		algorithm="dijkstra",
 		windows=list(range(2, 19)),
 		slur_constraint=False,
 		save_filepath=None,
@@ -170,6 +175,8 @@ def path_finder(
 	:param str filepath: path to file to be searched.
 	:param int part_num: part in the file to be searched (0-indexed).
 	:param `decitala.hash_table.FragmentHashTable` table: 
+	:param str mode: Path-finding algorithm used. Options are ``"floyd_warshall"`` and ``"dijkstra"``. 
+					Default is ``"dijkstra"``. 
 	:param list windows: Allowed window sizes for search.
 	:param bool slur_constraint: Whether to force Floyd-Warshall to choose slurred fragments. 
 	:param str save_filepath: An optional path to a file (ending in .json) to save the results.
@@ -183,22 +190,36 @@ def path_finder(
 	if not fragments:
 		return None
 
-	distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
-		fragments,
-		weights={
-			"gap": 0.75,
-			"onsets": 0.25
-		},
-		verbose=verbose
-	)
-	best_source, best_sink = floyd_warshall.best_source_and_sink(fragments)
-	best_path = floyd_warshall.get_path(
-		start=best_source,
-		end=best_sink,
-		next_matrix=next_matrix,
-		data=fragments,
-		slur_constraint=slur_constraint
-	)
+	if algorithm == "dijkstra":
+		dist, pred = dijkstra.dijkstra(
+			data=s1_fragments,
+			source=source,
+			target=target,
+		)
+		best_path = dijkstra.generate_path(
+			pred, 
+			source,
+			target
+		)
+		best_path = sorted([x for x in s1_fragments if x["id"] in best_path], key=lambda x: x["onset_range"][0]) # noqa
+	elif algorithm == "floyd-warshall":
+		distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
+			fragments,
+			weights={
+				"gap": 0.75,
+				"onsets": 0.25
+			},
+			verbose=verbose
+		)
+		best_source, best_sink = path_finding_utils.best_source_and_sink(fragments)
+		best_path = floyd_warshall.get_path(
+			start=best_source,
+			end=best_sink,
+			next_matrix=next_matrix,
+			data=fragments,
+			slur_constraint=slur_constraint
+		)
+
 	if save_filepath:
 		with open(save_filepath, "w") as output:
 			json.dump(obj=best_path, fp=output, cls=FragmentEncoder, indent=4)
