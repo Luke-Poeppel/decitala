@@ -24,13 +24,6 @@ from .utils import get_logger, loader
 here = os.path.abspath(os.path.dirname(__file__))
 treant_templates = here + "/treant_templates"
 
-__all__ = [
-	"create_tree_diagram",
-	"fragment_roll",
-	"annotate_score",
-	"result_bar_plot"
-]
-
 FONTNAME = 'Times'
 FONTSIZE_TITLE = 14
 FONTSIZE_LABEL = 14

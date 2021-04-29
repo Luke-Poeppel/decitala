@@ -9,6 +9,8 @@
 ####################################################################################################
 import numpy as np
 
+from collections import deque
+
 from . import path_finding_utils
 
 def dijkstra(
@@ -18,7 +20,7 @@ def dijkstra(
 		weights,
 		verbose=False
 	):
-	vertices = []
+	vertices = deque()
 	dist = [np.inf] * len(data)
 	prev = [None] * len(data)
 
@@ -35,14 +37,14 @@ def dijkstra(
 		curr_vertex_index = dist.index(min(dist))
 		curr_vertex = vertices[curr_vertex_index]
 		
-		del vertices[curr_vertex_index]
+		vertices.popleft()
 
 		if curr_vertex == target:
 			break
 		
 		for other_vertex in vertices:
 			other_vertex_index = vertices.index(other_vertex)
-			cost_pre = path_finding_utils.cost(curr_vertex, other_vertex, weights=weights)
+			cost = path_finding_utils.cost(curr_vertex, other_vertex, weights=weights)
 			if cost_pre < 0:
 				cost = cost_pre + 10000  # Random large number. 
 			else:

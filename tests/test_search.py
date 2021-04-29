@@ -18,6 +18,7 @@ def test_rolling_hash_search():
 	)
 	assert len(res) == 18
 
+# Also functions as an integration test with Floyd-Warshall. 
 def test_shuffled_I_path_with_slur_constraint():
 	path = search.path_finder(
 		filepath = filepath,
