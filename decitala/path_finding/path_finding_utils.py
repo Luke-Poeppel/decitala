@@ -28,3 +28,23 @@ def cost(
 	onsets = 1 / (vertex_1["fragment"].num_onsets + vertex_2["fragment"].num_onsets)
 	cost = (weights["gap"] * gap) + (weights["onsets"] * onsets)
 	return cost
+
+def build_graph(data, weights):
+	G = {}
+	i = 0
+	while i < len(data):
+		curr = data[i]
+		curr_edges = []
+		for other in data:
+			if other == curr:
+				continue
+			edge = cost(curr, other, weights)
+			if edge < 0:
+				continue
+			
+			curr_edges.append((other["id"], edge))
+
+		G[curr["id"]] = curr_edges
+		i += 1
+
+	return G

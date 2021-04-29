@@ -8,19 +8,47 @@
 # Location: NYC, 2021
 ####################################################################################################
 import numpy as np
-
-from collections import deque
+import heapq
 
 from . import path_finding_utils
 
-def dijkstra(
+# Got useful info from https://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python. 
+def dijkstra(data, source, target):
+	q = []
+	d = {k: np.inf for k in data.keys()}
+	p = {}
+
+	d[source] = 0 
+	heapq.heappush(q, (0, source))
+
+	while q:
+		last_w, curr_v = heapq.heappop(q)
+		for n, n_w in data[curr_v]:
+			cand_w = last_w + n_w
+			if cand_w < d[n]:
+				d[n] = cand_w
+				p[n] = curr_v
+				heapq.heappush(q, (cand_w, n))
+
+	return d, p
+
+def generate_path(parents, start, end):
+	path = [end]
+	while True:
+		key = parents[path[0]]
+		path.insert(0, key)
+		if key == start:
+			break
+	return path
+
+def dijkstra_first(
 		data,
 		source,
 		target,
 		weights,
 		verbose=False
 	):
-	vertices = deque()
+	vertices = []
 	dist = [np.inf] * len(data)
 	prev = [None] * len(data)
 
@@ -37,23 +65,21 @@ def dijkstra(
 		curr_vertex_index = dist.index(min(dist))
 		curr_vertex = vertices[curr_vertex_index]
 		
-		vertices.popleft()
-
-		if curr_vertex == target:
-			break
+		del vertices[curr_vertex_index]
 		
 		for other_vertex in vertices:
 			other_vertex_index = vertices.index(other_vertex)
 			cost = path_finding_utils.cost(curr_vertex, other_vertex, weights=weights)
-			if cost_pre < 0:
-				cost = cost_pre + 10000  # Random large number. 
-			else:
-				cost = cost_pre
+			if cost <= 0:
+				continue
 
 			alt = dist[curr_vertex_index] + cost
 			if alt < dist[other_vertex_index]:
 				dist[other_vertex_index] = alt
 				prev[other_vertex_index] = curr_vertex
+
+		if curr_vertex == target:
+			break
 
 	return dist, prev
 
