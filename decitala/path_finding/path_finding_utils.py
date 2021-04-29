@@ -16,12 +16,12 @@ def cost(
 	"""
 	Cost function used in the path finding algorithms. 
 
-	:param `~decitala.fragment.GeneralFragment` vertex_1: an object inheriting from
-			:obj:`~decitala.fragment.GeneralFragment`.
-	:param `~decitala.fragment.GeneralFragment` vertex_2: an object inheriting from
-			:obj:`~decitala.fragment.GeneralFragment`.
+	:param dict vertex_1: A dictionary holding (at least) a :obj:`~decitala.fragment.GeneralFragment`
+							object, as well as an ``onset_range``. 
+	:param dict vertex_2: A dictionary holding (at least) a :obj:`~decitala.fragment.GeneralFragment`
+							object, as well as an ``onset_range``.
 	:param dict weights: weights used in the model. Must sum to 1. Requires "gap" and "onsets" values.
-	:return: cost of moving from ``vertex_1`` to ``vertex_2``.
+	:return: The cost of moving from ``vertex_1`` to ``vertex_2``.
 	:rtype: float
 	"""
 	gap = vertex_2["onset_range"][0] - vertex_1["onset_range"][1]
@@ -31,7 +31,13 @@ def cost(
 
 def build_graph(data, weights):
 	"""
-	Function for building a "graph". 
+	Function for building a "graph" of nodes and edges from a given set of data (each
+	vertex of the form as those required in the cost function) extracted from one of the
+	search algorithms. Requires ``id`` keys in each dictionary input. 
+
+	:param dict weights: weights used in the model. Must sum to 1. Requires "gap" and "onsets" values.
+	:return: A "graph" holding vertices and the associated cost between all other non-negative edges.
+	:rtype: dict
 	"""
 	G = {}
 	i = 0
@@ -53,12 +59,20 @@ def build_graph(data, weights):
 	return G
 
 def sources_and_sinks(data):
+	"""
+	Calculates all sources and sinks in a given dataset. 
+	"""
 	sources = [x for x in data if not any(y["onset_range"][1] <= x["onset_range"][0] for y in data)]
 	sinks = [x for x in data if not any(x["onset_range"][1] <= y["onset_range"][0] for y in data)]
 
 	return sources, sinks
 
 def best_source_and_sink(data):
+	"""
+	Calculates the "best" source and sink from a dataset based on two simple heuristics: (1) the 
+	fragment with the earliest (or latest, for sink) starting point, (2) the fragment with the 
+	greatest number of onsets. 
+	"""
 	sources, sinks = sources_and_sinks(data)
 	curr_best_source = sources[0]
 	curr_best_sink = sinks[0]

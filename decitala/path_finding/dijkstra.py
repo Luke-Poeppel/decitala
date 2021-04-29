@@ -12,31 +12,50 @@ import heapq
 
 from . import path_finding_utils
 
-# Got useful info from https://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python. 
+# Useful info here: https://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python. 
 def dijkstra(data, source, target):
-	q = []
-	d = {k: np.inf for k in data.keys()}
-	p = {}
+	"""
+	Dijkstra path-finding algorithm from dynamic programming. Uses a min-heap 
+	data structure for efficiency. 
 
-	d[source] = 0 
+	:param list data: Data from one of the search algorithms (each result being a dictionary.)
+	:param dict source: Any element from ``data``. 
+	:param dict target: Any element from ``data``. 
+	"""
+	graph = path_finding_utils.build_graph(data, weights)
+	source = [data.index(x) for x in data if x == source][0]
+	sink = [data.index(x) for x in data if x == target]
+
+	q = []
+	dist = {x: np.inf for x in graph.keys()}
+	pred = {}
+
+	dist[source] = 0
 	heapq.heappush(q, (0, source))
 
 	while q:
 		last_w, curr_v = heapq.heappop(q)
-		for n, n_w in data[curr_v]:
+		for n, n_w in graph[curr_v]:
 			cand_w = last_w + n_w
-			if cand_w < d[n]:
-				d[n] = cand_w
-				p[n] = curr_v
+			if cand_w < dist[n]:
+				dist[n] = cand_w
+				pred[n] = curr_v
 				heapq.heappush(q, (cand_w, n))
 
-	return d, p
+	return dist, pred
 
-def generate_path(parents, start, end):
-	path = [end]
+def generate_path(pred, source, target):
+	"""
+	Returns the optimal path extracted from Dijkstra. 
+
+	:param dict pred: The ``pred`` dictionary returned from :obj:`decitala.path_finding.dijkstra.dijkstra`. 
+	:param dict source: An element from the ``data`` input to :obj:`decitala.path_finding.dijkstra.dijkstra`
+	:param dict target: An element from the ``data`` input to :obj:`decitala.path_finding.dijkstra.dijkstra`
+	"""
+	path = [target]
 	while True:
-		key = parents[path[0]]
+		key = pred[path[0]]
 		path.insert(0, key)
-		if key == start:
+		if key == source:
 			break
 	return path
