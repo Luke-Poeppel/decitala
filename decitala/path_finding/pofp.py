@@ -13,24 +13,6 @@
 approach to the end-overlapping indices problem) in a StackOverflow post from Summer, 2020. The link
 to the original post is:
 https://stackoverflow.com/questions/62734114/iterative-solution-to-end-overlapping-indices.
-
-Once we have retrieved :math:`n` talas in a part, we want to check whether or not they align.
-If a tala :math:`T_1` ranges from onsets :math:`X_i` to :math:`Y_i` and a tala :math:`T_2` ranges
-from onsets :math:`X_j` to :math:`Y_j`, if :math:`X_j < Y_i`, we can't satisfactorily align
-:math:`T_1` and :math:`T_2`; this means that one (or both) of these talas was not intentionally
-included, and simply exists as a sub-tala or cyclic rotation. Multiple possible alignments exist,
-so we calculate them all using an iterative solution to the end-overlapping indices problem using
-a Pareto frontier of paths.
-
-The output to the alignment function, :obj:`decitala.pofp.get_pareto_optimal_longest_paths`, may be
-exponential in size with respect to the input. As such, we use the observation that there often
-exist "break points" in the data collected from rolling search: points at which there exists no
-overlap. We divide the data by each of these regions (if they exist) and generate the longest
-paths separately.
-
-Several of the functions below have the parameter ``data``. This parameter is of the form returned
-by :obj:`~decitala.trees.rolling_search` and corresponds to a list of dictionaries, each holding
-information about the fragment, modification, onset-range, and spanning data.
 """
 import itertools
 

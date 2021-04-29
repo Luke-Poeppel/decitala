@@ -246,8 +246,8 @@ class FragmentHashTable:
 
 class DecitalaHashTable(FragmentHashTable):
 	"""
-	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the datasets
-	parameters set to ``["decitala"]`` and automatically loads.
+	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``
+	parameter set to ``["decitala"]`` and automatically loads.
 	"""
 	def __init__(self):
 		super().__init__(datasets=["decitala"])
@@ -255,8 +255,8 @@ class DecitalaHashTable(FragmentHashTable):
 
 class GreekFootHashTable(FragmentHashTable):
 	"""
-	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the datasets
-	parameters set to ``["greek_foot"]`` and automatically loads.
+	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``
+	parameter set to ``["greek_foot"]`` and automatically loads.
 	"""
 	def __init__(self):
 		super().__init__(datasets=["greek_foot"])
