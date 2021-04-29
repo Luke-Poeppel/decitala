@@ -3,6 +3,8 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.10.1] ???
+
 ## [v0.10.0] April 29, 2021
 ### Added
 - Revamped the database module (see #120). Everything is now ported over to SQLAlchemy and is more easily extendable to broader rhythmic corpora. Also added a `database.batch_create_database` function for creating a database from a large set of compositions. 
