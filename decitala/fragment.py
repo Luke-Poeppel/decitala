@@ -16,6 +16,7 @@ import os
 import re
 
 from collections import Counter
+from functools import cache
 
 from music21 import converter
 from music21 import note
@@ -258,6 +259,7 @@ class GeneralFragment:
 		return utils.ql_array_to_greek_diacritics(self.ql_array())
 
 	@property
+	@cache # Caching *extremely* useful for cost function in path-finding. 
 	def num_onsets(self):
 		"""
 		:return: The number of onsets in the fragment.
