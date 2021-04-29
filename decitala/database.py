@@ -6,7 +6,6 @@
 #
 # Location: Kent, CT 2020 / Frankfurt, DE 2020 / NYC, 2021
 ####################################################################################################
-import uuid
 import os
 import json
 
@@ -28,7 +27,6 @@ from sqlalchemy.orm import (
 
 from .search import rolling_hash_search
 from .utils import get_logger
-from .hash_table import GreekFootHashTable, MODIFICATION_HIERARCHY
 
 Base = declarative_base()
 
@@ -44,9 +42,9 @@ class CompositionData(Base):
 
 	:param str name: name of the composition.
 	:param int part_num: part number for the extraction.
-	:param str local_filepath: local filepath for the searched composition. 
+	:param str local_filepath: local filepath for the searched composition.
 
-	TODO: could add a `search_constraint` column that stores a JSON of the rolling_search parameters. 
+	TODO: could add a `search_constraint` column that stores a JSON of the rolling_search parameters.
 	"""
 	__tablename__ = "CompositionData"
 
@@ -63,20 +61,23 @@ class CompositionData(Base):
 
 class Extraction(Base):
 	"""
-	SQLAlchemy model representing a fragment extracted from a composition. 
+	SQLAlchemy model representing a fragment extracted from a composition.
 
 	Parameters
 	----------
-	
+
 	:param float onset_start: starting onset of the extracted fragment.
-	:param float onset_stop: ending onset of the extracted fragment (onset of final object + quarter length)
-	:param str fragment_type: fragment type; options currently include `decitala`, `greek_foot`, and `general_fragment`.
+	:param float onset_stop: ending onset of the extracted fragment
+							(onset of final object + quarter length)
+	:param str fragment_type: fragment type; options currently include
+							`decitala`, `greek_foot`, and `general_fragment`.
 	:param str name: name of the fragment.
 	:param str mod_type: modification type of the fragment.
-	:param float ratio: ratio of the fragment's values to the values in the database. 
-	:param float difference: difference between the fragment's values to the values in the database.
+	:param float ratio: ratio of the fragment's values to the values in the database.
+	:param float difference: difference between the fragment's values to the values
+							in the database.
 	:param str pitch_content: pitch content of the extracted fragment.
-	:param bool is_slurred: whether the extracted fragment is spanned by a slur object. 
+	:param bool is_slurred: whether the extracted fragment is spanned by a slur object.
 	"""
 	__tablename__ = "Fragments"
 
@@ -84,15 +85,15 @@ class Extraction(Base):
 
 	onset_start = Column(Float)
 	onset_stop = Column(Float)
-	
-	# TODO: just make this fragment with the JSON output from FragmentEncoder. 
+
+	# TODO: just make this fragment with the JSON output from FragmentEncoder.
 	fragment_type = Column(String)
 	name = Column(String)
-	
+
 	mod_hierarchy_val = Column(Float)
 	ratio = Column(Float)
 	difference = Column(Float)
-	
+
 	pitch_content = Column(String)
 	is_slurred = Column(Boolean)
 
@@ -173,14 +174,14 @@ def create_database(
 		echo=False
 	):
 	"""
-	Function for creating a database from a single filepath. 
+	Function for creating a database from a single filepath.
 
-	:param str db_path: Path to the database to be created. 
+	:param str db_path: Path to the database to be created.
 	:param str filepath: Path to the score to be analyzed.
-	:param list table: a :obj:`decitala.hash_table.FragmentHashTable` object. 
+	:param list table: a :obj:`decitala.hash_table.FragmentHashTable` object.
 	:param list part_nums: Parts to be analyzed.
-	:param list windows: Possible lengths of the search frames. 
-	:param bool echo: whether to echo the SQL calls. False by default. 
+	:param list windows: Possible lengths of the search frames.
+	:param bool echo: whether to echo the SQL calls. False by default.
 	"""
 	assert os.path.isfile(filepath), DatabaseException("✗ The path provided is not a valid file.")
 	assert db_path.endswith(".db"), DatabaseException("✗ The db_path must end with '.db'.")
@@ -203,7 +204,7 @@ def create_database(
 		windows,
 		session
 	)
-	
+
 	session.commit()
 	return
 
@@ -218,13 +219,12 @@ def batch_create_database(
 	This function creates a database from a dictionary of filepaths and desires ``part_nums``
 	to analyze.
 
-	:param str db_path: Path to the database to be created. 
-	:param dict data_in: Dictionary of filepaths (key) and part nums in a list (value). 
-	:param list table: a :obj:`decitala.hash_table.FragmentHashTable` object. 
-	:param list windows: Possible lengths of the search frames. 
-	:param bool echo: whether to echo the SQL calls. False by default. 
+	:param str db_path: Path to the database to be created.
+	:param dict data_in: Dictionary of filepaths (key) and part nums in a list (value).
+	:param list table: a :obj:`decitala.hash_table.FragmentHashTable` object.
+	:param list windows: Possible lengths of the search frames.
+	:param bool echo: whether to echo the SQL calls. False by default.
 	"""
-	assert os.path.isfile(filepath), DatabaseException("✗ The path provided is not a valid file.")
 	assert db_path.endswith(".db"), DatabaseException("✗ The db_path must end with '.db'.")
 	if os.path.isfile(db_path):
 		return "That database already exists ✔"
@@ -237,8 +237,8 @@ def batch_create_database(
 
 	Session = sessionmaker(bind=engine)
 	session = Session()
-	
-	for filepath, part_num in data_in.items():
+
+	for filepath, part_nums in data_in.items():
 		_add_results_to_session(
 			filepath,
 			part_nums,
@@ -246,6 +246,6 @@ def batch_create_database(
 			windows,
 			session
 		)
-	
+
 	session.commit()
 	return

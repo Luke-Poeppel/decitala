@@ -28,12 +28,12 @@ def decitala():
 @click.option("--part_num", default=0, help="Part number.")
 @click.option("--frag_type", default="greek_foot")
 @click.option("--verbose", default=True)
-def path_finder(filepath, part_num, frag_type, verbose):
+def path_finder(filepath, part_num, frag_type, verbose): # noqa
 	if frag_type == "decitala":
 		table = DecitalaHashTable()
 	elif frag_type == "greek_foot":
 		table = GreekFootHashTable()
-	
+
 	best_path = path_finder(
 		filepath=filepath,
 		part_num=part_num,

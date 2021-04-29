@@ -154,7 +154,7 @@ def _decitala_full_id_from_filename(filename):
 	if len(split) == 2:
 		full_id = split[0]
 	elif len(split) >= 3:
-		if len(split[1]) == 1:# e.g. ["80", "B", "..."]
+		if len(split[1]) == 1:  # e.g. ["80", "B", "..."]
 			full_id = "_".join([split[0], split[1]])
 		else:
 			full_id = split[0]
@@ -321,12 +321,11 @@ def removeAddedValuesFromList(lst):
 	added_val_indices = get_added_values(ql_lst=lst, print_type=False)
 	for i in added_val_indices:
 		del lst[i]
+	return
 
-	return 
-	
 def non_retrogradable_measures(filepath, part_num):
 	"""
-	Function for retrieving all non-retrogradable measures in a given filepath and part number. 
+	Function for retrieving all non-retrogradable measures in a given filepath and part number.
 	"""
 	converted = converter.parse(filepath)
 	p = converted.parts[part_num]
@@ -335,10 +334,10 @@ def non_retrogradable_measures(filepath, part_num):
 		ql_array = []
 		for this_note in this_measure.flat.stripTies().getElementsByClass(note.Note):
 			ql_array.append(this_note.quarterLength)
-		
+
 		if ql_array == ql_array[::-1]:
 			non_retrogradable_measures.append(this_measure.number)
-	
+
 	return non_retrogradable_measures
 
 ####################################################################################################
@@ -635,7 +634,7 @@ def get_object_indices(
 			elif measure_divider_mode == "string":
 				for this_obj in this_measure.recurse().stream().iter.notesAndRests:
 					data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
-				
+
 				if not this_measure.number == ms[-1].number:
 					data_out.append("B")
 			else:
@@ -645,10 +644,10 @@ def get_object_indices(
 
 def ts_to_reduced_ts(ts):
 	"""
-	Function for fully reducing a `music21.meter.TimeSignature` object (lowest denominator of 1). 
-	
-	:param ts: a music21.meter.TimeSignature object. 
-	:return: a new time signature that is fully reduced by removing all possible powers of 2. 
+	Function for fully reducing a `music21.meter.TimeSignature` object (lowest denominator of 1).
+
+	:param ts: a music21.meter.TimeSignature object.
+	:return: a new time signature that is fully reduced by removing all possible powers of 2.
 	:rtype: music21.meter.TimeSignature
 
 	>>> from music21.meter import TimeSignature

@@ -1,13 +1,12 @@
 ####################################################################################################
 # File:     corpora_models.py
-# Purpose:  Module for holding all of the SQLAlchemy models used in the decitala package for 
-#           included corpora. 
+# Purpose:  Module for holding all of the SQLAlchemy models used in the decitala package for
+#           included corpora.
 #
 # Author:   Luke Poeppel
 #
 # Location: NYC, 2021
 ####################################################################################################
-import uuid
 import json
 import os
 import natsort
@@ -42,10 +41,10 @@ def get_session(engine):
 
 class DecitalaData(Base):
 	"""
-	SQLAlchemy model representing a decitala fragment from the encoded datasets (given in `corpora`). 
+	SQLAlchemy model representing a decitala fragment from the encoded datasets (given in `corpora`).
 	"""
 	__tablename__ = "DecitalaData"
-	
+
 	id = Column(Integer, primary_key=True)
 	full_id = Column(String)
 	name = Column(String)
@@ -53,7 +52,7 @@ class DecitalaData(Base):
 
 class GreekFootData(Base):
 	"""
-	SQLAlchemy model representing a greek foot fragment from the encoded datasets (given in `corpora`). 
+	SQLAlchemy model representing a greek foot fragment from the encoded datasets (given in `corpora`).
 	"""
 	__tablename__ = "GreekFootData"
 
@@ -63,16 +62,19 @@ class GreekFootData(Base):
 
 def _make_corpora_database():
 	abspath_databases_directory = os.path.abspath("./databases/")
-	engine = get_engine(filepath=os.path.join(abspath_databases_directory, "fragment_database.db"), echo=True)
+	engine = get_engine(
+		filepath=os.path.join(abspath_databases_directory, "fragment_database.db"),
+		echo=True
+	)
 	session = get_session(engine=engine)
 
 	for this_file in natsort.natsorted(os.listdir(decitala_path)):
-		# Will use the utils function evenutally. Annoying bug. 
+		# Will use the utils function evenutally. Annoying bug.
 		split = this_file.split("_")
 		if len(split) == 2:
 			full_id = split[0]
 		elif len(split) >= 3:
-			if len(split[1]) == 1:# e.g. ["80", "B", "..."]
+			if len(split[1]) == 1:  # e.g. ["80", "B", "..."]
 				full_id = "_".join([split[0], split[1]])
 			else:
 				full_id = split[0]

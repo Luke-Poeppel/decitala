@@ -13,7 +13,6 @@ import copy
 import json
 import numpy as np
 import os
-import re
 
 from collections import Counter
 from functools import cache
@@ -60,14 +59,14 @@ class FragmentEncoder(json.JSONEncoder):
 				d = {
 					"frag_type": "general_fragment",
 					"data": obj.data,
-					"name": obj.name # May be None! 
+					"name": obj.name  # May be None!
 				}
 			else:
-				data = list(obj.data) # numpy array is not JSON serializable. 
+				data = list(obj.data)  # numpy array is not JSON serializable.
 				d = {
 					"frag_type": "general_fragment",
 					"data": data,
-					"name": obj.name # May be None! 
+					"name": obj.name  # May be None!
 				}
 			return d
 		elif type(obj) == Decitala:
@@ -221,8 +220,8 @@ class GeneralFragment:
 
 	def ql_array(self, retrograde=False):
 		"""
-		:param bool retrograde: Whether to return the fragment in its original form or 
-								in retrograde. 
+		:param bool retrograde: Whether to return the fragment in its original form or
+								in retrograde.
 		:return: The quarter length array of the fragment.
 		:rtype: numpy.array
 		"""
@@ -234,7 +233,7 @@ class GeneralFragment:
 			else:
 				return np.flip(data)
 		else:
-			
+
 			if not(retrograde):
 				return self.data
 			else:
@@ -259,7 +258,7 @@ class GeneralFragment:
 		return utils.ql_array_to_greek_diacritics(self.ql_array())
 
 	@property
-	@cache # Caching *extremely* useful for cost function in path-finding. 
+	@cache  # Caching *extremely* useful for cost function in path-finding.
 	def num_onsets(self):
 		"""
 		:return: The number of onsets in the fragment.
@@ -288,12 +287,12 @@ class GeneralFragment:
 
 	def dseg(self, as_str=False):
 		"""
-		:param bool as_str: Whether to make the return type a string. 
+		:param bool as_str: Whether to make the return type a string.
 		:return: the d-seg of the fragment, as introducted in `The Perception of Rhythm
-				in Non-Tonal Music 
+				in Non-Tonal Music
 				<https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents>`_
 				(Marvin, 1991). Maps a fragment into a sequence of relative durations.
-		:rtype: numpy.array (or string if `as_str=True`). 
+		:rtype: numpy.array (or string if `as_str=True`).
 
 		>>> g3 = GeneralFragment(np.array([0.25, 0.75, 2.0, 1.0]), name='marvin-p70')
 		>>> g3.dseg()
@@ -350,7 +349,8 @@ class GeneralFragment:
 
 	def cyclic_permutations(self):
 		"""
-		:return: All cyclic permutations of :obj:`~decitala.fragment.Decitala.ql_array`, as in Morris (1998).
+		:return: All cyclic permutations of :obj:`~decitala.fragment.Decitala.ql_array`,
+				as in Morris (1998).
 		:rtype: numpy.array
 		"""
 		return np.array([np.roll(self.ql_array(), -i) for i in range(self.num_onsets)])
@@ -365,7 +365,7 @@ class GeneralFragment:
 
 	def anga_class_counter(self):
 		"""
-		:return: A counter of the elements from `:meth:decitala.fragment.ql_array`. 
+		:return: A counter of the elements from `:meth:decitala.fragment.ql_array`.
 		:rtype: collections.Counter
 		"""
 		return Counter(self.ql_array())
@@ -414,7 +414,7 @@ class GeneralFragment:
 		- VII. Stream:						of the form :math:`XYZ...abc...`
 		"""
 		dseg = list(self.dseg())
-		centrish_element = self.ql_array()[self.num_onsets // 2] 
+		centrish_element = self.ql_array()[self.num_onsets // 2]
 
 		if self.num_onsets == 1:
 			return 1
@@ -554,7 +554,7 @@ class Decitala(GeneralFragment):
 	def __init__(self, name, **kwargs):
 		if name.endswith(".xml"):
 			name = name[:-4]
-		
+
 		matches = session.query(DecitalaData).filter(DecitalaData.name.contains(name)).all()
 		matches = [x.name + ".xml" for x in matches]
 
@@ -584,7 +584,7 @@ class Decitala(GeneralFragment):
 		A class method which retrieves a :obj:`~decitala.fragment.Decitala` object based \
 		on a given ID number. These numbers are listed in the Lavignac Encyclopédie (1921) \
 		and Messiaen Traité. Some talas have "sub-talas," meaning that their id is not \
-		unique. 
+		unique.
 
 		:return: a :obj:`~decitala.fragment.Decitala` object
 		:param str input_id: id number of the tala (in range 1-120).
@@ -655,7 +655,7 @@ class GreekFoot(GeneralFragment):
 		self.full_path = full_path
 
 		super().__init__(data=full_path, name=name)
-		
+
 		self.frag_type = "greek_foot"
 
 	def __repr__(self):

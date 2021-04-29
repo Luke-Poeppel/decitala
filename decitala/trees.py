@@ -10,7 +10,6 @@ import copy
 import json
 import jsonpickle
 import os
-import sqlite3
 
 from collections import deque
 from wand.image import Image
@@ -141,7 +140,7 @@ class NaryTree:
 	>>> # Level order traversal
 	>>> TestTree.level_order_traversal()
 	[[1.0], [0.5, 1.0, 3.0, 4.0], [0.5, 3.0, 2.0, 1.0], [1.0, 1.0, 0.5], [2.0]]
-	>>> # We can serialize an NaryTree as either a native Python type or Javascript type using NaryTree.serialize()
+	>>> # We can serialize an NaryTree with NaryTree.serialize()
 	"""
 	class Node:
 		"""

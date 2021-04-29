@@ -24,6 +24,7 @@ def test_shuffled_I_path_with_slur_constraint():
 		filepath = filepath,
 		part_num=0,
 		table=hash_table.GreekFootHashTable(),
+		algorithm="floyd-warshall",
 		slur_constraint=True
 	)
 	fragments = [x["fragment"] for x in path]

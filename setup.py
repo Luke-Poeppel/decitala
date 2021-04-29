@@ -28,7 +28,7 @@ setup(
 		"License :: OSI Approved :: MIT License",
 		"Operating System :: OS Independent",
 	],
-	python_requires='>=3.7',
+	python_requires='>=3.9',
 	include_package_data=True,
 	package_data={"decitala": ["VERSION"]},
 	install_requires=[

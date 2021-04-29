@@ -6,8 +6,8 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.10.0] April 29, 2021
 ### Added
 - Revamped the database module (see #120). Everything is now ported over to SQLAlchemy and is more easily extendable to broader rhythmic corpora. Also added a `database.batch_create_database` function for creating a database from a large set of compositions. 
+- Implemented Dijkstra's Algorithm for path finding. This is now the default algorithm used in `search.path_finder`, but the user can override this. 
 - New utils functions and additions: a `non_retrogradable_measures` function for finding all palindromic measures in a given filepath and part number; an optional `measure_divider_mode` parameter to `utils.get_object_indices` which returns the same objects, divided into lists of measures or objects divided by a string; a `utils.ts_to_reduced_ts` function for fully reducing time signatures; a `UtilsException` class. 
-- Implemented Dijkstra's Algorithm for path finding. 
 - The `search.path_finder` function now has optional `save_filepath` argument for dumping the results to a JSON file. (#97)
 - All classes inheriting from `GeneralFragment` (currently just `Decitala` and `GreekFoot`) as well as `GeneralFragment` itself now have a `frag_type` class attribute. 
 

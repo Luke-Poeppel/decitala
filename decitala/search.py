@@ -10,6 +10,7 @@
 Search algorithms.
 """
 import copy
+import json
 import numpy as np
 
 from .utils import (
@@ -25,13 +26,9 @@ from .utils import (
 	get_logger
 )
 from .fragment import (
-	Decitala,
-	GreekFoot,
 	FragmentEncoder
 )
 from .hash_table import (
-	DecitalaHashTable,
-	GreekFootHashTable,
 	FragmentHashTable
 )
 from .path_finding import (
@@ -61,16 +58,16 @@ def rolling_hash_search(
 
 	:param str filepath: path to file to be searched.
 	:param int part_num: part in the file to be searched (0-indexed).
-	:param `decitala.hash_table.FragmentHashTable` table: 
-	:param list windows: Allowed window sizes for search. 
-	:param bool allow_subdivision: Whether to check for subdivisions in the search. 
+	:param `decitala.hash_table.FragmentHashTable` table:
+	:param list windows: Allowed window sizes for search.
+	:param bool allow_subdivision: Whether to check for subdivisions in the search.
 	"""
 	object_list = get_object_indices(filepath=filepath, part_num=part_num)
 	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
 	fragment_id = 0 # noqa TODO
 	fragments_found = []
 
-	# These tables are already loaded. 
+	# These tables are already loaded.
 	if type(table) == FragmentHashTable:
 		table.load()
 
@@ -97,7 +94,7 @@ def rolling_hash_search(
 				try:
 					searched = table.data[tuple(ql_array)]
 					if searched is not None:
-						# Need new dict object or it overrides. 
+						# Need new dict object or it overrides.
 						result = copy.copy(searched)
 						is_spanned_by_slur = frame_is_spanned_by_slur(this_frame)
 						pitch_content = frame_to_midi(this_frame)
@@ -168,19 +165,19 @@ def path_finder(
 	):
 	"""
 	This function combines a number of tools for effectively finding a path of fragments
-	through a provided composition and part number. It first runs 
+	through a provided composition and part number. It first runs
 	:obj:`decitala.search.rolling_hash_search` to extract all fragments from the provided
-	table and then runs the Floyd-Warshall algorithm to get the best path. 
+	table and then runs the Floyd-Warshall algorithm to get the best path.
 
 	:param str filepath: path to file to be searched.
 	:param int part_num: part in the file to be searched (0-indexed).
-	:param `decitala.hash_table.FragmentHashTable` table: 
-	:param str mode: Path-finding algorithm used. Options are ``"floyd_warshall"`` and ``"dijkstra"``. 
-					Default is ``"dijkstra"``. 
+	:param `decitala.hash_table.FragmentHashTable` table:
+	:param str mode: Path-finding algorithm used. Options are ``"floyd_warshall"`` and ``"dijkstra"``.
+					Default is ``"dijkstra"``.
 	:param list windows: Allowed window sizes for search.
-	:param bool slur_constraint: Whether to force Floyd-Warshall to choose slurred fragments. 
+	:param bool slur_constraint: Whether to force Floyd-Warshall to choose slurred fragments.
 	:param str save_filepath: An optional path to a file (ending in .json) to save the results.
-	:param bool verbose: Whether to log messages. Default is ``False``. 
+	:param bool verbose: Whether to log messages. Default is ``False``.
 	"""
 	fragments = rolling_hash_search(
 		filepath=filepath,
@@ -190,18 +187,22 @@ def path_finder(
 	if not fragments:
 		return None
 
+	best_source, best_sink = path_finding_utils.best_source_and_sink(fragments)
+
 	if algorithm == "dijkstra":
+		if slur_constraint:
+			raise SearchException("This is not yet supported. Coming soon.")
 		dist, pred = dijkstra.dijkstra(
-			data=s1_fragments,
-			source=source,
-			target=target,
+			data=fragments,
+			source=best_source,
+			target=best_sink,
 		)
 		best_path = dijkstra.generate_path(
-			pred, 
-			source,
-			target
+			pred,
+			best_source,
+			best_sink
 		)
-		best_path = sorted([x for x in s1_fragments if x["id"] in best_path], key=lambda x: x["onset_range"][0]) # noqa
+		best_path = sorted([x for x in fragments if x["id"] in best_path], key=lambda x: x["onset_range"][0]) # noqa
 	elif algorithm == "floyd-warshall":
 		distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
 			fragments,
@@ -211,7 +212,6 @@ def path_finder(
 			},
 			verbose=verbose
 		)
-		best_source, best_sink = path_finding_utils.best_source_and_sink(fragments)
 		best_path = floyd_warshall.get_path(
 			start=best_source,
 			end=best_sink,
@@ -219,6 +219,8 @@ def path_finder(
 			data=fragments,
 			slur_constraint=slur_constraint
 		)
+	else:
+		raise SearchException("The only available options are 'dijkstra' and 'floyd-warshall'.")
 
 	if save_filepath:
 		with open(save_filepath, "w") as output:

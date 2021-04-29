@@ -7,12 +7,10 @@
 # Location: NYC, 2021.
 ####################################################################################################
 import os
-import json
 
 from .fragment import (
 	Decitala,
 	GreekFoot,
-	GeneralFragment
 )
 from .utils import (
 	augment,
@@ -65,15 +63,17 @@ def generate_all_modifications(
 	"""
 	Helper function for generating and storing all possible modifications of an input fragment.
 
-	:param dict dict_in: Dictionary storing all the results. 
-	:param `decitala.fragment.GeneralFragment` fragment: Fragment input. 
+	:param dict dict_in: Dictionary storing all the results.
+	:param `decitala.fragment.GeneralFragment` fragment: Fragment input.
 	:param list factors: Possible factors for multiplicative augmentation.
 	:param list differences: Possible differences for additive augmentation.
-	:param bool try_retrograde: Whether to also generate modifications for the retrograde of the fragment. 
-	:param bool allow_mixed_augmentation: Whether to allow mixed augmentation as a modification type. Not yet
-										supported. 
-	:param bool force_override: Whether to force the given fragment to override the existing fragment in 
-								the table (if it exists). Not yet supported. 
+	:param bool try_retrograde: Whether to also generate modifications for the retrograde of
+								the fragment.
+	:param bool allow_mixed_augmentation: Whether to allow mixed augmentation as a
+										modification type. Not yet supported.
+	:param bool force_override: Whether to force the given fragment to override the
+								existing fragment in the table (if it exists).
+								Not yet supported.
 	"""
 	if allow_mixed_augmentation or force_override:
 		raise HashTableException("These options are not yet supported. Coming soon.")
@@ -85,7 +85,7 @@ def generate_all_modifications(
 		searches = [qls]
 		if try_retrograde is True:
 			searches.append(qls[::-1])
-		
+
 		for i, search in enumerate(searches):
 			augmentation = tuple(augment(fragment=search, factor=this_factor, difference=0.0))
 
@@ -104,7 +104,7 @@ def generate_all_modifications(
 			}
 			if augmentation in dict_in:
 				existing = dict_in[augmentation]
-				# Lower number -> More likely. 
+				# Lower number -> More likely.
 				if existing["mod_hierarchy_val"] < elem_dict["mod_hierarchy_val"]:
 					continue
 				else:
@@ -135,7 +135,7 @@ def generate_all_modifications(
 				"difference": this_difference,
 				"mod_hierarchy_val": 3 if retrograde is False else 4
 			}
-			# Lower number -> More likely. 
+			# Lower number -> More likely.
 			if augmentation in dict_in:
 				existing = dict_in[augmentation]
 				if existing["mod_hierarchy_val"] < elem_dict["mod_hierarchy_val"]:
@@ -147,16 +147,16 @@ class FragmentHashTable:
 	"""
 	This class holds all (relevant) modifications of a set of fragments. Currently the only
 	supported input types to ``datasets`` are ``"decitala"`` and ``"greek_foot"``. The
-	``custom_fragments`` parameter allows the addition of any desired fragments; for a search 
+	``custom_fragments`` parameter allows the addition of any desired fragments; for a search
 	on a particular set of fragments, use this latter parameter. The factors, differences,
 	and other modification parameters are class attributes. To change them, subclass
-	``FragmentHashTable`` with your own attributes. 
-	
+	``FragmentHashTable`` with your own attributes.
+
 	>>> fht = FragmentHashTable(
 	... 	datasets=["greek_foot"],
 	... 	custom_fragments=[Decitala("Ragavardhana")]
 	... )
-	>>> # The object doesn't store anything until it is loaded. 
+	>>> # The object doesn't store anything until it is loaded.
 	>>> fht
 	<decitala.hash_table.FragmentHashTable 0 fragments>
 	>>> fht.load()
@@ -174,27 +174,27 @@ class FragmentHashTable:
 	modification_hierarchy = MODIFICATION_HIERARCHY
 	custom_overrides_datasets = CUSTOM_OVERRIDES_DATASETS
 
-	def __init__(self, datasets = [], custom_fragments = []):
+	def __init__(self, datasets=[], custom_fragments=[]):
 		"""
-		General object for storing all modifications of rhythmic datasets. Does not load the 
-		modifications by default. 
+		General object for storing all modifications of rhythmic datasets. Does not load the
+		modifications by default.
 
-		:param list datasets: optional elements from `decitala`'s built-in datasets. Currently 
-							includes `decitala` and `greek_foot`. 
+		:param list datasets: optional elements from `decitala`'s built-in datasets. Currently
+							includes `decitala` and `greek_foot`.
 		:param list custom_fragment: optional list of extra fragments to be included in the
 									datasets. If you wish for the custom fragments to override
 									the dataset fragments, you must create a new class inheriting
-									from `FragmentHashTable` that sets the class attribute 
-									`custom_overrides_datasets=True`. 
+									from `FragmentHashTable` that sets the class attribute
+									`custom_overrides_datasets=True`.
 		"""
 		self.datasets = datasets
 		self.custom_fragments = custom_fragments
 		self.loaded = False
-		self.data = dict() # All the data will be stored here. 
+		self.data = dict()  # All the data will be stored here.
 
 	def __repr__(self):
 		return f"<decitala.hash_table.FragmentHashTable {len(self.data)} fragments>"
-			
+
 	def load(
 			self,
 			factors=FACTORS,
@@ -214,7 +214,7 @@ class FragmentHashTable:
 				allow_mixed_augmentation=allow_mixed_augmentation,
 				force_override=force_override
 			)
-		
+
 		for this_dataset in self.datasets:
 			if this_dataset == "greek_foot":
 				data = session.query(GreekFootData).all()
