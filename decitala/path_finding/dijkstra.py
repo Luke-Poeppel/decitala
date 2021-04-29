@@ -13,7 +13,12 @@ import heapq
 from . import path_finding_utils
 
 # Useful info here: https://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python. 
-def dijkstra(data, source, target):
+def dijkstra(
+		data,
+		source,
+		target,
+		weights={"gap": 0.75, "onsets": 0.25}
+	):
 	"""
 	Dijkstra path-finding algorithm from dynamic programming. Uses a min-heap 
 	data structure for efficiency. 
@@ -23,8 +28,8 @@ def dijkstra(data, source, target):
 	:param dict target: Any element from ``data``. 
 	"""
 	graph = path_finding_utils.build_graph(data, weights)
-	source = [data.index(x) for x in data if x == source][0]
-	sink = [data.index(x) for x in data if x == target]
+	source = source["id"]
+	target = target["id"]
 
 	q = []
 	dist = {x: np.inf for x in graph.keys()}
@@ -52,6 +57,9 @@ def generate_path(pred, source, target):
 	:param dict source: An element from the ``data`` input to :obj:`decitala.path_finding.dijkstra.dijkstra`
 	:param dict target: An element from the ``data`` input to :obj:`decitala.path_finding.dijkstra.dijkstra`
 	"""
+	source = source["id"]
+	target = target["id"]
+	
 	path = [target]
 	while True:
 		key = pred[path[0]]
