@@ -59,7 +59,7 @@ def rolling_hash_search(
 	:param int part_num: part in the file to be searched (0-indexed).
 	:param `decitala.hash_table.FragmentHashTable` table: 
 	:param list windows: Allowed window sizes for search. 
-	:param bool allow_subdivision: Whether to check for subdivisions in the search. Not yet supported. 
+	:param bool allow_subdivision: Whether to check for subdivisions in the search. 
 	"""
 	object_list = get_object_indices(filepath=filepath, part_num=part_num)
 	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
@@ -113,32 +113,42 @@ def rolling_hash_search(
 
 				# TODO: Need to check appearance since this isn't done in preprocessing.
 				# Otherwise get duplicates!
-				# if allow_subdivision is True:
-				# 	raise SearchException("That is not yet implemented. Coming soon.")
-				# 	all_superdivisions = find_possible_superdivisions(ql_array)
-				# 	for i, this_superdivision in enumerate(all_superdivisions):
-				# 		if i == 0:
-				# 			continue
-				# 		this_superdivision_retrograde = this_superdivision[::-1]
-				# 		if len(this_superdivision) < 2:
-				# 			continue
+				if allow_subdivision is True:
+					# raise SearchException("That is not yet implemented. Coming soon.")
+					all_superdivisions = find_possible_superdivisions(ql_array)
+					for i, this_superdivision in enumerate(all_superdivisions):
+						if i == 0:
+							continue
+						this_superdivision_retrograde = this_superdivision[::-1]
+						if len(this_superdivision) < 2:
+							continue
 
-						# Tricky to interpolate this SR data. 
-						# try:
-						# 	searches = [tuple(this_superdivision), tuple(this_superdivision_retrograde)]
-						# 	for i, this_search in enumerate(searches):
-						# 		searched = table.data[str(this_search)]
-						# 		if searched is not None:
-						# 			search_dict = _make_search_dict(data=searched, frame=this_frame)
-						# 			search_dict["id"] = fragment_id
-						# 			if i == 0:
-						# 				search_dict["sr"] = True
-						# 			else:
-						# 				search_dict["rsr"] = True
-						# 			fragment_id += 1
-						# 			fragments_found.append(search_dict)
-						# except KeyError:
-						# 	pass
+						try:
+							searches = [tuple(this_superdivision), tuple(this_superdivision_retrograde)]
+							for i, this_search in enumerate(searches):
+								searched = table.data[this_search]
+								if searched is not None:
+									result = copy.copy(searched)
+									is_spanned_by_slur = frame_is_spanned_by_slur(this_frame)
+									pitch_content = frame_to_midi(this_frame)
+
+									offset_1 = this_frame[0][0]
+									offset_2 = this_frame[-1][0]
+
+									if i == 0:
+										result["mod_hierarchy_val"] = 5
+									else:
+										result["mod_hierarchy_val"] = 6
+
+									result["onset_range"] = (offset_1.offset, offset_2.offset + offset_2.quarterLength)
+									result["pitch_content"] = pitch_content
+									result["is_spanned_by_slur"] = is_spanned_by_slur
+									result["id"] = fragment_id
+									fragment_id += 1
+
+									fragments_found.append(result)
+						except KeyError:
+							pass
 
 	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
 

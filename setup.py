@@ -48,7 +48,6 @@ setup(
 		"sphinx_rtd_theme",
 		"Wand",
 		"natsort",
-		"functools"
 	],
 	entry_points={
 		"console_scripts": [
