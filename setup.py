@@ -47,7 +47,8 @@ setup(
 		"scipy",
 		"sphinx_rtd_theme",
 		"Wand",
-		"natsort"
+		"natsort",
+		"functools"
 	],
 	entry_points={
 		"console_scripts": [
