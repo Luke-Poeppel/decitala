@@ -451,19 +451,13 @@ def _make_one_superdivision(array, clusters):
 
 	return np.array([x for x in superdivision if x != 0])
 
-def find_possible_superdivisions(array):
+def find_possible_superdivisions(array, include_self=True):
 	"""
 	There is a more general approach to the subdivision problem, but we note that Messiaen's
 	subdivision of tala components tends to be even.
 
-	>>> varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
-	>>> for x in find_possible_superdivisions(varied_ragavardhana):
-	...     print(x)
-	[1.   1.   1.   0.5  0.75 0.5 ]
-	[3.   0.5  0.75 0.5 ]
-
-	>>> varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
-	>>> for x in find_possible_superdivisions(varied_ragavardhana_2):
+	>>> long_fragment = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])
+	>>> for x in find_possible_superdivisions(long_fragment):
 	...     print(x)
 	[1.   1.   1.   0.5  0.75 0.75 0.5  0.25 0.25 0.25]
 	[3.   0.5  0.75 0.75 0.5  0.25 0.25 0.25]
@@ -473,8 +467,16 @@ def find_possible_superdivisions(array):
 	[3.   0.5  0.75 0.75 0.5  0.75]
 	[1.   1.   1.   0.5  1.5  0.5  0.75]
 	[3.   0.5  1.5  0.5  0.75]
+
+	>>> varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])
+	>>> for x in find_possible_superdivisions(varied_ragavardhana, include_self=False):
+	...     print(x)
+	[3.   0.5  0.75 0.5 ]
 	"""
-	possible_super_divisions = [np.array(array)]
+	if include_self:
+		possible_super_divisions = [np.array(array)]
+	else:
+		possible_super_divisions = []
 	clusters = find_clusters(array)
 	possible_combinations = power_list(clusters)
 	for this_combination in possible_combinations:
