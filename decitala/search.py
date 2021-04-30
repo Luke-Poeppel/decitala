@@ -80,8 +80,8 @@ def rolling_hash_search(
 	for this_win in windows:
 		frames = roll_window(array=object_list, window_length=this_win)
 		for this_frame in frames:
-			# If having trouble finding a fragment, uncomment the code below and check table[str(tuple(ql_array))]. # noqa
-			# if this_win == 4 and this_frame[0][1][0] == 0: # starting onset
+			# If having trouble finding a fragment, uncomment the code below and check table[tuple(ql_array)]. # noqa
+			# if this_win == 6 and this_frame[0][1][0] == 2.0: # starting onset
 			# 	import pdb; pdb.set_trace()
 
 			objects = [x[0] for x in this_frame]
@@ -114,18 +114,19 @@ def rolling_hash_search(
 
 				# TODO: Need to check appearance since this isn't done in preprocessing.
 				# Otherwise get duplicates!
+				# if this_win == 6 and this_frame[0][1][0] == 2.0: # starting onset
+				# 	import pdb; pdb.set_trace()
 				if allow_subdivision is True:
 					# raise SearchException("That is not yet implemented. Coming soon.")
-					all_superdivisions = find_possible_superdivisions(ql_array)
-					for i, this_superdivision in enumerate(all_superdivisions):
-						if i == 0:
-							continue
+					all_superdivisions = find_possible_superdivisions(ql_array, include_self=False)
+					for this_superdivision in all_superdivisions:
 						this_superdivision_retrograde = this_superdivision[::-1]
 						if len(this_superdivision) < 2:
 							continue
 
 						try:
 							searches = [tuple(this_superdivision), tuple(this_superdivision_retrograde)]
+							subdivision_results = []
 							for i, this_search in enumerate(searches):
 								searched = table.data[this_search]
 								if searched is not None:
@@ -147,7 +148,9 @@ def rolling_hash_search(
 									result["id"] = fragment_id
 									fragment_id += 1
 
-									fragments_found.append(result)
+									subdivision_results.append(result)
+							
+							fragments_found.append(min(subdivision_results, key=lambda x: x["mod_hierarchy_val"]))
 						except KeyError:
 							pass
 

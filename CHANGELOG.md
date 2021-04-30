@@ -6,6 +6,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.10.1] ???
 ### Fixed
 - The `utils.find_possible_superdivisions` function was including itself as a possible superdivision. This was a bit confusing, so I added an `include_self` parameter. 
+- Issues #125: duplicate `sr` and `rsr` results from `rolling_hash_search`; 
 
 ## [v0.10.0] April 29, 2021
 ### Added

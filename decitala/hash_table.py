@@ -238,7 +238,7 @@ class FragmentHashTable:
 		self.loaded = True
 
 	def data(self):
-		if not self.data:
+		if not self.loaded:
 			self.load_modifications()
 			return self.data
 		else:
