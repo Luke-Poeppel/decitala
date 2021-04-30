@@ -3,7 +3,7 @@
 [![Actions Status](https://github.com/Luke-Poeppel/decitala/workflows/Build/badge.svg)](https://github.com/Luke-Poeppel/decitala/actions)
 ![Coverage](./coverage.svg)
 ![img](https://img.shields.io/badge/semver-0.10.1-green)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4698011.svg)](https://doi.org/10.5281/zenodo.4698011)
+[![DOI](https://zenodo.org/badge/275475667.svg)](https://zenodo.org/badge/latestdoi/275475667)
 
 The ``decitala`` package aims to make rhythmic analysis of Olivier Messiaen's music easier, particularly with respect to his use of ethnological rhythmic fragments.  
 

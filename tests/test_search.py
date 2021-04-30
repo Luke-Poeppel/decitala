@@ -3,6 +3,7 @@ import doctest
 
 from decitala import search, hash_table, utils
 from decitala.fragment import GreekFoot
+from decitala.hash_table import DecitalaHashTable
 
 here = os.path.abspath(os.path.dirname(__file__))
 filepath = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
@@ -36,3 +37,13 @@ def test_shuffled_I_path_with_slur_constraint():
 	]
 
 	assert fragments == analysis
+
+# fp = "/Users/lukepoeppel/Messiaen/Encodings/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl"
+# fragments = search.rolling_hash_search(
+# 	filepath=fp,
+# 	part_num=3,
+# 	table=DecitalaHashTable(),
+# 	allow_subdivision=True
+# )
+# for x in fragments:
+# 	print(x["fragment"], x["onset_range"], x["id"], x["mod_hierarchy_val"])

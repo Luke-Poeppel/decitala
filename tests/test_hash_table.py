@@ -85,8 +85,8 @@ def test_generate_all_modifications():
 	expected_length = (2*(len(factors) + len(differences))) - 2
 	assert len(dict_in) == expected_length
 
-	for key, val in dict_in.items():
-		print(key, val)
+	# for key, val in dict_in.items():
+	# 	print(key, val)
 
 def test_decitala_hash_table():
 	DHT = DecitalaHashTable()
@@ -117,3 +117,8 @@ def test_greek_foot_hash_table():
 		search_result = GFHT.data[modification]
 
 		assert search_result is not None
+
+def test_ragavardhana():
+	DHT = DecitalaHashTable()
+	frag = [3.0, 0.5, 0.75, 0.5]
+	assert DHT.data[tuple(frag)]["fragment"] == Decitala("Ragavardhana")

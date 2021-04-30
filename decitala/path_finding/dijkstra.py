@@ -60,13 +60,13 @@ def generate_path(pred, source, target):
 	:param dict target: An element from the ``data`` input to
 						:obj:`decitala.path_finding.dijkstra.dijkstra`
 	"""
-	source = source["id"]
-	target = target["id"]
+	source_fragment_id = source["id"]
+	target_fragment_id = target["id"]
 
-	path = [target]
+	path = [target_fragment_id]
 	while True:
 		key = pred[path[0]]
 		path.insert(0, key)
-		if key == source:
+		if key == source_fragment_id:
 			break
 	return path
