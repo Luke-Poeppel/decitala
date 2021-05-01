@@ -9,7 +9,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ### Fixed
 - The `utils.find_possible_superdivisions` function was including itself as a possible superdivision. This was a bit confusing, so I added an `include_self` parameter. This option was accidentally set to `False` by default which has been fixed. 
-- Issues #125: duplicate `sr` and `rsr` results from `rolling_hash_search`; #123: source-sink error in Dijkstra (fixed with a much more general solution (see `path_finding.dijkstra.dijkstra_best_source_and_sink`) and integrated into `search.path_finder`. 
+- Issues #125: duplicate `sr` and `rsr` results from `rolling_hash_search`; #123/#126: source-sink error in Dijkstra (fixed with a much more general solution (see `path_finding.dijkstra.dijkstra_best_source_and_sink`) and integrated into `search.path_finder`. 
 
 ## [v0.10.0] April 29, 2021
 ### Added

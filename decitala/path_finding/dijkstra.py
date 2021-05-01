@@ -54,6 +54,18 @@ def dijkstra_best_source_and_sink(data):
 	via Dijkstra. Only requires regular data input. 
 	"""
 	sources, targets = path_finding_utils.sources_and_sinks(data)
+
+	# This checks if there exists a fragment in sources/sinks that spans the whole onset range. 
+	min_onset = min(sources, key=lambda x: x["onset_range"][0])["onset_range"][0]
+	max_onset = max(targets, key=lambda x: x["onset_range"][1])["onset_range"][1]	
+	for source in sources:
+		if source["onset_range"] == (min_onset, max_onset):
+			dist, pred = dijkstra(
+				data,
+				source
+			)
+			return source, source, pred
+
 	best_path_cost = np.inf
 	best_source = None
 	best_target = None
@@ -65,8 +77,6 @@ def dijkstra_best_source_and_sink(data):
 			source
 		)
 		for target in targets:
-			if source == target:
-				continue
 			if (dist[target["id"]] < best_path_cost):
 				if source["onset_range"][1] <= target["onset_range"][0]:
 					best_path_cost = dist[target["id"]]
@@ -90,6 +100,9 @@ def generate_path(pred, source, target):
 	source_fragment_id = source["id"]
 	target_fragment_id = target["id"]
 
+	if not pred and source_fragment_id == target_fragment_id: # Second condition is just a guardrail.
+		return [source_fragment_id]
+
 	path = [target_fragment_id]
 	while True:
 		key = pred[path[0]]
@@ -97,4 +110,3 @@ def generate_path(pred, source, target):
 		if key == source_fragment_id:
 			break
 	return path
-

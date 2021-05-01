@@ -10,6 +10,7 @@ from decitala.path_finding import dijkstra, path_finding_utils
 here = os.path.abspath(os.path.dirname(__file__))
 s1_fp = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
 s3_fp = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_3.xml"
+s4_fp = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_4.xml"
 
 @pytest.fixture
 def s1_fragments():
@@ -23,6 +24,14 @@ def s1_fragments():
 def s3_fragments():
 	return rolling_hash_search(
 		filepath=s3_fp,
+		part_num=0,
+		table=GreekFootHashTable()
+	)
+
+@pytest.fixture
+def s4_fragments():
+	return rolling_hash_search(
+		filepath=s4_fp,
 		part_num=0,
 		table=GreekFootHashTable()
 	)
@@ -57,3 +66,16 @@ def test_dijkstra_path_2(s3_fragments):
 
 	assert [x["onset_range"] for x in path_frags] == expected_onset_ranges
 	assert set(x["fragment"] for x in path_frags) == set(expected_fragments)
+
+def test_dijkstra_path_3(s4_fragments):
+	expected_fragment = GreekFoot("Peon_IV")
+	source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=s4_fragments)
+	best_path = dijkstra.generate_path(
+		best_pred, 
+		source,
+		target
+	)
+	path_frags = sorted([x for x in s4_fragments if x["id"] in best_path], key=lambda x: x["onset_range"][0])
+
+	assert len(path_frags) == 1
+	assert path_frags[0]["fragment"] == expected_fragment
