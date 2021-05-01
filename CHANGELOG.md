@@ -4,6 +4,9 @@ All important changes to the decitala package will be documented here.
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [v0.10.1] ???
+### Changed
+- The caching in the `fragment` module now uses `functools.lru_cache(maxsize=None)` (replacing the newer `functools.cache`) to allow support for python 3.7/3.8. 
+
 ### Fixed
 - The `utils.find_possible_superdivisions` function was including itself as a possible superdivision. This was a bit confusing, so I added an `include_self` parameter. This option was accidentally set to `False` by default which has been fixed. 
 - Issues #125: duplicate `sr` and `rsr` results from `rolling_hash_search`; #123: source-sink error in Dijkstra (fixed with a much more general solution (see `path_finding.dijkstra.dijkstra_best_source_and_sink`) and integrated into `search.path_finder`. 
