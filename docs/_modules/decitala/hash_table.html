@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.hash_table &mdash; decitala 0.10.0 documentation</title>
+  <title>decitala.hash_table &mdash; decitala 0.10.1 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.10.0
+                0.10.1
               </div>
             
           
@@ -407,7 +407,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">loaded</span> <span class="o">=</span> <span class="kc">True</span>
 
 	<span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaded</span><span class="p">:</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">load_modifications</span><span class="p">()</span>
 			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
 		<span class="k">else</span><span class="p">:</span>

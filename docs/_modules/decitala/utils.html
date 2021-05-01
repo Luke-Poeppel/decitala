@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.utils &mdash; decitala 0.10.0 documentation</title>
+  <title>decitala.utils &mdash; decitala 0.10.1 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.10.0
+                0.10.1
               </div>
             
           
@@ -620,19 +620,13 @@
 
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">superdivision</span> <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])</span>
 
-<div class="viewcode-block" id="find_possible_superdivisions"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.find_possible_superdivisions">[docs]</a><span class="k">def</span> <span class="nf">find_possible_superdivisions</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+<div class="viewcode-block" id="find_possible_superdivisions"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.find_possible_superdivisions">[docs]</a><span class="k">def</span> <span class="nf">find_possible_superdivisions</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">include_self</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	There is a more general approach to the subdivision problem, but we note that Messiaen&#39;s</span>
 <span class="sd">	subdivision of tala components tends to be even.</span>
 
-<span class="sd">	&gt;&gt;&gt; varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])</span>
-<span class="sd">	&gt;&gt;&gt; for x in find_possible_superdivisions(varied_ragavardhana):</span>
-<span class="sd">	...     print(x)</span>
-<span class="sd">	[1.   1.   1.   0.5  0.75 0.5 ]</span>
-<span class="sd">	[3.   0.5  0.75 0.5 ]</span>
-
-<span class="sd">	&gt;&gt;&gt; varied_ragavardhana_2 = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])</span>
-<span class="sd">	&gt;&gt;&gt; for x in find_possible_superdivisions(varied_ragavardhana_2):</span>
+<span class="sd">	&gt;&gt;&gt; long_fragment = np.array([1, 1, 1, 0.5, 0.75, 0.75, 0.5, 0.25, 0.25, 0.25])</span>
+<span class="sd">	&gt;&gt;&gt; for x in find_possible_superdivisions(long_fragment):</span>
 <span class="sd">	...     print(x)</span>
 <span class="sd">	[1.   1.   1.   0.5  0.75 0.75 0.5  0.25 0.25 0.25]</span>
 <span class="sd">	[3.   0.5  0.75 0.75 0.5  0.25 0.25 0.25]</span>
@@ -642,8 +636,16 @@
 <span class="sd">	[3.   0.5  0.75 0.75 0.5  0.75]</span>
 <span class="sd">	[1.   1.   1.   0.5  1.5  0.5  0.75]</span>
 <span class="sd">	[3.   0.5  1.5  0.5  0.75]</span>
+
+<span class="sd">	&gt;&gt;&gt; varied_ragavardhana = np.array([1, 1, 1, 0.5, 0.75, 0.5])</span>
+<span class="sd">	&gt;&gt;&gt; for x in find_possible_superdivisions(varied_ragavardhana, include_self=False):</span>
+<span class="sd">	...     print(x)</span>
+<span class="sd">	[3.   0.5  0.75 0.5 ]</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">possible_super_divisions</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array</span><span class="p">)]</span>
+	<span class="k">if</span> <span class="n">include_self</span><span class="p">:</span>
+		<span class="n">possible_super_divisions</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array</span><span class="p">)]</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">possible_super_divisions</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="n">clusters</span> <span class="o">=</span> <span class="n">find_clusters</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
 	<span class="n">possible_combinations</span> <span class="o">=</span> <span class="n">power_list</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
 	<span class="k">for</span> <span class="n">this_combination</span> <span class="ow">in</span> <span class="n">possible_combinations</span><span class="p">:</span>

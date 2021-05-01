@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>path_finding &mdash; decitala 0.10.0 documentation</title>
+  <title>path_finding &mdash; decitala 0.10.1 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.10.0
+                0.10.1
               </div>
             
           
@@ -242,7 +242,7 @@ greatest number of onsets.</p>
 <span id="dijkstra"></span><h2>dijkstra<a class="headerlink" href="#module-decitala.path_finding.dijkstra" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="decitala.path_finding.dijkstra.dijkstra">
-<code class="sig-prename descclassname"><span class="pre">decitala.path_finding.dijkstra.</span></code><code class="sig-name descname"><span class="pre">dijkstra</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'gap':</span> <span class="pre">0.75,</span> <span class="pre">'onsets':</span> <span class="pre">0.25}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/path_finding/dijkstra.html#dijkstra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.path_finding.dijkstra.dijkstra" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.path_finding.dijkstra.</span></code><code class="sig-name descname"><span class="pre">dijkstra</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'gap':</span> <span class="pre">0.75,</span> <span class="pre">'onsets':</span> <span class="pre">0.25}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/path_finding/dijkstra.html#dijkstra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.path_finding.dijkstra.dijkstra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dijkstra path-finding algorithm from dynamic programming. Uses a min-heap
 data structure for efficiency.</p>
 <dl class="field-list simple">
@@ -250,10 +250,18 @@ data structure for efficiency.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<em>list</em>) – Data from one of the search algorithms (each result being a dictionary.)</p></li>
 <li><p><strong>source</strong> (<em>dict</em>) – Any element from <code class="docutils literal notranslate"><span class="pre">data</span></code>.</p></li>
-<li><p><strong>target</strong> (<em>dict</em>) – Any element from <code class="docutils literal notranslate"><span class="pre">data</span></code>.</p></li>
+<li><p><strong>weights</strong> (<em>dict</em>) – Dictionary with two keys and values (must sum to 1.0):
+<code class="docutils literal notranslate"><span class="pre">&quot;gap&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;onsets&quot;</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.path_finding.dijkstra.dijkstra_best_source_and_sink">
+<code class="sig-prename descclassname"><span class="pre">decitala.path_finding.dijkstra.</span></code><code class="sig-name descname"><span class="pre">dijkstra_best_source_and_sink</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/path_finding/dijkstra.html#dijkstra_best_source_and_sink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.path_finding.dijkstra.dijkstra_best_source_and_sink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for agnostically choosing the best source and target (and associated predecessor set)
+via Dijkstra. Only requires regular data input.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -288,6 +296,7 @@ data structure for efficiency.</p>
 <li><p><strong>data</strong> (<em>list</em>) – data from <code class="xref py py-obj docutils literal notranslate"><span class="pre">rolling_search</span></code>.</p></li>
 <li><p><strong>weights</strong> (<em>dict</em>) – weights to be used in the cost function. Must sum to 1. Requires “gap”
 and “onsets” values.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Whether to log messages (including showing a progress bar).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
