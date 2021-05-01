@@ -8,27 +8,29 @@ from decitala.search import rolling_hash_search
 from decitala.path_finding import dijkstra, path_finding_utils
 
 here = os.path.abspath(os.path.dirname(__file__))
-filepath = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
+s1_fp = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
+s3_fp = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_3.xml"
 
 @pytest.fixture
 def s1_fragments():
 	return rolling_hash_search(
-		filepath=filepath,
+		filepath=s1_fp,
 		part_num=0,
 		table=GreekFootHashTable()
 	)
 
-def test_dijkstra(s1_fragments):
-	source = s1_fragments[0]
-	target = s1_fragments[-3]
-
-	dist, pred = dijkstra.dijkstra(
-		data=s1_fragments,
-		source=source,
-		target=target,
+@pytest.fixture
+def s3_fragments():
+	return rolling_hash_search(
+		filepath=s3_fp,
+		part_num=0,
+		table=GreekFootHashTable()
 	)
+
+def test_dijkstra_path_1(s1_fragments):
+	source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=s1_fragments)
 	best_path = dijkstra.generate_path(
-		pred, 
+		best_pred, 
 		source,
 		target
 	)
@@ -39,29 +41,19 @@ def test_dijkstra(s1_fragments):
 		GreekFoot("Amphibrach"),
 		GreekFoot("Peon_IV"),
 	]
-
 	assert set(x["fragment"] for x in path_frags) == set(expected_fragments)
 
-fp = "/Users/lukepoeppel/Messiaen/Oiseaux_De_Nouvelle_Calédonie/11_Les_Siffleurs/B_Le_Siffleur_à_ventre_roux/XML/Le_Siffleur_à_ventre_roux_Ex98.xml"
-# fp = "/Users/lukepoeppel/Messiaen/Encodings/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl"
-# fragments = rolling_hash_search(
-# 	filepath=fp,
-# 	part_num=0,
-# 	table=GreekFootHashTable(),
-# 	allow_subdivision=True
-# )
-# source, sink = path_finding_utils.best_source_and_sink(fragments)
-# print(source, sink)
-# dist, prev = dijkstra.dijkstra(
-# 	fragments,
-# 	source,
-# 	sink
-# )
-# p = dijkstra.generate_path(
-# 	prev,
-# 	source,
-# 	sink
-# )
-# path_frags = sorted([x for x in fragments if x["id"] in p], key=lambda x: x["onset_range"][0]) # noqa
-# for x in path_frags:
-# 	print(x)
+def test_dijkstra_path_2(s3_fragments):
+	expected_fragments = [GreekFoot("Anapest"), GreekFoot("Choriamb")]
+	expected_onset_ranges = [(0.0, 0.5), (0.5, 1.25)]
+	
+	source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=s3_fragments)
+	best_path = dijkstra.generate_path(
+		best_pred, 
+		source,
+		target
+	)
+	path_frags = sorted([x for x in s3_fragments if x["id"] in best_path], key=lambda x: x["onset_range"][0])
+
+	assert [x["onset_range"] for x in path_frags] == expected_onset_ranges
+	assert set(x["fragment"] for x in path_frags) == set(expected_fragments)

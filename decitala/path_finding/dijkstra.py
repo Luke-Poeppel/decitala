@@ -16,7 +16,6 @@ from . import path_finding_utils
 def dijkstra(
 		data,
 		source,
-		target,
 		weights={"gap": 0.75, "onsets": 0.25}
 	):
 	"""
@@ -25,11 +24,11 @@ def dijkstra(
 
 	:param list data: Data from one of the search algorithms (each result being a dictionary.)
 	:param dict source: Any element from ``data``.
-	:param dict target: Any element from ``data``.
+	:param dict weights: Dictionary with two keys and values (must sum to 1.0): 
+						``"gap"`` and ``"onsets"``. 
 	"""
 	graph = path_finding_utils.build_graph(data, weights)
 	source = source["id"]
-	target = target["id"]
 
 	q = []
 	dist = {x: np.inf for x in graph.keys()}
@@ -48,6 +47,34 @@ def dijkstra(
 				heapq.heappush(q, (cand_w, n))
 
 	return dist, pred
+
+def dijkstra_best_source_and_sink(data):
+	"""
+	Function for agnostically choosing the best source and target (and associated predecessor set)
+	via Dijkstra. Only requires regular data input. 
+	"""
+	sources, targets = path_finding_utils.sources_and_sinks(data)
+	best_path_cost = np.inf
+	best_source = None
+	best_target = None
+	best_predecessor_set = None
+
+	for source in sources:
+		dist, pred = dijkstra(
+			data,
+			source
+		)
+		for target in targets:
+			if source == target:
+				continue
+			if (dist[target["id"]] < best_path_cost):
+				if source["onset_range"][1] <= target["onset_range"][0]:
+					best_path_cost = dist[target["id"]]
+					best_source = source
+					best_target = target
+					best_predecessor_set = pred
+	
+	return best_source, best_target, best_predecessor_set
 
 def generate_path(pred, source, target):
 	"""
@@ -70,3 +97,4 @@ def generate_path(pred, source, target):
 		if key == source_fragment_id:
 			break
 	return path
+
