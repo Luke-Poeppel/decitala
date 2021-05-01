@@ -195,15 +195,11 @@ def path_finder(
 	if algorithm == "dijkstra":
 		if slur_constraint:
 			raise SearchException("This is not yet supported. Coming soon.")
-		dist, pred = dijkstra.dijkstra(
-			data=fragments,
-			source=best_source,
-			target=best_sink,
-		)
+		source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=fragments)
 		best_path = dijkstra.generate_path(
-			pred,
-			best_source,
-			best_sink
+			best_pred, 
+			source,
+			target
 		)
 		best_path = sorted([x for x in fragments if x["id"] in best_path], key=lambda x: x["onset_range"][0]) # noqa
 	elif algorithm == "floyd-warshall":
