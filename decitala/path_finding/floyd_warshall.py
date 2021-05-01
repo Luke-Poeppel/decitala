@@ -30,7 +30,7 @@ def floyd_warshall(
 	:param list data: data from :obj:`~decitala.search.rolling_search`.
 	:param dict weights: weights to be used in the cost function. Must sum to 1. Requires "gap"
 			and "onsets" values.
-	:param bool verbose: Whether to log messages (including showing a progress bar). 
+	:param bool verbose: Whether to log messages (including showing a progress bar).
 	:return: two matrices of size len(data) x len(data): first is the weighted adjacency matrix, the
 			second is the matrix used for path reconstruction.
 	:rtype: tuple

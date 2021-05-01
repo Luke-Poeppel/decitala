@@ -3,7 +3,7 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.10.1] ???
+## [v0.10.1] May 1, 2021
 ### Changed
 - The caching in the `fragment` module now uses `functools.lru_cache(maxsize=None)` (replacing the newer `functools.cache`) to allow support for python 3.7/3.8. 
 

@@ -149,7 +149,7 @@ def rolling_hash_search(
 									fragment_id += 1
 
 									subdivision_results.append(result)
-							
+
 							fragments_found.append(min(subdivision_results, key=lambda x: x["mod_hierarchy_val"]))
 						except KeyError:
 							pass
@@ -197,7 +197,7 @@ def path_finder(
 			raise SearchException("This is not yet supported. Coming soon.")
 		source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=fragments)
 		best_path = dijkstra.generate_path(
-			best_pred, 
+			best_pred,
 			source,
 			target
 		)

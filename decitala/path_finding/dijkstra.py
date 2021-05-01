@@ -24,8 +24,8 @@ def dijkstra(
 
 	:param list data: Data from one of the search algorithms (each result being a dictionary.)
 	:param dict source: Any element from ``data``.
-	:param dict weights: Dictionary with two keys and values (must sum to 1.0): 
-						``"gap"`` and ``"onsets"``. 
+	:param dict weights: Dictionary with two keys and values (must sum to 1.0):
+						``"gap"`` and ``"onsets"``.
 	"""
 	graph = path_finding_utils.build_graph(data, weights)
 	source = source["id"]
@@ -51,13 +51,13 @@ def dijkstra(
 def dijkstra_best_source_and_sink(data):
 	"""
 	Function for agnostically choosing the best source and target (and associated predecessor set)
-	via Dijkstra. Only requires regular data input. 
+	via Dijkstra. Only requires regular data input.
 	"""
 	sources, targets = path_finding_utils.sources_and_sinks(data)
 
-	# This checks if there exists a fragment in sources/sinks that spans the whole onset range. 
+	# This checks if there exists a fragment in sources/sinks that spans the whole onset range.
 	min_onset = min(sources, key=lambda x: x["onset_range"][0])["onset_range"][0]
-	max_onset = max(targets, key=lambda x: x["onset_range"][1])["onset_range"][1]	
+	max_onset = max(targets, key=lambda x: x["onset_range"][1])["onset_range"][1]
 	for source in sources:
 		if source["onset_range"] == (min_onset, max_onset):
 			dist, pred = dijkstra(
@@ -83,7 +83,7 @@ def dijkstra_best_source_and_sink(data):
 					best_source = source
 					best_target = target
 					best_predecessor_set = pred
-	
+
 	return best_source, best_target, best_predecessor_set
 
 def generate_path(pred, source, target):
@@ -100,7 +100,7 @@ def generate_path(pred, source, target):
 	source_fragment_id = source["id"]
 	target_fragment_id = target["id"]
 
-	if not pred and source_fragment_id == target_fragment_id: # Second condition is just a guardrail.
+	if not pred and source_fragment_id == target_fragment_id:  # Second condition is just a guardrail.
 		return [source_fragment_id]
 
 	path = [target_fragment_id]
