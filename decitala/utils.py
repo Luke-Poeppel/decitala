@@ -719,7 +719,7 @@ def contiguous_summation(data):
 	0.25
 	"""
 	copied_data = copy.deepcopy(data)
-	regions_property = lambda i: ((copied_data[i][1][1] - copied_data[i][1][0]), [x.midi for x in copied_data[i][0].pitches])  # noqa: E501
+	regions_property = lambda i: ((copied_data[i][1][1] - copied_data[i][1][0]), [x.midi for x in copied_data[i][0].pitches if not(x.isRest)])  # noqa: E501
 	ranges = [list(this_range) for _, this_range in groupby(range(len(copied_data)), regions_property)]
 
 	cluster_index_ranges = [[this_range[0], this_range[-1]] for this_range in ranges if len(this_range) > 1]  # noqa: E501

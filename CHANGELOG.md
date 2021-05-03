@@ -8,7 +8,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - All functions accepting a `ql_array` in `utils.py` now take in a variable called `ql_array` –– a few were set to `fragment` instead which was confusing (fixes #122). 
 
 ### Fixed
-- Issues #130: Allow both lowercase and uppercase algorithm names in `search.path_finder`. 
+- Issues #130: Allow both lowercase and uppercase algorithm names in `search.path_finder`; #129: contiguous summation fails with rests; 
 
 ## [v0.10.1] May 1, 2021
 ### Changed
