@@ -164,31 +164,31 @@ def _decitala_full_id_from_filename(filename):
 ####################################################################################################
 # RHYTHM
 ####################################################################################################
-def augment(fragment, factor=1.0, difference=0.0):
+def augment(ql_array, factor=1.0, difference=0.0):
 	"""
 	Returns an augmentation in the style of Messiaen. If difference is set to 0.0, then the
 	augmentation is multiplicative. If factor is set to 1.0, then augmentation is additive. If
 	factor & difference are non-zero, we have a mixed augmentation.
 
-	:param numpy.array fragment: array defining the rhythmic fragment.
+	:param ql_array: array defining the rhythmic fragment (iterable).
 	:param float factor: factor for multiplicative augmentation.
 	:param float difference: factor for additive augmentation.
 
 	:return: an augmented fragment.
 	:rtype: numpy.array
 
-	>>> augment(fragment=[1.0, 1.0, 0.5, 0.25], factor=2.0, difference=0.25)
+	>>> augment(ql_array=[1.0, 1.0, 0.5, 0.25], factor=2.0, difference=0.25)
 	array([2.25, 2.25, 1.25, 0.75])
 	"""
-	assert factor >= 0.0
-	return np.array([(this_val * factor) + difference for this_val in fragment])
+	assert factor > 0.0
+	return np.array([(this_val * factor) + difference for this_val in ql_array])
 
-def successive_ratio_array(fragment):
+def successive_ratio_array(ql_array):
 	"""
 	Returns array defined by the ratio of successive elements. By convention,
 	we set the first value to 1.0.
 
-	:param numpy.array fragment: array defining a rhythmic fragment.
+	:param ql_array: array defining a rhythmic fragment.
 	:return: array consisting of successive ratios of the input elements.
 	:rtype: numpy.array
 
@@ -207,17 +207,17 @@ def successive_ratio_array(fragment):
 
 	ratio_lst = [1.0]
 	i = 0
-	while i < len(fragment) - 1:
-		ratio_lst.append(_ratio(fragment, i))
+	while i < len(ql_array) - 1:
+		ratio_lst.append(_ratio(ql_array, i))
 		i += 1
 
 	return np.array(ratio_lst)
 
-def successive_difference_array(fragment):
+def successive_difference_array(ql_array):
 	"""
-	Returns the first order difference of ``fragment`` (contiguous differences).
+	Returns the first order difference of ``ql_array`` (contiguous differences).
 
-	:param numpy.array fragment: array defining a rhythmic fragment.
+	:param ql_array: array defining a rhythmic fragment (iterable).
 	:return: array consisting of successive differences of the input elements.
 	:rtype: numpy.array
 
@@ -234,17 +234,22 @@ def successive_difference_array(fragment):
 
 	difference_lst = [0.0]
 	i = 0
-	while i < len(fragment) - 1:
-		difference_lst.append(_difference(fragment, i))
+	while i < len(ql_array) - 1:
+		difference_lst.append(_difference(ql_array, i))
 		i += 1
 
 	return np.array(difference_lst)
 
 # La Valeur Ajoutee
-def get_added_values(ql_lst, print_type=True):
+def get_added_values(ql_array, print_type=True):
 	"""
 	Given a quarter length list, returns all indices and types of added values found, according to
 	the examples dicussed in Technique de Mon Langage Musical (1944).
+
+	:param ql_array: Array defining a rhythmic fragment (iterable).
+	:param bool print_type: Whether to print the Valéur Ajoutée types, along with the locations. 
+	:return: Location of extracted added values (along with their type if ``print_type=True``)
+	:rtype: list
 
 	>>> get_added_values([0.25, 0.5, 0.5, 0.75, 0.25])
 	[(0, 'du Note'), (4, 'du Note')]
@@ -273,21 +278,21 @@ def get_added_values(ql_lst, print_type=True):
 	>>> get_added_values([0.5, 0.25, 0.75, 0.25, 0.5])
 	[(1, 'du Note'), (2, 'du Point'), (3, 'du Note')]
 	"""
-	if len(ql_lst) < 3:
+	if len(ql_array) < 3:
 		raise Exception('List must be of length 3 or greater.')
 
 	addedVals = []
-	if ql_lst[0] == 0.25 and ql_lst[1] != 0.25:
+	if ql_array[0] == 0.25 and ql_array[1] != 0.25:
 		addedVals.append((0, 'du Note'))
-	if ql_lst[-1] == 0.25 and ql_lst[-2] != 0.25:
-		addedVals.append((len(ql_lst) - 1, 'du Note'))
-	if ql_lst[-1] == 0.75 and ql_lst[-2] % 0.5 == 0:
-		addedVals.append((len(ql_lst) - 1, 'du Point'))
+	if ql_array[-1] == 0.25 and ql_array[-2] != 0.25:
+		addedVals.append((len(ql_array) - 1, 'du Note'))
+	if ql_array[-1] == 0.75 and ql_array[-2] % 0.5 == 0:
+		addedVals.append((len(ql_array) - 1, 'du Point'))
 
-	for currIndex in range(1, len(ql_lst) - 1):
-		prevVal = ql_lst[currIndex - 1]
-		currVal = ql_lst[currIndex]
-		nextVal = ql_lst[currIndex + 1]
+	for currIndex in range(1, len(ql_array) - 1):
+		prevVal = ql_array[currIndex - 1]
+		currVal = ql_array[currIndex]
+		nextVal = ql_array[currIndex + 1]
 
 		x = currVal - 0.25
 		if x >= 1.0 and x.is_integer():
