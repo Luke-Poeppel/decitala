@@ -236,14 +236,7 @@ class FragmentHashTable:
 				)
 
 		self.loaded = True
-
-	def data(self):
-		if not self.loaded:
-			self.load_modifications()
-			return self.data
-		else:
-			return self.data
-
+	
 class DecitalaHashTable(FragmentHashTable):
 	"""
 	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``
@@ -260,4 +253,13 @@ class GreekFootHashTable(FragmentHashTable):
 	"""
 	def __init__(self):
 		super().__init__(datasets=["greek_foot"])
+		self.load()
+
+class AllCorporaHashTable(FragmentHashTable):
+	"""
+	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``
+	parameter set to all available datasets in the ``corpora`` directory and automatically loads.
+	"""
+	def __init__(self):
+		super().__init__(datasets=["greek_foot", "decitala"])
 		self.load()
