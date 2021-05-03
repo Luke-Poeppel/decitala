@@ -62,6 +62,15 @@ PRIMES = [
 	79, 83, 89, 97
 ]
 
+NEUMES = {
+	(1, 0): "Clivis",
+	(0, 1): "Podatus",
+	(0, 1, 2): "Scandicus",
+	(2, 1, 0): "Climacus",
+	(0, 1, 0): "Torculus",
+	(1, 0, 1): "Porrectus"
+}
+
 class UtilsException(Exception):
 	pass
 
@@ -966,6 +975,21 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 		return np.array([int(val) for val in seg_vals])
 	else:
 		return "<" + " ".join([str(int(val)) for val in seg_vals]) + ">"
+
+def contour_to_neume(contour):
+	"""
+	Function for checking the associated neume for a given contour. Only two and three onset 
+	contour are supported. 
+
+	:param contour: A pitch contour (iterable).
+	:return: The associated neume or ``None``. 
+	:rtype: str or None
+	"""
+	assert len(contour) <= 3, UtilsException("Contour input must be of length three!")
+	try:
+		return NEUMES[tuple(contour)]
+	except KeyError:
+		return None
 
 def _has_extremum(window, mode):
 	"""
