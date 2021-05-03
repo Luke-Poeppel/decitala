@@ -7,6 +7,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Changed
 - All functions accepting a `ql_array` in `utils.py` now take in a variable called `ql_array` –– a few were set to `fragment` instead which was confusing (fixes #122). 
 
+### Fixed
+- Issues #130: Allow both lowercase and uppercase algorithm names in `search.path_finder`. 
+
 ## [v0.10.1] May 1, 2021
 ### Changed
 - The caching in the `fragment` module now uses `functools.lru_cache(maxsize=None)` (replacing the newer `functools.cache`) to allow support for python 3.7/3.8. 

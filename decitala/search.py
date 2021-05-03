@@ -192,7 +192,7 @@ def path_finder(
 
 	best_source, best_sink = path_finding_utils.best_source_and_sink(fragments)
 
-	if algorithm == "dijkstra":
+	if algorithm.lower() == "dijkstra":
 		if slur_constraint:
 			raise SearchException("This is not yet supported. Coming soon.")
 		source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=fragments)
@@ -202,7 +202,7 @@ def path_finder(
 			target
 		)
 		best_path = sorted([x for x in fragments if x["id"] in best_path], key=lambda x: x["onset_range"][0]) # noqa
-	elif algorithm == "floyd-warshall":
+	elif algorithm.lower() == "floyd-warshall":
 		distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
 			fragments,
 			weights={
