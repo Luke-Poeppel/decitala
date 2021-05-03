@@ -483,7 +483,7 @@ class GeneralFragment:
 		>>> pre_augmentation.augment(factor=2.0, difference=0.75)
 		<fragment.GeneralFragment Spondee/r:2.0/d:0.75: [4.75 4.75]>
 		"""
-		new_ql_array = utils.augment(self.ql_array(), factor=factor, difference=difference)
+		new_ql_array = utils.augment(ql_array=self.ql_array(), factor=factor, difference=difference)
 		new_name = self.name + "/r:{}/".format(factor) + "d:{}".format(difference)
 		return GeneralFragment(new_ql_array, new_name)
 

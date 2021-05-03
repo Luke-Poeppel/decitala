@@ -87,7 +87,7 @@ def generate_all_modifications(
 			searches.append(qls[::-1])
 
 		for i, search in enumerate(searches):
-			augmentation = tuple(augment(fragment=search, factor=this_factor, difference=0.0))
+			augmentation = tuple(augment(ql_array=search, factor=this_factor, difference=0.0))
 
 			if i == 0:
 				retrograde = False
@@ -118,7 +118,7 @@ def generate_all_modifications(
 		if retrograde is True:
 			searches.append(qls[::-1])
 		for i, search in enumerate(searches):
-			augmentation = tuple(augment(fragment=search, factor=1.0, difference=this_difference))
+			augmentation = tuple(augment(ql_array=search, factor=1.0, difference=this_difference))
 			if any(x <= 0 for x in augmentation):
 				continue
 
