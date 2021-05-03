@@ -4,8 +4,12 @@ All important changes to the decitala package will be documented here.
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [v0.11.0] ???
+### Added
+- Added a `utils.phrase_divider` function for over-simplistically dividing a filepath/part-num combination into phrases (in the same output as `utils.get_object_indices`). The division is only on the basis of the appearance of rests and fermatas. (See #104)
+
 ### Changed
 - All functions accepting a `ql_array` in `utils.py` now take in a variable called `ql_array` –– a few were set to `fragment` instead which was confusing (fixes #122). 
+- The `measure_divider_mode` of `utils.get_object_indices` now accepts `"str"` and `"list"` to be consistent with standard python type naming. 
 
 ### Fixed
 - Issues #130: Allow both lowercase and uppercase algorithm names in `search.path_finder`; #129: contiguous summation fails with rests; 

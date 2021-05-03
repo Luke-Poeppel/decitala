@@ -622,6 +622,16 @@ def get_object_indices(
 	"""
 	Returns data of the form [(object, (start, end)), ...] for a given file path and part number.
 	(Supports rests and grace notes.)
+
+	:param str filepath: Path to file to be analyzed.
+	:param int part_num: Part number to be analyzed. 
+	:param str measure_divider_mode: Tool used for dividing the data into measures. If
+									``measure_divider_mode="str"`, the data is returned with
+									`"B"` used as the measure marker. If instead
+									``measure_divider_mode="list"`, the data is returned
+									partitioned by measure. The default is ``None``, so no
+									measure divisions are present.
+	:param bool ignore_grade: Whether to ignore grace notes in the output. ``False`` by default. 
 	"""
 	score = converter.parse(filepath)
 	part = score.parts[part_num]
@@ -638,7 +648,7 @@ def get_object_indices(
 				for this_obj in this_measure.recurse().stream().iter.notesAndRests:
 					measure_objects.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
 				data_out.append(measure_objects)
-			elif measure_divider_mode == "string":
+			elif measure_divider_mode == "str":
 				for this_obj in this_measure.recurse().stream().iter.notesAndRests:
 					data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
 
@@ -648,6 +658,35 @@ def get_object_indices(
 				raise Exception("Only allowed modes are `string` and `list`.")
 
 	return data_out
+
+def phrase_divider(
+		filepath,
+		part_num
+	):
+	"""
+	This is an oversimplified but useful tool for phrase analysis (particularly for the birdsongs). 
+	It returns the same output as :obj:`decitala.utils.get_object_indices` but divides the output
+	by "phrases," **only** as defined by the appearance of rests and fermatas. Ignores all dividers.
+
+	:param str filepath: Path to file to be analyzed.
+	:param int part_num: Part number to be analyzed. 
+	"""
+	all_objects = get_object_indices(
+		filepath,
+		part_num
+	)
+	all_phrases = []
+	for _, phrase in groupby(all_objects, lambda x: x[0].isRest):
+		all_phrases.append(list(phrase))
+
+	desired_phrases = []
+	for phrase in all_phrases:
+		if phrase[0][0].isRest:
+			continue
+		else:
+			desired_phrases.append(phrase)
+
+	return desired_phrases
 
 def ts_to_reduced_ts(ts):
 	"""
