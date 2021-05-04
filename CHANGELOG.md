@@ -15,7 +15,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Fixed
 - Issues #130: Allow both lowercase and uppercase algorithm names in `search.path_finder`; #129: contiguous summation fails with rests; 
 
-## [v0.10.1] May 1, 2021
+## [v0.10.1](https://github.com/Luke-Poeppel/decitala/tree/v0.10.1) May 1, 2021
 ### Changed
 - The caching in the `fragment` module now uses `functools.lru_cache(maxsize=None)` (replacing the newer `functools.cache`) to allow support for python 3.7/3.8. 
 
@@ -23,7 +23,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - The `utils.find_possible_superdivisions` function was including itself as a possible superdivision. This was a bit confusing, so I added an `include_self` parameter. This option was accidentally set to `False` by default which has been fixed. 
 - Issues #125: duplicate `sr` and `rsr` results from `rolling_hash_search`; #123/#126: source-sink error in Dijkstra (fixed with a much more general solution (see `path_finding.dijkstra.dijkstra_best_source_and_sink`) and integrated into `search.path_finder`. 
 
-## [v0.10.0] April 29, 2021
+## [v0.10.0](https://github.com/Luke-Poeppel/decitala/tree/v0.10.0) April 29, 2021
 ### Added
 - Revamped the database module (see #120). Everything is now ported over to SQLAlchemy and is more easily extendable to broader rhythmic corpora. Also added a `database.batch_create_database` function for creating a database from a large set of compositions. 
 - Implemented Dijkstra's Algorithm for path finding. This is now the default algorithm used in `search.path_finder`, but the user can override this. 
@@ -47,7 +47,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Issues #116: missing result logging from `decitala.cli.pathfinder`; #115: incorrect results from Morris symmetry classes; #73: default value for `try_contiguous_summation`. 
 - Incorrect serialization condition for `GeneralFragment` –– forced incorrect parsing to and from analysis files. 
 
-## [v0.9.1] April 16, 2021
+## [v0.9.1](https://github.com/Luke-Poeppel/decitala/tree/v0.9.1) April 16, 2021
 ### Added
 - Added testing to improve coverage (50%-52%)
 
@@ -60,7 +60,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Removed
 - Removed `py_modules` from `setup.py`. 
 
-## [v0.9.0] April 14, 2021
+## [v0.9.0](https://github.com/Luke-Poeppel/decitala/tree/v0.9.0) April 14, 2021
 ### Added
 - Function for annotating a score with the extracted data: ``vis.annotate_score``. 
 - Added private ``remake_analysis_files.py`` for remaking the analysis files in each release. 
@@ -78,15 +78,15 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - README: incorrect installation notes in README, improved translation to the commentary. 
 - Issues #53: duplicates in logs caused by saved handlers; #100: `path_finder` bug related to `curr_best_sink`; 
 
-## [v0.8.4] March 22, 2021
+## [v0.8.4](https://github.com/Luke-Poeppel/decitala/tree/v0.8.4) March 22, 2021
 ### Fixed
 - Added the missing Zenodo badge to the README.md file.
 
-## [v0.8.3] March 22, 2021
+## [v0.8.3](https://github.com/Luke-Poeppel/decitala/tree/v0.8.3) March 22, 2021
 ### Fixed
 - Issue #90: removed unused JS modules used in tree visualization. 
 
-## [v0.8.2] March 22, 2021
+## [v0.8.2](https://github.com/Luke-Poeppel/decitala/tree/v0.8.2) March 22, 2021
 ### Added
 - Added a ``.coveragerc`` file for excluding the tests and CLI tools from coverage reports. 
 
@@ -97,7 +97,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Additional bugfixes for slur constraint in ``get_path`` (causing infinite runtime). 
 - Issues #19: referenced a fault Nary tree size. It appears to be fixed, but I added a test; #95: the ``pathfinder`` command line tool now writes to JSON; #94: minor formatting error in ``floyd_warshall.py``.
 
-## [v0.8.1] March 20, 2021
+## [v0.8.1](https://github.com/Luke-Poeppel/decitala/tree/v0.8.1) March 20, 2021
 ### Added
 - Coverage and coverage shield for code improvement. 
 
@@ -115,7 +115,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Hotfix to extremely strange inheritance bug in the ``GeneralFragment`` child classes. (#92)
 - Bugfix in ``floyd_warshall.get_path``. Function was inserting the given starting point in the path, even if it was overrided by the slur constraint. 
 
-## [v0.8.0] March 15, 2021
+## [v0.8.0](https://github.com/Luke-Poeppel/decitala/tree/v0.8.0) March 15, 2021
 ### Added
 - Added a ``loader`` function in utils.py for easy loading of Messiaen's analyses (encoded by me). Also added additional analysis json files (including parts 0 & 1 of Livre d'Orgue (1951-52) movement V). 
 - Added testing and improved functionality for the hash table creation and ``rolling_hash_search``. This included adding a ``GreekHashTable`` and ``CombinedHashTable`` for a combined database. 
@@ -132,27 +132,27 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Fixed
 - Missing modification data in ``rolling_hash_search``. 
 
-## [v0.7.4] March 8, 2021 (Kent)
+## [v0.7.4](https://github.com/Luke-Poeppel/decitala/tree/v0.7.4) March 8, 2021 (Kent)
 ### Fixed
 - Finished applying flake8 to modules. 
 - Fixed #83 (missing modules in setup.py)
 
-## [v0.7.3] March 8, 2021 (Kent)
+## [v0.7.3](https://github.com/Luke-Poeppel/decitala/tree/v0.7.3) March 8, 2021 (Kent)
 ### Fixed
 - Re-gitignored ``local_docs``. 
 
-## [v0.7.2] March 8, 2021 (Kent)
+## [v0.7.2](https://github.com/Luke-Poeppel/decitala/tree/v0.7.2) March 8, 2021 (Kent)
 ### Fixed
 - Missing modifications types ``rr``, ``rd``, ``sr``, and ``rsr`` in ``DecitalaHashTable``. Refactored and clean up the instantiation code –– still requires work for Greek metrics and General fragments. 
 - Applied flake8 to vis.py.
 - JSON Serialization/Deserialization errors for ``GeneralFragment`` and its inherited classes. This makes saving "training data" easier. (This step is for the next minor patch.)
 - The ``local_docs`` directory (this was previously gitignored for no good reason). Also an analyses directory of databases holding valid analysis of compositions. 
 
-## [v0.7.1] March 3, 2021 (NYC)
+## [v0.7.1](https://github.com/Luke-Poeppel/decitala/tree/v0.7.1) March 3, 2021 (NYC)
 ### Fixed
 - In enabling github actions, I hit several git/github snags. There were some commit message errors and bad merges. Hopefully everything is fixed now. 
 
-## [v0.7.0] March 3, 2021 (NYC)
+## [v0.7.0](https://github.com/Luke-Poeppel/decitala/tree/v0.7.0) March 3, 2021 (NYC)
 ### Added
 - Implemented the Floyd-Warshall Algorithm for path-finding. 
 - Added a ``hash_table.py`` module for more efficient searching. This is  used in ``search.rolling_hash_search``.
@@ -169,7 +169,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Fixed
 - Issue #54 (unreferenced variable); Issue #51 (updated databases); Issue #58 (unfiltered fragment table); 
 
-## [v0.6.3] February 23, 2021 (NYC)
+## [v0.6.3](https://github.com/Luke-Poeppel/decitala/tree/v0.6.3) February 23, 2021 (NYC)
 ### Added
 - Added support/testing for python3.8. 
 
@@ -182,18 +182,18 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Fixed
 - Issue #45 (requires .db extension in `database.create_database`); Issue #46 (missing logger reference in helper function); Issue #47 (missing logs in the trees.py module); Issue #40 (incorrect numbers in `database.create_database` logs); Issue #50 (change `start` in enumeration statements for readability); Issue #41 (first part of migration to SQLAlchemy); Issue #37 (example SQL insertion error). 
 
-## [v0.6.2] - February 5, 2021 (NYC)
+## [v0.6.2](https://github.com/Luke-Poeppel/decitala/tree/v0.6.2) - February 5, 2021 (NYC)
 ### Changed
 - Refactored code in ``database.create_database`` to improve readability. 
 
-## [v0.6.1] - February 3, 2021 (Kent, CT)
+## [v0.6.1](https://github.com/Luke-Poeppel/decitala/tree/v0.6.1) - February 3, 2021 (Kent, CT)
 ### Fixed
 - Fixed issue #35. Error with saving logs to file. 
 
 ### Changed
 - The trees module no longer logs results. This is a temporary change while I figure out a better solution for global/local logging. 
 
-## [v0.6.0] - February 3, 2021 (Kent, CT)
+## [v0.6.0](https://github.com/Luke-Poeppel/decitala/tree/v0.6.0) - February 3, 2021 (Kent, CT)
 ### Added
 - Added the missing ``database.model_full_path`` function. 
 - Documentation fixes for ``DBParser`` and ``fragments.py``. 
@@ -209,11 +209,11 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Fixed
 - Missing name argument in fragment trees created from ``frag_type``.
 
-## [v0.5.2] - January 17, 2020 (Kent, CT)
+## [v0.5.2](https://github.com/Luke-Poeppel/decitala/tree/v0.5.2) - January 17, 2020 (Kent, CT)
 ### Removed
 - Codecov coverage status (because the service is terrible). 
 
-## [v0.5.1] - January 17, 2020 (Kent, CT)
+## [v0.5.1](https://github.com/Luke-Poeppel/decitala/tree/v0.5.1) - January 17, 2020 (Kent, CT)
 ### Added
 - Added a function in database.py that filters out cross-corpus duplicates from the data generated in ``create_database`` (``database.remove_cross_corpus_duplicates``).
 
@@ -223,7 +223,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Fixed
 - Coverage results published on codecov.io (private upload token) with badge. 
 
-## [v0.5.0] - January 16, 2020 (Kent, CT)
+## [v0.5.0](https://github.com/Luke-Poeppel/decitala/tree/v0.5.0) - January 16, 2020 (Kent, CT)
 ### Added
 - Added a ``create_fragment_database`` function in ``database.py`` that holds name/ql data & ratio/difference equivalents in the decitala and greek metric databases (including equivalents _across_ databases). This data is available in ``fragment_database.db`` in the databases directory. 
 - Decitala and GreekFoot objects now have an ``equivalents`` method that return equivalents (based on the ``rep_type``) in the fragment corpus.
@@ -236,14 +236,14 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - FragmentTree instantiation now relies on SQL database instead of os.listdir.
 - No doctests rely on absolute paths anymore. 
 
-## [v0.4.4] - January 10, 2020 (Kent, CT)
+## [v0.4.4](https://github.com/Luke-Poeppel/decitala/tree/v0.4.0) - January 10, 2020 (Kent, CT)
 ### Added
 - The output of rolling search now has an id parameter. This will be useful in a number of contexts. **NOTE**: this may require some fiddling when dealing with combined databases. 
 
 ### Changed
 - Rewrote all the ``pofp.py`` code, making it far more readable. The duplicate error caused by contiguous summation should now be fixed. 
 
-## [v0.4.3] - January 8, 2020 (Kent, CT)
+## [v0.4.3](https://github.com/Luke-Poeppel/decitala/tree/v0.4.3) - January 8, 2020 (Kent, CT)
 ### Changed
 - The DBParser now has ``metadata`` in the attributes, which stores the path table num, number of subpaths, and average onset data. That way, it needn't be reevalutaed every time we run the model. 
 
@@ -253,7 +253,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Removed
 - Removed all inheritence from ``object`` in classes (python3 classes are new-style). 
 
-## [v0.4.2] - January 7, 2020 (Kent, CT)
+## [v0.4.2](https://github.com/Luke-Poeppel/decitala/tree/v0.4.2) - January 7, 2020 (Kent, CT)
 ### Added
 - Added fragment table visualization (``DBParser.show_fragments_table``) using pandas (wrapper for pd.read_sql_query). Also added a few other sub-displays (like ``show_slurred_fragments``). 
 - Added preliminary native FragmentTree visualization. Can be called with ``FragmentTree.show()``. 
@@ -273,12 +273,12 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Removed
 - The ``paths.py`` file has been removed as all of its functionality has migrated to ``database.DBParser``.
 
-## [v0.4.1] - January 4, 2020 (Kent, CT)
+## [v0.4.1](https://github.com/Luke-Poeppel/decitala/tree/v0.4.1) - January 4, 2020 (Kent, CT)
 ### Fixed
 - Bugfix for prime pitch contour calculation (cseg doesn't work on extrema data).
 - Bugfix in database creation (missing comma). 
 
-## [v0.4.0] - January 4, 2020 (Kent, CT)
+## [v0.4.0](https://github.com/Luke-Poeppel/decitala/tree/v0.4.0) - January 4, 2020 (Kent, CT)
 ### Added
 - Added ``utils.pitch_content_to_contour``. 
 - Implementation of Morris' 1993 pitch contour reduction algorithm. ``utils.contour_to_prime_contour``. 
@@ -287,7 +287,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Changed
 - The ``utils.roll_window`` function now allows for a ``fn`` input (allows for rolling window over parts of list, as defined by a lambda expression). 
 
-## [v0.3.2] - January 1, 2020 (Kent, CT)
+## [v0.3.2](https://github.com/Luke-Poeppel/decitala/tree/v0.3.2) - January 1, 2020 (Kent, CT)
 ### Added
 - ``__all__`` for each module for ease-of-import. 
 - Documentation for CLI (version getter and ``cli.create_db``).
@@ -296,7 +296,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Bugfix in ``utils.frame_is_spanned_by_slur``. Previously didn't take into account the fact that a range may have multiple overlapping spanners. 
 - Removed old tree diagram information from cli. 
 
-## [v0.3.1] - December 31, 2020 (Kent, CT)
+## [v0.3.1](https://github.com/Luke-Poeppel/decitala/tree/v0.3.1) - December 31, 2020 (Kent, CT)
 ### Added
 - Documentation page for ``vis.create_tree_diagram`` (Fragment Tree visualization using Treant.js.)
 - Log message telling the user if a database has already been made (useful for working in Jupyter).
@@ -305,7 +305,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Incorrect output of ``pofp.partition_data_by_break_points`` caused by unsorted data from ``trees.rolling_search``.
 - Documentation typo for ``utils.filter_single_anga_class_fragments``.
 
-## [v0.3.0] - December 30, 2020 (Kent, CT)
+## [v0.3.0](https://github.com/Luke-Poeppel/decitala/tree/v0.3.0) - December 30, 2020 (Kent, CT)
 ### Added
 - Added preliminary ``database.DBParser`` class that allows for easier querying of data from the ``Fragment`` table of ``database.create_database``.
 
@@ -315,12 +315,12 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Removed
 - Helper functions ``database._check_tuple_in_tuple_range`` and ``database._pitch_info_from_onset_range`` are removed due to the above addition. 
 
-## [v0.2.4] - December 30, 2020 (Kent, CT)
+## [v0.2.4](https://github.com/Luke-Poeppel/decitala/tree/v0.2.4) - December 30, 2020 (Kent, CT)
 ### Fixed
 - Bugfix in ``database.create_database`` (related to new rolling search output). 
 - Bugfix in ``pofp.get_pareto_optimal_longest_paths`` (related to new rolling search output).
 
-## [v0.2.3] - December 30, 2020 (Kent, CT)
+## [v0.2.3](https://github.com/Luke-Poeppel/decitala/tree/v0.2.3) - December 30, 2020 (Kent, CT)
 ### Added 
 - Added a ``utils.frame_to_midi`` option used in rolling search.
 - Documentation updates reflecting the new rolling search output. 
@@ -335,7 +335,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Removed  ``trees.rolling_search_on_array`` (at least for now) as it doesn't currently match the other search formats.
 - Removed ``utils.contiguous_multiplication``. 
 
-## [v0.2.2] - December 29, 2020 (Kent, CT)
+## [v0.2.2](https://github.com/Luke-Poeppel/decitala/tree/v0.2.2) - December 29, 2020 (Kent, CT)
 ### Added
 - Added a .yaml file for a pre-commit hook that prevents writing to master. (Uses ``pre-commit`` library).
 
@@ -346,11 +346,11 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Removed unnecessary doctest imports from modules. 
 - Removed old cleaning function for ``setup.py``.
 
-## [v0.2.1] - December 29, 2020 (Kent, CT)
+## [v0.2.1](https://github.com/Luke-Poeppel/decitala/tree/v0.2.1) - December 29, 2020 (Kent, CT)
 ### Changed
 - The ``decitala.trees`` and ``decitala.database`` modules now use ``logging.disable`` (removing a number of if statements) for readability. (Also removed logging from ``decitala.pofp``.)
 
-## [v0.2.0] - December 29, 2020 (Kent, CT)
+## [v0.2.0](https://github.com/Luke-Poeppel/decitala/tree/v0.2.0) - December 29, 2020 (Kent, CT)
 ### Added
 - The ``decitala.utils`` module now includes a ``frame_is_spanned_by_slur`` function.
 - The output of ``trees.rolling_search`` now includes ``is_spanned_by_slur`` for each fragment found. 
@@ -359,6 +359,6 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Fixed
 - The ``database.create_database`` function now raises a ``DatabaseException`` when an invalid score path is provided. 
 
-## [v0.1.1] - December 28, 2020 (Kent, CT)
+## [v0.1.1](https://github.com/Luke-Poeppel/decitala/tree/v0.1.1) - December 28, 2020 (Kent, CT)
 - First tagged version.
 - Documentation (made with sphinx, hosted on github pages) available at https://luke-poeppel.github.io/decitala/.
