@@ -13,7 +13,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - The `measure_divider_mode` of `utils.get_object_indices` now accepts `"str"` and `"list"` to be consistent with standard python type naming. 
 
 ### Fixed
-- Issues #130: Allow both lowercase and uppercase algorithm names in `search.path_finder`; #129: contiguous summation fails with rests; 
+- Issues #130: Allow both lowercase and uppercase algorithm names in `search.path_finder`; #129: contiguous summation fails with rests; #132: `ignore_grace` was not doing anything (also fixed docs typo) in `get_object_indices`; 
 
 ## [v0.10.1](https://github.com/Luke-Poeppel/decitala/tree/v0.10.1) May 1, 2021
 ### Changed

@@ -640,33 +640,51 @@ def get_object_indices(
 									``measure_divider_mode="list"`, the data is returned
 									partitioned by measure. The default is ``None``, so no
 									measure divisions are present.
-	:param bool ignore_grade: Whether to ignore grace notes in the output. ``False`` by default. 
+	:param bool ignore_grace: Whether to ignore grace notes in the output. ``False`` by default. 
 	"""
 	score = converter.parse(filepath)
 	part = score.parts[part_num]
-	data_out = []
 	stripped = part.stripTies(retainContainers=True)
 	if not measure_divider_mode:
+		data_out = []
 		for this_obj in stripped.recurse().stream().iter.notesAndRests:
-			data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
+			start = this_obj.offset
+			stop = this_obj.offset + this_obj.quarterLength
+			data_out.append((this_obj, (start, stop)))
+		if ignore_grace:
+			data_out = [x for x in data_out if x[1][0] != x[1][1]]
+
+		return data_out
 	else:
 		ms = stripped.getElementsByClass(stream.Measure)
-		for this_measure in ms:
-			if measure_divider_mode == "list":
+		if measure_divider_mode == "list":
+			data_out = []
+			for this_measure in ms:
 				measure_objects = []
 				for this_obj in this_measure.recurse().stream().iter.notesAndRests:
-					measure_objects.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
+					start = this_obj.offset
+					stop = this_obj.offset + this_obj.quarterLength
+					if ignore_grace:
+						if start == stop:
+							continue
+					measure_objects.append((this_obj, (start, stop)))
 				data_out.append(measure_objects)
-			elif measure_divider_mode == "str":
-				for this_obj in this_measure.recurse().stream().iter.notesAndRests:
-					data_out.append((this_obj, (this_obj.offset, this_obj.offset + this_obj.quarterLength)))
+		if measure_divider_mode == "str":
+			data_out = []
+			for this_obj in this_measure.recurse().stream().iter.notesAndRests:
+				start = this_obj.offset
+				stop = this_obj.offset + this_obj.quarterLength
+				if ignore_grace:
+					if start == stop:
+						continue
+				data_out.append((this_obj, (start, stop)))
 
-				if not this_measure.number == ms[-1].number:
-					data_out.append("B")
-			else:
-				raise Exception("Only allowed modes are `string` and `list`.")
+			if not this_measure.number == ms[-1].number:
+				data_out.append("B")
+		else:
+			raise Exception("Only allowed modes are `str` and `list`.")
 
-	return data_out
+		return data_out
 
 def phrase_divider(
 		filepath,
