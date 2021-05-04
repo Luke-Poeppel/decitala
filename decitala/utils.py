@@ -671,16 +671,17 @@ def get_object_indices(
 				data_out.append(measure_objects)
 		if measure_divider_mode == "str":
 			data_out = []
-			for this_obj in this_measure.recurse().stream().iter.notesAndRests:
-				start = this_obj.offset
-				stop = this_obj.offset + this_obj.quarterLength
-				if ignore_grace:
-					if start == stop:
-						continue
-				data_out.append((this_obj, (start, stop)))
+			for this_measure in ms:
+				for this_obj in this_measure.recurse().stream().iter.notesAndRests:
+					start = this_obj.offset
+					stop = this_obj.offset + this_obj.quarterLength
+					if ignore_grace:
+						if start == stop:
+							continue
+					data_out.append((this_obj, (start, stop)))
 
-			if not this_measure.number == ms[-1].number:
-				data_out.append("B")
+				if not(this_measure.number == ms[-1].number):
+					data_out.append("B")
 		else:
 			raise Exception("Only allowed modes are `str` and `list`.")
 
