@@ -3,7 +3,7 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.11.0] ???
+## [v0.11.0](https://github.com/Luke-Poeppel/decitala/tree/v0.11.0) ???
 ### Added
 - Added a `utils.phrase_divider` function for over-simplistically dividing a filepath/part-num combination into phrases (in the same output as `utils.get_object_indices`). The division is only on the basis of the appearance of rests and fermatas. (See #104)
 - Added a `contour_to_neume` function in utils.py for some experiments with Cheong's work (2008). 
@@ -11,7 +11,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Changed
 - All functions accepting a `ql_array` in `utils.py` now take in a variable called `ql_array` –– a few were set to `fragment` instead which was confusing (fixes #122). 
 - The `measure_divider_mode` of `utils.get_object_indices` now accepts `"str"` and `"list"` to be consistent with standard python type naming. 
-- Renamed `utils.ts_to_reduced_ts` to just `utils.reduce_ts`. 
+- Renamed `utils.ts_to_reduced_ts` to `utils.reframe_ts` and now allow any input `new_denominator` (reducing maximally by default).  
 
 ### Fixed
 - Issues #130: Allow both lowercase and uppercase algorithm names in `search.path_finder`; #129: contiguous summation fails with rests; #132: `ignore_grace` was not doing anything (also fixed docs typo) in `get_object_indices`; 

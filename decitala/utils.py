@@ -718,7 +718,7 @@ def phrase_divider(
 
 	return desired_phrases
 
-def reduce_ts(ts, new_denominator=None):
+def reframe_ts(ts, new_denominator=None):
 	"""
 	Function for reducing a `music21.meter.TimeSignature` object (lowest denominator of 1) to
 	a given denominiator. 
@@ -728,9 +728,9 @@ def reduce_ts(ts, new_denominator=None):
 	:rtype: music21.meter.TimeSignature
 
 	>>> from music21.meter import TimeSignature
-	>>> reduce_ts(TimeSignature("4/16"))
+	>>> reframe_ts(TimeSignature("4/16"))
 	<music21.meter.TimeSignature 1/4>
-	>>> reduce_ts(TimeSignature("4/4"), new_denominator=2)
+	>>> reframe_ts(TimeSignature("4/4"), new_denominator=2)
 	<music21.meter.TimeSignature 2/2>
 	"""
 	numerator = ts.numerator
@@ -740,9 +740,14 @@ def reduce_ts(ts, new_denominator=None):
 	else:
 		assert new_denominator in set(VALID_DENOMINATORS)
 
-	while numerator % 2 == 0 and denominator > new_denominator:
-		numerator = numerator / 2
-		denominator = denominator / 2
+	if new_denominator <= ts.numerator:
+		while numerator % 2 == 0 and denominator > new_denominator:
+			numerator = numerator / 2
+			denominator = denominator / 2
+	else:
+		while denominator < new_denominator:
+			numerator = numerator*2
+			denominator = denominator*2
 
 	reduced_ts_str = f"{int(numerator)}/{int(denominator)}"
 	return TimeSignature(reduced_ts_str)
