@@ -11,6 +11,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Changed
 - All functions accepting a `ql_array` in `utils.py` now take in a variable called `ql_array` –– a few were set to `fragment` instead which was confusing (fixes #122). 
 - The `measure_divider_mode` of `utils.get_object_indices` now accepts `"str"` and `"list"` to be consistent with standard python type naming. 
+- Renamed `utils.ts_to_reduced_ts` to just `utils.reduce_ts`. 
 
 ### Fixed
 - Issues #130: Allow both lowercase and uppercase algorithm names in `search.path_finder`; #129: contiguous summation fails with rests; #132: `ignore_grace` was not doing anything (also fixed docs typo) in `get_object_indices`; 

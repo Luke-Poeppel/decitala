@@ -190,23 +190,23 @@ def test_write_analysis():
 		fragments = [x["fragment"].name for x in loaded]
 		assert set(fragments) == set([f1, f2, f3])
 
-def test_ts_to_reduced_ts():
+def test_reduce_ts():
 	ex1 = meter.TimeSignature("44/32")
-	ex1_res = utils.ts_to_reduced_ts(ex1)
+	ex1_res = utils.reduce_ts(ex1)
 	expected_ex1 = meter.TimeSignature("11/8")
 	assert ex1_res.ratioEqual(expected_ex1)
 
 	ex2 = meter.TimeSignature("8/2")
-	ex2_res = utils.ts_to_reduced_ts(ex2)
-	expected_ex2 = meter.TimeSignature("4/1")
+	ex2_res = utils.reduce_ts(ex2, new_denominator=2)
+	expected_ex2 = meter.TimeSignature("8/2")
 	assert ex2_res.ratioEqual(expected_ex2)
 
 	ex3 = meter.TimeSignature("8/8")
-	ex3_res = utils.ts_to_reduced_ts(ex3)
+	ex3_res = utils.reduce_ts(ex3)
 	expected_ex3 = meter.TimeSignature("1/1")
 	assert ex3_res.ratioEqual(expected_ex3)
 
 	ex4 = meter.TimeSignature("13/2")
-	ex4_res = utils.ts_to_reduced_ts(ex4)
+	ex4_res = utils.reduce_ts(ex4)
 	expected_ex4 = meter.TimeSignature("13/2")
 	assert ex4_res.ratioEqual(expected_ex4)

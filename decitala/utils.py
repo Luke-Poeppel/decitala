@@ -71,6 +71,8 @@ NEUMES = {
 	(1, 0, 1): "Porrectus"
 }
 
+VALID_DENOMINATORS = [1, 2, 4, 8, 16, 32, 64, 128]
+
 class UtilsException(Exception):
 	pass
 
@@ -716,28 +718,31 @@ def phrase_divider(
 
 	return desired_phrases
 
-def ts_to_reduced_ts(ts):
+def reduce_ts(ts, new_denominator=None):
 	"""
-	Function for fully reducing a `music21.meter.TimeSignature` object (lowest denominator of 1).
+	Function for reducing a `music21.meter.TimeSignature` object (lowest denominator of 1) to
+	a given denominiator. 
 
 	:param ts: a music21.meter.TimeSignature object.
 	:return: a new time signature that is fully reduced by removing all possible powers of 2.
 	:rtype: music21.meter.TimeSignature
 
 	>>> from music21.meter import TimeSignature
-	>>> ts_to_reduced_ts(TimeSignature("4/16"))
+	>>> reduce_ts(TimeSignature("4/16"))
 	<music21.meter.TimeSignature 1/4>
-	>>> ts_to_reduced_ts(TimeSignature("4/4"))
-	<music21.meter.TimeSignature 1/1>
+	>>> reduce_ts(TimeSignature("4/4"), new_denominator=2)
+	<music21.meter.TimeSignature 2/2>
 	"""
 	numerator = ts.numerator
 	denominator = ts.denominator
+	if new_denominator is None:
+		new_denominator = VALID_DENOMINATORS[0]
+	else:
+		assert new_denominator in set(VALID_DENOMINATORS)
 
-	factor = 0
-	while numerator % 2 == 0 and denominator > 1:
+	while numerator % 2 == 0 and denominator > new_denominator:
 		numerator = numerator / 2
 		denominator = denominator / 2
-		factor += 1
 
 	reduced_ts_str = f"{int(numerator)}/{int(denominator)}"
 	return TimeSignature(reduced_ts_str)
