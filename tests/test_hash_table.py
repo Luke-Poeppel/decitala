@@ -78,6 +78,7 @@ def test_generate_all_modifications():
 		fragment=GreekFoot("Iamb"),
 		factors=factors,
 		differences=differences,
+		allow_stretch_augmentation=False,
 		try_retrograde=try_retrograde
 	)
 
@@ -132,8 +133,9 @@ def test_peons():
 	for p in peons:
 		assert GFHT.data[p.ql_tuple()]["fragment"] == p
 
-# def test_stretch_augmentation():
-# 	GFHT = DecitalaHashTable()
-# 	nc_ex2 = [0.125, 0.5] # Described as "Iambique". 
-# 	found = GFHT.data[tuple(nc_ex2)]
-# 	assert found["fragment"]
+def test_stretch_augmentation():
+	GFHT = GreekFootHashTable()
+	nc_ex2 = [0.125, 0.5] # Described as "Iambique". 
+	found = GFHT.data[tuple(nc_ex2)]
+	assert found["fragment"].name == "Iamb"
+	assert found["mod_hierarchy_val"] == 7 # Stretch augmentation

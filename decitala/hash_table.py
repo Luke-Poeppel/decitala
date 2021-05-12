@@ -49,15 +49,20 @@ FACTORS = [0.125, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0]
 DIFFERENCES = [-0.375, -0.25, -0.125, 0.0, 0.125, 0.25, 0.375, 0.5, 0.75, 0.875, 1.75, 2.625, 3.5, 4.375] # noqa
 TRY_RETROGRADE = True
 ALLOW_MIXED_AUGMENTATION = False
-ALLOW_STRETCH_AUGMENTATION = False
+ALLOW_STRETCH_AUGMENTATION = True
 CUSTOM_OVERRIDES_DATASETS = False
 
 class HashTableException(Exception):
 	pass
 
+def _is_proper_stretch_augmentation(ql_array, factor, other_factor):
+	"""Checks if a stretch augmentation is 'valid'"""
+	return (max(ql_array) * other_factor) > (min(ql_array) * factor)
+
 def _single_factor_or_difference_augmentation(
 		fragment,
 		factor,
+		stretch_factor,
 		difference,
 		try_retrograde,
 		dict_in,
@@ -85,11 +90,12 @@ def _single_factor_or_difference_augmentation(
 			elem_dict["factor"] = factor
 			elem_dict["difference"] = difference
 			elem_dict["mod_hierarchy_val"] = 3 if retrograde is False else 4
-		# elif mode == "stretch":
-		# 	augmentation = tuple(stretch_augment(ql_array=search, factor=factor, difference=difference))
-		# 	elem_dict["factor"] = factor
-		# 	elem_dict["difference"] = difference
-		# 	elem_dict["mod_hierarchy_val"] = 7 if retrograde is False else 8
+		elif mode == "stretch":
+			augmentation = tuple(stretch_augment(ql_array=search, factor=factor, stretch_factor=stretch_factor))
+			elem_dict["factor"] = factor
+			elem_dict["stretch_factor"] = stretch_factor
+			elem_dict["difference"] = difference
+			elem_dict["mod_hierarchy_val"] = 7 if retrograde is False else 8
 
 		if augmentation in dict_in:
 			existing = dict_in[augmentation]
@@ -134,6 +140,7 @@ def generate_all_modifications(
 			fragment=fragment,
 			factor=this_factor,
 			difference=0.0,
+			stretch_factor=1,
 			try_retrograde=try_retrograde,
 			dict_in=dict_in,
 			mode="multiplicative"
@@ -144,24 +151,28 @@ def generate_all_modifications(
 			fragment=fragment,
 			factor=1.0,
 			difference=this_difference,
+			stretch_factor=1,
 			try_retrograde=try_retrograde,
 			dict_in=dict_in,
 			mode="additive"
 		)
 
 	# Stretch Augmentation (this should be cleaned up somehow...)
-	# if allow_stretch_augmentation:
-	# 	if type(fragment) == GreekFoot:
-	# 		for this_factor in factors:
-	# 			for this_difference in differences:
-	# 				_single_factor_or_difference_augmentation(
-	# 					fragment=fragment,
-	# 					factor=this_factor,
-	# 					difference=this_difference,
-	# 					try_retrograde=try_retrograde,
-	# 					dict_in=dict_in,
-	# 					mode="stretch"
-	# 				)
+	if allow_stretch_augmentation:
+		if fragment.frag_type == "greek_foot":
+			for this_factor in factors:
+				for this_other_factor in factors:
+					if not(_is_proper_stretch_augmentation(fragment.ql_array(), this_factor, this_other_factor)):
+						continue
+					_single_factor_or_difference_augmentation(
+						fragment=fragment,
+						factor=this_factor,
+						difference=0,
+						stretch_factor=this_other_factor,
+						try_retrograde=try_retrograde,
+						dict_in=dict_in,
+						mode="stretch"
+					)
 
 class FragmentHashTable:
 	"""
@@ -181,7 +192,7 @@ class FragmentHashTable:
 	<decitala.hash_table.FragmentHashTable 0 fragments>
 	>>> fht.load()
 	>>> fht
-	<decitala.hash_table.FragmentHashTable 735 fragments>
+	<decitala.hash_table.FragmentHashTable 2301 fragments>
 	>>> fht.datasets
 	['greek_foot']
 	>>> fht.custom_fragments
