@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.utils &mdash; decitala 0.10.1 documentation</title>
+  <title>decitala.utils &mdash; decitala 0.11.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.10.1
+                0.11.0
               </div>
             
           
@@ -231,6 +231,17 @@
 	<span class="mi">79</span><span class="p">,</span> <span class="mi">83</span><span class="p">,</span> <span class="mi">89</span><span class="p">,</span> <span class="mi">97</span>
 <span class="p">]</span>
 
+<span class="n">NEUMES</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="s2">&quot;Clivis&quot;</span><span class="p">,</span>
+	<span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span> <span class="s2">&quot;Podatus&quot;</span><span class="p">,</span>
+	<span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="s2">&quot;Scandicus&quot;</span><span class="p">,</span>
+	<span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="s2">&quot;Climacus&quot;</span><span class="p">,</span>
+	<span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span> <span class="s2">&quot;Torculus&quot;</span><span class="p">,</span>
+	<span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span> <span class="s2">&quot;Porrectus&quot;</span>
+<span class="p">}</span>
+
+<span class="n">VALID_DENOMINATORS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">]</span>
+
 <div class="viewcode-block" id="UtilsException"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.UtilsException">[docs]</a><span class="k">class</span> <span class="nc">UtilsException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 	<span class="k">pass</span></div>
 
@@ -333,31 +344,54 @@
 <span class="c1">####################################################################################################</span>
 <span class="c1"># RHYTHM</span>
 <span class="c1">####################################################################################################</span>
-<div class="viewcode-block" id="augment"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.augment">[docs]</a><span class="k">def</span> <span class="nf">augment</span><span class="p">(</span><span class="n">fragment</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<div class="viewcode-block" id="augment"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.augment">[docs]</a><span class="k">def</span> <span class="nf">augment</span><span class="p">(</span><span class="n">ql_array</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Returns an augmentation in the style of Messiaen. If difference is set to 0.0, then the</span>
 <span class="sd">	augmentation is multiplicative. If factor is set to 1.0, then augmentation is additive. If</span>
 <span class="sd">	factor &amp; difference are non-zero, we have a mixed augmentation.</span>
 
-<span class="sd">	:param numpy.array fragment: array defining the rhythmic fragment.</span>
+<span class="sd">	:param ql_array: array defining the rhythmic fragment (iterable).</span>
 <span class="sd">	:param float factor: factor for multiplicative augmentation.</span>
 <span class="sd">	:param float difference: factor for additive augmentation.</span>
 
 <span class="sd">	:return: an augmented fragment.</span>
 <span class="sd">	:rtype: numpy.array</span>
 
-<span class="sd">	&gt;&gt;&gt; augment(fragment=[1.0, 1.0, 0.5, 0.25], factor=2.0, difference=0.25)</span>
+<span class="sd">	&gt;&gt;&gt; augment(ql_array=[1.0, 1.0, 0.5, 0.25], factor=2.0, difference=0.25)</span>
 <span class="sd">	array([2.25, 2.25, 1.25, 0.75])</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">assert</span> <span class="n">factor</span> <span class="o">&gt;=</span> <span class="mf">0.0</span>
-	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">this_val</span> <span class="o">*</span> <span class="n">factor</span><span class="p">)</span> <span class="o">+</span> <span class="n">difference</span> <span class="k">for</span> <span class="n">this_val</span> <span class="ow">in</span> <span class="n">fragment</span><span class="p">])</span></div>
+	<span class="k">assert</span> <span class="n">factor</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">this_val</span> <span class="o">*</span> <span class="n">factor</span><span class="p">)</span> <span class="o">+</span> <span class="n">difference</span> <span class="k">for</span> <span class="n">this_val</span> <span class="ow">in</span> <span class="n">ql_array</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="successive_ratio_array"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.successive_ratio_array">[docs]</a><span class="k">def</span> <span class="nf">successive_ratio_array</span><span class="p">(</span><span class="n">fragment</span><span class="p">):</span>
+<div class="viewcode-block" id="stretch_augment"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.stretch_augment">[docs]</a><span class="k">def</span> <span class="nf">stretch_augment</span><span class="p">(</span><span class="n">ql_array</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">stretch_factor</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A special kind of rhythmic augmentation catered toward the Greek metrics. The &quot;short&quot; is</span>
+<span class="sd">	kept as is and the &quot;long&quot; is modified by the given difference. The new long must still be</span>
+<span class="sd">	longer than the short value.</span>
+
+<span class="sd">	:param ql_array: array defining the rhythmic fragment (iterable)</span>
+
+<span class="sd">	&gt;&gt;&gt; stretch_augment(ql_array=[1.0, 2.0], factor=0.125, stretch_factor=0.25)</span>
+<span class="sd">	array([0.125, 0.5  ])</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">ql_array</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="mi">2</span>
+
+	<span class="n">stretch_augmentation</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">breve</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">this_val</span> <span class="ow">in</span> <span class="n">ql_array</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">this_val</span> <span class="o">==</span> <span class="n">breve</span><span class="p">:</span>
+			<span class="n">stretch_augmentation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">factor</span> <span class="o">*</span> <span class="n">breve</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">stretch_augmentation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_val</span> <span class="o">*</span> <span class="n">stretch_factor</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">stretch_augmentation</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="successive_ratio_array"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.successive_ratio_array">[docs]</a><span class="k">def</span> <span class="nf">successive_ratio_array</span><span class="p">(</span><span class="n">ql_array</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Returns array defined by the ratio of successive elements. By convention,</span>
 <span class="sd">	we set the first value to 1.0.</span>
 
-<span class="sd">	:param numpy.array fragment: array defining a rhythmic fragment.</span>
+<span class="sd">	:param ql_array: array defining a rhythmic fragment.</span>
 <span class="sd">	:return: array consisting of successive ratios of the input elements.</span>
 <span class="sd">	:rtype: numpy.array</span>
 
@@ -376,17 +410,17 @@
 
 	<span class="n">ratio_lst</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">]</span>
 	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">fragment</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-		<span class="n">ratio_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_ratio</span><span class="p">(</span><span class="n">fragment</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">ratio_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_ratio</span><span class="p">(</span><span class="n">ql_array</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
 		<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ratio_lst</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="successive_difference_array"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.successive_difference_array">[docs]</a><span class="k">def</span> <span class="nf">successive_difference_array</span><span class="p">(</span><span class="n">fragment</span><span class="p">):</span>
+<div class="viewcode-block" id="successive_difference_array"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.successive_difference_array">[docs]</a><span class="k">def</span> <span class="nf">successive_difference_array</span><span class="p">(</span><span class="n">ql_array</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Returns the first order difference of ``fragment`` (contiguous differences).</span>
+<span class="sd">	Returns the first order difference of ``ql_array`` (contiguous differences).</span>
 
-<span class="sd">	:param numpy.array fragment: array defining a rhythmic fragment.</span>
+<span class="sd">	:param ql_array: array defining a rhythmic fragment (iterable).</span>
 <span class="sd">	:return: array consisting of successive differences of the input elements.</span>
 <span class="sd">	:rtype: numpy.array</span>
 
@@ -403,17 +437,22 @@
 
 	<span class="n">difference_lst</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
 	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">fragment</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-		<span class="n">difference_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_difference</span><span class="p">(</span><span class="n">fragment</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
+	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">difference_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_difference</span><span class="p">(</span><span class="n">ql_array</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
 		<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">difference_lst</span><span class="p">)</span></div>
 
 <span class="c1"># La Valeur Ajoutee</span>
-<span class="k">def</span> <span class="nf">get_added_values</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">,</span> <span class="n">print_type</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_added_values</span><span class="p">(</span><span class="n">ql_array</span><span class="p">,</span> <span class="n">print_type</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Given a quarter length list, returns all indices and types of added values found, according to</span>
 <span class="sd">	the examples dicussed in Technique de Mon Langage Musical (1944).</span>
+
+<span class="sd">	:param ql_array: Array defining a rhythmic fragment (iterable).</span>
+<span class="sd">	:param bool print_type: Whether to print the Valéur Ajoutée types, along with the locations.</span>
+<span class="sd">	:return: Location of extracted added values (along with their type if ``print_type=True``)</span>
+<span class="sd">	:rtype: list</span>
 
 <span class="sd">	&gt;&gt;&gt; get_added_values([0.25, 0.5, 0.5, 0.75, 0.25])</span>
 <span class="sd">	[(0, &#39;du Note&#39;), (4, &#39;du Note&#39;)]</span>
@@ -442,21 +481,21 @@
 <span class="sd">	&gt;&gt;&gt; get_added_values([0.5, 0.25, 0.75, 0.25, 0.5])</span>
 <span class="sd">	[(1, &#39;du Note&#39;), (2, &#39;du Point&#39;), (3, &#39;du Note&#39;)]</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
 		<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;List must be of length 3 or greater.&#39;</span><span class="p">)</span>
 
 	<span class="n">addedVals</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="k">if</span> <span class="n">ql_lst</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.25</span> <span class="ow">and</span> <span class="n">ql_lst</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.25</span><span class="p">:</span>
+	<span class="k">if</span> <span class="n">ql_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.25</span> <span class="ow">and</span> <span class="n">ql_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.25</span><span class="p">:</span>
 		<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;du Note&#39;</span><span class="p">))</span>
-	<span class="k">if</span> <span class="n">ql_lst</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.25</span> <span class="ow">and</span> <span class="n">ql_lst</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.25</span><span class="p">:</span>
-		<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;du Note&#39;</span><span class="p">))</span>
-	<span class="k">if</span> <span class="n">ql_lst</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.75</span> <span class="ow">and</span> <span class="n">ql_lst</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">%</span> <span class="mf">0.5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-		<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;du Point&#39;</span><span class="p">))</span>
+	<span class="k">if</span> <span class="n">ql_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.25</span> <span class="ow">and</span> <span class="n">ql_array</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.25</span><span class="p">:</span>
+		<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;du Note&#39;</span><span class="p">))</span>
+	<span class="k">if</span> <span class="n">ql_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mf">0.75</span> <span class="ow">and</span> <span class="n">ql_array</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">%</span> <span class="mf">0.5</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">addedVals</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;du Point&#39;</span><span class="p">))</span>
 
-	<span class="k">for</span> <span class="n">currIndex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ql_lst</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-		<span class="n">prevVal</span> <span class="o">=</span> <span class="n">ql_lst</span><span class="p">[</span><span class="n">currIndex</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-		<span class="n">currVal</span> <span class="o">=</span> <span class="n">ql_lst</span><span class="p">[</span><span class="n">currIndex</span><span class="p">]</span>
-		<span class="n">nextVal</span> <span class="o">=</span> <span class="n">ql_lst</span><span class="p">[</span><span class="n">currIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">currIndex</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+		<span class="n">prevVal</span> <span class="o">=</span> <span class="n">ql_array</span><span class="p">[</span><span class="n">currIndex</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+		<span class="n">currVal</span> <span class="o">=</span> <span class="n">ql_array</span><span class="p">[</span><span class="n">currIndex</span><span class="p">]</span>
+		<span class="n">nextVal</span> <span class="o">=</span> <span class="n">ql_array</span><span class="p">[</span><span class="n">currIndex</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
 
 		<span class="n">x</span> <span class="o">=</span> <span class="n">currVal</span> <span class="o">-</span> <span class="mf">0.25</span>
 		<span class="k">if</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">is_integer</span><span class="p">():</span>
@@ -786,55 +825,121 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Returns data of the form [(object, (start, end)), ...] for a given file path and part number.</span>
 <span class="sd">	(Supports rests and grace notes.)</span>
+
+<span class="sd">	:param str filepath: Path to file to be analyzed.</span>
+<span class="sd">	:param int part_num: Part number to be analyzed.</span>
+<span class="sd">	:param str measure_divider_mode: Tool used for dividing the data into measures. If</span>
+<span class="sd">									``measure_divider_mode=&quot;str&quot;`, the data is returned with</span>
+<span class="sd">									`&quot;B&quot;` used as the measure marker. If instead</span>
+<span class="sd">									``measure_divider_mode=&quot;list&quot;`, the data is returned</span>
+<span class="sd">									partitioned by measure. The default is ``None``, so no</span>
+<span class="sd">									measure divisions are present.</span>
+<span class="sd">	:param bool ignore_grace: Whether to ignore grace notes in the output. ``False`` by default.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">score</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
 	<span class="n">part</span> <span class="o">=</span> <span class="n">score</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="n">part_num</span><span class="p">]</span>
-	<span class="n">data_out</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="n">stripped</span> <span class="o">=</span> <span class="n">part</span><span class="o">.</span><span class="n">stripTies</span><span class="p">(</span><span class="n">retainContainers</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 	<span class="k">if</span> <span class="ow">not</span> <span class="n">measure_divider_mode</span><span class="p">:</span>
+		<span class="n">data_out</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="k">for</span> <span class="n">this_obj</span> <span class="ow">in</span> <span class="n">stripped</span><span class="o">.</span><span class="n">recurse</span><span class="p">()</span><span class="o">.</span><span class="n">stream</span><span class="p">()</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notesAndRests</span><span class="p">:</span>
-			<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">this_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)))</span>
+			<span class="n">start</span> <span class="o">=</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span>
+			<span class="n">stop</span> <span class="o">=</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span>
+			<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">this_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)))</span>
+		<span class="k">if</span> <span class="n">ignore_grace</span><span class="p">:</span>
+			<span class="n">data_out</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data_out</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]]</span>
+
+		<span class="k">return</span> <span class="n">data_out</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="n">ms</span> <span class="o">=</span> <span class="n">stripped</span><span class="o">.</span><span class="n">getElementsByClass</span><span class="p">(</span><span class="n">stream</span><span class="o">.</span><span class="n">Measure</span><span class="p">)</span>
-		<span class="k">for</span> <span class="n">this_measure</span> <span class="ow">in</span> <span class="n">ms</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">measure_divider_mode</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">measure_divider_mode</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">:</span>
+			<span class="n">data_out</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">this_measure</span> <span class="ow">in</span> <span class="n">ms</span><span class="p">:</span>
 				<span class="n">measure_objects</span> <span class="o">=</span> <span class="p">[]</span>
 				<span class="k">for</span> <span class="n">this_obj</span> <span class="ow">in</span> <span class="n">this_measure</span><span class="o">.</span><span class="n">recurse</span><span class="p">()</span><span class="o">.</span><span class="n">stream</span><span class="p">()</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notesAndRests</span><span class="p">:</span>
-					<span class="n">measure_objects</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">this_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)))</span>
+					<span class="n">start</span> <span class="o">=</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span>
+					<span class="n">stop</span> <span class="o">=</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span>
+					<span class="k">if</span> <span class="n">ignore_grace</span><span class="p">:</span>
+						<span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="n">stop</span><span class="p">:</span>
+							<span class="k">continue</span>
+					<span class="n">measure_objects</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">this_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)))</span>
 				<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">measure_objects</span><span class="p">)</span>
-			<span class="k">elif</span> <span class="n">measure_divider_mode</span> <span class="o">==</span> <span class="s2">&quot;string&quot;</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">measure_divider_mode</span> <span class="o">==</span> <span class="s2">&quot;str&quot;</span><span class="p">:</span>
+			<span class="n">data_out</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">this_measure</span> <span class="ow">in</span> <span class="n">ms</span><span class="p">:</span>
 				<span class="k">for</span> <span class="n">this_obj</span> <span class="ow">in</span> <span class="n">this_measure</span><span class="o">.</span><span class="n">recurse</span><span class="p">()</span><span class="o">.</span><span class="n">stream</span><span class="p">()</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notesAndRests</span><span class="p">:</span>
-					<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">this_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)))</span>
+					<span class="n">start</span> <span class="o">=</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span>
+					<span class="n">stop</span> <span class="o">=</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span>
+					<span class="k">if</span> <span class="n">ignore_grace</span><span class="p">:</span>
+						<span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="n">stop</span><span class="p">:</span>
+							<span class="k">continue</span>
+					<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">this_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)))</span>
 
-				<span class="k">if</span> <span class="ow">not</span> <span class="n">this_measure</span><span class="o">.</span><span class="n">number</span> <span class="o">==</span> <span class="n">ms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">number</span><span class="p">:</span>
+				<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">this_measure</span><span class="o">.</span><span class="n">number</span> <span class="o">==</span> <span class="n">ms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">number</span><span class="p">):</span>
 					<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
-			<span class="k">else</span><span class="p">:</span>
-				<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Only allowed modes are `string` and `list`.&quot;</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Only allowed modes are `str` and `list`.&quot;</span><span class="p">)</span>
 
-	<span class="k">return</span> <span class="n">data_out</span></div>
+		<span class="k">return</span> <span class="n">data_out</span></div>
 
-<div class="viewcode-block" id="ts_to_reduced_ts"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.ts_to_reduced_ts">[docs]</a><span class="k">def</span> <span class="nf">ts_to_reduced_ts</span><span class="p">(</span><span class="n">ts</span><span class="p">):</span>
+<div class="viewcode-block" id="phrase_divider"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.phrase_divider">[docs]</a><span class="k">def</span> <span class="nf">phrase_divider</span><span class="p">(</span>
+		<span class="n">filepath</span><span class="p">,</span>
+		<span class="n">part_num</span>
+	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Function for fully reducing a `music21.meter.TimeSignature` object (lowest denominator of 1).</span>
+<span class="sd">	This is an oversimplified but useful tool for phrase analysis (particularly for the birdsongs).</span>
+<span class="sd">	It returns the same output as :obj:`decitala.utils.get_object_indices` but divides the output</span>
+<span class="sd">	by &quot;phrases,&quot; **only** as defined by the appearance of rests and fermatas. Ignores all dividers.</span>
+
+<span class="sd">	:param str filepath: Path to file to be analyzed.</span>
+<span class="sd">	:param int part_num: Part number to be analyzed.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">all_objects</span> <span class="o">=</span> <span class="n">get_object_indices</span><span class="p">(</span>
+		<span class="n">filepath</span><span class="p">,</span>
+		<span class="n">part_num</span>
+	<span class="p">)</span>
+	<span class="n">all_phrases</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">phrase</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">all_objects</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isRest</span><span class="p">):</span>
+		<span class="n">all_phrases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">phrase</span><span class="p">))</span>
+
+	<span class="n">desired_phrases</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">phrase</span> <span class="ow">in</span> <span class="n">all_phrases</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">phrase</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isRest</span><span class="p">:</span>
+			<span class="k">continue</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">desired_phrases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">phrase</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">desired_phrases</span></div>
+
+<div class="viewcode-block" id="reframe_ts"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.reframe_ts">[docs]</a><span class="k">def</span> <span class="nf">reframe_ts</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">new_denominator</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for reducing a `music21.meter.TimeSignature` object (lowest denominator of 1) to</span>
+<span class="sd">	a given denominiator.</span>
 
 <span class="sd">	:param ts: a music21.meter.TimeSignature object.</span>
 <span class="sd">	:return: a new time signature that is fully reduced by removing all possible powers of 2.</span>
 <span class="sd">	:rtype: music21.meter.TimeSignature</span>
 
 <span class="sd">	&gt;&gt;&gt; from music21.meter import TimeSignature</span>
-<span class="sd">	&gt;&gt;&gt; ts_to_reduced_ts(TimeSignature(&quot;4/16&quot;))</span>
+<span class="sd">	&gt;&gt;&gt; reframe_ts(TimeSignature(&quot;4/16&quot;))</span>
 <span class="sd">	&lt;music21.meter.TimeSignature 1/4&gt;</span>
-<span class="sd">	&gt;&gt;&gt; ts_to_reduced_ts(TimeSignature(&quot;4/4&quot;))</span>
-<span class="sd">	&lt;music21.meter.TimeSignature 1/1&gt;</span>
+<span class="sd">	&gt;&gt;&gt; reframe_ts(TimeSignature(&quot;4/4&quot;), new_denominator=2)</span>
+<span class="sd">	&lt;music21.meter.TimeSignature 2/2&gt;</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">numerator</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">numerator</span>
 	<span class="n">denominator</span> <span class="o">=</span> <span class="n">ts</span><span class="o">.</span><span class="n">denominator</span>
+	<span class="k">if</span> <span class="n">new_denominator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">new_denominator</span> <span class="o">=</span> <span class="n">VALID_DENOMINATORS</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">assert</span> <span class="n">new_denominator</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">VALID_DENOMINATORS</span><span class="p">)</span>
 
-	<span class="n">factor</span> <span class="o">=</span> <span class="mi">0</span>
-	<span class="k">while</span> <span class="n">numerator</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">denominator</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-		<span class="n">numerator</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="mi">2</span>
-		<span class="n">denominator</span> <span class="o">=</span> <span class="n">denominator</span> <span class="o">/</span> <span class="mi">2</span>
-		<span class="n">factor</span> <span class="o">+=</span> <span class="mi">1</span>
+	<span class="k">if</span> <span class="n">new_denominator</span> <span class="o">&lt;=</span> <span class="n">ts</span><span class="o">.</span><span class="n">numerator</span><span class="p">:</span>
+		<span class="k">while</span> <span class="n">numerator</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">denominator</span> <span class="o">&gt;</span> <span class="n">new_denominator</span><span class="p">:</span>
+			<span class="n">numerator</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="mi">2</span>
+			<span class="n">denominator</span> <span class="o">=</span> <span class="n">denominator</span> <span class="o">/</span> <span class="mi">2</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">while</span> <span class="n">denominator</span> <span class="o">&lt;</span> <span class="n">new_denominator</span><span class="p">:</span>
+			<span class="n">numerator</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">*</span> <span class="mi">2</span>
+			<span class="n">denominator</span> <span class="o">=</span> <span class="n">denominator</span> <span class="o">*</span> <span class="mi">2</span>
 
 	<span class="n">reduced_ts_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">numerator</span><span class="p">)</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">denominator</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 	<span class="k">return</span> <span class="n">TimeSignature</span><span class="p">(</span><span class="n">reduced_ts_str</span><span class="p">)</span></div>
@@ -883,6 +988,7 @@
 <span class="sd">	0.25</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">copied_data</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="n">copied_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">copied_data</span> <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;Rest&quot;</span><span class="p">)]</span>
 	<span class="n">regions_property</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="p">((</span><span class="n">copied_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">copied_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">midi</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">copied_data</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pitches</span><span class="p">])</span>  <span class="c1"># noqa: E501</span>
 	<span class="n">ranges</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">this_range</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">this_range</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">copied_data</span><span class="p">)),</span> <span class="n">regions_property</span><span class="p">)]</span>
 
@@ -1090,6 +1196,21 @@
 		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">seg_vals</span><span class="p">])</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">return</span> <span class="s2">&quot;&lt;&quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">seg_vals</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;&gt;&quot;</span></div>
+
+<div class="viewcode-block" id="contour_to_neume"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.contour_to_neume">[docs]</a><span class="k">def</span> <span class="nf">contour_to_neume</span><span class="p">(</span><span class="n">contour</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for checking the associated neume for a given contour. Only two and three onset</span>
+<span class="sd">	contour are supported.</span>
+
+<span class="sd">	:param contour: A pitch contour (iterable).</span>
+<span class="sd">	:return: The associated neume or ``None``.</span>
+<span class="sd">	:rtype: str or None</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">UtilsException</span><span class="p">(</span><span class="s2">&quot;Contour input must be of length three!&quot;</span><span class="p">)</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">NEUMES</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">contour</span><span class="p">)]</span>
+	<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+		<span class="k">return</span> <span class="kc">None</span></div>
 
 <span class="k">def</span> <span class="nf">_has_extremum</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>

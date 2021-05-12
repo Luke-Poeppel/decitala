@@ -3,7 +3,7 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.11.0](https://github.com/Luke-Poeppel/decitala/tree/v0.11.0) ???
+## [v0.11.0](https://github.com/Luke-Poeppel/decitala/tree/v0.11.0) May 12, 2021
 ### Added
 - Added a `utils.phrase_divider` function for over-simplistically dividing a filepath/part-num combination into phrases (in the same output as `utils.get_object_indices`). The division is only on the basis of the appearance of rests and fermatas. (See #104)
 - Added a `contour_to_neume` function in utils.py for some experiments with Wai Ling Cheong's work (2008). 

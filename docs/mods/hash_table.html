@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>hash_table &mdash; decitala 0.10.1 documentation</title>
+  <title>hash_table &mdash; decitala 0.11.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.10.1
+                0.11.0
               </div>
             
           
@@ -180,7 +180,7 @@
 
 <dl class="py function">
 <dt id="decitala.hash_table.generate_all_modifications">
-<code class="sig-prename descclassname"><span class="pre">decitala.hash_table.</span></code><code class="sig-name descname"><span class="pre">generate_all_modifications</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fragment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differences</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_retrograde</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_mixed_augmentation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hash_table.html#generate_all_modifications"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hash_table.generate_all_modifications" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.hash_table.</span></code><code class="sig-name descname"><span class="pre">generate_all_modifications</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fragment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differences</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_retrograde</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_stretch_augmentation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_mixed_augmentation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hash_table.html#generate_all_modifications"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hash_table.generate_all_modifications" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function for generating and storing all possible modifications of an input fragment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -220,13 +220,24 @@ and other modification parameters are class attributes. To change them, subclass
 <span class="go">&lt;decitala.hash_table.FragmentHashTable 0 fragments&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span>
-<span class="go">&lt;decitala.hash_table.FragmentHashTable 731 fragments&gt;</span>
+<span class="go">&lt;decitala.hash_table.FragmentHashTable 2301 fragments&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span><span class="o">.</span><span class="n">datasets</span>
 <span class="go">[&#39;greek_foot&#39;]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span><span class="o">.</span><span class="n">custom_fragments</span>
 <span class="go">[&lt;fragment.Decitala 93_Ragavardhana&gt;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span><span class="o">.</span><span class="n">data</span><span class="p">[(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)][</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span>
+<span class="go">&lt;fragment.Decitala 93_Ragavardhana&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">peon_check</span> <span class="o">=</span> <span class="n">fht</span><span class="o">.</span><span class="n">data</span><span class="p">[(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">peon_check</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;Peon_IV&quot;</span>
+<span class="go">True</span>
 </pre></div>
 </div>
+<dl class="py method">
+<dt id="decitala.hash_table.FragmentHashTable.load">
+<code class="sig-name descname"><span class="pre">load</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.125,</span> <span class="pre">0.25,</span> <span class="pre">0.5,</span> <span class="pre">0.75,</span> <span class="pre">1.0,</span> <span class="pre">1.25,</span> <span class="pre">1.5,</span> <span class="pre">2.0,</span> <span class="pre">3.0,</span> <span class="pre">4.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differences</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-</span> <span class="pre">0.375,</span> <span class="pre">-</span> <span class="pre">0.25,</span> <span class="pre">-</span> <span class="pre">0.125,</span> <span class="pre">0.0,</span> <span class="pre">0.125,</span> <span class="pre">0.25,</span> <span class="pre">0.375,</span> <span class="pre">0.5,</span> <span class="pre">0.75,</span> <span class="pre">0.875,</span> <span class="pre">1.75,</span> <span class="pre">2.625,</span> <span class="pre">3.5,</span> <span class="pre">4.375]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_retrograde</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_stretch_augmentation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_mixed_augmentation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modification_hierarchy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'difference':</span> <span class="pre">3,</span> <span class="pre">'mixed':</span> <span class="pre">9,</span> <span class="pre">'ratio':</span> <span class="pre">1,</span> <span class="pre">'retrograde-difference':</span> <span class="pre">4,</span> <span class="pre">'retrograde-mixed':</span> <span class="pre">10,</span> <span class="pre">'retrograde-ratio':</span> <span class="pre">2,</span> <span class="pre">'retrograde-stretch':</span> <span class="pre">8,</span> <span class="pre">'retrograde-subdivision-ratio':</span> <span class="pre">6,</span> <span class="pre">'stretch':</span> <span class="pre">7,</span> <span class="pre">'subdivision-ratio':</span> <span class="pre">5}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hash_table.html#FragmentHashTable.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hash_table.FragmentHashTable.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for loading the modifications. Allows the user to override the default attributes.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -243,6 +254,14 @@ parameter set to <code class="docutils literal notranslate"><span class="pre">[&
 <dd><p>Bases: <a class="reference internal" href="#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a></p>
 <p>This class subclasses <a class="reference internal" href="#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a> with the <code class="docutils literal notranslate"><span class="pre">datasets</span></code>
 parameter set to <code class="docutils literal notranslate"><span class="pre">[&quot;greek_foot&quot;]</span></code> and automatically loads.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="decitala.hash_table.AllCorporaHashTable">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.hash_table.</span></code><code class="sig-name descname"><span class="pre">AllCorporaHashTable</span></code><a class="reference internal" href="../_modules/decitala/hash_table.html#AllCorporaHashTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hash_table.AllCorporaHashTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a></p>
+<p>This class subclasses <a class="reference internal" href="#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a> with the <code class="docutils literal notranslate"><span class="pre">datasets</span></code>
+parameter set to all available datasets in the <code class="docutils literal notranslate"><span class="pre">corpora</span></code> directory and automatically loads.</p>
 </dd></dl>
 
 </div>

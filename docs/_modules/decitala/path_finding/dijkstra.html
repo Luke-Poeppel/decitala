@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.path_finding.dijkstra &mdash; decitala 0.10.1 documentation</title>
+  <title>decitala.path_finding.dijkstra &mdash; decitala 0.11.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.10.1
+                0.11.0
               </div>
             
           
@@ -182,6 +182,7 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">path_finding_utils</span>
 
 <span class="c1"># Useful info here: https://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python.</span>
+<span class="c1"># Weights found from hyperparameter search on pre-annotated compositions.</span>
 <div class="viewcode-block" id="dijkstra"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.dijkstra.dijkstra">[docs]</a><span class="k">def</span> <span class="nf">dijkstra</span><span class="p">(</span>
 		<span class="n">data</span><span class="p">,</span>
 		<span class="n">source</span><span class="p">,</span>
@@ -209,11 +210,11 @@
 	<span class="k">while</span> <span class="n">q</span><span class="p">:</span>
 		<span class="n">last_w</span><span class="p">,</span> <span class="n">curr_v</span> <span class="o">=</span> <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 		<span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">n_w</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="n">curr_v</span><span class="p">]:</span>
-			<span class="n">cand_w</span> <span class="o">=</span> <span class="n">last_w</span> <span class="o">+</span> <span class="n">n_w</span>
-			<span class="k">if</span> <span class="n">cand_w</span> <span class="o">&lt;</span> <span class="n">dist</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
-				<span class="n">dist</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">cand_w</span>
+			<span class="n">alt</span> <span class="o">=</span> <span class="n">last_w</span> <span class="o">+</span> <span class="n">n_w</span>
+			<span class="k">if</span> <span class="n">alt</span> <span class="o">&lt;</span> <span class="n">dist</span><span class="p">[</span><span class="n">n</span><span class="p">]:</span>
+				<span class="n">dist</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">alt</span>
 				<span class="n">pred</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">curr_v</span>
-				<span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="p">(</span><span class="n">cand_w</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+				<span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="p">(</span><span class="n">alt</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
 
 	<span class="k">return</span> <span class="n">dist</span><span class="p">,</span> <span class="n">pred</span></div>
 

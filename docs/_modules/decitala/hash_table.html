@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.hash_table &mdash; decitala 0.10.1 documentation</title>
+  <title>decitala.hash_table &mdash; decitala 0.11.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.10.1
+                0.11.0
               </div>
             
           
@@ -183,6 +183,7 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">augment</span><span class="p">,</span>
+	<span class="n">stretch_augment</span><span class="p">,</span>
 	<span class="n">get_logger</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.corpora_models</span> <span class="kn">import</span> <span class="p">(</span>
@@ -207,18 +208,78 @@
 	<span class="s2">&quot;retrograde-difference&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
 	<span class="s2">&quot;subdivision-ratio&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
 	<span class="s2">&quot;retrograde-subdivision-ratio&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
-	<span class="s2">&quot;mixed&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
-	<span class="s2">&quot;retrograde-mixed&quot;</span><span class="p">:</span> <span class="mi">8</span>
+	<span class="s2">&quot;stretch&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+	<span class="s2">&quot;retrograde-stretch&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+	<span class="s2">&quot;mixed&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+	<span class="s2">&quot;retrograde-mixed&quot;</span><span class="p">:</span> <span class="mi">10</span>
 <span class="p">}</span>
 
 <span class="n">FACTORS</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]</span>
 <span class="n">DIFFERENCES</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.375</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.875</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">,</span> <span class="mf">2.625</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mf">4.375</span><span class="p">]</span> <span class="c1"># noqa</span>
 <span class="n">TRY_RETROGRADE</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">ALLOW_MIXED_AUGMENTATION</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">ALLOW_STRETCH_AUGMENTATION</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">CUSTOM_OVERRIDES_DATASETS</span> <span class="o">=</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="HashTableException"><a class="viewcode-back" href="../../mods/hash_table.html#decitala.hash_table.HashTableException">[docs]</a><span class="k">class</span> <span class="nc">HashTableException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 	<span class="k">pass</span></div>
+
+<span class="k">def</span> <span class="nf">_is_proper_stretch_augmentation</span><span class="p">(</span><span class="n">ql_array</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">other_factor</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Checks if a stretch augmentation is &#39;valid&#39;&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)</span> <span class="o">*</span> <span class="n">other_factor</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)</span> <span class="o">*</span> <span class="n">factor</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_single_factor_or_difference_augmentation</span><span class="p">(</span>
+		<span class="n">fragment</span><span class="p">,</span>
+		<span class="n">factor</span><span class="p">,</span>
+		<span class="n">stretch_factor</span><span class="p">,</span>
+		<span class="n">difference</span><span class="p">,</span>
+		<span class="n">try_retrograde</span><span class="p">,</span>
+		<span class="n">dict_in</span><span class="p">,</span>
+		<span class="n">mode</span>
+	<span class="p">):</span>
+	<span class="n">ql_array</span> <span class="o">=</span> <span class="n">fragment</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()</span>
+	<span class="n">searches</span> <span class="o">=</span> <span class="p">[</span><span class="n">ql_array</span><span class="p">]</span>
+	<span class="k">if</span> <span class="n">try_retrograde</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+		<span class="n">searches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ql_array</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">search</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">searches</span><span class="p">):</span>
+		<span class="n">retrograde</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">True</span>
+		<span class="n">elem_dict</span> <span class="o">=</span> <span class="p">{</span>
+			<span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="n">fragment</span><span class="p">,</span>
+			<span class="s2">&quot;frag_type&quot;</span><span class="p">:</span> <span class="n">fragment</span><span class="o">.</span><span class="n">frag_type</span><span class="p">,</span>
+			<span class="s2">&quot;retrograde&quot;</span><span class="p">:</span> <span class="n">retrograde</span><span class="p">,</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;multiplicative&quot;</span><span class="p">:</span>
+			<span class="n">augmentation</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">augment</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="n">search</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="n">factor</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="n">difference</span><span class="p">))</span>
+			<span class="n">elem_dict</span><span class="p">[</span><span class="s2">&quot;factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">factor</span>
+			<span class="n">elem_dict</span><span class="p">[</span><span class="s2">&quot;difference&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">difference</span>
+			<span class="n">elem_dict</span><span class="p">[</span><span class="s2">&quot;mod_hierarchy_val&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">retrograde</span> <span class="ow">is</span> <span class="kc">False</span> <span class="k">else</span> <span class="mi">2</span>
+		<span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;additive&quot;</span><span class="p">:</span>
+			<span class="n">augmentation</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">augment</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="n">search</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="n">factor</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="n">difference</span><span class="p">))</span>
+			<span class="n">elem_dict</span><span class="p">[</span><span class="s2">&quot;factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">factor</span>
+			<span class="n">elem_dict</span><span class="p">[</span><span class="s2">&quot;difference&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">difference</span>
+			<span class="n">elem_dict</span><span class="p">[</span><span class="s2">&quot;mod_hierarchy_val&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span> <span class="k">if</span> <span class="n">retrograde</span> <span class="ow">is</span> <span class="kc">False</span> <span class="k">else</span> <span class="mi">4</span>
+		<span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;stretch&quot;</span><span class="p">:</span>
+			<span class="n">stretch_augmentation</span> <span class="o">=</span> <span class="n">stretch_augment</span><span class="p">(</span>
+				<span class="n">ql_array</span><span class="o">=</span><span class="n">search</span><span class="p">,</span>
+				<span class="n">factor</span><span class="o">=</span><span class="n">factor</span><span class="p">,</span>
+				<span class="n">stretch_factor</span><span class="o">=</span><span class="n">stretch_factor</span>
+			<span class="p">)</span>
+			<span class="n">augmentation</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">stretch_augmentation</span><span class="p">)</span>
+			<span class="n">elem_dict</span><span class="p">[</span><span class="s2">&quot;factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">factor</span>
+			<span class="n">elem_dict</span><span class="p">[</span><span class="s2">&quot;stretch_factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stretch_factor</span>
+			<span class="n">elem_dict</span><span class="p">[</span><span class="s2">&quot;difference&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">difference</span>
+			<span class="n">elem_dict</span><span class="p">[</span><span class="s2">&quot;mod_hierarchy_val&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">7</span> <span class="k">if</span> <span class="n">retrograde</span> <span class="ow">is</span> <span class="kc">False</span> <span class="k">else</span> <span class="mi">8</span>
+
+		<span class="k">if</span> <span class="n">augmentation</span> <span class="ow">in</span> <span class="n">dict_in</span><span class="p">:</span>
+			<span class="n">existing</span> <span class="o">=</span> <span class="n">dict_in</span><span class="p">[</span><span class="n">augmentation</span><span class="p">]</span>
+			<span class="c1"># Lower number -&gt; More likely.</span>
+			<span class="k">if</span> <span class="n">existing</span><span class="p">[</span><span class="s2">&quot;mod_hierarchy_val&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">elem_dict</span><span class="p">[</span><span class="s2">&quot;mod_hierarchy_val&quot;</span><span class="p">]:</span>
+				<span class="k">continue</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">dict_in</span><span class="p">[</span><span class="n">augmentation</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem_dict</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">dict_in</span><span class="p">[</span><span class="n">augmentation</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem_dict</span>
 
 <div class="viewcode-block" id="generate_all_modifications"><a class="viewcode-back" href="../../mods/hash_table.html#decitala.hash_table.generate_all_modifications">[docs]</a><span class="k">def</span> <span class="nf">generate_all_modifications</span><span class="p">(</span>
 		<span class="n">dict_in</span><span class="p">,</span>
@@ -226,6 +287,7 @@
 		<span class="n">factors</span><span class="p">,</span>
 		<span class="n">differences</span><span class="p">,</span>
 		<span class="n">try_retrograde</span><span class="p">,</span>
+		<span class="n">allow_stretch_augmentation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 		<span class="n">allow_mixed_augmentation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 		<span class="n">force_override</span><span class="o">=</span><span class="kc">False</span>
 	<span class="p">):</span>
@@ -247,70 +309,44 @@
 	<span class="k">if</span> <span class="n">allow_mixed_augmentation</span> <span class="ow">or</span> <span class="n">force_override</span><span class="p">:</span>
 		<span class="k">raise</span> <span class="n">HashTableException</span><span class="p">(</span><span class="s2">&quot;These options are not yet supported. Coming soon.&quot;</span><span class="p">)</span>
 
-	<span class="n">qls</span> <span class="o">=</span> <span class="n">fragment</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()</span>
-
-	<span class="c1"># First we form multiplicative augmentations</span>
 	<span class="k">for</span> <span class="n">this_factor</span> <span class="ow">in</span> <span class="n">factors</span><span class="p">:</span>
-		<span class="n">searches</span> <span class="o">=</span> <span class="p">[</span><span class="n">qls</span><span class="p">]</span>
-		<span class="k">if</span> <span class="n">try_retrograde</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-			<span class="n">searches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qls</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+		<span class="n">_single_factor_or_difference_augmentation</span><span class="p">(</span>
+			<span class="n">fragment</span><span class="o">=</span><span class="n">fragment</span><span class="p">,</span>
+			<span class="n">factor</span><span class="o">=</span><span class="n">this_factor</span><span class="p">,</span>
+			<span class="n">difference</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+			<span class="n">stretch_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+			<span class="n">try_retrograde</span><span class="o">=</span><span class="n">try_retrograde</span><span class="p">,</span>
+			<span class="n">dict_in</span><span class="o">=</span><span class="n">dict_in</span><span class="p">,</span>
+			<span class="n">mode</span><span class="o">=</span><span class="s2">&quot;multiplicative&quot;</span>
+		<span class="p">)</span>
 
-		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">search</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">searches</span><span class="p">):</span>
-			<span class="n">augmentation</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">augment</span><span class="p">(</span><span class="n">fragment</span><span class="o">=</span><span class="n">search</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="n">this_factor</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="mf">0.0</span><span class="p">))</span>
-
-			<span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-				<span class="n">retrograde</span> <span class="o">=</span> <span class="kc">False</span>
-			<span class="k">else</span><span class="p">:</span>
-				<span class="n">retrograde</span> <span class="o">=</span> <span class="kc">True</span>
-
-			<span class="n">elem_dict</span> <span class="o">=</span> <span class="p">{</span>
-				<span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="n">fragment</span><span class="p">,</span>
-				<span class="s2">&quot;frag_type&quot;</span><span class="p">:</span> <span class="n">fragment</span><span class="o">.</span><span class="n">frag_type</span><span class="p">,</span>
-				<span class="s2">&quot;retrograde&quot;</span><span class="p">:</span> <span class="n">retrograde</span><span class="p">,</span>
-				<span class="s2">&quot;factor&quot;</span><span class="p">:</span> <span class="n">this_factor</span><span class="p">,</span>
-				<span class="s2">&quot;difference&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-				<span class="s2">&quot;mod_hierarchy_val&quot;</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">retrograde</span> <span class="ow">is</span> <span class="kc">False</span> <span class="k">else</span> <span class="mi">2</span>
-			<span class="p">}</span>
-			<span class="k">if</span> <span class="n">augmentation</span> <span class="ow">in</span> <span class="n">dict_in</span><span class="p">:</span>
-				<span class="n">existing</span> <span class="o">=</span> <span class="n">dict_in</span><span class="p">[</span><span class="n">augmentation</span><span class="p">]</span>
-				<span class="c1"># Lower number -&gt; More likely.</span>
-				<span class="k">if</span> <span class="n">existing</span><span class="p">[</span><span class="s2">&quot;mod_hierarchy_val&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">elem_dict</span><span class="p">[</span><span class="s2">&quot;mod_hierarchy_val&quot;</span><span class="p">]:</span>
-					<span class="k">continue</span>
-				<span class="k">else</span><span class="p">:</span>
-					<span class="n">dict_in</span><span class="p">[</span><span class="n">augmentation</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem_dict</span>
-			<span class="k">else</span><span class="p">:</span>
-				<span class="n">dict_in</span><span class="p">[</span><span class="n">augmentation</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem_dict</span>
-
-	<span class="c1"># Next we form additive augmentations</span>
 	<span class="k">for</span> <span class="n">this_difference</span> <span class="ow">in</span> <span class="n">differences</span><span class="p">:</span>
-		<span class="n">searches</span> <span class="o">=</span> <span class="p">[</span><span class="n">qls</span><span class="p">]</span>
-		<span class="k">if</span> <span class="n">retrograde</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-			<span class="n">searches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qls</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">search</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">searches</span><span class="p">):</span>
-			<span class="n">augmentation</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">augment</span><span class="p">(</span><span class="n">fragment</span><span class="o">=</span><span class="n">search</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="n">this_difference</span><span class="p">))</span>
-			<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">augmentation</span><span class="p">):</span>
-				<span class="k">continue</span>
+		<span class="n">_single_factor_or_difference_augmentation</span><span class="p">(</span>
+			<span class="n">fragment</span><span class="o">=</span><span class="n">fragment</span><span class="p">,</span>
+			<span class="n">factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+			<span class="n">difference</span><span class="o">=</span><span class="n">this_difference</span><span class="p">,</span>
+			<span class="n">stretch_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+			<span class="n">try_retrograde</span><span class="o">=</span><span class="n">try_retrograde</span><span class="p">,</span>
+			<span class="n">dict_in</span><span class="o">=</span><span class="n">dict_in</span><span class="p">,</span>
+			<span class="n">mode</span><span class="o">=</span><span class="s2">&quot;additive&quot;</span>
+		<span class="p">)</span>
 
-			<span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-				<span class="n">retrograde</span> <span class="o">=</span> <span class="kc">False</span>
-			<span class="k">else</span><span class="p">:</span>
-				<span class="n">retrograde</span> <span class="o">=</span> <span class="kc">True</span>
-
-			<span class="n">elem_dict</span> <span class="o">=</span> <span class="p">{</span>
-				<span class="s2">&quot;fragment&quot;</span><span class="p">:</span> <span class="n">fragment</span><span class="p">,</span>
-				<span class="s2">&quot;frag_type&quot;</span><span class="p">:</span> <span class="n">fragment</span><span class="o">.</span><span class="n">frag_type</span><span class="p">,</span>
-				<span class="s2">&quot;retrograde&quot;</span><span class="p">:</span> <span class="n">retrograde</span><span class="p">,</span>
-				<span class="s2">&quot;factor&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-				<span class="s2">&quot;difference&quot;</span><span class="p">:</span> <span class="n">this_difference</span><span class="p">,</span>
-				<span class="s2">&quot;mod_hierarchy_val&quot;</span><span class="p">:</span> <span class="mi">3</span> <span class="k">if</span> <span class="n">retrograde</span> <span class="ow">is</span> <span class="kc">False</span> <span class="k">else</span> <span class="mi">4</span>
-			<span class="p">}</span>
-			<span class="c1"># Lower number -&gt; More likely.</span>
-			<span class="k">if</span> <span class="n">augmentation</span> <span class="ow">in</span> <span class="n">dict_in</span><span class="p">:</span>
-				<span class="n">existing</span> <span class="o">=</span> <span class="n">dict_in</span><span class="p">[</span><span class="n">augmentation</span><span class="p">]</span>
-				<span class="k">if</span> <span class="n">existing</span><span class="p">[</span><span class="s2">&quot;mod_hierarchy_val&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">elem_dict</span><span class="p">[</span><span class="s2">&quot;mod_hierarchy_val&quot;</span><span class="p">]:</span>
-					<span class="k">continue</span>
-			<span class="k">else</span><span class="p">:</span>
-				<span class="n">dict_in</span><span class="p">[</span><span class="n">augmentation</span><span class="p">]</span> <span class="o">=</span> <span class="n">elem_dict</span></div>
+	<span class="c1"># Stretch Augmentation (this should be cleaned up somehow...)</span>
+	<span class="k">if</span> <span class="n">allow_stretch_augmentation</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">fragment</span><span class="o">.</span><span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">this_factor</span> <span class="ow">in</span> <span class="n">factors</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">this_other_factor</span> <span class="ow">in</span> <span class="n">factors</span><span class="p">:</span>
+					<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">_is_proper_stretch_augmentation</span><span class="p">(</span><span class="n">fragment</span><span class="o">.</span><span class="n">ql_array</span><span class="p">(),</span> <span class="n">this_factor</span><span class="p">,</span> <span class="n">this_other_factor</span><span class="p">)):</span>
+						<span class="k">continue</span>
+					<span class="n">_single_factor_or_difference_augmentation</span><span class="p">(</span>
+						<span class="n">fragment</span><span class="o">=</span><span class="n">fragment</span><span class="p">,</span>
+						<span class="n">factor</span><span class="o">=</span><span class="n">this_factor</span><span class="p">,</span>
+						<span class="n">difference</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+						<span class="n">stretch_factor</span><span class="o">=</span><span class="n">this_other_factor</span><span class="p">,</span>
+						<span class="n">try_retrograde</span><span class="o">=</span><span class="n">try_retrograde</span><span class="p">,</span>
+						<span class="n">dict_in</span><span class="o">=</span><span class="n">dict_in</span><span class="p">,</span>
+						<span class="n">mode</span><span class="o">=</span><span class="s2">&quot;stretch&quot;</span>
+					<span class="p">)</span></div>
 
 <div class="viewcode-block" id="FragmentHashTable"><a class="viewcode-back" href="../../mods/hash_table.html#decitala.hash_table.FragmentHashTable">[docs]</a><span class="k">class</span> <span class="nc">FragmentHashTable</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -330,16 +366,22 @@
 <span class="sd">	&lt;decitala.hash_table.FragmentHashTable 0 fragments&gt;</span>
 <span class="sd">	&gt;&gt;&gt; fht.load()</span>
 <span class="sd">	&gt;&gt;&gt; fht</span>
-<span class="sd">	&lt;decitala.hash_table.FragmentHashTable 731 fragments&gt;</span>
+<span class="sd">	&lt;decitala.hash_table.FragmentHashTable 2301 fragments&gt;</span>
 <span class="sd">	&gt;&gt;&gt; fht.datasets</span>
 <span class="sd">	[&#39;greek_foot&#39;]</span>
 <span class="sd">	&gt;&gt;&gt; fht.custom_fragments</span>
 <span class="sd">	[&lt;fragment.Decitala 93_Ragavardhana&gt;]</span>
+<span class="sd">	&gt;&gt;&gt; fht.data[(3.0, 0.5, 0.75, 0.5)][&quot;fragment&quot;]</span>
+<span class="sd">	&lt;fragment.Decitala 93_Ragavardhana&gt;</span>
+<span class="sd">	&gt;&gt;&gt; peon_check = fht.data[(2.0, 2.0, 2.0, 4.0)]</span>
+<span class="sd">	&gt;&gt;&gt; peon_check[&quot;fragment&quot;].name == &quot;Peon_IV&quot;</span>
+<span class="sd">	True</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">factors</span> <span class="o">=</span> <span class="n">FACTORS</span>
 	<span class="n">differences</span> <span class="o">=</span> <span class="n">DIFFERENCES</span>
 	<span class="n">try_retrograde</span> <span class="o">=</span> <span class="n">TRY_RETROGRADE</span>
 	<span class="n">allow_mixed_augmentation</span> <span class="o">=</span> <span class="n">ALLOW_MIXED_AUGMENTATION</span>
+	<span class="n">allow_stretch_augmentation</span> <span class="o">=</span> <span class="n">ALLOW_STRETCH_AUGMENTATION</span>
 	<span class="n">modification_hierarchy</span> <span class="o">=</span> <span class="n">MODIFICATION_HIERARCHY</span>
 	<span class="n">custom_overrides_datasets</span> <span class="o">=</span> <span class="n">CUSTOM_OVERRIDES_DATASETS</span>
 
@@ -364,15 +406,19 @@
 	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;decitala.hash_table.FragmentHashTable </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> fragments&gt;&quot;</span>
 
-	<span class="k">def</span> <span class="nf">load</span><span class="p">(</span>
+<div class="viewcode-block" id="FragmentHashTable.load"><a class="viewcode-back" href="../../mods/hash_table.html#decitala.hash_table.FragmentHashTable.load">[docs]</a>	<span class="k">def</span> <span class="nf">load</span><span class="p">(</span>
 			<span class="bp">self</span><span class="p">,</span>
 			<span class="n">factors</span><span class="o">=</span><span class="n">FACTORS</span><span class="p">,</span>
 			<span class="n">differences</span><span class="o">=</span><span class="n">DIFFERENCES</span><span class="p">,</span>
 			<span class="n">try_retrograde</span><span class="o">=</span><span class="n">TRY_RETROGRADE</span><span class="p">,</span>
+			<span class="n">allow_stretch_augmentation</span><span class="o">=</span><span class="n">ALLOW_STRETCH_AUGMENTATION</span><span class="p">,</span>
 			<span class="n">allow_mixed_augmentation</span><span class="o">=</span><span class="n">ALLOW_MIXED_AUGMENTATION</span><span class="p">,</span>
 			<span class="n">modification_hierarchy</span><span class="o">=</span><span class="n">MODIFICATION_HIERARCHY</span><span class="p">,</span>
 			<span class="n">force_override</span><span class="o">=</span><span class="n">CUSTOM_OVERRIDES_DATASETS</span>
 		<span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Function for loading the modifications. Allows the user to override the default attributes.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">custom_fragments</span><span class="p">:</span>
 			<span class="n">generate_all_modifications</span><span class="p">(</span>
 				<span class="n">dict_in</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
@@ -380,6 +426,7 @@
 				<span class="n">factors</span><span class="o">=</span><span class="n">factors</span><span class="p">,</span>
 				<span class="n">differences</span><span class="o">=</span><span class="n">differences</span><span class="p">,</span>
 				<span class="n">try_retrograde</span><span class="o">=</span><span class="n">try_retrograde</span><span class="p">,</span>
+				<span class="n">allow_stretch_augmentation</span><span class="o">=</span><span class="n">allow_stretch_augmentation</span><span class="p">,</span>
 				<span class="n">allow_mixed_augmentation</span><span class="o">=</span><span class="n">allow_mixed_augmentation</span><span class="p">,</span>
 				<span class="n">force_override</span><span class="o">=</span><span class="n">force_override</span>
 			<span class="p">)</span>
@@ -404,14 +451,7 @@
 					<span class="n">force_override</span><span class="o">=</span><span class="n">force_override</span>
 				<span class="p">)</span>
 
-		<span class="bp">self</span><span class="o">.</span><span class="n">loaded</span> <span class="o">=</span> <span class="kc">True</span>
-
-	<span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaded</span><span class="p">:</span>
-			<span class="bp">self</span><span class="o">.</span><span class="n">load_modifications</span><span class="p">()</span>
-			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
+		<span class="bp">self</span><span class="o">.</span><span class="n">loaded</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 
 <div class="viewcode-block" id="DecitalaHashTable"><a class="viewcode-back" href="../../mods/hash_table.html#decitala.hash_table.DecitalaHashTable">[docs]</a><span class="k">class</span> <span class="nc">DecitalaHashTable</span><span class="p">(</span><span class="n">FragmentHashTable</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -429,6 +469,15 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">datasets</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;greek_foot&quot;</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AllCorporaHashTable"><a class="viewcode-back" href="../../mods/hash_table.html#decitala.hash_table.AllCorporaHashTable">[docs]</a><span class="k">class</span> <span class="nc">AllCorporaHashTable</span><span class="p">(</span><span class="n">FragmentHashTable</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``</span>
+<span class="sd">	parameter set to all available datasets in the ``corpora`` directory and automatically loads.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">datasets</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;greek_foot&quot;</span><span class="p">,</span> <span class="s2">&quot;decitala&quot;</span><span class="p">])</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">()</span></div>
 </pre></div>
 

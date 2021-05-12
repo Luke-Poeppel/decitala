@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>utils &mdash; decitala 0.10.1 documentation</title>
+  <title>utils &mdash; decitala 0.11.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.10.1
+                0.11.0
               </div>
             
           
@@ -242,14 +242,14 @@ for two types of rhythmic values (long &amp; short).</p>
 
 <dl class="py function">
 <dt id="decitala.utils.augment">
-<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">augment</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fragment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#augment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.augment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">augment</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ql_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#augment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.augment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an augmentation in the style of Messiaen. If difference is set to 0.0, then the
 augmentation is multiplicative. If factor is set to 1.0, then augmentation is additive. If
 factor &amp; difference are non-zero, we have a mixed augmentation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fragment</strong> (<em>numpy.array</em>) – array defining the rhythmic fragment.</p></li>
+<li><p><strong>ql_array</strong> – array defining the rhythmic fragment (iterable).</p></li>
 <li><p><strong>factor</strong> (<em>float</em>) – factor for multiplicative augmentation.</p></li>
 <li><p><strong>difference</strong> (<em>float</em>) – factor for additive augmentation.</p></li>
 </ul>
@@ -261,20 +261,37 @@ factor &amp; difference are non-zero, we have a mixed augmentation.</p>
 <dd class="field-odd"><p>numpy.array</p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">augment</span><span class="p">(</span><span class="n">fragment</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span> <span class="n">factor</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">augment</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span> <span class="n">factor</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
 <span class="go">array([2.25, 2.25, 1.25, 0.75])</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py function">
+<dt id="decitala.utils.stretch_augment">
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">stretch_augment</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ql_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stretch_factor</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#stretch_augment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.stretch_augment" title="Permalink to this definition">¶</a></dt>
+<dd><p>A special kind of rhythmic augmentation catered toward the Greek metrics. The “short” is
+kept as is and the “long” is modified by the given difference. The new long must still be
+longer than the short value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ql_array</strong> – array defining the rhythmic fragment (iterable)</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stretch_augment</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.125</span><span class="p">,</span> <span class="n">stretch_factor</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="go">array([0.125, 0.5  ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt id="decitala.utils.successive_ratio_array">
-<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">successive_ratio_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fragment</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#successive_ratio_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.successive_ratio_array" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">successive_ratio_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ql_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#successive_ratio_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.successive_ratio_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns array defined by the ratio of successive elements. By convention,
 we set the first value to 1.0.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fragment</strong> (<em>numpy.array</em>) – array defining a rhythmic fragment.</p>
+<dd class="field-odd"><p><strong>ql_array</strong> – array defining a rhythmic fragment.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>array consisting of successive ratios of the input elements.</p>
@@ -291,11 +308,11 @@ we set the first value to 1.0.</p>
 
 <dl class="py function">
 <dt id="decitala.utils.successive_difference_array">
-<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">successive_difference_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fragment</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#successive_difference_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.successive_difference_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the first order difference of <code class="docutils literal notranslate"><span class="pre">fragment</span></code> (contiguous differences).</p>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">successive_difference_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ql_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#successive_difference_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.successive_difference_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the first order difference of <code class="docutils literal notranslate"><span class="pre">ql_array</span></code> (contiguous differences).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fragment</strong> (<em>numpy.array</em>) – array defining a rhythmic fragment.</p>
+<dd class="field-odd"><p><strong>ql_array</strong> – array defining a rhythmic fragment (iterable).</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>array consisting of successive differences of the input elements.</p>
@@ -493,12 +510,44 @@ subdivision of tala components tends to be even.</p>
 <code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">get_object_indices</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">measure_divider_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_grace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#get_object_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.get_object_indices" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns data of the form [(object, (start, end)), …] for a given file path and part number.
 (Supports rests and grace notes.)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – Path to file to be analyzed.</p></li>
+<li><p><strong>part_num</strong> (<em>int</em>) – Part number to be analyzed.</p></li>
+<li><p><strong>measure_divider_mode</strong> (<em>str</em>) – Tool used for dividing the data into measures. If
+<code class="docutils literal notranslate"><span class="pre">measure_divider_mode=&quot;str&quot;`,</span> <span class="pre">the</span> <span class="pre">data</span> <span class="pre">is</span> <span class="pre">returned</span> <span class="pre">with</span>
+<span class="pre">`&quot;B&quot;`</span> <span class="pre">used</span> <span class="pre">as</span> <span class="pre">the</span> <span class="pre">measure</span> <span class="pre">marker.</span> <span class="pre">If</span> <span class="pre">instead</span>
+<span class="pre">``measure_divider_mode=&quot;list&quot;`,</span> <span class="pre">the</span> <span class="pre">data</span> <span class="pre">is</span> <span class="pre">returned</span>
+<span class="pre">partitioned</span> <span class="pre">by</span> <span class="pre">measure.</span> <span class="pre">The</span> <span class="pre">default</span> <span class="pre">is</span> <span class="pre">``None</span></code>, so no
+measure divisions are present.</p></li>
+<li><p><strong>ignore_grace</strong> (<em>bool</em>) – Whether to ignore grace notes in the output. <code class="docutils literal notranslate"><span class="pre">False</span></code> by default.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="decitala.utils.ts_to_reduced_ts">
-<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">ts_to_reduced_ts</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#ts_to_reduced_ts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.ts_to_reduced_ts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for fully reducing a <cite>music21.meter.TimeSignature</cite> object (lowest denominator of 1).</p>
+<dt id="decitala.utils.phrase_divider">
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">phrase_divider</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#phrase_divider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.phrase_divider" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is an oversimplified but useful tool for phrase analysis (particularly for the birdsongs).
+It returns the same output as <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.utils.get_object_indices</span></code></a> but divides the output
+by “phrases,” <strong>only</strong> as defined by the appearance of rests and fermatas. Ignores all dividers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – Path to file to be analyzed.</p></li>
+<li><p><strong>part_num</strong> (<em>int</em>) – Part number to be analyzed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.reframe_ts">
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">reframe_ts</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_denominator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#reframe_ts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.reframe_ts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for reducing a <cite>music21.meter.TimeSignature</cite> object (lowest denominator of 1) to
+a given denominiator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>ts</strong> – a music21.meter.TimeSignature object.</p>
@@ -511,10 +560,10 @@ subdivision of tala components tends to be even.</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">music21.meter</span> <span class="kn">import</span> <span class="n">TimeSignature</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ts_to_reduced_ts</span><span class="p">(</span><span class="n">TimeSignature</span><span class="p">(</span><span class="s2">&quot;4/16&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reframe_ts</span><span class="p">(</span><span class="n">TimeSignature</span><span class="p">(</span><span class="s2">&quot;4/16&quot;</span><span class="p">))</span>
 <span class="go">&lt;music21.meter.TimeSignature 1/4&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ts_to_reduced_ts</span><span class="p">(</span><span class="n">TimeSignature</span><span class="p">(</span><span class="s2">&quot;4/4&quot;</span><span class="p">))</span>
-<span class="go">&lt;music21.meter.TimeSignature 1/1&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reframe_ts</span><span class="p">(</span><span class="n">TimeSignature</span><span class="p">(</span><span class="s2">&quot;4/4&quot;</span><span class="p">),</span> <span class="n">new_denominator</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">&lt;music21.meter.TimeSignature 2/2&gt;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -714,6 +763,24 @@ This function assumes the data is monophonic.</p>
 <span class="go">array([0, 1, 1])</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.contour_to_neume">
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">contour_to_neume</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contour</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#contour_to_neume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.contour_to_neume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for checking the associated neume for a given contour. Only two and three onset
+contour are supported.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>contour</strong> – A pitch contour (iterable).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The associated neume or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str or None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

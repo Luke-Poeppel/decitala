@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Decitala Documentation &mdash; decitala 0.10.1 documentation</title>
+  <title>Decitala Documentation &mdash; decitala 0.11.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.10.1
+                0.11.0
               </div>
             
           
@@ -189,17 +189,17 @@ $ decitala --version # Check for proper installation.
 </div>
 <div class="section" id="rhythmic-manipulation">
 <h1>Rhythmic Manipulation<a class="headerlink" href="#rhythmic-manipulation" title="Permalink to this headline">¶</a></h1>
-<p>Messiaen often altered rhythmic fragments from the decitala database before including
-them in his composition. And yet he still establishes an equivalence relation such that
-a fragment <span class="math notranslate nohighlight">\(F\)</span> and a transformed fragment <span class="math notranslate nohighlight">\(T(F)\)</span> are equivalent if there
-exists a special kind (and highly specified) transformation between them. These possible
+<p>Messiaen often altered rhythmic fragments from the various datasets he used before including
+them in his compositions. He still establishes an equivalence relation where
+a fragment <span class="math notranslate nohighlight">\(F\)</span> and a transformed fragment <span class="math notranslate nohighlight">\(T(F)\)</span> are examples of the same fragment so long as there
+exists a highly specified (but simple) transformation between them. These possible
 transformations include multiplicative augmentation, additive augmentation, mixed augmentation,
-flips into retrograde, and subdivision.</p>
+flips into retrograde, subdivision, and “contiguous summation.”</p>
 </div>
 <div class="section" id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
-<p>Normally, this package is used to find “paths” of rhythms through a given composition, the rhythms
-coming from a dataset. To calculate a path, you can simply use the following:</p>
+<p>Normally, this package is used to find paths of rhythms through a given composition. If we’re interested in
+finding the “best” path of Greek metrics through a given part, we can simply use the following:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">composition</span> <span class="o">=</span> <span class="s2">&quot;/Users/lukepoeppel/decitala/tests/static/Shuffled_Transcription_1.xml&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.search</span> <span class="kn">import</span> <span class="n">path_finder</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.hash_table</span> <span class="kn">import</span> <span class="n">GreekFootHashTable</span>
@@ -207,6 +207,7 @@ coming from a dataset. To calculate a path, you can simply use the following:</p
 <span class="gp">... </span>  <span class="n">filename</span><span class="o">=</span><span class="n">composition</span><span class="p">,</span>
 <span class="gp">... </span>  <span class="n">part_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
 <span class="gp">... </span>  <span class="n">table</span><span class="o">=</span><span class="n">GreekFootHashTable</span><span class="p">(),</span>
+<span class="gp">... </span>  <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;floyd-warshall&quot;</span><span class="p">,</span>
 <span class="gp">... </span>  <span class="n">slur_constraint</span><span class="o">=</span><span class="kc">True</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
@@ -218,6 +219,8 @@ coming from a dataset. To calculate a path, you can simply use the following:</p
 <span class="go">&lt;fragment.GreekFoot Peon_IV&gt; (2.375, 3.0)</span>
 </pre></div>
 </div>
+<p>Each element of <cite>path</cite> stores a number of pieces information including the fragment, onset range (as are shown above), the
+associated pitch content of the region, whether it is slurred, the modification type of the fragment, etc…</p>
 <div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">

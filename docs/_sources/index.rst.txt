@@ -22,17 +22,17 @@ Run the following::
 
 Rhythmic Manipulation
 ====================================
-Messiaen often altered rhythmic fragments from the decitala database before including 
-them in his composition. And yet he still establishes an equivalence relation such that
-a fragment :math:`F` and a transformed fragment :math:`T(F)` are equivalent if there
-exists a special kind (and highly specified) transformation between them. These possible 
+Messiaen often altered rhythmic fragments from the various datasets he used before including 
+them in his compositions. He still establishes an equivalence relation where
+a fragment :math:`F` and a transformed fragment :math:`T(F)` are examples of the same fragment so long as there
+exists a highly specified (but simple) transformation between them. These possible 
 transformations include multiplicative augmentation, additive augmentation, mixed augmentation, 
-flips into retrograde, and subdivision. 
+flips into retrograde, subdivision, and "contiguous summation."
 
 Basic Usage
 ====================================
-Normally, this package is used to find "paths" of rhythms through a given composition, the rhythms
-coming from a dataset. To calculate a path, you can simply use the following:
+Normally, this package is used to find paths of rhythms through a given composition. If we're interested in 
+finding the "best" path of Greek metrics through a given part, we can simply use the following: 
 
    >>> composition = "/Users/lukepoeppel/decitala/tests/static/Shuffled_Transcription_1.xml"
    >>> from decitala.search import path_finder
@@ -41,6 +41,7 @@ coming from a dataset. To calculate a path, you can simply use the following:
    ...   filename=composition,
    ...   part_num=0,
    ...   table=GreekFootHashTable(),
+   ...   algorithm="floyd-warshall",
    ...   slur_constraint=True
    ... )
    >>> for fragment in path:
@@ -50,6 +51,9 @@ coming from a dataset. To calculate a path, you can simply use the following:
    <fragment.GreekFoot Iamb> (0.875, 1.25)
    <fragment.GreekFoot Peon_IV> (1.25, 1.875)
    <fragment.GreekFoot Peon_IV> (2.375, 3.0)
+
+Each element of `path` stores a number of pieces information including the fragment, onset range (as are shown above), the 
+associated pitch content of the region, whether it is slurred, the modification type of the fragment, etc... 
 
 .. toctree::
    :maxdepth: 2

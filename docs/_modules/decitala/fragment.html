@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.fragment &mdash; decitala 0.10.1 documentation</title>
+  <title>decitala.fragment &mdash; decitala 0.11.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.10.1
+                0.11.0
               </div>
             
           
@@ -174,7 +174,7 @@
 <span class="c1">#</span>
 <span class="c1"># Author:   Luke Poeppel</span>
 <span class="c1">#</span>
-<span class="c1"># Location: Kent, CT 2020</span>
+<span class="c1"># Location: Kent, CT 2020 / NYC, 2021</span>
 <span class="c1">####################################################################################################</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
 
@@ -340,7 +340,7 @@
 <span class="sd">	[0.5  1.   1.   0.5  0.25 0.25 0.5 ]</span>
 <span class="sd">	[1.   1.   0.5  0.25 0.25 0.5  0.5 ]</span>
 <span class="sd">	[1.   0.5  0.25 0.25 0.5  0.5  1.  ]</span>
-<span class="sd">	&gt;&gt;&gt; # We may also initialize with an array...</span>
+<span class="sd">	&gt;&gt;&gt; # We can also initialize with an array.</span>
 <span class="sd">	&gt;&gt;&gt; GeneralFragment(data=np.array([0.75, 0.75, 0.5, 0.25]))</span>
 <span class="sd">	&lt;fragment.GeneralFragment: [0.75 0.75 0.5  0.25]&gt;</span>
 <span class="sd">	&gt;&gt;&gt; # We can also set keyword arguments</span>
@@ -350,15 +350,7 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">frag_type</span> <span class="o">=</span> <span class="s2">&quot;general_fragment&quot;</span>
 
-	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-			<span class="bp">self</span><span class="p">,</span>
-			<span class="n">data</span><span class="p">,</span>
-			<span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-			<span class="c1"># ratio_equivalents=None, # TODO</span>
-			<span class="c1"># difference_equivalents=None, # TODO</span>
-			<span class="c1"># filepath=None,</span>
-			<span class="o">**</span><span class="n">kwargs</span>
-		<span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
 			<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">FragmentException</span><span class="p">(</span><span class="s2">&quot;The input data is not a file.&quot;</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">data</span>
@@ -379,7 +371,8 @@
 			<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;fragment.GeneralFragment </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
 
 	<span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+		<span class="n">lil_repr</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)])</span>
+		<span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="n">lil_repr</span><span class="p">)</span>
 
 	<span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">():</span>
@@ -387,7 +380,8 @@
 		<span class="k">else</span><span class="p">:</span>
 			<span class="k">return</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="GeneralFragment.ql_array"><a class="viewcode-back" href="../../mods/fragment.html#decitala.fragment.GeneralFragment.ql_array">[docs]</a>	<span class="k">def</span> <span class="nf">ql_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retrograde</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="GeneralFragment.ql_array"><a class="viewcode-back" href="../../mods/fragment.html#decitala.fragment.GeneralFragment.ql_array">[docs]</a>	<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+	<span class="k">def</span> <span class="nf">ql_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retrograde</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		:param bool retrograde: Whether to return the fragment in its original form or</span>
 <span class="sd">								in retrograde.</span>
@@ -652,7 +646,7 @@
 <span class="sd">		&gt;&gt;&gt; pre_augmentation.augment(factor=2.0, difference=0.75)</span>
 <span class="sd">		&lt;fragment.GeneralFragment Spondee/r:2.0/d:0.75: [4.75 4.75]&gt;</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="n">new_ql_array</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">augment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">(),</span> <span class="n">factor</span><span class="o">=</span><span class="n">factor</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="n">difference</span><span class="p">)</span>
+		<span class="n">new_ql_array</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">augment</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">(),</span> <span class="n">factor</span><span class="o">=</span><span class="n">factor</span><span class="p">,</span> <span class="n">difference</span><span class="o">=</span><span class="n">difference</span><span class="p">)</span>
 		<span class="n">new_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;/r:</span><span class="si">{}</span><span class="s2">/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;d:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">GeneralFragment</span><span class="p">(</span><span class="n">new_ql_array</span><span class="p">,</span> <span class="n">new_name</span><span class="p">)</span></div>
 
