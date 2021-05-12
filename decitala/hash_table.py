@@ -53,39 +53,33 @@ class HashTableException(Exception):
 
 def _single_factor_or_difference_augmentation(
 		fragment,
-		ql_array,
 		factor,
 		difference,
 		try_retrograde,
 		dict_in,
 		mode
 	):
+	ql_array = fragment.ql_array()
 	searches = [ql_array]
 	if try_retrograde is True:
 		searches.append(ql_array[::-1])
 
 	for i, search in enumerate(searches):
-		retrograde = (i == 0)
+		retrograde = False if i == 0 else True
+		elem_dict = {
+			"fragment": fragment,
+			"frag_type": fragment.frag_type,
+			"retrograde": retrograde,
+			"mod_hierarchy_val": 1 if retrograde is False else 2
+		}
 		if mode == "multiplicative":
-			augmentation = tuple(augment(ql_array=search, factor=factor, difference=0.0))
-			elem_dict = {
-				"fragment": fragment,
-				"frag_type": fragment.frag_type,
-				"retrograde": retrograde,
-				"factor": factor,
-				"difference": 0,
-				"mod_hierarchy_val": 1 if retrograde is False else 2
-			}
+			augmentation = tuple(augment(ql_array=search, factor=factor, difference=difference))
+			elem_dict["factor"] = factor
+			elem_dict["difference"] = difference
 		elif mode == "additive":
-			augmentation = tuple(augment(ql_array=search, factor=1.0, difference=difference))
-			elem_dict = {
-				"fragment": fragment,
-				"frag_type": fragment.frag_type,
-				"retrograde": retrograde,
-				"factor": 1.0,
-				"difference": difference,
-				"mod_hierarchy_val": 3 if retrograde is False else 4
-			}
+			augmentation = tuple(augment(ql_array=search, factor=factor, difference=difference))
+			elem_dict["factor"] = factor
+			elem_dict["difference"] = difference
 		
 		if augmentation in dict_in:
 			existing = dict_in[augmentation]
@@ -124,11 +118,9 @@ def generate_all_modifications(
 	if allow_mixed_augmentation or force_override:
 		raise HashTableException("These options are not yet supported. Coming soon.")
 
-	ql_array = fragment.ql_array()
 	for this_factor in factors:
 		_single_factor_or_difference_augmentation(
 			fragment=fragment,
-			ql_array=ql_array,
 			factor=this_factor,
 			difference=0.0,
 			try_retrograde=try_retrograde,
@@ -136,11 +128,9 @@ def generate_all_modifications(
 			mode="multiplicative"
 		)
 
-	# Next we form additive augmentations
 	for this_difference in differences:
 		_single_factor_or_difference_augmentation(
 			fragment=fragment,
-			ql_array=ql_array,
 			factor=1.0,
 			difference=this_difference,
 			try_retrograde=try_retrograde,
@@ -166,11 +156,16 @@ class FragmentHashTable:
 	<decitala.hash_table.FragmentHashTable 0 fragments>
 	>>> fht.load()
 	>>> fht
-	<decitala.hash_table.FragmentHashTable 731 fragments>
+	<decitala.hash_table.FragmentHashTable 735 fragments>
 	>>> fht.datasets
 	['greek_foot']
 	>>> fht.custom_fragments
 	[<fragment.Decitala 93_Ragavardhana>]
+	>>> fht.data[(3.0, 0.5, 0.75, 0.5)]["fragment"]
+	<fragment.Decitala 93_Ragavardhana>
+	>>> peon_check = fht.data[(2.0, 2.0, 2.0, 4.0)]
+	>>> peon_check["fragment"].name == "Peon_IV"
+	True
 	"""
 	factors = FACTORS
 	differences = DIFFERENCES
@@ -209,6 +204,9 @@ class FragmentHashTable:
 			modification_hierarchy=MODIFICATION_HIERARCHY,
 			force_override=CUSTOM_OVERRIDES_DATASETS
 		):
+		"""
+		Function for loading the modifications. Allows the user to override the default attributes. 
+		"""
 		for this_fragment in self.custom_fragments:
 			generate_all_modifications(
 				dict_in=self.data,

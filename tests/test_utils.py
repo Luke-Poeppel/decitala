@@ -184,10 +184,9 @@ def test_write_analysis():
 			data=analysis,
 			filepath=tmpfile.name
 		)
-
 		# Reread to check proper serialization. 
 		loaded = utils.loader(tmpfile.name)
-		fragments = [x["fragment"].name for x in loaded]
+		fragments = [x["fragment"] for x in loaded]
 		assert set(fragments) == set([f1, f2, f3])
 
 def test_reframe_ts():

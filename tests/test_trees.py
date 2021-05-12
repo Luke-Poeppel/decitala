@@ -117,16 +117,16 @@ def test_greek_metric_tree_instantiation(greek_ratio_tree, greek_difference_tree
 def test_fragment_tree_size(small_fragment_tree):
 	assert small_fragment_tree.size() == 7
 
-def test_filter(fake_fragment_dataset):
-	filtered = filter_data(fake_fragment_dataset)
-	expected = [
-		fake_fragment_dataset[4], # [0.75, 0.5]
-		fake_fragment_dataset[2], # [0.75, 0.5, 0.75]
-		fake_fragment_dataset[3], # [0.25, 0.25, 0.5]
-		fake_fragment_dataset[9], # [0.25, 0.5, 1.0, 2.0]
-		fake_fragment_dataset[8], # [1.0, 0.5, 0.5, 0.25, 0.25]
-	]
-	assert set(filtered) == set(expected)
+# def test_filter(fake_fragment_dataset):
+# 	filtered = filter_data(fake_fragment_dataset)
+# 	expected = [
+# 		fake_fragment_dataset[4], # [0.75, 0.5]
+# 		fake_fragment_dataset[2], # [0.75, 0.5, 0.75]
+# 		fake_fragment_dataset[3], # [0.25, 0.25, 0.5]
+# 		fake_fragment_dataset[9], # [0.25, 0.5, 1.0, 2.0]
+# 		fake_fragment_dataset[8], # [1.0, 0.5, 0.5, 0.25, 0.25]
+# 	]
+# 	assert set(filtered) == set(expected)
 
 def test_livre_dorgue_talas(tala_ratio_tree, tala_difference_tree):
 	laya = [1.0, 0.5, 1.5, 1.5, 1.5, 1.0, 1.5, 0.25, 0.25, 0.25] #ratio

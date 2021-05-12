@@ -210,7 +210,8 @@ class GeneralFragment:
 			return f"<fragment.GeneralFragment {self.name}: {self.ql_array()}>"
 
 	def __hash__(self):
-		return hash(self.name)
+		lil_repr = "-".join([str(self.name), str(self.data)])
+		return hash(lil_repr)
 
 	def __eq__(self, other):
 		if self.__hash__() == other.__hash__():
@@ -218,6 +219,7 @@ class GeneralFragment:
 		else:
 			return False
 
+	@lru_cache(maxsize=None)
 	def ql_array(self, retrograde=False):
 		"""
 		:param bool retrograde: Whether to return the fragment in its original form or

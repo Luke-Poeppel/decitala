@@ -81,12 +81,10 @@ def test_generate_all_modifications():
 		try_retrograde=try_retrograde
 	)
 
-	# Subtract 1 for each duplicate in regular and retrograde. 
+	# Subtract 1 for each duplicate (*1 or + 0) in regular and retrograde. 
+	# Multiply by 2 for retrograde. 
 	expected_length = (2*(len(factors) + len(differences))) - 2
 	assert len(dict_in) == expected_length
-
-	# for key, val in dict_in.items():
-	# 	print(key, val)
 
 def test_decitala_hash_table():
 	DHT = DecitalaHashTable()
@@ -122,3 +120,14 @@ def test_ragavardhana():
 	DHT = DecitalaHashTable()
 	frag = [3.0, 0.5, 0.75, 0.5]
 	assert DHT.data[tuple(frag)]["fragment"] == Decitala("Ragavardhana")
+
+def test_peons():
+	GFHT = GreekFootHashTable()
+	p1 = GreekFoot("Peon_I")
+	p2 = GreekFoot("Peon_II")
+	p3 = GreekFoot("Peon_III")
+	p4 = GreekFoot("Peon_IV")
+	peons = [p1, p2, p3, p4]
+	
+	for p in peons:
+		assert GFHT.data[p.ql_tuple()]["fragment"] == p

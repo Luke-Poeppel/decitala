@@ -28,16 +28,20 @@ def test_shuffled_I_path_with_slur_constraint():
 		algorithm="floyd-warshall",
 		slur_constraint=True
 	)
-	fragments = [x["fragment"] for x in path]
-	analysis = [
-		GreekFoot("Peon_IV"),
-		GreekFoot("Iamb"),
-		GreekFoot("Peon_IV"),
-		GreekFoot("Peon_IV")
-	]
+	# print(GreekFoot("Peon_IV").ql_array())
+	#for x in path:
+		#print(x)
+	# fragments = [x["fragment"] for x in path]
+	# analysis = [
+	# 	GreekFoot("Peon_IV"),
+	# 	GreekFoot("Iamb"),
+	# 	GreekFoot("Peon_IV"),
+	# 	GreekFoot("Peon_IV")
+	# ]
 
-	assert fragments == analysis
+	# assert fragments == analysis
 
+print(test_shuffled_I_path_with_slur_constraint())
 # fp = "/Users/lukepoeppel/Messiaen/Encodings/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl"
 # fragments = search.rolling_hash_search(
 # 	filepath=fp,

@@ -543,7 +543,7 @@ class FragmentTree(NaryTree):
 	<fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]>
 	<fragment.GreekFoot Ionic_Major>
 	"""
-	def __init__(self, data, rep_type, name=None, skip_filter=False, **kwargs):
+	def __init__(self, data, rep_type, name=None, **kwargs):
 		assert rep_type.lower() in ["ratio", "difference"], FragmentTreeException("The only possible rep_types are `ratio` and `difference`") # noqa
 
 		self.rep_type = rep_type.lower()
@@ -555,21 +555,17 @@ class FragmentTree(NaryTree):
 			for this_file in os.listdir(self.data):
 				new_data.append(GeneralFragment(data=this_file))
 
-			self.filtered_data = filter_data(new_data)
+			self.data = data
 
 		if isinstance(data, list):
 			assert all(type(x).__name__ in ["GeneralFragment", "Decitala", "GreekFoot"] for x in data), FragmentTreeException("The elements of data must be GeneralFragment, \
 																																Decitala, or GreekFoot objects.") # noqa
-			if not(skip_filter):
-				self.filtered_data = filter_data(data)
-			else:
-				self.filtered_data = data
+			self.data = data
 
 		super().__init__()
 
-		self.depth = max([len(x.ql_array()) for x in self.filtered_data])
-		self.sorted_data = sorted(self.filtered_data, key=lambda x: len(x.ql_array()))
-		# self.filtered_data = None # Free up memory
+		self.depth = max([len(x.ql_array()) for x in self.data])
+		self.sorted_data = sorted(self.data, key=lambda x: len(x.ql_array()))
 
 		if self.rep_type == "ratio":
 			root_node = NaryTree().Node(value=1.0, name="ROOT")
@@ -584,8 +580,6 @@ class FragmentTree(NaryTree):
 				path = list(this_fragment.successive_difference_array())
 				root_node.add_path_of_children(path=path, final_node_name=this_fragment)
 			self.root = root_node
-
-		# self.sorted_data = None # Free up memory
 
 	def __repr__(self):
 		if self.name:
@@ -618,7 +612,6 @@ class FragmentTree(NaryTree):
 			data=data,
 			rep_type=rep_type,
 			name="{0}_{1}".format(frag_type, rep_type),
-			skip_filter=True
 		)
 
 	@classmethod
