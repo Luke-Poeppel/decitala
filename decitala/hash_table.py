@@ -14,6 +14,7 @@ from .fragment import (
 )
 from .utils import (
 	augment,
+	stretch_augment,
 	get_logger
 )
 from .corpora_models import (
@@ -38,14 +39,17 @@ MODIFICATION_HIERARCHY = {
 	"retrograde-difference": 4,
 	"subdivision-ratio": 5,
 	"retrograde-subdivision-ratio": 6,
-	"mixed": 7,
-	"retrograde-mixed": 8
+	"stretch": 7,
+	"retrograde-stretch": 8,
+	"mixed": 9,
+	"retrograde-mixed": 10
 }
 
 FACTORS = [0.125, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0]
 DIFFERENCES = [-0.375, -0.25, -0.125, 0.0, 0.125, 0.25, 0.375, 0.5, 0.75, 0.875, 1.75, 2.625, 3.5, 4.375] # noqa
 TRY_RETROGRADE = True
 ALLOW_MIXED_AUGMENTATION = False
+ALLOW_STRETCH_AUGMENTATION = False
 CUSTOM_OVERRIDES_DATASETS = False
 
 class HashTableException(Exception):
@@ -70,17 +74,23 @@ def _single_factor_or_difference_augmentation(
 			"fragment": fragment,
 			"frag_type": fragment.frag_type,
 			"retrograde": retrograde,
-			"mod_hierarchy_val": 1 if retrograde is False else 2
 		}
 		if mode == "multiplicative":
 			augmentation = tuple(augment(ql_array=search, factor=factor, difference=difference))
 			elem_dict["factor"] = factor
 			elem_dict["difference"] = difference
+			elem_dict["mod_hierarchy_val"] = 1 if retrograde is False else 2
 		elif mode == "additive":
 			augmentation = tuple(augment(ql_array=search, factor=factor, difference=difference))
 			elem_dict["factor"] = factor
 			elem_dict["difference"] = difference
-		
+			elem_dict["mod_hierarchy_val"] = 3 if retrograde is False else 4
+		# elif mode == "stretch":
+		# 	augmentation = tuple(stretch_augment(ql_array=search, factor=factor, difference=difference))
+		# 	elem_dict["factor"] = factor
+		# 	elem_dict["difference"] = difference
+		# 	elem_dict["mod_hierarchy_val"] = 7 if retrograde is False else 8
+
 		if augmentation in dict_in:
 			existing = dict_in[augmentation]
 			# Lower number -> More likely.
@@ -97,6 +107,7 @@ def generate_all_modifications(
 		factors,
 		differences,
 		try_retrograde,
+		allow_stretch_augmentation=True,
 		allow_mixed_augmentation=False,
 		force_override=False
 	):
@@ -138,6 +149,20 @@ def generate_all_modifications(
 			mode="additive"
 		)
 
+	# Stretch Augmentation (this should be cleaned up somehow...)
+	# if allow_stretch_augmentation:
+	# 	if type(fragment) == GreekFoot:
+	# 		for this_factor in factors:
+	# 			for this_difference in differences:
+	# 				_single_factor_or_difference_augmentation(
+	# 					fragment=fragment,
+	# 					factor=this_factor,
+	# 					difference=this_difference,
+	# 					try_retrograde=try_retrograde,
+	# 					dict_in=dict_in,
+	# 					mode="stretch"
+	# 				)
+
 class FragmentHashTable:
 	"""
 	This class holds all (relevant) modifications of a set of fragments. Currently the only
@@ -171,6 +196,7 @@ class FragmentHashTable:
 	differences = DIFFERENCES
 	try_retrograde = TRY_RETROGRADE
 	allow_mixed_augmentation = ALLOW_MIXED_AUGMENTATION
+	allow_stretch_augmentation = ALLOW_STRETCH_AUGMENTATION
 	modification_hierarchy = MODIFICATION_HIERARCHY
 	custom_overrides_datasets = CUSTOM_OVERRIDES_DATASETS
 
@@ -200,6 +226,7 @@ class FragmentHashTable:
 			factors=FACTORS,
 			differences=DIFFERENCES,
 			try_retrograde=TRY_RETROGRADE,
+			allow_stretch_augmentation=ALLOW_STRETCH_AUGMENTATION,
 			allow_mixed_augmentation=ALLOW_MIXED_AUGMENTATION,
 			modification_hierarchy=MODIFICATION_HIERARCHY,
 			force_override=CUSTOM_OVERRIDES_DATASETS
@@ -214,6 +241,7 @@ class FragmentHashTable:
 				factors=factors,
 				differences=differences,
 				try_retrograde=try_retrograde,
+				allow_stretch_augmentation=allow_stretch_augmentation,
 				allow_mixed_augmentation=allow_mixed_augmentation,
 				force_override=force_override
 			)

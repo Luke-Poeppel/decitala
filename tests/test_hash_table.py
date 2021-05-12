@@ -131,3 +131,9 @@ def test_peons():
 	
 	for p in peons:
 		assert GFHT.data[p.ql_tuple()]["fragment"] == p
+
+# def test_stretch_augmentation():
+# 	GFHT = DecitalaHashTable()
+# 	nc_ex2 = [0.125, 0.5] # Described as "Iambique". 
+# 	found = GFHT.data[tuple(nc_ex2)]
+# 	assert found["fragment"]

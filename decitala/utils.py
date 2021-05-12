@@ -194,6 +194,25 @@ def augment(ql_array, factor=1.0, difference=0.0):
 	assert factor > 0.0
 	return np.array([(this_val * factor) + difference for this_val in ql_array])
 
+def stretch_augment(ql_array, factor, difference):
+	"""
+	A special kind of rhythmic augmentation catered toward the Greek metrics. The "short" is
+	kept as is and the "long" is modified by the given difference. The new long must still be
+	longer than the short value. 
+
+	:param ql_array: array defining the rhythmic fragment (iterable)
+	"""
+	assert len(np.unique(ql_array)) == 2, UtilsException("Stretch augment is only supported for  \
+														two" "onset type fragments, i.e. metrics.")
+
+	stretch_augmentation = []
+	breve = min(ql_array)
+	for this_val in ql_array:
+		if this_val == breve:
+			stretch_augmentation.append(factor * breve)
+		else:
+			stretch_augmentation.append(this_val + difference)
+
 def successive_ratio_array(ql_array):
 	"""
 	Returns array defined by the ratio of successive elements. By convention,
