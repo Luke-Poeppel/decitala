@@ -198,7 +198,7 @@ def stretch_augment(ql_array, factor, stretch_factor):
 	"""
 	A special kind of rhythmic augmentation catered toward the Greek metrics. The "short" is
 	kept as is and the "long" is modified by the given difference. The new long must still be
-	longer than the short value. 
+	longer than the short value.
 
 	:param ql_array: array defining the rhythmic fragment (iterable)
 
@@ -214,7 +214,7 @@ def stretch_augment(ql_array, factor, stretch_factor):
 			stretch_augmentation.append(factor * breve)
 		else:
 			stretch_augmentation.append(this_val * stretch_factor)
-	
+
 	return np.array(stretch_augmentation)
 
 def successive_ratio_array(ql_array):
@@ -281,7 +281,7 @@ def get_added_values(ql_array, print_type=True):
 	the examples dicussed in Technique de Mon Langage Musical (1944).
 
 	:param ql_array: Array defining a rhythmic fragment (iterable).
-	:param bool print_type: Whether to print the Valéur Ajoutée types, along with the locations. 
+	:param bool print_type: Whether to print the Valéur Ajoutée types, along with the locations.
 	:return: Location of extracted added values (along with their type if ``print_type=True``)
 	:rtype: list
 
@@ -658,14 +658,14 @@ def get_object_indices(
 	(Supports rests and grace notes.)
 
 	:param str filepath: Path to file to be analyzed.
-	:param int part_num: Part number to be analyzed. 
+	:param int part_num: Part number to be analyzed.
 	:param str measure_divider_mode: Tool used for dividing the data into measures. If
 									``measure_divider_mode="str"`, the data is returned with
 									`"B"` used as the measure marker. If instead
 									``measure_divider_mode="list"`, the data is returned
 									partitioned by measure. The default is ``None``, so no
 									measure divisions are present.
-	:param bool ignore_grace: Whether to ignore grace notes in the output. ``False`` by default. 
+	:param bool ignore_grace: Whether to ignore grace notes in the output. ``False`` by default.
 	"""
 	score = converter.parse(filepath)
 	part = score.parts[part_num]
@@ -717,12 +717,12 @@ def phrase_divider(
 		part_num
 	):
 	"""
-	This is an oversimplified but useful tool for phrase analysis (particularly for the birdsongs). 
+	This is an oversimplified but useful tool for phrase analysis (particularly for the birdsongs).
 	It returns the same output as :obj:`decitala.utils.get_object_indices` but divides the output
 	by "phrases," **only** as defined by the appearance of rests and fermatas. Ignores all dividers.
 
 	:param str filepath: Path to file to be analyzed.
-	:param int part_num: Part number to be analyzed. 
+	:param int part_num: Part number to be analyzed.
 	"""
 	all_objects = get_object_indices(
 		filepath,
@@ -744,7 +744,7 @@ def phrase_divider(
 def reframe_ts(ts, new_denominator=None):
 	"""
 	Function for reducing a `music21.meter.TimeSignature` object (lowest denominator of 1) to
-	a given denominiator. 
+	a given denominiator.
 
 	:param ts: a music21.meter.TimeSignature object.
 	:return: a new time signature that is fully reduced by removing all possible powers of 2.
@@ -769,8 +769,8 @@ def reframe_ts(ts, new_denominator=None):
 			denominator = denominator / 2
 	else:
 		while denominator < new_denominator:
-			numerator = numerator*2
-			denominator = denominator*2
+			numerator = numerator * 2
+			denominator = denominator * 2
 
 	reduced_ts_str = f"{int(numerator)}/{int(denominator)}"
 	return TimeSignature(reduced_ts_str)
@@ -1030,11 +1030,11 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 
 def contour_to_neume(contour):
 	"""
-	Function for checking the associated neume for a given contour. Only two and three onset 
-	contour are supported. 
+	Function for checking the associated neume for a given contour. Only two and three onset
+	contour are supported.
 
 	:param contour: A pitch contour (iterable).
-	:return: The associated neume or ``None``. 
+	:return: The associated neume or ``None``.
 	:rtype: str or None
 	"""
 	assert len(contour) <= 3, UtilsException("Contour input must be of length three!")

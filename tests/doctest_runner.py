@@ -17,7 +17,7 @@ def doctest_runner():
 		search,
 		hash_table
 	)
-	all_modules = [hash_table]#, database, utils, hash_table, trees, fragment, search]
+	all_modules = [database, utils, hash_table, trees, fragment, search]
 	for module in all_modules:
 		logger.info("Testing: {}".format(module))
 		fail_count, test_count = doctest.testmod(module)

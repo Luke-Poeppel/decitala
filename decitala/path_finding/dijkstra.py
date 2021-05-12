@@ -13,6 +13,7 @@ import heapq
 from . import path_finding_utils
 
 # Useful info here: https://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python.
+# Weights found from hyperparameter search on pre-annotated compositions.
 def dijkstra(
 		data,
 		source,
@@ -40,11 +41,11 @@ def dijkstra(
 	while q:
 		last_w, curr_v = heapq.heappop(q)
 		for n, n_w in graph[curr_v]:
-			cand_w = last_w + n_w
-			if cand_w < dist[n]:
-				dist[n] = cand_w
+			alt = last_w + n_w
+			if alt < dist[n]:
+				dist[n] = alt
 				pred[n] = curr_v
-				heapq.heappush(q, (cand_w, n))
+				heapq.heappush(q, (alt, n))
 
 	return dist, pred
 

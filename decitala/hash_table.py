@@ -91,7 +91,12 @@ def _single_factor_or_difference_augmentation(
 			elem_dict["difference"] = difference
 			elem_dict["mod_hierarchy_val"] = 3 if retrograde is False else 4
 		elif mode == "stretch":
-			augmentation = tuple(stretch_augment(ql_array=search, factor=factor, stretch_factor=stretch_factor))
+			stretch_augmentation = stretch_augment(
+				ql_array=search,
+				factor=factor,
+				stretch_factor=stretch_factor
+			)
+			augmentation = tuple(stretch_augmentation)
 			elem_dict["factor"] = factor
 			elem_dict["stretch_factor"] = stretch_factor
 			elem_dict["difference"] = difference
@@ -243,7 +248,7 @@ class FragmentHashTable:
 			force_override=CUSTOM_OVERRIDES_DATASETS
 		):
 		"""
-		Function for loading the modifications. Allows the user to override the default attributes. 
+		Function for loading the modifications. Allows the user to override the default attributes.
 		"""
 		for this_fragment in self.custom_fragments:
 			generate_all_modifications(
@@ -278,7 +283,7 @@ class FragmentHashTable:
 				)
 
 		self.loaded = True
-	
+
 class DecitalaHashTable(FragmentHashTable):
 	"""
 	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``

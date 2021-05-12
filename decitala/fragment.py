@@ -5,7 +5,7 @@
 #
 # Author:   Luke Poeppel
 #
-# Location: Kent, CT 2020
+# Location: Kent, CT 2020 / NYC, 2021
 ####################################################################################################
 from __future__ import division, print_function, unicode_literals
 
@@ -171,7 +171,7 @@ class GeneralFragment:
 	[0.5  1.   1.   0.5  0.25 0.25 0.5 ]
 	[1.   1.   0.5  0.25 0.25 0.5  0.5 ]
 	[1.   0.5  0.25 0.25 0.5  0.5  1.  ]
-	>>> # We may also initialize with an array...
+	>>> # We can also initialize with an array.
 	>>> GeneralFragment(data=np.array([0.75, 0.75, 0.5, 0.25]))
 	<fragment.GeneralFragment: [0.75 0.75 0.5  0.25]>
 	>>> # We can also set keyword arguments
@@ -181,15 +181,7 @@ class GeneralFragment:
 	"""
 	frag_type = "general_fragment"
 
-	def __init__(
-			self,
-			data,
-			name=None,
-			# ratio_equivalents=None, # TODO
-			# difference_equivalents=None, # TODO
-			# filepath=None,
-			**kwargs
-		):
+	def __init__(self, data, name=None, **kwargs):
 		if isinstance(data, str):
 			assert os.path.isfile(data), FragmentException("The input data is not a file.")
 			self.filepath = data
