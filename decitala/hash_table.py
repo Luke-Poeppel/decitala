@@ -51,6 +51,52 @@ CUSTOM_OVERRIDES_DATASETS = False
 class HashTableException(Exception):
 	pass
 
+def _single_factor_or_difference_augmentation(
+		fragment,
+		ql_array,
+		factor,
+		difference,
+		try_retrograde,
+		dict_in,
+		mode
+	):
+	searches = [ql_array]
+	if try_retrograde is True:
+		searches.append(ql_array[::-1])
+
+	for i, search in enumerate(searches):
+		retrograde = (i == 0)
+		if mode == "multiplicative":
+			augmentation = tuple(augment(ql_array=search, factor=factor, difference=0.0))
+			elem_dict = {
+				"fragment": fragment,
+				"frag_type": fragment.frag_type,
+				"retrograde": retrograde,
+				"factor": factor,
+				"difference": 0,
+				"mod_hierarchy_val": 1 if retrograde is False else 2
+			}
+		elif mode == "additive":
+			augmentation = tuple(augment(ql_array=search, factor=1.0, difference=difference))
+			elem_dict = {
+				"fragment": fragment,
+				"frag_type": fragment.frag_type,
+				"retrograde": retrograde,
+				"factor": 1.0,
+				"difference": difference,
+				"mod_hierarchy_val": 3 if retrograde is False else 4
+			}
+		
+		if augmentation in dict_in:
+			existing = dict_in[augmentation]
+			# Lower number -> More likely.
+			if existing["mod_hierarchy_val"] < elem_dict["mod_hierarchy_val"]:
+				continue
+			else:
+				dict_in[augmentation] = elem_dict
+		else:
+			dict_in[augmentation] = elem_dict
+
 def generate_all_modifications(
 		dict_in,
 		fragment,
@@ -78,70 +124,29 @@ def generate_all_modifications(
 	if allow_mixed_augmentation or force_override:
 		raise HashTableException("These options are not yet supported. Coming soon.")
 
-	qls = fragment.ql_array()
-
-	# First we form multiplicative augmentations
+	ql_array = fragment.ql_array()
 	for this_factor in factors:
-		searches = [qls]
-		if try_retrograde is True:
-			searches.append(qls[::-1])
-
-		for i, search in enumerate(searches):
-			augmentation = tuple(augment(ql_array=search, factor=this_factor, difference=0.0))
-
-			if i == 0:
-				retrograde = False
-			else:
-				retrograde = True
-
-			elem_dict = {
-				"fragment": fragment,
-				"frag_type": fragment.frag_type,
-				"retrograde": retrograde,
-				"factor": this_factor,
-				"difference": 0,
-				"mod_hierarchy_val": 1 if retrograde is False else 2
-			}
-			if augmentation in dict_in:
-				existing = dict_in[augmentation]
-				# Lower number -> More likely.
-				if existing["mod_hierarchy_val"] < elem_dict["mod_hierarchy_val"]:
-					continue
-				else:
-					dict_in[augmentation] = elem_dict
-			else:
-				dict_in[augmentation] = elem_dict
+		_single_factor_or_difference_augmentation(
+			fragment=fragment,
+			ql_array=ql_array,
+			factor=this_factor,
+			difference=0.0,
+			try_retrograde=try_retrograde,
+			dict_in=dict_in,
+			mode="multiplicative"
+		)
 
 	# Next we form additive augmentations
 	for this_difference in differences:
-		searches = [qls]
-		if retrograde is True:
-			searches.append(qls[::-1])
-		for i, search in enumerate(searches):
-			augmentation = tuple(augment(ql_array=search, factor=1.0, difference=this_difference))
-			if any(x <= 0 for x in augmentation):
-				continue
-
-			if i == 0:
-				retrograde = False
-			else:
-				retrograde = True
-
-			elem_dict = {
-				"fragment": fragment,
-				"frag_type": fragment.frag_type,
-				"retrograde": retrograde,
-				"factor": 1.0,
-				"difference": this_difference,
-				"mod_hierarchy_val": 3 if retrograde is False else 4
-			}
-			# Lower number -> More likely.
-			if augmentation in dict_in:
-				existing = dict_in[augmentation]
-				if existing["mod_hierarchy_val"] < elem_dict["mod_hierarchy_val"]:
-					continue
-			else:
-				dict_in[augmentation] = elem_dict
+		_single_factor_or_difference_augmentation(
+			fragment=fragment,
+			ql_array=ql_array,
+			factor=1.0,
+			difference=this_difference,
+			try_retrograde=try_retrograde,
+			dict_in=dict_in,
+			mode="additive"
+		)
 
 class FragmentHashTable:
 	"""

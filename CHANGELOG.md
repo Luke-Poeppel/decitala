@@ -6,7 +6,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.11.0](https://github.com/Luke-Poeppel/decitala/tree/v0.11.0) ???
 ### Added
 - Added a `utils.phrase_divider` function for over-simplistically dividing a filepath/part-num combination into phrases (in the same output as `utils.get_object_indices`). The division is only on the basis of the appearance of rests and fermatas. (See #104)
-- Added a `contour_to_neume` function in utils.py for some experiments with Cheong's work (2008). 
+- Added a `contour_to_neume` function in utils.py for some experiments with Wai Ling Cheong's work (2008). 
 
 ### Changed
 - All functions accepting a `ql_array` in `utils.py` now take in a variable called `ql_array` –– a few were set to `fragment` instead which was confusing (fixes #122). 
