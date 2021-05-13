@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.utils &mdash; decitala 0.11.0 documentation</title>
+  <title>decitala.utils &mdash; decitala 0.11.1 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.11.0
+                0.11.1
               </div>
             
           
@@ -442,6 +442,32 @@
 		<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">difference_lst</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">_remove_adjacent_equal_elements</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+	<span class="n">as_lst</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+	<span class="n">filtered</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">as_lst</span><span class="p">,</span> <span class="n">as_lst</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="p">[</span><span class="ow">not</span> <span class="n">as_lst</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span> <span class="k">if</span> <span class="n">a</span> <span class="o">!=</span> <span class="n">b</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">filtered</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">dseg</span><span class="p">(</span><span class="n">ql_array</span><span class="p">,</span> <span class="n">reduced</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_str</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="n">dseg_vals</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">ql_array</span><span class="p">)</span>
+	<span class="n">value_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">dseg_vals</span><span class="p">)))),</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">dseg_vals</span><span class="p">))):</span>
+		<span class="n">value_dict</span><span class="p">[</span><span class="n">this_val</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dseg_vals</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">value_dict</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">this_val</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
+				<span class="n">dseg_vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+	<span class="n">dseg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">dseg_vals</span><span class="p">])</span>
+	<span class="k">if</span> <span class="n">reduced</span><span class="p">:</span>
+		<span class="n">dseg</span> <span class="o">=</span> <span class="n">_remove_adjacent_equal_elements</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">dseg</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">as_str</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">dseg</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="s2">&quot;&lt;&quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">dseg</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;&gt;&quot;</span>
 
 <span class="c1"># La Valeur Ajoutee</span>
 <span class="k">def</span> <span class="nf">get_added_values</span><span class="p">(</span><span class="n">ql_array</span><span class="p">,</span> <span class="n">print_type</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -829,9 +855,9 @@
 <span class="sd">	:param str filepath: Path to file to be analyzed.</span>
 <span class="sd">	:param int part_num: Part number to be analyzed.</span>
 <span class="sd">	:param str measure_divider_mode: Tool used for dividing the data into measures. If</span>
-<span class="sd">									``measure_divider_mode=&quot;str&quot;`, the data is returned with</span>
-<span class="sd">									`&quot;B&quot;` used as the measure marker. If instead</span>
-<span class="sd">									``measure_divider_mode=&quot;list&quot;`, the data is returned</span>
+<span class="sd">									``measure_divider_mode=&quot;str&quot;``, the data is returned with</span>
+<span class="sd">									``&quot;B&quot;`` used as the measure marker. If instead</span>
+<span class="sd">									``measure_divider_mode=&quot;list&quot;``, the data is returned</span>
 <span class="sd">									partitioned by measure. The default is ``None``, so no</span>
 <span class="sd">									measure divisions are present.</span>
 <span class="sd">	:param bool ignore_grace: Whether to ignore grace notes in the output. ``False`` by default.</span>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Decitala Documentation &mdash; decitala 0.11.0 documentation</title>
+  <title>Decitala Documentation &mdash; decitala 0.11.1 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.11.0
+                0.11.1
               </div>
             
           
@@ -187,19 +187,48 @@ $ decitala --version # Check for proper installation.
 </pre></div>
 </div>
 </div>
-<div class="section" id="rhythmic-manipulation">
-<h1>Rhythmic Manipulation<a class="headerlink" href="#rhythmic-manipulation" title="Permalink to this headline">¶</a></h1>
-<p>Messiaen often altered rhythmic fragments from the various datasets he used before including
-them in his compositions. He still establishes an equivalence relation where
-a fragment <span class="math notranslate nohighlight">\(F\)</span> and a transformed fragment <span class="math notranslate nohighlight">\(T(F)\)</span> are examples of the same fragment so long as there
-exists a highly specified (but simple) transformation between them. These possible
-transformations include multiplicative augmentation, additive augmentation, mixed augmentation,
-flips into retrograde, subdivision, and “contiguous summation.”</p>
-</div>
 <div class="section" id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
-<p>Normally, this package is used to find paths of rhythms through a given composition. If we’re interested in
-finding the “best” path of Greek metrics through a given part, we can simply use the following:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">decitala</span></code> package includes a number of rhythmic fragments in the <code class="docutils literal notranslate"><span class="pre">corpora</span></code> directory. Currently,
+two fragment types are supported: <code class="docutils literal notranslate"><span class="pre">fragment.Decitala</span></code> and <code class="docutils literal notranslate"><span class="pre">fragment.GreekFoot</span></code>. More possibilities
+will become available in the future. These objects are normally instantiated with a name (as provided).
+We can also create custom fragments with the <code class="docutils literal notranslate"><span class="pre">fragment.GeneralFragment</span></code> class.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.fragment</span> <span class="kn">import</span> <span class="n">Decitala</span><span class="p">,</span> <span class="n">GreekFoot</span><span class="p">,</span> <span class="n">GeneralFragment</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ragavardhana</span> <span class="o">=</span> <span class="n">Decitala</span><span class="p">(</span><span class="s2">&quot;Ragavardhana&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ragavardhana</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()</span>
+<span class="go">array([0.25 , 0.375, 0.25 , 1.5  ])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bacchius</span> <span class="o">=</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Bacchius&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bacchius</span><span class="o">.</span><span class="n">greek_string</span>
+<span class="go">&#39;⏑ –– ––&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_fragment</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">])</span> <span class="c1"># can also be instantiated with a filepath.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_fragment</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="go">1.5242185497821</span>
+</pre></div>
+</div>
+<p>See the <code class="docutils literal notranslate"><span class="pre">fragment</span></code> module for more information. Also included in the package is a method for fast queries
+on rhythmic datasets. The <code class="docutils literal notranslate"><span class="pre">hash_table</span></code> module stores a number of possible modifications to a given fragment
+(based on Messiaen’s well-documented modification techniques). To create and query a generic <code class="docutils literal notranslate"><span class="pre">hash_table.FragmentHashTable</span></code>,
+we may use the following:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.hash_table</span> <span class="kn">import</span> <span class="n">FragmentHashTable</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.fragment</span> <span class="kn">import</span> <span class="n">GeneralFragment</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_ht</span> <span class="o">=</span> <span class="n">FragmentHashTable</span><span class="p">(</span>
+<span class="gp">... </span>     <span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;greek_foot&quot;</span><span class="p">],</span>
+<span class="gp">... </span>     <span class="n">custom_fragments</span> <span class="o">=</span> <span class="p">[</span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">filepath</span><span class="p">),</span> <span class="n">Decitala</span><span class="p">(</span><span class="s2">&quot;Ragavardhana&quot;</span><span class="p">)]</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_ht</span><span class="o">.</span><span class="n">datasets</span>
+<span class="go">[&quot;greek_foot&quot;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_ht</span><span class="o">.</span><span class="n">load</span><span class="p">()</span> <span class="c1"># You must first load the modifications into the data.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="n">my_ht</span><span class="o">.</span><span class="n">data</span><span class="p">[(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span>
+<span class="go">&lt;fragment.GreekFoot Anapest&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span><span class="p">[</span><span class="s2">&quot;factor&quot;</span><span class="p">]</span>
+<span class="go">1.0</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">hash_table</span></code> module subclasses <code class="docutils literal notranslate"><span class="pre">hash_table.FragmentHashTable</span></code> with the included datasets. These objects are pre-loaded
+and can be created by calling the classes <code class="docutils literal notranslate"><span class="pre">GreekFootHashTable()</span></code> or <code class="docutils literal notranslate"><span class="pre">DecitalaHashTable()</span></code>, as below. Normally, this package
+is used to find paths of rhythms through a given composition. If we’re interested in finding the “best” path of Greek metrics
+through a given part (as calculated by dynamic programming algorithms), we simply use the following:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">composition</span> <span class="o">=</span> <span class="s2">&quot;/Users/lukepoeppel/decitala/tests/static/Shuffled_Transcription_1.xml&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.search</span> <span class="kn">import</span> <span class="n">path_finder</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.hash_table</span> <span class="kn">import</span> <span class="n">GreekFootHashTable</span>
@@ -208,7 +237,7 @@ finding the “best” path of Greek metrics through a given part, we can simply
 <span class="gp">... </span>  <span class="n">part_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
 <span class="gp">... </span>  <span class="n">table</span><span class="o">=</span><span class="n">GreekFootHashTable</span><span class="p">(),</span>
 <span class="gp">... </span>  <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;floyd-warshall&quot;</span><span class="p">,</span>
-<span class="gp">... </span>  <span class="n">slur_constraint</span><span class="o">=</span><span class="kc">True</span>
+<span class="gp">... </span>  <span class="n">slur_constraint</span><span class="o">=</span><span class="kc">True</span> <span class="c1"># forces the algorithm to include slurred fragments if found.</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
 <span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="n">fragment</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">],</span> <span class="n">fragment</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">])</span>
@@ -219,8 +248,18 @@ finding the “best” path of Greek metrics through a given part, we can simply
 <span class="go">&lt;fragment.GreekFoot Peon_IV&gt; (2.375, 3.0)</span>
 </pre></div>
 </div>
-<p>Each element of <cite>path</cite> stores a number of pieces information including the fragment, onset range (as are shown above), the
-associated pitch content of the region, whether it is slurred, the modification type of the fragment, etc…</p>
+<p>Each element of <code class="docutils literal notranslate"><span class="pre">path</span></code> stores a number of pieces of information in a dictionary. It includes the fragment, its onset range, the
+associated pitch content of the region, whether it is slurred, the modification type of the fragment, etc… If a faster algorithm
+than Floyd-Warshall is desired, replace it with <code class="docutils literal notranslate"><span class="pre">&quot;Dijkstra&quot;</span></code> (though this currently disables the possibility of <code class="docutils literal notranslate"><span class="pre">slur_constraint</span></code>).</p>
+</div>
+<div class="section" id="rhythmic-manipulation">
+<h1>Rhythmic Manipulation<a class="headerlink" href="#rhythmic-manipulation" title="Permalink to this headline">¶</a></h1>
+<p>Messiaen often altered rhythmic fragments from the various datasets he used before including
+them in his compositions. He still establishes an equivalence relation where
+a fragment <span class="math notranslate nohighlight">\(F\)</span> and a transformed fragment <span class="math notranslate nohighlight">\(T(F)\)</span> are examples of the same fragment so long as there
+exists a highly specified (but simple) transformation between them. These possible
+transformations include multiplicative augmentation, additive augmentation, mixed augmentation,
+flips into retrograde, subdivision, and “contiguous summation.”</p>
 <div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">

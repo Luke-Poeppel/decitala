@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>fragment &mdash; decitala 0.11.0 documentation</title>
+  <title>fragment &mdash; decitala 0.11.1 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.11.0
+                0.11.1
               </div>
             
           
@@ -373,10 +373,13 @@ in retrograde.</p>
 
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.dseg">
-<code class="sig-name descname"><span class="pre">dseg</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">as_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#GeneralFragment.dseg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.dseg" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">dseg</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reduced</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#GeneralFragment.dseg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.dseg" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>as_str</strong> (<em>bool</em>) – Whether to make the return type a string.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reduced</strong> (<em>bool</em>) – Whether to remove equal contiguous values.</p></li>
+<li><p><strong>as_str</strong> (<em>bool</em>) – Whether to make the return type a string.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the d-seg of the fragment, as introducted in <a class="reference external" href="https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents">The Perception of Rhythm
@@ -390,29 +393,6 @@ in Non-Tonal Music</a>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g3</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;marvin-p70&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g3</span><span class="o">.</span><span class="n">dseg</span><span class="p">()</span>
 <span class="go">array([0, 1, 3, 2])</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.fragment.GeneralFragment.reduced_dseg">
-<code class="sig-name descname"><span class="pre">reduced_dseg</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">as_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#GeneralFragment.reduced_dseg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.reduced_dseg" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>as_str</strong> (<em>bool</em>) – Whether to return the reduced d-seg as a string.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>d-seg of the fragment with all contiguous equal values reduced to a single instance.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>numpy.array (or string if <cite>as_str=True</cite>)</p>
-</dd>
-</dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g4</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">([</span><span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;marvin-p74-x&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g4</span><span class="o">.</span><span class="n">dseg</span><span class="p">(</span><span class="n">as_str</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;&lt;0 0 2 1&gt;&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g4</span><span class="o">.</span><span class="n">reduced_dseg</span><span class="p">(</span><span class="n">as_str</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">&#39;&lt;0 2 1&gt;&#39;</span>
 </pre></div>
 </div>
 </dd></dl>
