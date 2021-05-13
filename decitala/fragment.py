@@ -23,7 +23,7 @@ from . import utils
 from .corpora_models import (
 	DecitalaData,
 	GreekFootData,
-	ProsodyData,
+	ProsodicFragmentData,
 	get_engine,
 	get_session
 )
@@ -32,6 +32,7 @@ from .corpora_models import (
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
 greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics/"
+prosody_path = os.path.dirname(here) + "/corpora/Prosody/"
 
 fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
 
@@ -620,15 +621,31 @@ class GreekFoot(GeneralFragment):
 class TheorieKarnatique(GeneralFragment):
 	pass
 
-class Prosody(GeneralFragment):
+class ProsodicFragment(GeneralFragment):
+	"""
+	Class that stores prosodic data. The class reads from the fragments_db file in the databases
+	directory (see the ProsodicFragments table).
+
+	>>> asclepiad_m = ProsodicFragment("Asclépiad_Mineur")
+	>>> asclepiad_m
+	<fragment.ProsodicFragment Asclépiad_Mineur>
+	"""
 	frag_type = "prosodic_fragment"
 
 	def __init__(self, name, **kwargs):
 		if name.endswith(".xml"):
 			name = name[:-4]
 
-		matches = session.query(ProsodyData).filter(name == name).all()
+		matches = session.query(ProsodicFragmentData).filter(name == name).all()
 		matches = [x.name + ".xml" for x in matches]
 
 		if not matches:
 			raise ProsodicException(f"No matches were found for name {name}.")
+
+		full_path, name, filename = _process_matches(name, matches, prosody_path)
+		self.full_path = full_path
+
+		super().__init__(data=full_path, name=name)
+
+	def __repr__(self):
+		return f"<fragment.ProsodicFragment {self.name}>"

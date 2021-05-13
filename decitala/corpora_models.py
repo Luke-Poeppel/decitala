@@ -26,6 +26,7 @@ from music21 import note
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
 greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics/"
+prosody_path = os.path.dirname(here) + "/corpora/Prosody/"
 
 Base = declarative_base()
 
@@ -61,27 +62,27 @@ class GreekFootData(Base):
 	name = Column(String)
 	ql_array = Column(String)
 
-class ProsodyData(Base):
+class ProsodicFragmentData(Base):
 	"""
 	SQLAlchemy model representing a prosodic fragment from the encoded datasets (given in ``corpora``).
 	"""
-	__tablename__ = "ProsodyData"
+	__tablename__ = "ProsodicFragmentData"
 
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
-	text = Column(String)
+	collection = Column(String)
 	ql_array = Column(String)
 
-def _make_corpora_database():
+def _make_corpora_database(echo):
 	abspath_databases_directory = os.path.abspath("./databases/")
 	engine = get_engine(
 		filepath=os.path.join(abspath_databases_directory, "fragment_database.db"),
-		echo=True
+		echo=echo
 	)
 	session = get_session(engine=engine)
 
 	for this_file in natsort.natsorted(os.listdir(decitala_path)):
-		# Will use the utils function evenutally. Annoying bug.
+		# Will use the utils function eventually. Annoying bug.
 		split = this_file.split("_")
 		if len(split) == 2:
 			full_id = split[0]
@@ -109,4 +110,20 @@ def _make_corpora_database():
 		)
 		session.add(greek_foot)
 
+	for this_dir in os.listdir(prosody_path):
+		if this_dir == "README.md":
+			continue
+		subdir = os.path.join(prosody_path, this_dir)
+		for this_file in os.listdir(subdir):
+			converted = converter.parse(os.path.join(subdir, this_file))
+			ql_array = json.dumps([x.quarterLength for x in converted.flat.getElementsByClass(note.Note)])
+			prosodic_fragment = ProsodicFragmentData(
+				name=this_file[:-4],
+				collection=this_dir,
+				ql_array=ql_array
+			)
+			session.add(prosodic_fragment)
+
 	session.commit()
+
+# _make_corpora_database(echo=False)
