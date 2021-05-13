@@ -290,7 +290,7 @@ def dseg(ql_array, reduced=False, as_str=False):
 		for key in value_dict:
 			if this_val == key:
 				dseg_vals[i] = value_dict[key]
-	
+
 	dseg = np.array([int(val) for val in dseg_vals])
 	if reduced:
 		dseg = _remove_adjacent_equal_elements(array=dseg)

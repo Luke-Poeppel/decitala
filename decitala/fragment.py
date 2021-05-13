@@ -9,7 +9,6 @@
 ####################################################################################################
 from __future__ import division, print_function, unicode_literals
 
-import copy
 import json
 import numpy as np
 import os
@@ -282,7 +281,7 @@ class GeneralFragment:
 
 	def dseg(self, reduced=False, as_str=False):
 		"""
-		:param bool reduced: Whether to remove equal contiguous values. 
+		:param bool reduced: Whether to remove equal contiguous values.
 		:param bool as_str: Whether to make the return type a string.
 		:return: the d-seg of the fragment, as introducted in `The Perception of Rhythm
 				in Non-Tonal Music
