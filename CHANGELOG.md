@@ -6,9 +6,12 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.11.1](https://github.com/Luke-Poeppel/decitala/tree/v0.11.0) ???
 ### Changed
 - Moved `dseg` calculation to `utils.py` that `GeneralFragment.dseg` now wraps. Also made `reduced` a parameter in the same function for simplicity (removing the need for a second method). 
+- Table name in `database.py` for extractions is now `Extractions`, not `Fragments` (this made no sense). 
 
 ### Fixed
 - Missing `lru_cache` in `GeneralFragment.ql_tuple()`. 
+- Missing `get_engine/get_session` in `database.py`. 
+- Issues #133: formatting issue in docs; #131: missing assertions in database tests. 
 
 ## [v0.11.0](https://github.com/Luke-Poeppel/decitala/tree/v0.11.0) May 12, 2021
 ### Added

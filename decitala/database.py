@@ -30,6 +30,16 @@ from .utils import get_logger
 
 Base = declarative_base()
 
+def get_engine(filepath, echo=False):
+	engine = create_engine(f"sqlite:////{filepath}", echo=echo)
+	Base.metadata.create_all(engine)
+	return engine
+
+def get_session(engine):
+	Session = sessionmaker(bind=engine)
+	session = Session()
+	return session
+
 class DatabaseException(Exception):
 	pass
 
@@ -79,7 +89,7 @@ class Extraction(Base):
 	:param str pitch_content: pitch content of the extracted fragment.
 	:param bool is_slurred: whether the extracted fragment is spanned by a slur object.
 	"""
-	__tablename__ = "Fragments"
+	__tablename__ = "Extraction"
 
 	id = Column(Integer, primary_key=True)
 
