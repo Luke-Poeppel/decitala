@@ -686,9 +686,9 @@ def get_object_indices(
 	:param str filepath: Path to file to be analyzed.
 	:param int part_num: Part number to be analyzed.
 	:param str measure_divider_mode: Tool used for dividing the data into measures. If
-									``measure_divider_mode="str"`, the data is returned with
-									`"B"` used as the measure marker. If instead
-									``measure_divider_mode="list"`, the data is returned
+									``measure_divider_mode="str"``, the data is returned with
+									``"B"`` used as the measure marker. If instead
+									``measure_divider_mode="list"``, the data is returned
 									partitioned by measure. The default is ``None``, so no
 									measure divisions are present.
 	:param bool ignore_grace: Whether to ignore grace notes in the output. ``False`` by default.
