@@ -280,8 +280,9 @@ class GeneralFragment:
 		"""
 		return sum(self.ql_array())
 
-	def dseg(self, as_str=False):
+	def dseg(self, reduced=False, as_str=False):
 		"""
+		:param bool reduced: Whether to remove equal contiguous values. 
 		:param bool as_str: Whether to make the return type a string.
 		:return: the d-seg of the fragment, as introducted in `The Perception of Rhythm
 				in Non-Tonal Music
@@ -293,46 +294,7 @@ class GeneralFragment:
 		>>> g3.dseg()
 		array([0, 1, 3, 2])
 		"""
-		dseg_vals = copy.copy(self.ql_array())
-		value_dict = dict()
-
-		for i, this_val in zip(range(0, len(sorted(set(dseg_vals)))), sorted(set(dseg_vals))):
-			value_dict[this_val] = str(i)
-
-		for i, this_val in enumerate(dseg_vals):
-			for key in value_dict:
-				if this_val == key:
-					dseg_vals[i] = value_dict[key]
-
-		if as_str is True:
-			return "<" + " ".join([str(int(val)) for val in dseg_vals]) + ">"
-		else:
-			return np.array([int(val) for val in dseg_vals])
-
-	def reduced_dseg(self, as_str=False):
-		"""
-		:param bool as_str: Whether to return the reduced d-seg as a string.
-		:return: d-seg of the fragment with all contiguous equal values reduced to a single instance.
-		:rtype: numpy.array (or string if `as_str=True`)
-
-		>>> g4 = GeneralFragment([0.125, 0.125, 1.75, 0.5], name='marvin-p74-x')
-		>>> g4.dseg(as_str=True)
-		'<0 0 2 1>'
-		>>> g4.reduced_dseg(as_str=True)
-		'<0 2 1>'
-		"""
-		def _remove_adjacent_equal_elements(array):
-			as_lst = list(array)
-			filtered = [a for a, b in zip(as_lst, as_lst[1:] + [not as_lst[-1]]) if a != b]
-			return np.array(filtered)
-
-		orig = self.dseg(as_str=False)
-		as_array = _remove_adjacent_equal_elements(array=orig)
-
-		if not(as_str):
-			return np.array([int(val) for val in as_array])
-		else:
-			return "<" + " ".join([str(int(val)) for val in as_array]) + ">"
+		return utils.dseg(self.ql_array(), reduced=reduced, as_str=as_str)
 
 	def successive_ratio_array(self, retrograde=False):
 		"""See docstring of :obj:`decitala.utils.successive_ratio_array`."""

@@ -106,12 +106,11 @@ def test_dseg():
 	GeneralFragment.ql_array.cache_clear()
 	frag = GeneralFragment([1.0, 1.0, 2.0, 2.0, 3.0, 0.125, 1.0, 0.5, 4.0])
 	predicted = np.array([2, 2, 3, 3, 4, 0, 2, 1, 5])
+
 	assert np.array_equal(predicted, frag.dseg())
 
-def test_reduced_dseg():
-	frag = GeneralFragment([1.0, 1.0, 2.0, 2.0, 3.0, 0.125, 1.0, 0.5, 4.0])
-	predicted = np.array([2, 3, 4, 0, 2, 1, 5])
-	assert np.array_equal(predicted, frag.reduced_dseg())
+	predicted_reduced = np.array([2, 3, 4, 0, 2, 1, 5])
+	assert np.array_equal(predicted_reduced, frag.dseg(reduced=True))
 
 def test_fragment_augment():
 	f1 = GeneralFragment([4.0, 1.0, 2.0], name="myfragment")

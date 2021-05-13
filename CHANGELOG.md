@@ -4,6 +4,9 @@ All important changes to the decitala package will be documented here.
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [v0.11.1](https://github.com/Luke-Poeppel/decitala/tree/v0.11.0) ???
+### Changed
+- Moved `dseg` calculation to `utils.py` that `GeneralFragment.dseg` now wraps. Also made `reduced` a parameter in the same function for simplicity (removing the need for a second method). 
+
 ### Fixed
 - Missing `lru_cache` in `GeneralFragment.ql_tuple()`. 
 

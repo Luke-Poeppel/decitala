@@ -274,6 +274,32 @@ def successive_difference_array(ql_array):
 
 	return np.array(difference_lst)
 
+def _remove_adjacent_equal_elements(array):
+	as_lst = list(array)
+	filtered = [a for a, b in zip(as_lst, as_lst[1:] + [not as_lst[-1]]) if a != b]
+	return np.array(filtered)
+
+def dseg(ql_array, reduced=False, as_str=False):
+	dseg_vals = copy.copy(ql_array)
+	value_dict = dict()
+
+	for i, this_val in zip(range(0, len(sorted(set(dseg_vals)))), sorted(set(dseg_vals))):
+		value_dict[this_val] = str(i)
+
+	for i, this_val in enumerate(dseg_vals):
+		for key in value_dict:
+			if this_val == key:
+				dseg_vals[i] = value_dict[key]
+	
+	dseg = np.array([int(val) for val in dseg_vals])
+	if reduced:
+		dseg = _remove_adjacent_equal_elements(array=dseg)
+
+	if not(as_str):
+		return dseg
+	else:
+		return "<" + " ".join([str(val) for val in dseg]) + ">"
+
 # La Valeur Ajoutee
 def get_added_values(ql_array, print_type=True):
 	"""
