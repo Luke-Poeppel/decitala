@@ -41,7 +41,7 @@ def get_session(engine):
 
 class DecitalaData(Base):
 	"""
-	SQLAlchemy model representing a decitala fragment from the encoded datasets (given in `corpora`).
+	SQLAlchemy model representing a decitala fragment from the encoded datasets (given in ``corpora``).
 	"""
 	__tablename__ = "DecitalaData"
 
@@ -52,12 +52,24 @@ class DecitalaData(Base):
 
 class GreekFootData(Base):
 	"""
-	SQLAlchemy model representing a greek foot fragment from the encoded datasets (given in `corpora`).
+	SQLAlchemy model representing a greek foot fragment from the encoded datasets (given
+	in ``corpora``).
 	"""
 	__tablename__ = "GreekFootData"
 
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
+	ql_array = Column(String)
+
+class ProsodyData(Base):
+	"""
+	SQLAlchemy model representing a prosodic fragment from the encoded datasets (given in ``corpora``).
+	"""
+	__tablename__ = "ProsodyData"
+
+	id = Column(Integer, primary_key=True)
+	name = Column(String)
+	text = Column(String)
 	ql_array = Column(String)
 
 def _make_corpora_database():

@@ -23,6 +23,7 @@ from . import utils
 from .corpora_models import (
 	DecitalaData,
 	GreekFootData,
+	ProsodyData,
 	get_engine,
 	get_session
 )
@@ -48,6 +49,9 @@ class DecitalaException(FragmentException):
 	pass
 
 class GreekFootException(FragmentException):
+	pass
+
+class ProsodicException(FragmentException):
 	pass
 
 # Serialization
@@ -606,12 +610,9 @@ class GreekFoot(GeneralFragment):
 			raise GreekFootException(f"No matches were found for name {name}.")
 
 		full_path, name, filename = _process_matches(name, matches, greek_path)
-
 		self.full_path = full_path
 
 		super().__init__(data=full_path, name=name)
-
-		self.frag_type = "greek_foot"
 
 	def __repr__(self):
 		return f"<fragment.GreekFoot {self.name}>"
@@ -620,4 +621,14 @@ class TheorieKarnatique(GeneralFragment):
 	pass
 
 class Prosody(GeneralFragment):
-	pass
+	frag_type = "prosodic_fragment"
+
+	def __init__(self, name, **kwargs):
+		if name.endswith(".xml"):
+			name = name[:-4]
+
+		matches = session.query(ProsodyData).filter(name == name).all()
+		matches = [x.name + ".xml" for x in matches]
+
+		if not matches:
+			raise ProsodicException(f"No matches were found for name {name}.")
