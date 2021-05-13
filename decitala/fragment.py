@@ -233,6 +233,7 @@ class GeneralFragment:
 			else:
 				return np.flip(self.data)
 
+	@lru_cache(maxsize=None)
 	def ql_tuple(self, retrograde=False):
 		"""
 		:param bool retrograde: Whether to return the fragment in retrograde.
