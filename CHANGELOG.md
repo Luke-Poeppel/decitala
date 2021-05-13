@@ -4,6 +4,8 @@ All important changes to the decitala package will be documented here.
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [v0.12.0](https://github.com/Luke-Poeppel/decitala/tree/v0.12.0) ???
+### Added
+- WIP: Annotated prosodic feet from Traité (Tome 1). 
 
 ## [v0.11.1](https://github.com/Luke-Poeppel/decitala/tree/v0.11.1) May 13, 2021
 ### Changed
