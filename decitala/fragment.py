@@ -563,7 +563,6 @@ class Decitala(GeneralFragment):
 		"""
 		return (self.ql_duration / 0.5)
 
-####################################################################################################
 class GreekFoot(GeneralFragment):
 	"""
 	Class that stores greek foot data. The class reads from the fragments_db file in the databases
@@ -616,3 +615,9 @@ class GreekFoot(GeneralFragment):
 
 	def __repr__(self):
 		return f"<fragment.GreekFoot {self.name}>"
+
+class TheorieKarnatique(GeneralFragment):
+	pass
+
+class Prosody(GeneralFragment):
+	pass
