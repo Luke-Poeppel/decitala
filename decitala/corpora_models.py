@@ -70,7 +70,7 @@ class ProsodicFragmentData(Base):
 
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
-	collection = Column(String)
+	source = Column(String)
 	ql_array = Column(String)
 
 def _make_corpora_database(echo):
@@ -119,11 +119,9 @@ def _make_corpora_database(echo):
 			ql_array = json.dumps([x.quarterLength for x in converted.flat.getElementsByClass(note.Note)])
 			prosodic_fragment = ProsodicFragmentData(
 				name=this_file[:-4],
-				collection=this_dir,
+				source=this_dir,
 				ql_array=ql_array
 			)
 			session.add(prosodic_fragment)
 
 	session.commit()
-
-# _make_corpora_database(echo=False)
