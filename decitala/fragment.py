@@ -12,6 +12,7 @@ from __future__ import division, print_function, unicode_literals
 import json
 import numpy as np
 import os
+import unidecode
 
 from collections import Counter
 from functools import lru_cache
@@ -604,7 +605,7 @@ class GreekFoot(GeneralFragment):
 	def __init__(self, name, **kwargs):
 		if name.endswith(".xml"):
 			name = name[:-4]
-		matches = session.query(GreekFootData).filter(name == name).all()
+		matches = session.query(GreekFootData).filter(GreekFootData.name == name).all()
 		matches = [x.name + ".xml" for x in matches]
 
 		if not matches:
@@ -618,17 +619,26 @@ class GreekFoot(GeneralFragment):
 	def __repr__(self):
 		return f"<fragment.GreekFoot {self.name}>"
 
-class TheorieKarnatique(GeneralFragment):
-	pass
+class Breve(GeneralFragment):
+	frag_type = "breve"
+
+	def __init__(self, **kwargs):
+		super().__init__(data=[1.0], name="Breve")
+
+class Macron(GeneralFragment):
+	frag_type = "macron"
+
+	def __init__(self, **kwargs):
+		super().__init__(data=[2.0], name="Macron")
 
 class ProsodicFragment(GeneralFragment):
 	"""
 	Class that stores prosodic data. The class reads from the fragments_db file in the databases
 	directory (see the ProsodicFragments table).
 
-	>>> asclepiad_m = ProsodicFragment("Asclépiad_Mineur")
-	>>> asclepiad_m
-	<fragment.ProsodicFragment Asclépiad_Mineur>
+	# >>> asclepiad_m = ProsodicFragment("Asclépiade_Mineur")
+	# >>> asclepiad_m
+	# <fragment.ProsodicFragment Asclépiade_Mineur>
 	"""
 	frag_type = "prosodic_fragment"
 
@@ -636,8 +646,10 @@ class ProsodicFragment(GeneralFragment):
 		if name.endswith(".xml"):
 			name = name[:-4]
 
-		matches = session.query(ProsodicFragmentData).filter(name == name).all()
-		matches = [x.name + ".xml" for x in matches]
+		name = unidecode.unidecode(name)
+
+		matches = session.query(ProsodicFragmentData).filter(ProsodicFragmentData.name == name).all()
+		matches = [unidecode.unidecode(x.name) + ".xml" for x in matches]
 
 		if not matches:
 			raise ProsodicException(f"No matches were found for name {name}.")
@@ -649,3 +661,6 @@ class ProsodicFragment(GeneralFragment):
 
 	def __repr__(self):
 		return f"<fragment.ProsodicFragment {self.name}>"
+
+class TheorieKarnatique(GeneralFragment):
+	pass

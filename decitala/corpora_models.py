@@ -10,6 +10,7 @@
 import json
 import os
 import natsort
+import unidecode
 
 from sqlalchemy import (
 	Column,
@@ -118,10 +119,12 @@ def _make_corpora_database(echo):
 			converted = converter.parse(os.path.join(subdir, this_file))
 			ql_array = json.dumps([x.quarterLength for x in converted.flat.getElementsByClass(note.Note)])
 			prosodic_fragment = ProsodicFragmentData(
-				name=this_file[:-4],
-				source=this_dir,
+				name=unidecode.unidecode(this_file[:-4]),
+				source=unidecode.unidecode(this_dir),
 				ql_array=ql_array
 			)
 			session.add(prosodic_fragment)
 
 	session.commit()
+
+# _make_corpora_database(echo=False)

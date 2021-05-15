@@ -8,6 +8,7 @@ from decitala import fragment
 from decitala.fragment import (
 	Decitala,
 	GreekFoot,
+	ProsodicFragment,
 	GeneralFragment,
 	FragmentEncoder,
 	FragmentDecoder
@@ -84,6 +85,11 @@ def test_all_greek_foot_names():
 		new_name = random.choice(funcs)(this_file)
 		this_greek_foot = GreekFoot(new_name)
 		assert this_greek_foot.full_path == greek_path + "/" + this_file
+
+def test_prosody_misc():
+	# asclepiad_minor = ProsodicFragment("Asclépiade_Mineur")# "Glyconique") #
+
+	print('hi')
 
 def test_get_by_id():
 	random_nums = [str(x) for x in [71, 23, 14, 91, 108, 44]]

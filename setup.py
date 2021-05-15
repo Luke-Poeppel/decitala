@@ -48,6 +48,7 @@ setup(
 		"sphinx_rtd_theme",
 		"Wand",
 		"natsort",
+		"unidecode"
 	],
 	entry_points={
 		"console_scripts": [
