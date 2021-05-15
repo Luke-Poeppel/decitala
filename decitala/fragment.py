@@ -1,7 +1,7 @@
 ####################################################################################################
 # File:     fragment.py
-# Purpose:  Representation and tools for dealing with generic rhythmic fragments, as well as those
-# 			used specifically by Messiaen. Includes Decitala and GreekFoot objects.
+# Purpose:  (OOP) Tools for dealing with generic rhythmic fragments, as well as those used
+# 			specifically by Messiaen.
 #
 # Author:   Luke Poeppel
 #
@@ -33,7 +33,7 @@ from .corpora_models import (
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
 greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics/"
-prosody_path = os.path.dirname(here) + "/corpora/Prosody/"
+prosody_path = os.path.dirname(here) + "/corpora/Prosody"
 
 fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
 
@@ -647,14 +647,15 @@ class ProsodicFragment(GeneralFragment):
 			name = name[:-4]
 
 		name = unidecode.unidecode(name)
-
-		matches = session.query(ProsodicFragmentData).filter(ProsodicFragmentData.name == name).all()
-		matches = [unidecode.unidecode(x.name) + ".xml" for x in matches]
-
-		if not matches:
+		match = session.query(ProsodicFragmentData).filter(ProsodicFragmentData.name == name).first()
+		if not match:
 			raise ProsodicException(f"No matches were found for name {name}.")
 
-		full_path, name, filename = _process_matches(name, matches, prosody_path)
+		match_name = unidecode.unidecode(match.name) + ".xml"
+		full_path = "/".join([prosody_path, match.source, match_name])
+		name = match_name[:-4]
+
+		self.source = match.source
 		self.full_path = full_path
 
 		super().__init__(data=full_path, name=name)
