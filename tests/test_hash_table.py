@@ -10,18 +10,21 @@ from decitala.hash_table import (
 	FragmentHashTable,
 	DecitalaHashTable,
 	GreekFootHashTable,
+	ProsodicFragmentHashTable,
 	generate_all_modifications
 )
 from decitala.fragment import (
 	Decitala,
 	GeneralFragment,
-	GreekFoot
+	GreekFoot,
+	ProsodicFragment
 )
 from decitala.corpora_models import (
 	get_engine,
 	get_session,
 	DecitalaData,
-	GreekFootData
+	GreekFootData,
+	ProsodicFragmentData
 )
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -114,6 +117,21 @@ def test_greek_foot_hash_table():
 		modification = tuple(modification_and_mod_val[0])
 		mod_value = modification_and_mod_val[1]
 		search_result = GFHT.data[modification]
+
+		assert search_result is not None
+
+def test_prosodic_fragment_hash_table():
+	PFHT = ProsodicFragmentHashTable()
+	fragment_data = session.query(ProsodicFragmentData).all()
+	fragments = [ProsodicFragment(x.name) for x in fragment_data]
+	for fragment in fragments:
+		modification_and_mod_val = random.choice(funcs)(fragment.ql_array())
+		if any(x <= 0 for x in modification_and_mod_val[0]):
+			continue
+		
+		modification = tuple(modification_and_mod_val[0])
+		mod_value = modification_and_mod_val[1]
+		search_result = PFHT.data[modification]
 
 		assert search_result is not None
 
