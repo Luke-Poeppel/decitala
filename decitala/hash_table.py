@@ -11,6 +11,7 @@ import os
 from .fragment import (
 	Decitala,
 	GreekFoot,
+	ProsodicFragment
 )
 from .utils import (
 	augment,
@@ -21,7 +22,8 @@ from .corpora_models import (
 	get_engine,
 	get_session,
 	GreekFootData,
-	DecitalaData
+	DecitalaData,
+	ProsodicFragmentData
 )
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -262,14 +264,17 @@ class FragmentHashTable:
 				force_override=force_override
 			)
 
+		# Process datasets
 		for this_dataset in self.datasets:
 			if this_dataset == "greek_foot":
 				data = session.query(GreekFootData).all()
 				fragments = [GreekFoot(x.name) for x in data]
-
-			if this_dataset == "decitala":
+			elif this_dataset == "decitala":
 				data = session.query(DecitalaData).all()
 				fragments = [Decitala(x.name) for x in data]
+			elif this_dataset == "prosodic_fragment":
+				data = session.query(ProsodicFragmentData).all()
+				fragments = [ProsodicFragment(x.name) for x in data]
 
 			for this_fragment in fragments:
 				generate_all_modifications(
@@ -308,11 +313,20 @@ class GreekFootHashTable(FragmentHashTable):
 		super().__init__(datasets=["greek_foot"])
 		self.load()
 
+class ProsodicFragmentHashTable(FragmentHashTable):
+	"""
+	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``
+	parameter set to ``["prosodic_fragment"]`` and automatically loads.
+	"""
+	def __init__(self):
+		super().__init__(datasets=["prosodic_fragment"])
+		self.load()
+
 class AllCorporaHashTable(FragmentHashTable):
 	"""
 	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``
 	parameter set to all available datasets in the ``corpora`` directory and automatically loads.
 	"""
 	def __init__(self):
-		super().__init__(datasets=["greek_foot", "decitala"])
+		super().__init__(datasets=["greek_foot", "decitala", "prosodic_fragment"])
 		self.load()
