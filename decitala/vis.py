@@ -28,7 +28,7 @@ FONTNAME = 'Times'
 FONTSIZE_TITLE = 14
 FONTSIZE_LABEL = 14
 
-mpl.style.use("seaborn")
+mpl.style.use("bmh")
 
 ####################################################################################################
 def _prepare_docs_and_screenshot(path, serialized_tree, logger):
@@ -207,4 +207,37 @@ def result_bar_plot(
 		plt.xlim(-0.5, 1.5)
 
 	plt.bar(counter.keys(), counter.values(), width=0.3, color="k")
+	return plt
+
+def plot_2D_search_results(data=None, path=None, title=None, save_filepath=None):
+	"""
+	Function for plotting the results of (usually) the full extracted data from a composition,
+	as well as a path extracted from it. The ``data`` parameter will plot the fragments as a
+	scatter plot of their start and end; the ``path`` parameter will plot the connected line
+	between the ``path`` fragments.
+	"""
+	if data:
+		xs = [x["onset_range"][0] for x in data]
+		ys = [x["onset_range"][1] for x in data]
+		plt.scatter(xs, ys, s=5, color="k")
+
+	if path:
+		xs = [x["onset_range"][0] for x in path]
+		ys = [x["onset_range"][1] for x in path]
+		plt.plot(xs, ys, "--o", color="r", markersize=3, linewidth=1, label="Extracted Path")
+
+	plt.xticks(fontname="Times")
+	plt.yticks(fontname="Times")
+
+	if title:
+		plt.title(title, fontname="Times", fontsize=14)
+
+	plt.xlabel("Onset Start", fontname="Times", fontsize=12)
+	plt.ylabel("Onset Stop", fontname="Times", fontsize=12)
+
+	plt.legend(prop="Times")
+
+	if save_filepath:
+		plt.savefig(save_filepath, dpi=350)
+
 	return plt
