@@ -7,6 +7,7 @@ from decitala.hash_table import DecitalaHashTable
 
 here = os.path.abspath(os.path.dirname(__file__))
 filepath = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
+filepath_2 = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_2.xml"
 
 def test_doctests():
 	assert doctest.testmod(search, raise_on_error=True)
@@ -28,26 +29,36 @@ def test_shuffled_I_path_with_slur_constraint():
 		algorithm="floyd-warshall",
 		slur_constraint=True
 	)
-	# print(GreekFoot("Peon_IV").ql_array())
-	#for x in path:
-		#print(x)
-	# fragments = [x["fragment"] for x in path]
-	# analysis = [
-	# 	GreekFoot("Peon_IV"),
-	# 	GreekFoot("Iamb"),
-	# 	GreekFoot("Peon_IV"),
-	# 	GreekFoot("Peon_IV")
-	# ]
+	fragments = [x["fragment"] for x in path]
+	analysis = [
+		GreekFoot("Peon_IV"),
+		GreekFoot("Iamb"),
+		GreekFoot("Peon_IV"),
+		GreekFoot("Peon_IV")
+	]
 
-	# assert fragments == analysis
+	assert fragments == analysis
 
-print(test_shuffled_I_path_with_slur_constraint())
-# fp = "/Users/lukepoeppel/Messiaen/Encodings/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.mxl"
-# fragments = search.rolling_hash_search(
-# 	filepath=fp,
-# 	part_num=3,
-# 	table=DecitalaHashTable(),
-# 	allow_subdivision=True
-# )
-# for x in fragments:
-# 	print(x["fragment"], x["onset_range"], x["id"], x["mod_hierarchy_val"])
+def test_frame_is_spanned_by_slur_a():
+	example_transcription_1 = filepath
+	num_slurs = 0
+	all_objects = utils.get_object_indices(example_transcription_1, 0)
+	for this_window_size in [2, 3, 4]:
+		for this_frame in utils.roll_window(all_objects, this_window_size):
+			check = search.frame_is_spanned_by_slur(this_frame)
+			if check == True:
+				num_slurs += 1
+	
+	assert num_slurs == 5
+
+def test_frame_is_spanned_by_slur_b():
+	example_transcription_2 = filepath_2
+	num_slurs = 0
+	all_objects = utils.get_object_indices(example_transcription_2, 0)
+	for this_window_size in [2, 3, 4]:
+		for this_frame in utils.roll_window(all_objects, this_window_size):
+			check = search.frame_is_spanned_by_slur(this_frame)
+			if check == True:
+				num_slurs += 1
+	
+	assert num_slurs == 3

@@ -9,6 +9,10 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - WIP: Added a `lookup` method to `hash_table` to simplify the code in `rolling_hash_search`. 
 - Added `plot_2D_search_results` to `vis` module for plotting search results in XY space, along with a given path. (This implements #4, finally!)
 
+### Changed
+- Removed `utils.is_octatonic_collection`. All Modes of Limited Transposition stuff will eventually be living in `moiseaux.molt`. 
+- Moved some `search`-specific functions from `utils` (they were really helpers, not utility functions). See #138. 
+
 ## [v0.11.1](https://github.com/Luke-Poeppel/decitala/tree/v0.11.1) May 13, 2021
 ### Changed
 - Moved `dseg` calculation to `utils.py` that `GeneralFragment.dseg` now wraps. Also made `reduced` a parameter in the same function for simplicity (removing the need for a second method). 

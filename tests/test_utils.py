@@ -122,30 +122,6 @@ def test_single_anga_class_and_subtala_filtering(decitala_collection):
 	filter_b = utils.filter_sub_fragments(filter_a)
 	assert len(filter_b) == 1
 
-def test_frame_is_spanned_by_slur_a(example_transcriptions):
-	example_transcription_1 = example_transcriptions[0]
-	num_slurs = 0
-	all_objects = utils.get_object_indices(example_transcription_1, 0)
-	for this_window_size in [2, 3, 4]:
-		for this_frame in utils.roll_window(all_objects, this_window_size):
-			check = utils.frame_is_spanned_by_slur(this_frame)
-			if check == True:
-				num_slurs += 1
-	
-	assert num_slurs == 5
-
-def test_frame_is_spanned_by_slur_b(example_transcriptions):
-	example_transcription_2 = example_transcriptions[1]
-	num_slurs = 0
-	all_objects = utils.get_object_indices(example_transcription_2, 0)
-	for this_window_size in [2, 3, 4]:
-		for this_frame in utils.roll_window(all_objects, this_window_size):
-			check = utils.frame_is_spanned_by_slur(this_frame)
-			if check == True:
-				num_slurs += 1
-	
-	assert num_slurs == 3
-
 # Examples from the Schultz article.
 def test_prime_contour():
 	contour_1 = [2, 4, 1, 5, 0, 6, 3]

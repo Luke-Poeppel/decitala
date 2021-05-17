@@ -19,10 +19,7 @@ from .utils import (
 	find_possible_superdivisions,
 	get_object_indices,
 	roll_window,
-	frame_to_ql_array,
-	frame_is_spanned_by_slur,
 	contiguous_summation,
-	frame_to_midi,
 	get_logger
 )
 from .fragment import (
@@ -44,7 +41,84 @@ class SearchException(Exception):
 	pass
 
 ####################################################################################################
-# Hash table search approach.
+# Hash table lookup.
+def frame_to_ql_array(frame):
+	"""
+	:param list frame: frame of data from :obj:`~decitala.utils.get_object_indices`.
+	:return: numpy array holding the associated quarter length of a given window.
+	:rtype: numpy.array
+
+	>>> from music21 import note
+	>>> my_frame = [
+	...     (note.Note("B-", quarterLength=0.125), (4.125, 4.25)),
+	...		(note.Note("A", quarterLength=0.25), (4.25, 4.5)),
+	...		(note.Note("B", quarterLength=0.125), (4.5, 4.625)),
+	...		(note.Note("B-", quarterLength=0.125), (4.625, 4.75)),
+	...		(note.Note("A", quarterLength=0.25), (4.75, 5.0)),
+	...		(note.Note("G", quarterLength=0.25), (5.0, 5.25)),
+	...		(note.Note("G", quarterLength=0.25), (5.25, 5.5)),
+	...	]
+	>>> frame_to_ql_array(my_frame)
+	array([0.125, 0.25 , 0.125, 0.125, 0.25 , 0.25 , 0.25 ])
+	"""
+	qls = []
+	for this_obj, this_range in frame:
+		qls.append(this_obj.quarterLength)
+
+	return np.array([x for x in qls if x != 0])
+
+def frame_to_midi(frame, ignore_graces=True):
+	"""
+	:param list frame: frame of data from :obj:`~decitala.utils.get_object_indices`.
+	:return: numpy array holding the pitches within the frame.
+	:rtype: numpy.array
+
+	>>> from music21 import note
+	>>> my_frame = [
+	...     (note.Note("B-", quarterLength=0.125), (4.125, 4.25)),
+	...		(note.Note("A", quarterLength=0.25), (4.25, 4.5)),
+	...		(note.Note("B", quarterLength=0.125), (4.5, 4.625)),
+	...		(note.Note("B-", quarterLength=0.125), (4.625, 4.75)),
+	...		(note.Note("A", quarterLength=0.25), (4.75, 5.0)),
+	...		(note.Note("G", quarterLength=0.25), (5.0, 5.25)),
+	...		(note.Note("G", quarterLength=0.25), (5.25, 5.5)),
+	...	]
+	>>> frame_to_midi(my_frame)
+	[(70,), (69,), (71,), (70,), (69,), (67,), (67,)]
+	"""
+	midi_out = []
+	for this_obj, this_range in frame:
+		if not(ignore_graces):
+			fpitches = this_obj.pitches
+			midi_out.append(tuple([x.midi for x in fpitches]))
+		else:
+			if this_obj.quarterLength == 0.0:
+				pass
+			else:
+				fpitches = this_obj.pitches
+				midi_out.append(tuple([x.midi for x in fpitches]))
+
+	return midi_out
+
+def frame_is_spanned_by_slur(frame):
+	"""
+	:param list frame: frame from :obj:`~decitala.utils.get_object_indices`.
+	:return: whether or not the frame is spanned by a music21.spanner.Slur object.
+	:rtype: bool
+	"""
+	is_spanned_by_slur = False
+
+	first_obj = frame[0][0]
+	last_obj = frame[-1][0]
+	spanners = first_obj.getSpannerSites()
+	if spanners:
+		for this_spanner in spanners:
+			if type(this_spanner).__name__ == "Slur":
+				if this_spanner.isFirst(first_obj) and this_spanner.isLast(last_obj):
+					is_spanned_by_slur = True
+
+	return is_spanned_by_slur
+
 def rolling_hash_search(
 		filepath,
 		part_num,
