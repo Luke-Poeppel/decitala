@@ -274,7 +274,7 @@ def dseg(ql_array, reduced=False, as_str=False):
 			(Marvin, 1991). Maps a fragment into a sequence of relative durations.
 	:rtype: numpy.array (or string if `as_str=True`).
 
-	>>> g3 = GeneralFragment(np.array([0.25, 0.75, 2.0, 1.0]), name='marvin-p70')
+	>>> g3 = fragment.GeneralFragment(np.array([0.25, 0.75, 2.0, 1.0]), name='marvin-p70')
 	>>> g3.dseg()
 	array([0, 1, 3, 2])
 	"""
