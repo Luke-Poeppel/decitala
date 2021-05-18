@@ -226,6 +226,9 @@ def rolling_hash_search(
 
 			if allow_contiguous_summation:
 				copied_frame = copy.copy(this_frame)
+				if any(type(x[0]).__name__ == "Rest" for x in copied_frame):
+					continue
+
 				cs_frame = contiguous_summation(copied_frame)
 				cs_ql_array = frame_to_ql_array(cs_frame)
 				if len(cs_ql_array) < min(windows):
@@ -284,7 +287,7 @@ def path_finder(
 		table=table,
 		windows=windows,
 		allow_subdivision=allow_subdivision,
-		allow_contiguous_summation=False
+		allow_contiguous_summation=allow_contiguous_summation
 	)
 	if not fragments:
 		return None
