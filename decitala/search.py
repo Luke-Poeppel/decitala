@@ -107,7 +107,6 @@ def frame_is_spanned_by_slur(frame):
 	:rtype: bool
 	"""
 	is_spanned_by_slur = False
-
 	first_obj = frame[0][0]
 	last_obj = frame[-1][0]
 	spanners = first_obj.getSpannerSites()
@@ -118,6 +117,39 @@ def frame_is_spanned_by_slur(frame):
 					is_spanned_by_slur = True
 
 	return is_spanned_by_slur
+
+def frame_lookup(frame, ql_array, curr_fragment_id, table, windows, subdivision_search_i=None):
+	objects = [x[0] for x in frame]
+	if any(x.isRest for x in objects):
+		return None
+	else:
+		if len(ql_array) < windows[0]:
+			return None
+		try:
+			searched = table.data[tuple(ql_array)]
+			if searched is not None:
+				result = copy.copy(searched)
+				is_spanned_by_slur = frame_is_spanned_by_slur(frame)
+				pitch_content = frame_to_midi(frame)
+
+				offset_1 = frame[0][0]
+				offset_2 = frame[-1][0]
+
+				result["onset_range"] = (offset_1.offset, offset_2.offset + offset_2.quarterLength)
+				result["pitch_content"] = pitch_content
+				result["is_spanned_by_slur"] = is_spanned_by_slur
+				result["id"] = curr_fragment_id
+
+				if subdivision_search_i:
+					if subdivision_search_i == 0:
+						result["mod_hierarchy_val"] = 5
+					else:
+						result["mod_hierarchy_val"] = 6
+
+		except KeyError:
+			return None
+
+	return result
 
 def rolling_hash_search(
 		filepath,
@@ -154,79 +186,44 @@ def rolling_hash_search(
 	for this_win in windows:
 		frames = roll_window(array=object_list, window_length=this_win)
 		for this_frame in frames:
-			# If having trouble finding a fragment, uncomment the code below and check table[tuple(ql_array)]. # noqa
-			# if this_win == 6 and this_frame[0][1][0] == 2.0: # starting onset
-			# 	import pdb; pdb.set_trace()
+			lookup = frame_lookup(
+				frame=this_frame,
+				ql_array=frame_to_ql_array(this_frame),
+				curr_fragment_id=fragment_id,
+				table=table,
+				windows=windows
+			)
+			if lookup:
+				fragments_found.append(lookup)
+				fragment_id += 1
 
-			objects = [x[0] for x in this_frame]
-			if any(x.isRest for x in objects):
-				continue
-			else:
-				ql_array = frame_to_ql_array(this_frame)
-				if len(ql_array) < windows[0]:
-					continue
-				try:
-					searched = table.data[tuple(ql_array)]
-					if searched is not None:
-						# Need new dict object or it overrides.
-						result = copy.copy(searched)
-						is_spanned_by_slur = frame_is_spanned_by_slur(this_frame)
-						pitch_content = frame_to_midi(this_frame)
+			if allow_subdivision:
+				subdivision_ql_array = frame_to_ql_array(this_frame)
+				all_superdivisions = find_possible_superdivisions(
+					ql_array=subdivision_ql_array,
+					include_self=False
+				)
+				for this_superdivision in all_superdivisions:
+					this_superdivision_retrograde = this_superdivision[::-1]
+					if len(this_superdivision) < 2:
+						continue
 
-						offset_1 = this_frame[0][0]
-						offset_2 = this_frame[-1][0]
+					searches = [tuple(this_superdivision), tuple(this_superdivision_retrograde)]
+					subdivision_results = []
+					for i, this_search in enumerate(searches):
+						lookup = frame_lookup(
+							frame=this_frame,
+							ql_array=subdivision_ql_array,
+							curr_fragment_id=fragment_id,
+							table=table,
+							windows=windows,
+							subdivision_search_i=i
+						)
+						if lookup:
+							subdivision_results.append(lookup)
+							fragment_id += 1
 
-						result["onset_range"] = (offset_1.offset, offset_2.offset + offset_2.quarterLength)
-						result["pitch_content"] = pitch_content
-						result["is_spanned_by_slur"] = is_spanned_by_slur
-						result["id"] = fragment_id
-						fragment_id += 1
-
-						fragments_found.append(result)
-				except KeyError:
-					pass
-
-				# TODO: Need to check appearance since this isn't done in preprocessing.
-				# Otherwise get duplicates!
-				# if this_win == 6 and this_frame[0][1][0] == 2.0: # starting onset
-				# 	import pdb; pdb.set_trace()
-				if allow_subdivision is True:
-					# raise SearchException("That is not yet implemented. Coming soon.")
-					all_superdivisions = find_possible_superdivisions(ql_array, include_self=False)
-					for this_superdivision in all_superdivisions:
-						this_superdivision_retrograde = this_superdivision[::-1]
-						if len(this_superdivision) < 2:
-							continue
-
-						try:
-							searches = [tuple(this_superdivision), tuple(this_superdivision_retrograde)]
-							subdivision_results = []
-							for i, this_search in enumerate(searches):
-								searched = table.data[this_search]
-								if searched is not None:
-									result = copy.copy(searched)
-									is_spanned_by_slur = frame_is_spanned_by_slur(this_frame)
-									pitch_content = frame_to_midi(this_frame)
-
-									offset_1 = this_frame[0][0]
-									offset_2 = this_frame[-1][0]
-
-									if i == 0:
-										result["mod_hierarchy_val"] = 5
-									else:
-										result["mod_hierarchy_val"] = 6
-
-									result["onset_range"] = (offset_1.offset, offset_2.offset + offset_2.quarterLength)
-									result["pitch_content"] = pitch_content
-									result["is_spanned_by_slur"] = is_spanned_by_slur
-									result["id"] = fragment_id
-									fragment_id += 1
-
-									subdivision_results.append(result)
-
-							fragments_found.append(min(subdivision_results, key=lambda x: x["mod_hierarchy_val"]))
-						except KeyError:
-							pass
+					fragments_found.append(min(subdivision_results, key=lambda x: x["mod_hierarchy_val"]))
 
 	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
 
