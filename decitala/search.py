@@ -145,7 +145,6 @@ def frame_lookup(frame, ql_array, curr_fragment_id, table, windows, subdivision_
 						result["mod_hierarchy_val"] = 5
 					else:
 						result["mod_hierarchy_val"] = 6
-
 		except KeyError:
 			return None
 
@@ -169,8 +168,7 @@ def rolling_hash_search(
 	:param list windows: The allowed window sizes for search. Default is all integers in range 2-19.
 	:param bool allow_subdivision: Whether to check for subdivisions of a frame in the search.
 	"""
-	object_list = get_object_indices(filepath=filepath, part_num=part_num)
-	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
+	object_list = get_object_indices(filepath=filepath, part_num=part_num, ignore_grace=True)
 
 	if type(table) == FragmentHashTable:
 		table.load()
@@ -305,6 +303,53 @@ def path_finder(
 		logger.info(f"Result saved in: {save_filepath}")
 
 	return best_path
+
+def rolling_search_on_array(
+		ql_array,
+		table,
+		windows=list(range(2, 19)),
+	):
+	"""
+	A very light function for rhythmic search on an array. This is primarily useful
+	for quick checks in a score. It does not support all possible modification types, etc... 
+
+	:param numpy.array ql_array: A quarter length array.
+	:param `decitala.hash_table.FragmentHashTable` table: A :obj:`decitala.hash_table.FragmentHashTable` # noqa
+	 													object or one of its subclasses.
+	:param list windows: The allowed window sizes for search. Default is all integers in range 2-19.
+	:return: A list holding fragments in the array that were detected in the table.
+	:rtype: list
+ 
+	>>> ght = FragmentHashTable(
+	... 	datasets=["greek_foot"]
+	... )
+	>>> ght.load()
+	>>> example_fragment = np.array([0.25, 0.5, 0.25, 0.5])
+	>>> for x in rolling_search_on_array(ql_array=example_fragment, table=ght):
+	... 	print(x["fragment"])
+	<fragment.GreekFoot Iamb>
+	<fragment.GreekFoot Trochee>
+	<fragment.GreekFoot Iamb>
+	<fragment.GreekFoot Amphibrach>
+	<fragment.GreekFoot Amphimacer>
+	"""
+	max_dataset_length = len(max(table.data, key=lambda x: len(x)))
+	max_window_size = min(max_dataset_length, len(ql_array))
+	closest_window = min(windows, key=lambda x: abs(x - max_window_size))
+	index_of_closest = windows.index(closest_window)
+	windows = windows[0:index_of_closest + 1]
+
+	fragments_found = []
+	for this_window in windows:
+		for this_frame in roll_window(array=ql_array, window_length=this_window):
+			try:
+				searched = table.data[tuple(this_frame)]
+				if searched:
+					fragments_found.append(searched)
+			except KeyError:
+				continue
+
+	return fragments_found
 
 ####################################################################################################
 # Tree search method.
@@ -617,55 +662,3 @@ def rolling_tree_search(
 						# logger.info("({0}, {1}), ({2}), {3}".format(cs_search_dict["fragment"], cs_search_dict["mod"], cs_search_dict["onset_range"], cs_search_dict["is_spanned_by_slur"])) # noqa
 
 	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
-
-# def rolling_search_on_array(
-# 		ql_array,
-# 		ratio_tree=None,
-# 		difference_tree=None,
-# 		allowed_modifications=[
-# 			"r",
-# 			"rr",
-# 			"d",
-# 			"rd",
-# 			"sr",
-# 			"rsr"
-# 		],
-# 		windows=[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 18, 19],
-# 		allow_unnamed=False,
-# 	):
-# 	"""
-# 	Rolling search on an array (useful for quick checks in a score). For search types,
-# 	see documentation for :func:`~decitala.trees.get_by_ql_array`.
-
-# 	:param numpy.array ql_array: fragment to be searched.
-# 	:param `~decitala.trees.FragmentTree` ratio_tree: tree storing ratio representations.
-# 	:param `~decitala.trees.FragmentTree` difference_tree: tree storing difference representations.
-# 	:param list windows: possible length of the search frame.
-# 	:return: list holding fragments in the array present in the trees.
-# 	:rtype: list
-
-# 	>>> greek_ratio_tree = FragmentTree(frag_type='greek_foot', rep_type='ratio')
-# 	>>> greek_difference_tree = FragmentTree(frag_type='greek_foot', rep_type='difference')
-# 	>>> example_fragment = np.array([0.25, 0.5, 0.25, 0.5])
-# 	>>> for x in rolling_search_on_array(ql_array=example_fragment, ratio_tree=greek_ratio_tree, difference_tree=greek_difference_tree): # noqa
-# 	...     print(x)
-# 	(<fragment.GreekFoot Iamb>, ('r', 0.25))
-# 	(<fragment.GreekFoot Trochee>, ('r', 0.25))
-# 	(<fragment.GreekFoot Iamb>, ('r', 0.25))
-# 	(<fragment.GreekFoot Amphibrach>, ('r', 0.25))
-# 	(<fragment.GreekFoot Amphimacer>, ('r', 0.25))
-# 	"""
-# 	assert ratio_tree.rep_type == "ratio"
-# 	assert difference_tree.rep_type == "difference"
-
-# 	fragments_found = []
-# 	max_window_size = min(windows, key = lambda x: abs(x - len(ql_array)))
-# 	max_index = windows.index(max_window_size)
-# 	windows = windows[0:max_index + 1]
-# 	for this_window in windows:
-# 		for this_frame in roll_window(array = ql_array, window_length = this_window):
-# 			searched = get_by_ql_array(this_frame, ratio_tree, difference_tree, allowed_modifications, allow_unnamed) # noqa
-# 			if searched is not None:
-# 				fragments_found.append(searched)
-
-# 	return fragments_found

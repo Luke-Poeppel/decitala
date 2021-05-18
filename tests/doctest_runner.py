@@ -4,7 +4,6 @@ standard way as the files have relative imports. As such, we may run them here.
 """
 import doctest
 import sys
-import importlib
 
 from decitala import (
 	database,
@@ -38,7 +37,7 @@ if __name__ == "__main__":
 	try:
 		arg_in = sys.argv[1]
 		if arg_in:
-			mod = globals()["fragment"]
+			mod = globals()[arg_in]
 			doctest_runner(module=mod)
 	except IndexError:
 		doctest_runner()

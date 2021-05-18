@@ -115,7 +115,7 @@ def carnatic_string_to_ql_array(string_):
 
 def ql_array_to_carnatic_string(ql_array):
 	"""
-	:param iterable ql_array: A quarter length array.
+	:param ql_array: A quarter length array.
 	:return: The quarter length array converted to carnatic notation.
 	:rtype: str
 
@@ -134,7 +134,7 @@ def ql_array_to_greek_diacritics(ql_array):
 	Returns the input ``ql_array`` in greek prosodic notation. This notation only allows
 	for two types of rhythmic values (long & short).
 
-	:param iterable ql_array: A quarter length array.
+	:param ql_array: A quarter length array.
 	:return: The quarter length array converted to greek prosodic notation.
 	:rtype: str
 

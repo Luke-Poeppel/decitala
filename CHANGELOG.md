@@ -7,10 +7,15 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ### Added
 - WIP: Annotated prosodic feet from Traité (Tome 1). Also added classes (and corresponding `frag_types`) for the package. You can now create `fragment.ProsodicFragment` objects as well as create, for instance, a `ProsodicFragmentHashTable`. 
 - Added `plot_2D_search_results` to `vis` module for plotting search results in XY space, along with a given path. (This implements #4, finally!)
+- Re-added `search.rolling_search_on_array`. It conforms to the hash table approach. (See #48)
 
 ### Changed
+- Big documentation improvements, code/logic cleanup. 
 - Removed `utils.is_octatonic_collection`. All Modes of Limited Transposition stuff will eventually be living in `moiseaux.molt`. 
 - Moved some `search`-specific functions from `utils` (they were really helpers, not utility functions). See #138. 
+
+### Fixed
+- Missing parameter for `windows` and `allow_subdivision` in `search.path_finder`.
 
 ## [v0.11.1](https://github.com/Luke-Poeppel/decitala/tree/v0.11.1) May 13, 2021
 ### Changed

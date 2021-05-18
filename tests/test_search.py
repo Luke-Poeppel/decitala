@@ -62,3 +62,13 @@ def test_frame_is_spanned_by_slur_b():
 				num_slurs += 1
 	
 	assert num_slurs == 3
+
+def test_rolling_search_on_array():
+	ght = hash_table.FragmentHashTable(
+		datasets=["greek_foot"]
+	)
+	ght.load()
+	example_fragment = [0.25, 0.25, 0.5, 0.25, 1.0, 2.0, 1.0]
+	windows = [2, 3]
+	found = search.rolling_search_on_array(ql_array=example_fragment, table=ght, windows=windows)
+	assert len(found) == 9
