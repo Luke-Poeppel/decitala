@@ -212,7 +212,7 @@ def rolling_hash_search(
 					subdivision_results = []
 					for i, this_search in enumerate(searches):
 						lookup = frame_lookup(
-							frame=this_frame,
+							frame=this_search,
 							ql_array=subdivision_ql_array,
 							curr_fragment_id=fragment_id,
 							table=table,
