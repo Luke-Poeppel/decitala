@@ -96,8 +96,8 @@ def get_logger(name, print_to_console=True, write_to_file=None):
 ####################################################################################################
 def carnatic_string_to_ql_array(string_):
 	"""
-	:param str string_: string of carnatic durations separated by spaces.
-	:return: input string converted to a quarter length array.
+	:param str string_: A string of carnatic durations separated by spaces.
+	:return: The input string converted to a quarter length array.
 	:rtype: numpy.array.
 
 	>>> carnatic_string_to_ql_array('oc o | | Sc S o o o')
@@ -115,8 +115,8 @@ def carnatic_string_to_ql_array(string_):
 
 def ql_array_to_carnatic_string(ql_array):
 	"""
-	:param iterable ql_array: quarter length array.
-	:return: quarter length array converted to carnatic notation.
+	:param iterable ql_array: A quarter length array.
+	:return: The quarter length array converted to carnatic notation.
 	:rtype: str
 
 	>>> ql_array_to_carnatic_string([0.5, 0.25, 0.25, 0.375, 1.0, 1.5, 1.0, 0.5, 1.0])
@@ -134,8 +134,8 @@ def ql_array_to_greek_diacritics(ql_array):
 	Returns the input ``ql_array`` in greek prosodic notation. This notation only allows
 	for two types of rhythmic values (long & short).
 
-	:param iterable ql_array: quarter length array.
-	:return: quarter length array converted to greek prosodic notation.
+	:param iterable ql_array: A quarter length array.
+	:return: The quarter length array converted to greek prosodic notation.
 	:rtype: str
 
 	>>> ql_array_to_greek_diacritics(ql_array=[1.0, 0.5, 0.5, 1.0, 1.0, 0.5])
@@ -158,18 +158,6 @@ def ql_array_to_greek_diacritics(ql_array):
 
 	return " ".join(greek_string_lst)
 
-def _decitala_full_id_from_filename(filename):
-	split = filename.split("_")
-	if len(split) == 2:
-		full_id = split[0]
-	elif len(split) >= 3:
-		if len(split[1]) == 1:  # e.g. ["80", "B", "..."]
-			full_id = "_".join([split[0], split[1]])
-		else:
-			full_id = split[0]
-
-	return full_id
-
 ####################################################################################################
 # RHYTHM
 ####################################################################################################
@@ -179,11 +167,10 @@ def augment(ql_array, factor=1.0, difference=0.0):
 	augmentation is multiplicative. If factor is set to 1.0, then augmentation is additive. If
 	factor & difference are non-zero, we have a mixed augmentation.
 
-	:param ql_array: array defining the rhythmic fragment (iterable).
-	:param float factor: factor for multiplicative augmentation.
-	:param float difference: factor for additive augmentation.
-
-	:return: an augmented fragment.
+	:param ql_array: A quarter length array.
+	:param float factor: The factor for multiplicative augmentation.
+	:param float difference: The factor for additive augmentation.
+	:return: The fragment augmented by the given `factor` and `difference`.
 	:rtype: numpy.array
 
 	>>> augment(ql_array=[1.0, 1.0, 0.5, 0.25], factor=2.0, difference=0.25)
@@ -198,7 +185,7 @@ def stretch_augment(ql_array, factor, stretch_factor):
 	kept as is and the "long" is modified by the given difference. The new long must still be
 	longer than the short value.
 
-	:param ql_array: array defining the rhythmic fragment (iterable)
+	:param ql_array: A quarter length array.
 
 	>>> stretch_augment(ql_array=[1.0, 2.0], factor=0.125, stretch_factor=0.25)
 	array([0.125, 0.5  ])
@@ -220,7 +207,7 @@ def successive_ratio_array(ql_array):
 	Returns array defined by the ratio of successive elements. By convention,
 	we set the first value to 1.0.
 
-	:param ql_array: array defining a rhythmic fragment.
+	:param ql_array: A quarter length array.
 	:return: array consisting of successive ratios of the input elements.
 	:rtype: numpy.array
 
@@ -249,7 +236,7 @@ def successive_difference_array(ql_array):
 	"""
 	Returns the first order difference of ``ql_array`` (contiguous differences).
 
-	:param ql_array: array defining a rhythmic fragment (iterable).
+	:param ql_array: A quarter length array.
 	:return: array consisting of successive differences of the input elements.
 	:rtype: numpy.array
 
@@ -278,6 +265,19 @@ def _remove_adjacent_equal_elements(array):
 	return np.array(filtered)
 
 def dseg(ql_array, reduced=False, as_str=False):
+	"""
+	:param bool reduced: Whether to remove equal contiguous values.
+	:param bool as_str: Whether to make the return type a string.
+	:return: The d-seg of the fragment, as introducted in `The Perception of Rhythm
+			in Non-Tonal Music
+			<https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents>`_
+			(Marvin, 1991). Maps a fragment into a sequence of relative durations.
+	:rtype: numpy.array (or string if `as_str=True`).
+
+	>>> g3 = GeneralFragment(np.array([0.25, 0.75, 2.0, 1.0]), name='marvin-p70')
+	>>> g3.dseg()
+	array([0, 1, 3, 2])
+	"""
 	dseg_vals = copy.copy(ql_array)
 	value_dict = dict()
 
@@ -410,7 +410,7 @@ def find_clusters(input_, data_mode=False):
 	"""
 	Finds the regions with consecutive equal elements.
 
-	:param iterable input_: either a list/array (representing
+	:param iterable input_: Either a list/array (representing
 							:obj:`~decitala.fragment.GeneralFragment.ql_array`) or data from
 							:obj:`~decitala.utils.get_object_indices`.
 	:param bool data_mode: whether or not the input data is a quarter length array or data from

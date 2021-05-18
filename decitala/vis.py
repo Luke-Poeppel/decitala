@@ -19,7 +19,7 @@ from collections import Counter
 from music21 import converter
 
 from . import trees  # To avoid circular dependency.
-from .utils import get_logger, loader
+from .utils import get_logger
 
 here = os.path.abspath(os.path.dirname(__file__))
 treant_templates = here + "/treant_templates"
@@ -57,15 +57,16 @@ def _prepare_docs_and_screenshot(path, serialized_tree, logger):
 		shell=True
 	)
 
-def create_tree_diagram(FragmentTree, path=None, pdf_path=None, verbose=False):
+def create_tree_diagram(FragmentTree, path=None, verbose=False):
 	"""
 	This function creates a visualization of a given :obj:`~decitala.trees.FragmentTree`
 	using the Treant.js library. If a path is provided, all the files will be stored there. Otherwise,
 	they will be stored in a tempfile for the display.
 
 	:param `~decitala.trees.FragmentTree` FragmentTree: A Fragment tree
-	:param str path: path to the folder where the visualization will be stored.
-	:return: folder at the provided path containing an index.html file which has a visualization
+	:param str path: Path to the folder where the visualization will be optionally stored.
+					Default is `None`.
+	:return: A folder at the provided path containing an index.html file which has a visualization
 			of the provided :obj:`~decitala.trees.FragmentTree`.
 	"""
 	if verbose:
@@ -107,18 +108,14 @@ def create_tree_diagram(FragmentTree, path=None, pdf_path=None, verbose=False):
 def fragment_roll(
 		data,
 		title=None,
-		show=True,
-		save=None,
-		plot_break_points=False
+		save_filepath=None,
 	):
 	"""
 	Creates a piano-roll type visualization of fragments in the input data.
 
-	:param list data: intended for output of
-					:obj:`~database.DBParser.model_full_path(return_data=True)`.
-	:param str title: optional title.
-	:param bool show: displays the plot.
-	:param str save: optional path to save the file.
+	:param list data: Data from one of the :obj:`decitala.search` functions.
+	:param str title: Title for the plot. Default is `None`.
+	:param str save_filepath: Optional path to save the plot (DPI=350). Default is `None`.
 	"""
 	plt.figure(figsize=(11, 3))
 	plt.title(title, fontsize=14, fontname="Times")
@@ -146,25 +143,26 @@ def fragment_roll(
 	# if plot_break_points:
 	# 	pass # TODO
 
-	if show:
-		plt.show()
-	if save:
-		plt.savefig(save, dpi=300)
+	if save_filepath:
+		plt.savefig(save_filepath, dpi=350)
+
 	return plt
 
 def annotate_score(
 		data,
-		filein,
+		filepath,
 		part_num,
 	):
 	"""
 	Function for annotating a score with data.
 
-	:param list data: output of the form from a rolling search or path finder.
-	:param str filein: input file to convert.
-	:param int part_num: part number.
+	:param list data: Data from one of the :obj:`decitala.search` functions.
+	:param str filepath: Filepath to the score to be annotated. Should correspond to the filepath
+						used in the creation of the `data`.
+	:param int part_num: Part number in the filepath which is to be annotated.Should correspond to
+						the filepath used in the creation of the `data`.
 	"""
-	converted = converter.parse(filein)
+	converted = converter.parse(filepath)
 	for this_fragment in data:
 		for this_obj in converted.flat.iter.notes:
 			if this_obj.offset == this_fragment["onset_range"][0]:
@@ -183,16 +181,12 @@ def result_bar_plot(
 	"""
 	Returns a bar plot of input data.
 
-	:param list data: output of the form from a rolling search or path finder.
-	:param str title: title to add to the plot.
-	:param str save_filepath: path to save plot.
+	:param list data: Data from one of the :obj:`decitala.search` functions.
+	:param str title: Title for the plot. Default is `None`.
+	:param str save_filepath: Optional path to save the plot (DPI=350). Default is `None`.
 	"""
 	if type(data) == list:
 		fragments = [x["fragment"].name for x in data]
-	elif type(data) == str:
-		assert os.path.isfile(data)
-		loaded = loader(data)
-		fragments = [x["fragment"] for x in loaded]
 
 	counter = Counter(fragments)
 
@@ -215,6 +209,11 @@ def plot_2D_search_results(data=None, path=None, title=None, save_filepath=None)
 	as well as a path extracted from it. The ``data`` parameter will plot the fragments as a
 	scatter plot of their start and end; the ``path`` parameter will plot the connected line
 	between the ``path`` fragments.
+
+	:param list data: Data from one of the :obj:`decitala.search` functions. Default is `None`.
+	:param list path: Intended for data from :obj:`decitala.search.path_finder`. Default is `None.
+	:param str title: Title for the plot. Default is `None`.
+	:param str save_filepath: Optional path to save the plot (DPI=350). Default is `None`.
 	"""
 	if data:
 		xs = [x["onset_range"][0] for x in data]

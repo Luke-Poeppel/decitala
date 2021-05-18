@@ -159,21 +159,19 @@ def rolling_hash_search(
 		allow_subdivision=False,
 	):
 	"""
-	A different (faster) paradigm than the tree approaches above. Searches a large dictionary of
-	all possible modifications of the rhythmic datasets.
+	Function for searching a score for rhythmic fragments and modifications of rhythmic fragments.
+	This function is faster and simpler than :meth:`decitala.search.rolling_tree_search`. 
 
-	:param str filepath: path to file to be searched.
-	:param int part_num: part in the file to be searched (0-indexed).
-	:param `decitala.hash_table.FragmentHashTable` table:
-	:param list windows: Allowed window sizes for search.
-	:param bool allow_subdivision: Whether to check for subdivisions in the search.
+	:param str filepath: Path to file to be searched.
+	:param int part_num: Part in the file to be searched (0-indexed).
+	:param `decitala.hash_table.FragmentHashTable` table: A :obj:`decitala.hash_table.FragmentHashTable` # noqa
+	 													object or one of its subclasses.
+	:param list windows: The allowed window sizes for search. Default is all integers in range 2-19.
+	:param bool allow_subdivision: Whether to check for subdivisions of a frame in the search.
 	"""
 	object_list = get_object_indices(filepath=filepath, part_num=part_num)
 	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
-	fragment_id = 0 # noqa TODO
-	fragments_found = []
 
-	# These tables are already loaded.
 	if type(table) == FragmentHashTable:
 		table.load()
 
@@ -183,6 +181,8 @@ def rolling_hash_search(
 	index_of_closest = windows.index(closest_window)
 	windows = windows[0:index_of_closest + 1]
 
+	fragment_id = 0
+	fragments_found = []
 	for this_win in windows:
 		frames = roll_window(array=object_list, window_length=this_win)
 		for this_frame in frames:
@@ -243,15 +243,19 @@ def path_finder(
 	:obj:`decitala.search.rolling_hash_search` to extract all fragments from the provided
 	table and then runs the Floyd-Warshall algorithm to get the best path.
 
-	:param str filepath: path to file to be searched.
-	:param int part_num: part in the file to be searched (0-indexed).
-	:param `decitala.hash_table.FragmentHashTable` table:
+	:param str filepath: Path to file to be searched.
+	:param int part_num: Part in the file to be searched (0-indexed).
+	:param `decitala.hash_table.FragmentHashTable` table: A :obj:`decitala.hash_table.FragmentHashTable` # noqa
+	 													object or one of its subclasses.
 	:param str mode: Path-finding algorithm used. Options are ``"floyd_warshall"`` and ``"dijkstra"``.
 					Default is ``"dijkstra"``.
-	:param list windows: Allowed window sizes for search.
-	:param bool slur_constraint: Whether to force Floyd-Warshall to choose slurred fragments.
-	:param str save_filepath: An optional path to a file (ending in .json) to save the results.
-	:param bool verbose: Whether to log messages. Default is ``False``.
+	:param list windows: The allowed window sizes for search. Default is all integers in range 2-19.
+	:param bool slur_constraint: Whether to force slurred fragments to appear in the final path.
+								Only possible if `algorithm="floyd-warshall"`.
+	:param str save_filepath: An optional path to a JSON file for saving search results. This file
+							can then be loaded with the :meth:`decitala.utils.loader`.
+	:param bool verbose: Whether to log messages (only used with `algorithm="floyd-warshall"`).
+						Default is ``False``.
 	"""
 	fragments = rolling_hash_search(
 		filepath=filepath,
@@ -260,8 +264,6 @@ def path_finder(
 	)
 	if not fragments:
 		return None
-
-	best_source, best_sink = path_finding_utils.best_source_and_sink(fragments)
 
 	if algorithm.lower() == "dijkstra":
 		if slur_constraint:
@@ -274,6 +276,7 @@ def path_finder(
 		)
 		best_path = sorted([x for x in fragments if x["id"] in best_path], key=lambda x: x["onset_range"][0]) # noqa
 	elif algorithm.lower() == "floyd-warshall":
+		best_source, best_sink = path_finding_utils.best_source_and_sink(fragments)
 		distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
 			fragments,
 			weights={

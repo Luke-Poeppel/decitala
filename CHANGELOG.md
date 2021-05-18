@@ -6,7 +6,6 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.12.0](https://github.com/Luke-Poeppel/decitala/tree/v0.12.0) ???
 ### Added
 - WIP: Annotated prosodic feet from Traité (Tome 1). Also added classes (and corresponding `frag_types`) for the package. You can now create `fragment.ProsodicFragment` objects as well as create, for instance, a `ProsodicFragmentHashTable`. 
-- WIP: Added a `lookup` method to `hash_table` to simplify the code in `rolling_hash_search`. 
 - Added `plot_2D_search_results` to `vis` module for plotting search results in XY space, along with a given path. (This implements #4, finally!)
 
 ### Changed

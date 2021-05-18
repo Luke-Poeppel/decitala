@@ -289,12 +289,6 @@ class FragmentHashTable:
 
 		self.loaded = True
 
-	def lookup(self, ql_array):
-		"""
-		Looks up the input ``ql_array``, but is more thorough than just a key search on the data.
-		"""
-		pass
-
 class DecitalaHashTable(FragmentHashTable):
 	"""
 	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``

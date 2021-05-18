@@ -140,6 +140,18 @@ def _process_matches(name, matches, data_path):
 
 	return full_path, name, filename
 
+def _decitala_full_id_from_filename(filename):
+	split = filename.split("_")
+	if len(split) == 2:
+		full_id = split[0]
+	elif len(split) >= 3:
+		if len(split[1]) == 1:  # e.g. ["80", "B", "..."]
+			full_id = "_".join([split[0], split[1]])
+		else:
+			full_id = split[0]
+
+	return full_id
+
 class GeneralFragment:
 	"""
 	Class representing a generic rhythmic fragment. The user must provide either a path to a music21
@@ -242,7 +254,7 @@ class GeneralFragment:
 	def ql_tuple(self, retrograde=False):
 		"""
 		:param bool retrograde: Whether to return the fragment in retrograde.
-		:return: the quarter length array of the fragment as a tuple.
+		:return: The quarter length array of the fragment as a tuple.
 		:rtype: tuple
 		"""
 		return tuple(self.ql_array(retrograde=retrograde))
@@ -286,19 +298,7 @@ class GeneralFragment:
 		return sum(self.ql_array())
 
 	def dseg(self, reduced=False, as_str=False):
-		"""
-		:param bool reduced: Whether to remove equal contiguous values.
-		:param bool as_str: Whether to make the return type a string.
-		:return: the d-seg of the fragment, as introducted in `The Perception of Rhythm
-				in Non-Tonal Music
-				<https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents>`_
-				(Marvin, 1991). Maps a fragment into a sequence of relative durations.
-		:rtype: numpy.array (or string if `as_str=True`).
-
-		>>> g3 = GeneralFragment(np.array([0.25, 0.75, 2.0, 1.0]), name='marvin-p70')
-		>>> g3.dseg()
-		array([0, 1, 3, 2])
-		"""
+		"""See docstring of :obj:`decitala.utils.dseg`."""
 		return utils.dseg(self.ql_array(), reduced=reduced, as_str=as_str)
 
 	def successive_ratio_array(self, retrograde=False):
@@ -320,7 +320,7 @@ class GeneralFragment:
 	@property
 	def is_non_retrogradable(self):
 		"""
-		:return: whether or not the given fragment is palindromic (i.e. non-retrogradable.)
+		:return: Whether or not the given fragment is palindromic (i.e. non-retrogradable.)
 		:rtype: bool
 		"""
 		return (self.ql_array(retrograde=False) == self.ql_array(retrograde=True)).all()
@@ -334,11 +334,10 @@ class GeneralFragment:
 
 	def is_sub_fragment(self, other, try_retrograde=True):
 		"""
-		:param other: a :obj:`~decitala.fragment.GeneralFragment`, :obj:`~decitala.fragment.Decitala`, \
+		:param other: A :obj:`~decitala.fragment.GeneralFragment`, :obj:`~decitala.fragment.Decitala`, \
 						or :obj:`~decitala.fragment.GreekFoot` object.
-		:param bool try_retrograde: whether to allow searching in retrograde.
-		:return: whether or not self is a sub-fragment, meaning its successive_ratio_array exists \
-				inorder in the others.
+		:param bool try_retrograde: Whether to allow searching in retrograde.
+		:return: Whether or not self is a sub-fragment of `other`.
 		:rtype: bool
 		"""
 		def _check(array_1, array_2):
@@ -362,7 +361,7 @@ class GeneralFragment:
 
 	def morris_symmetry_class(self):
 		"""
-		:return: the fragment's form of rhythmic symmetry, as defined by Morris in \
+		:return: The fragment's form of rhythmic symmetry, as defined by Morris in \
 				`Sets, Scales and Rhythmic Cycles. A Classification of Talas in Indian \
 				Music <http://ecmc.rochester.edu/rdm/pdflib/talapaper.pdf>`_ (1999).
 		:rtype: int
@@ -535,10 +534,10 @@ class Decitala(GeneralFragment):
 	@property
 	def id_num(self):
 		"""
-		:return: the ID of the fragment, as given by Lavignac (1921).
+		:return: The ID of the fragment, as given by Lavignac (1921).
 		:rtype: int
 		"""
-		return utils._decitala_full_id_from_filename(self.filename)
+		return _decitala_full_id_from_filename(self.filename)
 
 	@classmethod
 	def get_by_id(cls, input_id):
@@ -548,8 +547,8 @@ class Decitala(GeneralFragment):
 		and Messiaen Traité. Some talas have "sub-talas," meaning that their id is not \
 		unique.
 
-		:return: a :obj:`~decitala.fragment.Decitala` object
-		:param str input_id: id number of the tala (in range 1-120).
+		:return: A :obj:`~decitala.fragment.Decitala` object
+		:param str input_id: The ID number of the tala (in range 1-120).
 		:rtype: :obj:`~decitala.fragment.Decitala`
 		:raises `~decitala.fragment.DecitalaException`: when there is an issue with the `input_id`.
 
@@ -564,7 +563,7 @@ class Decitala(GeneralFragment):
 	@property
 	def num_matras(self):
 		"""
-		:return: returns the number of matras in the tala (here, the number of eighth notes).
+		:return: Returns the number of matras in the tala (here, the number of eighth notes).
 		:rtype: int
 		"""
 		return (self.ql_duration / 0.5)
