@@ -118,13 +118,11 @@ def frame_is_spanned_by_slur(frame):
 
 	return is_spanned_by_slur
 
-def frame_lookup(frame, ql_array, curr_fragment_id, table, windows, subdivision_search_i=None):
+def frame_lookup(frame, ql_array, curr_fragment_id, table, windows):
 	objects = [x[0] for x in frame]
 	if any(x.isRest for x in objects):
 		return None
 	else:
-		if len(ql_array) < windows[0]:
-			return None
 		try:
 			searched = table.data[tuple(ql_array)]
 			if searched is not None:
@@ -139,12 +137,6 @@ def frame_lookup(frame, ql_array, curr_fragment_id, table, windows, subdivision_
 				result["pitch_content"] = pitch_content
 				result["is_spanned_by_slur"] = is_spanned_by_slur
 				result["id"] = curr_fragment_id
-
-				if subdivision_search_i:
-					if subdivision_search_i == 0:
-						result["mod_hierarchy_val"] = 5
-					else:
-						result["mod_hierarchy_val"] = 6
 		except KeyError:
 			return None
 
@@ -156,6 +148,7 @@ def rolling_hash_search(
 		table,
 		windows=list(range(2, 19)),
 		allow_subdivision=False,
+		allow_contiguous_summation=False
 	):
 	"""
 	Function for searching a score for rhythmic fragments and modifications of rhythmic fragments.
@@ -184,9 +177,13 @@ def rolling_hash_search(
 	for this_win in windows:
 		frames = roll_window(array=object_list, window_length=this_win)
 		for this_frame in frames:
+			frame_ql_array = frame_to_ql_array(this_frame)
+			if len(frame_ql_array) < 2:
+				continue
+
 			lookup = frame_lookup(
 				frame=this_frame,
-				ql_array=frame_to_ql_array(this_frame),
+				ql_array=frame_ql_array,
 				curr_fragment_id=fragment_id,
 				table=table,
 				windows=windows
@@ -203,7 +200,7 @@ def rolling_hash_search(
 				)
 				for this_superdivision in all_superdivisions:
 					this_superdivision_retrograde = this_superdivision[::-1]
-					if len(this_superdivision) < 2:
+					if len(this_superdivision) < min(windows):
 						continue
 
 					searches = [tuple(this_superdivision), tuple(this_superdivision_retrograde)]
@@ -218,10 +215,34 @@ def rolling_hash_search(
 							subdivision_search_i=i
 						)
 						if lookup:
+							if i == 0:
+								lookup["mod_hierarchy_val"] = 5
+							else:
+								lookup["mod_hierarchy_val"] = 6
+
 							subdivision_results.append(lookup)
 							fragment_id += 1
 
 					fragments_found.append(min(subdivision_results, key=lambda x: x["mod_hierarchy_val"]))
+
+			if allow_contiguous_summation:
+				copied_frame = copy.copy(this_frame)
+				cs_frame = contiguous_summation(copied_frame)
+				cs_ql_array = frame_to_ql_array(cs_frame)
+				if len(cs_ql_array) < min(windows):
+					continue
+				else:
+					cs_lookup = frame_lookup(
+						frame=cs_frame,
+						ql_array=cs_ql_array,
+						curr_fragment_id=fragment_id,
+						table=table,
+						windows=windows
+					)
+					if cs_lookup:
+						cs_lookup["contiguous_summation"] = True
+						fragments_found.append(cs_lookup)
+						fragment_id += 1
 
 	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
 
@@ -231,6 +252,7 @@ def path_finder(
 		table,
 		windows=list(range(2, 19)),
 		allow_subdivision=False,
+		allow_contiguous_summation=False,
 		algorithm="dijkstra",
 		slur_constraint=False,
 		save_filepath=None,
@@ -262,7 +284,8 @@ def path_finder(
 		part_num=part_num,
 		table=table,
 		windows=windows,
-		allow_subdivision=allow_subdivision
+		allow_subdivision=allow_subdivision,
+		allow_contiguous_summation=False
 	)
 	if not fragments:
 		return None
