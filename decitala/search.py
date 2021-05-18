@@ -231,8 +231,9 @@ def path_finder(
 		filepath,
 		part_num,
 		table,
-		algorithm="dijkstra",
 		windows=list(range(2, 19)),
+		allow_subdivision=False,
+		algorithm="dijkstra",
 		slur_constraint=False,
 		save_filepath=None,
 		verbose=False
@@ -247,9 +248,10 @@ def path_finder(
 	:param int part_num: Part in the file to be searched (0-indexed).
 	:param `decitala.hash_table.FragmentHashTable` table: A :obj:`decitala.hash_table.FragmentHashTable` # noqa
 	 													object or one of its subclasses.
-	:param str mode: Path-finding algorithm used. Options are ``"floyd_warshall"`` and ``"dijkstra"``.
-					Default is ``"dijkstra"``.
 	:param list windows: The allowed window sizes for search. Default is all integers in range 2-19.
+	:param bool allow_subdivision: Whether to check for subdivisions of a frame in the search.
+	:param str algorithm: Path-finding algorithm used. Options are ``"floyd_warshall"`` and ``"dijkstra"``.
+						Default is ``"dijkstra"``.
 	:param bool slur_constraint: Whether to force slurred fragments to appear in the final path.
 								Only possible if `algorithm="floyd-warshall"`.
 	:param str save_filepath: An optional path to a JSON file for saving search results. This file
@@ -261,6 +263,8 @@ def path_finder(
 		filepath=filepath,
 		part_num=part_num,
 		table=table,
+		windows=windows,
+		allow_subdivision=allow_subdivision
 	)
 	if not fragments:
 		return None
