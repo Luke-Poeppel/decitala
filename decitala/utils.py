@@ -514,7 +514,7 @@ def _make_one_superdivision(array, clusters):
 
 	return np.array([x for x in superdivision if x != 0])
 
-def find_possible_superdivisions(array, include_self=True):
+def find_possible_superdivisions(ql_array, include_self=True):
 	"""
 	There is a more general approach to the subdivision problem, but we note that Messiaen's
 	subdivision of tala components tends to be even.
@@ -537,13 +537,13 @@ def find_possible_superdivisions(array, include_self=True):
 	[3.   0.5  0.75 0.5 ]
 	"""
 	if include_self:
-		possible_super_divisions = [np.array(array)]
+		possible_super_divisions = [np.array(ql_array)]
 	else:
 		possible_super_divisions = []
-	clusters = find_clusters(array)
+	clusters = find_clusters(ql_array)
 	possible_combinations = power_list(clusters)
 	for this_combination in possible_combinations:
-		superdivision = _make_one_superdivision(array, this_combination)
+		superdivision = _make_one_superdivision(ql_array, this_combination)
 		possible_super_divisions.append(superdivision)
 
 	return possible_super_divisions

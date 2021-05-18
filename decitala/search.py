@@ -193,9 +193,8 @@ def rolling_hash_search(
 				fragment_id += 1
 
 			if allow_subdivision:
-				subdivision_ql_array = frame_to_ql_array(this_frame)
 				all_superdivisions = find_possible_superdivisions(
-					ql_array=subdivision_ql_array,
+					ql_array=frame_ql_array,
 					include_self=False
 				)
 				for this_superdivision in all_superdivisions:
@@ -207,12 +206,11 @@ def rolling_hash_search(
 					subdivision_results = []
 					for i, this_search in enumerate(searches):
 						lookup = frame_lookup(
-							frame=this_search,
-							ql_array=subdivision_ql_array,
+							frame=this_frame,
+							ql_array=this_search,
 							curr_fragment_id=fragment_id,
 							table=table,
 							windows=windows,
-							subdivision_search_i=i
 						)
 						if lookup:
 							if i == 0:
@@ -223,7 +221,8 @@ def rolling_hash_search(
 							subdivision_results.append(lookup)
 							fragment_id += 1
 
-					fragments_found.append(min(subdivision_results, key=lambda x: x["mod_hierarchy_val"]))
+					if subdivision_results:
+						fragments_found.append(min(subdivision_results, key=lambda x: x["mod_hierarchy_val"]))
 
 			if allow_contiguous_summation:
 				copied_frame = copy.copy(this_frame)

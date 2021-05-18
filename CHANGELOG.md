@@ -8,7 +8,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - WIP: Annotated prosodic feet from Traité (Tome 1). Also added classes (and corresponding `frag_types`) for the package. You can now create `fragment.ProsodicFragment` objects as well as create, for instance, a `ProsodicFragmentHashTable`. 
 - Added `plot_2D_search_results` to `vis` module for plotting search results in XY space, along with a given path. (This implements #4, finally!)
 - Re-added `search.rolling_search_on_array`. It conforms to the hash table approach. (See #48)
-- Added `allow_contiguous_summation` parameter to `search.rolling_hash_search`. (See #)
+- Added `allow_contiguous_summation` parameter to `search.rolling_hash_search`. (See #127)
 
 ### Changed
 - Big documentation improvements, code/logic cleanup. 

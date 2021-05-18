@@ -26,6 +26,8 @@ def test_shuffled_I_path_with_slur_constraint():
 		filepath = filepath,
 		part_num=0,
 		table=hash_table.GreekFootHashTable(),
+		allow_subdivision=True,
+		allow_contiguous_summation=True,
 		algorithm="floyd-warshall",
 		slur_constraint=True
 	)
