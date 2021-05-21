@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>search &mdash; decitala 0.11.1 documentation</title>
+  <title>search &mdash; decitala 0.12.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.11.1
+                0.12.0
               </div>
             
           
@@ -180,18 +180,95 @@
 </dd></dl>
 
 <dl class="py function">
+<dt id="decitala.search.frame_to_ql_array">
+<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">frame_to_ql_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#frame_to_ql_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.frame_to_ql_array" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>frame</strong> (<em>list</em>) – frame of data from <a class="reference internal" href="utils.html#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy array holding the associated quarter length of a given window.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_frame</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B-&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.125</span><span class="p">,</span> <span class="mf">4.25</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.25</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">4.625</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B-&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.625</span><span class="p">,</span> <span class="mf">4.75</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.75</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.25</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">5.25</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame_to_ql_array</span><span class="p">(</span><span class="n">my_frame</span><span class="p">)</span>
+<span class="go">array([0.125, 0.25 , 0.125, 0.125, 0.25 , 0.25 , 0.25 ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.search.frame_to_midi">
+<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">frame_to_midi</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_graces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#frame_to_midi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.frame_to_midi" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>frame</strong> (<em>list</em>) – frame of data from <a class="reference internal" href="utils.html#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>numpy array holding the pitches within the frame.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_frame</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B-&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.125</span><span class="p">,</span> <span class="mf">4.25</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.25</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">4.625</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B-&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.625</span><span class="p">,</span> <span class="mf">4.75</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.75</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.25</span><span class="p">)),</span>
+<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">5.25</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)),</span>
+<span class="gp">... </span>    <span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frame_to_midi</span><span class="p">(</span><span class="n">my_frame</span><span class="p">)</span>
+<span class="go">[(70,), (69,), (71,), (70,), (69,), (67,), (67,)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.search.frame_is_spanned_by_slur">
+<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">frame_is_spanned_by_slur</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#frame_is_spanned_by_slur"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.frame_is_spanned_by_slur" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>frame</strong> (<em>list</em>) – frame from <a class="reference internal" href="utils.html#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>whether or not the frame is spanned by a music21.spanner.Slur object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="decitala.search.rolling_hash_search">
-<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">rolling_hash_search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_subdivision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#rolling_hash_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.rolling_hash_search" title="Permalink to this definition">¶</a></dt>
-<dd><p>A different (faster) paradigm than the tree approaches above. Searches a large dictionary of
-all possible modifications of the rhythmic datasets.</p>
+<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">rolling_hash_search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_subdivision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_contiguous_summation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#rolling_hash_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.rolling_hash_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for searching a score for rhythmic fragments and modifications of rhythmic fragments.
+This function is faster and simpler than <a class="reference internal" href="#decitala.search.rolling_tree_search" title="decitala.search.rolling_tree_search"><code class="xref py py-meth docutils literal notranslate"><span class="pre">decitala.search.rolling_tree_search()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filepath</strong> (<em>str</em>) – path to file to be searched.</p></li>
-<li><p><strong>part_num</strong> (<em>int</em>) – part in the file to be searched (0-indexed).</p></li>
-<li><p><strong>table</strong> (<a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><em>decitala.hash_table.FragmentHashTable</em></a>) – </p></li>
-<li><p><strong>windows</strong> (<em>list</em>) – Allowed window sizes for search.</p></li>
-<li><p><strong>allow_subdivision</strong> (<em>bool</em>) – Whether to check for subdivisions in the search.</p></li>
+<li><p><strong>filepath</strong> (<em>str</em>) – Path to file to be searched.</p></li>
+<li><p><strong>part_num</strong> (<em>int</em>) – Part in the file to be searched (0-indexed).</p></li>
+<li><p><strong>table</strong> (<a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><em>decitala.hash_table.FragmentHashTable</em></a>) – A <a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a> # noqa
+object or one of its subclasses.</p></li>
+<li><p><strong>windows</strong> (<em>list</em>) – The allowed window sizes for search. Default is all integers in range 2-19.</p></li>
+<li><p><strong>allow_subdivision</strong> (<em>bool</em>) – Whether to check for subdivisions of a frame in the search.</p></li>
 </ul>
 </dd>
 </dl>
@@ -199,7 +276,7 @@ all possible modifications of the rhythmic datasets.</p>
 
 <dl class="py function">
 <dt id="decitala.search.path_finder">
-<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">path_finder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dijkstra'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slur_constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#path_finder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.path_finder" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">path_finder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_subdivision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_contiguous_summation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dijkstra'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slur_constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#path_finder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.path_finder" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function combines a number of tools for effectively finding a path of fragments
 through a provided composition and part number. It first runs
 <a class="reference internal" href="#decitala.search.rolling_hash_search" title="decitala.search.rolling_hash_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.rolling_hash_search</span></code></a> to extract all fragments from the provided
@@ -207,18 +284,60 @@ table and then runs the Floyd-Warshall algorithm to get the best path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filepath</strong> (<em>str</em>) – path to file to be searched.</p></li>
-<li><p><strong>part_num</strong> (<em>int</em>) – part in the file to be searched (0-indexed).</p></li>
-<li><p><strong>table</strong> (<a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><em>decitala.hash_table.FragmentHashTable</em></a>) – </p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – Path-finding algorithm used. Options are <code class="docutils literal notranslate"><span class="pre">&quot;floyd_warshall&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;dijkstra&quot;</span></code>.
+<li><p><strong>filepath</strong> (<em>str</em>) – Path to file to be searched.</p></li>
+<li><p><strong>part_num</strong> (<em>int</em>) – Part in the file to be searched (0-indexed).</p></li>
+<li><p><strong>table</strong> (<a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><em>decitala.hash_table.FragmentHashTable</em></a>) – A <a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a> # noqa
+object or one of its subclasses.</p></li>
+<li><p><strong>windows</strong> (<em>list</em>) – The allowed window sizes for search. Default is all integers in range 2-19.</p></li>
+<li><p><strong>allow_subdivision</strong> (<em>bool</em>) – Whether to check for subdivisions of a frame in the search.</p></li>
+<li><p><strong>algorithm</strong> (<em>str</em>) – Path-finding algorithm used. Options are <code class="docutils literal notranslate"><span class="pre">&quot;floyd_warshall&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;dijkstra&quot;</span></code>.
 Default is <code class="docutils literal notranslate"><span class="pre">&quot;dijkstra&quot;</span></code>.</p></li>
-<li><p><strong>windows</strong> (<em>list</em>) – Allowed window sizes for search.</p></li>
-<li><p><strong>slur_constraint</strong> (<em>bool</em>) – Whether to force Floyd-Warshall to choose slurred fragments.</p></li>
-<li><p><strong>save_filepath</strong> (<em>str</em>) – An optional path to a file (ending in .json) to save the results.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – Whether to log messages. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>slur_constraint</strong> (<em>bool</em>) – Whether to force slurred fragments to appear in the final path.
+Only possible if <cite>algorithm=”floyd-warshall”</cite>.</p></li>
+<li><p><strong>save_filepath</strong> (<em>str</em>) – An optional path to a JSON file for saving search results. This file
+can then be loaded with the <a class="reference internal" href="utils.html#decitala.utils.loader" title="decitala.utils.loader"><code class="xref py py-meth docutils literal notranslate"><span class="pre">decitala.utils.loader()</span></code></a>.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Whether to log messages (only used with <cite>algorithm=”floyd-warshall”</cite>).
+Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.search.rolling_search_on_array">
+<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">rolling_search_on_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ql_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#rolling_search_on_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.rolling_search_on_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>A very light function for rhythmic search on an array. This is primarily useful
+for quick checks in a score. It does not support all possible modification types, etc…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ql_array</strong> (<em>numpy.array</em>) – A quarter length array.</p></li>
+<li><p><strong>table</strong> (<a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><em>decitala.hash_table.FragmentHashTable</em></a>) – A <a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a> # noqa
+object or one of its subclasses.</p></li>
+<li><p><strong>windows</strong> (<em>list</em>) – The allowed window sizes for search. Default is all integers in range 2-19.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list holding fragments in the array that were detected in the table.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span> <span class="o">=</span> <span class="n">FragmentHashTable</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">datasets</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;greek_foot&quot;</span><span class="p">]</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example_fragment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">rolling_search_on_array</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="n">example_fragment</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">ght</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">])</span>
+<span class="go">&lt;fragment.GreekFoot Iamb&gt;</span>
+<span class="go">&lt;fragment.GreekFoot Trochee&gt;</span>
+<span class="go">&lt;fragment.GreekFoot Iamb&gt;</span>
+<span class="go">&lt;fragment.GreekFoot Amphibrach&gt;</span>
+<span class="go">&lt;fragment.GreekFoot Amphimacer&gt;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">

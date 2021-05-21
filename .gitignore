@@ -7,3 +7,4 @@ dist/
 htmlcov/
 remake_analysis_files.py
 docsrc/_build/
+docs/_modules/

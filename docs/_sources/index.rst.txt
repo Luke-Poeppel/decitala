@@ -44,7 +44,6 @@ on rhythmic datasets. The ``hash_table`` module stores a number of possible modi
 we may use the following:
 
    >>> from decitala.hash_table import FragmentHashTable
-   >>> from decitala.fragment import GeneralFragment
    >>> my_ht = FragmentHashTable(
    ...      datasets = ["greek_foot"],
    ...      custom_fragments = [GeneralFragment(data=filepath), Decitala("Ragavardhana")]

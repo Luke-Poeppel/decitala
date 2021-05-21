@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>fragment &mdash; decitala 0.11.1 documentation</title>
+  <title>fragment &mdash; decitala 0.12.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.11.1
+                0.12.0
               </div>
             
           
@@ -191,43 +191,10 @@
 <dd><p>Bases: <a class="reference internal" href="#decitala.fragment.FragmentException" title="decitala.fragment.FragmentException"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.FragmentException</span></code></a></p>
 </dd></dl>
 
-<dl class="py class">
-<dt id="decitala.fragment.FragmentEncoder">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.fragment.</span></code><code class="sig-name descname"><span class="pre">FragmentEncoder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipkeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_ascii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_circular</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#FragmentEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.FragmentEncoder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">json.encoder.JSONEncoder</span></code></p>
-<dl class="py method">
-<dt id="decitala.fragment.FragmentEncoder.default">
-<code class="sig-name descname"><span class="pre">default</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#FragmentEncoder.default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.FragmentEncoder.default" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implement this method in a subclass such that it returns
-a serializable object for <code class="docutils literal notranslate"><span class="pre">o</span></code>, or calls the base implementation
-(to raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>).</p>
-<p>For example, to support arbitrary iterators, you could
-implement default like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">iterable</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-        <span class="k">pass</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
-    <span class="c1"># Let the base class default method raise the TypeError</span>
-    <span class="k">return</span> <span class="n">JSONEncoder</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="decitala.fragment.FragmentDecoder">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.fragment.</span></code><code class="sig-name descname"><span class="pre">FragmentDecoder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#FragmentDecoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.FragmentDecoder" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">json.decoder.JSONDecoder</span></code></p>
-<dl class="py method">
-<dt id="decitala.fragment.FragmentDecoder.object_hook">
-<code class="sig-name descname"><span class="pre">object_hook</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#FragmentDecoder.object_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.FragmentDecoder.object_hook" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function already runs json.loads invisibly on <code class="docutils literal notranslate"><span class="pre">obj</span></code>.</p>
-</dd></dl>
-
+<dl class="py exception">
+<dt id="decitala.fragment.ProsodicException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.fragment.</span></code><code class="sig-name descname"><span class="pre">ProsodicException</span></code><a class="reference internal" href="../_modules/decitala/fragment.html#ProsodicException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.ProsodicException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#decitala.fragment.FragmentException" title="decitala.fragment.FragmentException"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.FragmentException</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
@@ -308,7 +275,7 @@ in retrograde.</p>
 <dd class="field-odd"><p><strong>retrograde</strong> (<em>bool</em>) – Whether to return the fragment in retrograde.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the quarter length array of the fragment as a tuple.</p>
+<dd class="field-even"><p>The quarter length array of the fragment as a tuple.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>tuple</p>
@@ -374,27 +341,7 @@ in retrograde.</p>
 <dl class="py method">
 <dt id="decitala.fragment.GeneralFragment.dseg">
 <code class="sig-name descname"><span class="pre">dseg</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reduced</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#GeneralFragment.dseg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.dseg" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>reduced</strong> (<em>bool</em>) – Whether to remove equal contiguous values.</p></li>
-<li><p><strong>as_str</strong> (<em>bool</em>) – Whether to make the return type a string.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the d-seg of the fragment, as introducted in <a class="reference external" href="https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents">The Perception of Rhythm
-in Non-Tonal Music</a>
-(Marvin, 1991). Maps a fragment into a sequence of relative durations.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>numpy.array (or string if <cite>as_str=True</cite>).</p>
-</dd>
-</dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g3</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;marvin-p70&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g3</span><span class="o">.</span><span class="n">dseg</span><span class="p">()</span>
-<span class="go">array([0, 1, 3, 2])</span>
-</pre></div>
-</div>
+<dd><p>See docstring of <a class="reference internal" href="utils.html#decitala.utils.dseg" title="decitala.utils.dseg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.utils.dseg</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -428,7 +375,7 @@ as in Morris (1998).</p>
 <em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">is_non_retrogradable</span></code><a class="headerlink" href="#decitala.fragment.GeneralFragment.is_non_retrogradable" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>whether or not the given fragment is palindromic (i.e. non-retrogradable.)</p>
+<dd class="field-odd"><p>Whether or not the given fragment is palindromic (i.e. non-retrogradable.)</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>bool</p>
@@ -455,12 +402,12 @@ as in Morris (1998).</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>other</strong> – a <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GeneralFragment</span></code></a>, <a class="reference internal" href="#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Decitala</span></code></a>,                                          or <a class="reference internal" href="#decitala.fragment.GreekFoot" title="decitala.fragment.GreekFoot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GreekFoot</span></code></a> object.</p></li>
-<li><p><strong>try_retrograde</strong> (<em>bool</em>) – whether to allow searching in retrograde.</p></li>
+<li><p><strong>other</strong> – A <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GeneralFragment</span></code></a>, <a class="reference internal" href="#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Decitala</span></code></a>,                                          or <a class="reference internal" href="#decitala.fragment.GreekFoot" title="decitala.fragment.GreekFoot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GreekFoot</span></code></a> object.</p></li>
+<li><p><strong>try_retrograde</strong> (<em>bool</em>) – Whether to allow searching in retrograde.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>whether or not self is a sub-fragment, meaning its successive_ratio_array exists                               inorder in the others.</p>
+<dd class="field-even"><p>Whether or not self is a sub-fragment of <cite>other</cite>.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>bool</p>
@@ -473,7 +420,7 @@ as in Morris (1998).</p>
 <code class="sig-name descname"><span class="pre">morris_symmetry_class</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#GeneralFragment.morris_symmetry_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.GeneralFragment.morris_symmetry_class" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the fragment’s form of rhythmic symmetry, as defined by Morris in                              <a class="reference external" href="http://ecmc.rochester.edu/rdm/pdflib/talapaper.pdf">Sets, Scales and Rhythmic Cycles. A Classification of Talas in Indian                          Music</a> (1999).</p>
+<dd class="field-odd"><p>The fragment’s form of rhythmic symmetry, as defined by Morris in                              <a class="reference external" href="http://ecmc.rochester.edu/rdm/pdflib/talapaper.pdf">Sets, Scales and Rhythmic Cycles. A Classification of Talas in Indian                          Music</a> (1999).</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>int</p>
@@ -646,7 +593,7 @@ databases directory (see the Decitalas table).</p>
 <em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">id_num</span></code><a class="headerlink" href="#decitala.fragment.Decitala.id_num" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>the ID of the fragment, as given by Lavignac (1921).</p>
+<dd class="field-odd"><p>The ID of the fragment, as given by Lavignac (1921).</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>int</p>
@@ -660,10 +607,10 @@ databases directory (see the Decitalas table).</p>
 <dd><p>A class method which retrieves a <a class="reference internal" href="#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Decitala</span></code></a> object based                on a given ID number. These numbers are listed in the Lavignac Encyclopédie (1921)              and Messiaen Traité. Some talas have “sub-talas,” meaning that their id is not          unique.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>a <a class="reference internal" href="#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Decitala</span></code></a> object</p>
+<dd class="field-odd"><p>A <a class="reference internal" href="#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Decitala</span></code></a> object</p>
 </dd>
 <dt class="field-even">Parameters</dt>
-<dd class="field-even"><p><strong>input_id</strong> (<em>str</em>) – id number of the tala (in range 1-120).</p>
+<dd class="field-even"><p><strong>input_id</strong> (<em>str</em>) – The ID number of the tala (in range 1-120).</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Decitala</span></code></a></p>
@@ -683,7 +630,7 @@ databases directory (see the Decitalas table).</p>
 <em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">num_matras</span></code><a class="headerlink" href="#decitala.fragment.Decitala.num_matras" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>returns the number of matras in the tala (here, the number of eighth notes).</p>
+<dd class="field-odd"><p>Returns the number of matras in the tala (here, the number of eighth notes).</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>int</p>
@@ -726,6 +673,29 @@ directory (see the Greek_Metrics table).</p>
 <span class="go">[2. 1. 2.]</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py class">
+<dt id="decitala.fragment.Breve">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.fragment.</span></code><code class="sig-name descname"><span class="pre">Breve</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#Breve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.Breve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.GeneralFragment</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="decitala.fragment.Macron">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.fragment.</span></code><code class="sig-name descname"><span class="pre">Macron</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#Macron"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.Macron" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.GeneralFragment</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="decitala.fragment.ProsodicFragment">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.fragment.</span></code><code class="sig-name descname"><span class="pre">ProsodicFragment</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#ProsodicFragment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.ProsodicFragment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.GeneralFragment</span></code></a></p>
+<p>Class that stores prosodic data. The class reads from the fragments_db file in the databases
+directory (see the ProsodicFragments table).</p>
+<p># &gt;&gt;&gt; asclepiad_m = ProsodicFragment(“Asclépiade_Mineur”)
+# &gt;&gt;&gt; asclepiad_m
+# &lt;fragment.ProsodicFragment Asclépiade_Mineur&gt;</p>
 </dd></dl>
 
 </div>

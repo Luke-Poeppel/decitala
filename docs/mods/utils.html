@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>utils &mdash; decitala 0.11.1 documentation</title>
+  <title>utils &mdash; decitala 0.12.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.11.1
+                0.12.0
               </div>
             
           
@@ -183,10 +183,10 @@
 <code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">carnatic_string_to_ql_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#carnatic_string_to_ql_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.carnatic_string_to_ql_array" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>string</strong> (<em>str</em>) – string of carnatic durations separated by spaces.</p>
+<dd class="field-odd"><p><strong>string</strong> (<em>str</em>) – A string of carnatic durations separated by spaces.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>input string converted to a quarter length array.</p>
+<dd class="field-even"><p>The input string converted to a quarter length array.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array.</p>
@@ -203,10 +203,10 @@
 <code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">ql_array_to_carnatic_string</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ql_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#ql_array_to_carnatic_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.ql_array_to_carnatic_string" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ql_array</strong> (<em>iterable</em>) – quarter length array.</p>
+<dd class="field-odd"><p><strong>ql_array</strong> – A quarter length array.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>quarter length array converted to carnatic notation.</p>
+<dd class="field-even"><p>The quarter length array converted to carnatic notation.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
@@ -225,10 +225,10 @@
 for two types of rhythmic values (long &amp; short).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ql_array</strong> (<em>iterable</em>) – quarter length array.</p>
+<dd class="field-odd"><p><strong>ql_array</strong> – A quarter length array.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>quarter length array converted to greek prosodic notation.</p>
+<dd class="field-even"><p>The quarter length array converted to greek prosodic notation.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
@@ -249,13 +249,13 @@ factor &amp; difference are non-zero, we have a mixed augmentation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ql_array</strong> – array defining the rhythmic fragment (iterable).</p></li>
-<li><p><strong>factor</strong> (<em>float</em>) – factor for multiplicative augmentation.</p></li>
-<li><p><strong>difference</strong> (<em>float</em>) – factor for additive augmentation.</p></li>
+<li><p><strong>ql_array</strong> – A quarter length array.</p></li>
+<li><p><strong>factor</strong> (<em>float</em>) – The factor for multiplicative augmentation.</p></li>
+<li><p><strong>difference</strong> (<em>float</em>) – The factor for additive augmentation.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>an augmented fragment.</p>
+<dd class="field-even"><p>The fragment augmented by the given <cite>factor</cite> and <cite>difference</cite>.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array</p>
@@ -275,7 +275,7 @@ kept as is and the “long” is modified by the given difference. The new long 
 longer than the short value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ql_array</strong> – array defining the rhythmic fragment (iterable)</p>
+<dd class="field-odd"><p><strong>ql_array</strong> – A quarter length array.</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stretch_augment</span><span class="p">(</span><span class="n">ql_array</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="n">factor</span><span class="o">=</span><span class="mf">0.125</span><span class="p">,</span> <span class="n">stretch_factor</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
@@ -291,10 +291,10 @@ longer than the short value.</p>
 we set the first value to 1.0.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ql_array</strong> – array defining a rhythmic fragment.</p>
+<dd class="field-odd"><p><strong>ql_array</strong> – A quarter length array.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>array consisting of successive ratios of the input elements.</p>
+<dd class="field-even"><p>An array consisting of successive ratios of the input elements.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array</p>
@@ -312,10 +312,10 @@ we set the first value to 1.0.</p>
 <dd><p>Returns the first order difference of <code class="docutils literal notranslate"><span class="pre">ql_array</span></code> (contiguous differences).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ql_array</strong> – array defining a rhythmic fragment (iterable).</p>
+<dd class="field-odd"><p><strong>ql_array</strong> – A quarter length array.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>array consisting of successive differences of the input elements.</p>
+<dd class="field-even"><p>An array consisting of successive differences of the input elements.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.array</p>
@@ -323,6 +323,32 @@ we set the first value to 1.0.</p>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">successive_difference_array</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">])</span>
 <span class="go">array([ 0.  ,  0.  ,  0.5 ,  0.  , -0.25,  0.5 ,  0.5 ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.dseg">
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">dseg</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ql_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduced</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#dseg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.dseg" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>reduced</strong> (<em>bool</em>) – Whether to remove equal contiguous values.</p></li>
+<li><p><strong>as_str</strong> (<em>bool</em>) – Whether to make the return type a string.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The d-seg of the fragment, as introducted in <a class="reference external" href="https://www.jstor.org/stable/745974?seq=1#metadata_info_tab_contents">The Perception of Rhythm
+in Non-Tonal Music</a>
+(Marvin, 1991). Maps a fragment into a sequence of relative durations.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy.array (or string if <cite>as_str=True</cite>).</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">g3</span> <span class="o">=</span> <span class="n">fragment</span><span class="o">.</span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;marvin-p70&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g3</span><span class="o">.</span><span class="n">dseg</span><span class="p">()</span>
+<span class="go">array([0, 1, 3, 2])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -340,7 +366,7 @@ we set the first value to 1.0.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>iterable</em>) – either a list/array (representing
+<li><p><strong>input</strong> (<em>iterable</em>) – Either a list/array (representing
 <a class="reference internal" href="fragment.html#decitala.fragment.GeneralFragment.ql_array" title="decitala.fragment.GeneralFragment.ql_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ql_array</span></code></a>) or data from
 <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p></li>
 <li><p><strong>data_mode</strong> (<em>bool</em>) – whether or not the input data is a quarter length array or data from
@@ -390,7 +416,7 @@ if <code class="docutils literal notranslate"><span class="pre">data_mode=True</
 
 <dl class="py function">
 <dt id="decitala.utils.find_possible_superdivisions">
-<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">find_possible_superdivisions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_self</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#find_possible_superdivisions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.find_possible_superdivisions" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">find_possible_superdivisions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ql_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_self</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#find_possible_superdivisions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.find_possible_superdivisions" title="Permalink to this definition">¶</a></dt>
 <dd><p>There is a more general approach to the subdivision problem, but we note that Messiaen’s
 subdivision of tala components tends to be even.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">long_fragment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">])</span>
@@ -424,6 +450,11 @@ subdivision of tala components tends to be even.</p>
 <dt id="decitala.utils.transform_to_time_scale">
 <code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">transform_to_time_scale</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ql_array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#transform_to_time_scale"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.transform_to_time_scale" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transforms a quarter length array to time-scale (binary) notation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ql_array</strong> – A quarter length array.</p>
+</dd>
+</dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">udikshana</span> <span class="o">=</span> <span class="n">fragment</span><span class="o">.</span><span class="n">Decitala</span><span class="p">(</span><span class="s2">&quot;Udikshana&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">udikshana</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()</span>
 <span class="go">array([0.5, 0.5, 1. ])</span>
@@ -440,13 +471,13 @@ subdivision of tala components tends to be even.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>array</strong> (<em>numpy.array</em>) – an iterable</p></li>
-<li><p><strong>window_length</strong> (<em>int</em>) – size of the window</p></li>
-<li><p><strong>fn</strong> (<em>lambda</em>) – function evaluating a bool.</p></li>
+<li><p><strong>array</strong> – A list, tuple, numpy array, etc.</p></li>
+<li><p><strong>window_length</strong> (<em>int</em>) – Size of the window</p></li>
+<li><p><strong>fn</strong> (<em>lambda</em>) – A function evaluating a bool –– used for prime contour calculations.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>rolling windows of array, each of length <cite>window_length</cite>.</p>
+<dd class="field-even"><p>A rolling windows of array, each of length <cite>window_length</cite>.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.vstack</p>
@@ -615,82 +646,6 @@ where the pitch and rhythmic material are contiguously equal and sums these regi
 </dd></dl>
 
 <dl class="py function">
-<dt id="decitala.utils.frame_to_ql_array">
-<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">frame_to_ql_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#frame_to_ql_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.frame_to_ql_array" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>frame</strong> (<em>list</em>) – frame of data from <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>numpy array holding the associated quarter length of a given window.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>numpy.array</p>
-</dd>
-</dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">my_frame</span> <span class="o">=</span> <span class="p">[</span>
-<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B-&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.125</span><span class="p">,</span> <span class="mf">4.25</span><span class="p">)),</span>
-<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.25</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)),</span>
-<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">4.625</span><span class="p">)),</span>
-<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B-&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.625</span><span class="p">,</span> <span class="mf">4.75</span><span class="p">)),</span>
-<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.75</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)),</span>
-<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.25</span><span class="p">)),</span>
-<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">5.25</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)),</span>
-<span class="gp">... </span>    <span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">frame_to_ql_array</span><span class="p">(</span><span class="n">my_frame</span><span class="p">)</span>
-<span class="go">array([0.125, 0.25 , 0.125, 0.125, 0.25 , 0.25 , 0.25 ])</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="decitala.utils.frame_to_midi">
-<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">frame_to_midi</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_graces</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#frame_to_midi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.frame_to_midi" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>frame</strong> (<em>list</em>) – frame of data from <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>numpy array holding the pitches within the frame.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>numpy.array</p>
-</dd>
-</dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">my_frame</span> <span class="o">=</span> <span class="p">[</span>
-<span class="gp">... </span>    <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B-&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.125</span><span class="p">,</span> <span class="mf">4.25</span><span class="p">)),</span>
-<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.25</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">)),</span>
-<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">4.625</span><span class="p">)),</span>
-<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;B-&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.125</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.625</span><span class="p">,</span> <span class="mf">4.75</span><span class="p">)),</span>
-<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.75</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)),</span>
-<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.25</span><span class="p">)),</span>
-<span class="gp">... </span>            <span class="p">(</span><span class="n">note</span><span class="o">.</span><span class="n">Note</span><span class="p">(</span><span class="s2">&quot;G&quot;</span><span class="p">,</span> <span class="n">quarterLength</span><span class="o">=</span><span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mf">5.25</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">)),</span>
-<span class="gp">... </span>    <span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">frame_to_midi</span><span class="p">(</span><span class="n">my_frame</span><span class="p">)</span>
-<span class="go">[(70,), (69,), (71,), (70,), (69,), (67,), (67,)]</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="decitala.utils.frame_is_spanned_by_slur">
-<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">frame_is_spanned_by_slur</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#frame_is_spanned_by_slur"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.frame_is_spanned_by_slur" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>frame</strong> (<em>list</em>) – frame from <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>whether or not the frame is spanned by a music21.spanner.Slur object.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt id="decitala.utils.filter_single_anga_class_fragments">
 <code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">filter_single_anga_class_fragments</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#filter_single_anga_class_fragments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.filter_single_anga_class_fragments" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -806,18 +761,6 @@ are flagged as maxima or minima.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">contour_d</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour_d</span><span class="p">,</span> <span class="n">include_depth</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="go">array([0, 1, 1])</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="decitala.utils.is_octatonic_collection">
-<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">is_octatonic_collection</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pitch_content</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#is_octatonic_collection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.is_octatonic_collection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for checking if pitch content belongs to one of the two octatonic collections.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">is_octatonic_collection</span><span class="p">([</span><span class="mi">60</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="mi">68</span><span class="p">])</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">is_octatonic_collection</span><span class="p">([</span><span class="mi">60</span><span class="p">,</span> <span class="mi">61</span><span class="p">,</span> <span class="mi">63</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">66</span><span class="p">])</span>
-<span class="go">True</span>
 </pre></div>
 </div>
 </dd></dl>

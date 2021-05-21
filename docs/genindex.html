@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Index &mdash; decitala 0.11.1 documentation</title>
+  <title>Index &mdash; decitala 0.12.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.11.1
+                0.12.0
               </div>
             
           
@@ -227,9 +227,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mods/database.html#decitala.database.batch_create_database">batch_create_database() (in module decitala.database)</a>
 </li>
+      <li><a href="mods/path_finding.html#decitala.path_finding.path_finding_utils.best_source_and_sink">best_source_and_sink() (in module decitala.path_finding.path_finding_utils)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mods/path_finding.html#decitala.path_finding.path_finding_utils.best_source_and_sink">best_source_and_sink() (in module decitala.path_finding.path_finding_utils)</a>
+      <li><a href="mods/fragment.html#decitala.fragment.Breve">Breve (class in decitala.fragment)</a>
 </li>
       <li><a href="mods/path_finding.html#decitala.path_finding.path_finding_utils.build_graph">build_graph() (in module decitala.path_finding.path_finding_utils)</a>
 </li>
@@ -358,14 +360,16 @@
 </li>
       <li><a href="mods/hash_table.html#decitala.hash_table.DecitalaHashTable">DecitalaHashTable (class in decitala.hash_table)</a>
 </li>
-      <li><a href="mods/fragment.html#decitala.fragment.FragmentEncoder.default">default() (decitala.fragment.FragmentEncoder method)</a>
-</li>
       <li><a href="mods/path_finding.html#decitala.path_finding.dijkstra.dijkstra">dijkstra() (in module decitala.path_finding.dijkstra)</a>
 </li>
       <li><a href="mods/path_finding.html#decitala.path_finding.dijkstra.dijkstra_best_source_and_sink">dijkstra_best_source_and_sink() (in module decitala.path_finding.dijkstra)</a>
 </li>
       <li><a href="mods/fragment.html#decitala.fragment.GeneralFragment.dseg">dseg() (decitala.fragment.GeneralFragment method)</a>
+
+      <ul>
+        <li><a href="mods/utils.html#decitala.utils.dseg">(in module decitala.utils)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -394,25 +398,21 @@
 </li>
       <li><a href="mods/vis.html#decitala.vis.fragment_roll">fragment_roll() (in module decitala.vis)</a>
 </li>
-      <li><a href="mods/fragment.html#decitala.fragment.FragmentDecoder">FragmentDecoder (class in decitala.fragment)</a>
-</li>
-      <li><a href="mods/fragment.html#decitala.fragment.FragmentEncoder">FragmentEncoder (class in decitala.fragment)</a>
+      <li><a href="mods/fragment.html#decitala.fragment.FragmentException">FragmentException</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mods/fragment.html#decitala.fragment.FragmentException">FragmentException</a>
-</li>
       <li><a href="mods/hash_table.html#decitala.hash_table.FragmentHashTable">FragmentHashTable (class in decitala.hash_table)</a>
 </li>
       <li><a href="mods/trees.html#decitala.trees.FragmentTree">FragmentTree (class in decitala.trees)</a>
 </li>
       <li><a href="mods/trees.html#decitala.trees.FragmentTreeException">FragmentTreeException</a>
 </li>
-      <li><a href="mods/utils.html#decitala.utils.frame_is_spanned_by_slur">frame_is_spanned_by_slur() (in module decitala.utils)</a>
+      <li><a href="mods/search.html#decitala.search.frame_is_spanned_by_slur">frame_is_spanned_by_slur() (in module decitala.search)</a>
 </li>
-      <li><a href="mods/utils.html#decitala.utils.frame_to_midi">frame_to_midi() (in module decitala.utils)</a>
+      <li><a href="mods/search.html#decitala.search.frame_to_midi">frame_to_midi() (in module decitala.search)</a>
 </li>
-      <li><a href="mods/utils.html#decitala.utils.frame_to_ql_array">frame_to_ql_array() (in module decitala.utils)</a>
+      <li><a href="mods/search.html#decitala.search.frame_to_ql_array">frame_to_ql_array() (in module decitala.search)</a>
 </li>
       <li><a href="mods/trees.html#decitala.trees.FragmentTree.from_composition">from_composition() (decitala.trees.FragmentTree class method)</a>
 </li>
@@ -478,11 +478,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mods/fragment.html#decitala.fragment.Decitala.id_num">id_num() (decitala.fragment.Decitala property)</a>
 </li>
-      <li><a href="mods/fragment.html#decitala.fragment.GeneralFragment.is_non_retrogradable">is_non_retrogradable() (decitala.fragment.GeneralFragment property)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mods/utils.html#decitala.utils.is_octatonic_collection">is_octatonic_collection() (in module decitala.utils)</a>
+      <li><a href="mods/fragment.html#decitala.fragment.GeneralFragment.is_non_retrogradable">is_non_retrogradable() (decitala.fragment.GeneralFragment property)</a>
 </li>
       <li><a href="mods/fragment.html#decitala.fragment.GeneralFragment.is_sub_fragment">is_sub_fragment() (decitala.fragment.GeneralFragment method)</a>
 </li>
@@ -508,6 +506,8 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mods/fragment.html#decitala.fragment.Macron">Macron (class in decitala.fragment)</a>
+</li>
       <li><a href="mods/utils.html#decitala.utils.measure_by_measure_time_signatures">measure_by_measure_time_signatures() (in module decitala.utils)</a>
 </li>
       <li>
@@ -573,10 +573,6 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="mods/fragment.html#decitala.fragment.FragmentDecoder.object_hook">object_hook() (decitala.fragment.FragmentDecoder method)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mods/trees.html#decitala.trees.NaryTree.Node.ordered_children">ordered_children() (decitala.trees.NaryTree.Node method)</a>
 </li>
   </ul></td>
@@ -589,13 +585,21 @@
 </li>
       <li><a href="mods/search.html#decitala.search.path_finder">path_finder() (in module decitala.search)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mods/utils.html#decitala.utils.phrase_divider">phrase_divider() (in module decitala.utils)</a>
 </li>
       <li><a href="mods/utils.html#decitala.utils.pitch_content_to_contour">pitch_content_to_contour() (in module decitala.utils)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="mods/vis.html#decitala.vis.plot_2D_search_results">plot_2D_search_results() (in module decitala.vis)</a>
+</li>
       <li><a href="mods/utils.html#decitala.utils.power_list">power_list() (in module decitala.utils)</a>
+</li>
+      <li><a href="mods/fragment.html#decitala.fragment.ProsodicException">ProsodicException</a>
+</li>
+      <li><a href="mods/fragment.html#decitala.fragment.ProsodicFragment">ProsodicFragment (class in decitala.fragment)</a>
+</li>
+      <li><a href="mods/hash_table.html#decitala.hash_table.ProsodicFragmentHashTable">ProsodicFragmentHashTable (class in decitala.hash_table)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -627,13 +631,15 @@
 </li>
       <li><a href="mods/trees.html#decitala.trees.NaryTree.Node.remove_children">remove_children() (decitala.trees.NaryTree.Node method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mods/vis.html#decitala.vis.result_bar_plot">result_bar_plot() (in module decitala.vis)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="mods/utils.html#decitala.utils.roll_window">roll_window() (in module decitala.utils)</a>
 </li>
       <li><a href="mods/search.html#decitala.search.rolling_hash_search">rolling_hash_search() (in module decitala.search)</a>
+</li>
+      <li><a href="mods/search.html#decitala.search.rolling_search_on_array">rolling_search_on_array() (in module decitala.search)</a>
 </li>
       <li><a href="mods/search.html#decitala.search.rolling_tree_search">rolling_tree_search() (in module decitala.search)</a>
 </li>
