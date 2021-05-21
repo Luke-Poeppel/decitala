@@ -208,7 +208,7 @@ def successive_ratio_array(ql_array):
 	we set the first value to 1.0.
 
 	:param ql_array: A quarter length array.
-	:return: array consisting of successive ratios of the input elements.
+	:return: An array consisting of successive ratios of the input elements.
 	:rtype: numpy.array
 
 	>>> successive_ratio_array([1.0, 1.0, 2.0, 0.5, 0.5, 0.25, 1.0])
@@ -237,7 +237,7 @@ def successive_difference_array(ql_array):
 	Returns the first order difference of ``ql_array`` (contiguous differences).
 
 	:param ql_array: A quarter length array.
-	:return: array consisting of successive differences of the input elements.
+	:return: An array consisting of successive differences of the input elements.
 	:rtype: numpy.array
 
 	>>> successive_difference_array([0.25, 0.25, 0.75, 0.75, 0.5, 1.0, 1.5])
@@ -571,6 +571,8 @@ def transform_to_time_scale(ql_array):
 	"""
 	Transforms a quarter length array to time-scale (binary) notation.
 
+	:param ql_array: A quarter length array.
+
 	>>> udikshana = fragment.Decitala("Udikshana")
 	>>> udikshana.ql_array()
 	array([0.5, 0.5, 1. ])
@@ -611,10 +613,10 @@ def roll_window(array, window_length, fn=None):
 	"""
 	Takes in a list and returns a numpy vstack holding rolling windows of length ``window_length``.
 
-	:param numpy.array array: an iterable
-	:param int window_length: size of the window
-	:param lambda fn: function evaluating a bool.
-	:return: rolling windows of array, each of length `window_length`.
+	:param array: A list, tuple, numpy array, etc.
+	:param int window_length: Size of the window
+	:param lambda fn: A function evaluating a bool –– used for prime contour calculations.
+	:return: A rolling windows of array, each of length `window_length`.
 	:rtype: numpy.vstack
 
 	>>> composers = np.array(['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet'])
@@ -635,12 +637,10 @@ def roll_window(array, window_length, fn=None):
 	([4, {1}], [5, {1}], [5, {1}])
 	([5, {1}], [5, {1}], [1, {1, -1}])
 	"""
+	assert type(window_length) == int
+
 	if fn is not None:
 		array = [x for x in array if fn(x) is True]
-
-	assert type(window_length) == int
-	# if len(array) >= window_length:
-	# 	return [array]
 	windows = list(windowed(seq=array, n=window_length, step=1))
 	return windows
 

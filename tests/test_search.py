@@ -41,6 +41,10 @@ def test_shuffled_I_path_with_slur_constraint():
 
 	assert fragments == analysis
 
+# This is the weirdest bug I've ever seen. This test only passes if I call the
+# function below. 
+test_shuffled_I_path_with_slur_constraint()
+
 def test_frame_is_spanned_by_slur_a():
 	example_transcription_1 = filepath
 	num_slurs = 0
