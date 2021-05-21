@@ -4,6 +4,6 @@ __pycache__/
 build/
 dist/
 *.egg-info/
-local_docs/*
 htmlcov/
 remake_analysis_files.py
+docsrc/_build/

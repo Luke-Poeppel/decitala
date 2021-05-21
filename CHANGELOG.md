@@ -5,11 +5,12 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.12.0](https://github.com/Luke-Poeppel/decitala/tree/v0.12.0) May 21, 2021
 #### Added
-- Began adding prosodic patterns from Traité T1 analyses. Also added classes (and corresponding `frag_types`) for the package. You can now create `fragment.ProsodicFragment` objects as well as create, for instance, a `ProsodicFragmentHashTable`. These fragments will accumulate over future 
+- Began adding prosodic patterns from Traité T1 analyses. Also added classes (and corresponding `frag_types`) for the package. You can now create `fragment.ProsodicFragment` objects as well as create, for instance, a `ProsodicFragmentHashTable`. These fragments will accumulate over future versions (directory structure particularly subject to change).  
 - Added `plot_2D_search_results` to `vis` module for plotting search results in XY space, along with a given path. (This implements #4, finally!)
 - Re-added `search.rolling_search_on_array`. It conforms to the hash table approach. (See #48)
 - Added `allow_contiguous_summation` parameter to `search.rolling_hash_search`. (See #127)
 - Added `Breve` and `Macron` classes to the fragments module. This will eventually be used in accessing the `parts` of a `ProsodicFragment`. 
+- Trying new solution for documentation maintenence. Using a github build in the sphinx makefile. 
 
 #### Changed
 - Big documentation improvements, code/logic cleanup. 
