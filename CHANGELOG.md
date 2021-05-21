@@ -5,20 +5,17 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.12.0](https://github.com/Luke-Poeppel/decitala/tree/v0.12.0) May 21, 2021
 #### Added
-- Began adding prosodic patterns from Traité T1 analyses. Also added classes (and corresponding `frag_types`) for the package. You can now create `fragment.ProsodicFragment` objects as well as create, for instance, a `ProsodicFragmentHashTable`. These fragments will accumulate over future versions (directory structure particularly subject to change).  
+- Began adding prosodic patterns from Traité T1 analyses. Also added classes (and corresponding `frag_types`) for the package. You can now create `fragment.ProsodicFragment` objects as well as create, for instance, a `ProsodicFragmentHashTable`. These fragments will accumulate over future versions (directory structure subject to change).  
 - Added `plot_2D_search_results` to `vis` module for plotting search results in XY space, along with a given path. (This implements #4, finally!)
 - Re-added `search.rolling_search_on_array`. It conforms to the hash table approach. (See #48)
-- Added `allow_contiguous_summation` parameter to `search.rolling_hash_search`. (See #127)
+- Added `allow_contiguous_summation` parameter to `search.rolling_hash_search` and `path_finder`. (See #127)
 - Added `Breve` and `Macron` classes to the fragments module. This will eventually be used in accessing the `parts` of a `ProsodicFragment`. 
-- Trying new solution for documentation maintenence. Using a github build in the sphinx makefile. 
+- Added missing parameter for `windows` and `allow_subdivision` in `search.path_finder`.
 
 #### Changed
-- Big documentation improvements, code/logic cleanup. 
+- Big documentation improvements, code/logic cleanup. Trying a new solution for documentation maintenence. Using a github build in the sphinx makefile. 
 - Removed `utils.is_octatonic_collection`. All Modes of Limited Transposition stuff will eventually be living in `moiseaux.molt`. 
 - Moved some `search`-specific functions from `utils` (they were really helpers, not utility functions). See #138. 
-
-#### Fixed
-- Missing parameter for `windows` and `allow_subdivision` in `search.path_finder`.
 
 ## [v0.11.1](https://github.com/Luke-Poeppel/decitala/tree/v0.11.1) May 13, 2021
 #### Changed
