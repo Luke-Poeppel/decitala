@@ -662,5 +662,5 @@ class ProsodicFragment(GeneralFragment):
 	def __repr__(self):
 		return f"<fragment.ProsodicFragment {self.name}>"
 
-class TheorieKarnatique(GeneralFragment):
-	pass
+# class TheorieKarnatique(GeneralFragment):
+# 	pass
