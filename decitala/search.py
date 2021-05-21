@@ -126,7 +126,7 @@ def frame_lookup(frame, ql_array, curr_fragment_id, table, windows):
 		try:
 			searched = table.data[tuple(ql_array)]
 			if searched is not None:
-				result = copy.copy(searched)
+				result = copy.deepcopy(searched)
 				is_spanned_by_slur = frame_is_spanned_by_slur(frame)
 				pitch_content = frame_to_midi(frame)
 
@@ -225,11 +225,13 @@ def rolling_hash_search(
 						fragments_found.append(min(subdivision_results, key=lambda x: x["mod_hierarchy_val"]))
 
 			if allow_contiguous_summation:
-				copied_frame = copy.copy(this_frame)
-				if any(type(x[0]).__name__ == "Rest" for x in copied_frame):
+				if any(type(x[0]).__name__ == "Rest" for x in this_frame):
 					continue
 
-				cs_frame = contiguous_summation(copied_frame)
+				cs_frame = tuple(contiguous_summation(this_frame))
+				if cs_frame == this_frame:
+					continue
+
 				cs_ql_array = frame_to_ql_array(cs_frame)
 				if len(cs_ql_array) < min(windows):
 					continue

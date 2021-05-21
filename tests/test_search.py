@@ -1,29 +1,58 @@
 import os
 import doctest
+import pytest
 
 from decitala import search, hash_table, utils
 from decitala.fragment import GreekFoot
 from decitala.hash_table import DecitalaHashTable
 
 here = os.path.abspath(os.path.dirname(__file__))
-filepath = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
-filepath_2 = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_2.xml"
+
+@pytest.fixture
+def fp1():
+	return os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
+
+@pytest.fixture
+def fp2():
+	return os.path.dirname(here) + "/tests/static/Shuffled_Transcription_2.xml"
 
 def test_doctests():
 	assert doctest.testmod(search, raise_on_error=True)
 
-def test_rolling_hash_search():
+def test_rolling_hash_search(fp1):
 	res = search.rolling_hash_search(
-		filepath = filepath,
+		filepath = fp1,
 		part_num = 0,
 		table = hash_table.GreekFootHashTable()
 	)
 	assert len(res) == 18
 
+def test_frame_is_spanned_by_slur_a(fp1):
+	num_slurs = 0
+	all_objects = utils.get_object_indices(fp1, 0)
+	for this_window_size in [2, 3, 4]:
+		for this_frame in utils.roll_window(all_objects, this_window_size):
+			check = search.frame_is_spanned_by_slur(this_frame)
+			if check == True:
+				num_slurs += 1
+	
+	assert num_slurs == 5
+
+def test_frame_is_spanned_by_slur_b(fp2):
+	num_slurs = 0
+	all_objects = utils.get_object_indices(fp2, 0)
+	for this_window_size in [2, 3, 4]:
+		for this_frame in utils.roll_window(all_objects, this_window_size):
+			check = search.frame_is_spanned_by_slur(this_frame)
+			if check == True:
+				num_slurs += 1
+	
+	assert num_slurs == 3
+
 # Also functions as an integration test with Floyd-Warshall. 
-def test_shuffled_I_path_with_slur_constraint():
+def test_shuffled_I_path_with_slur_constraint(fp1):
 	path = search.path_finder(
-		filepath = filepath,
+		filepath = fp1,
 		part_num=0,
 		table=hash_table.GreekFootHashTable(),
 		allow_subdivision=True,
@@ -40,34 +69,6 @@ def test_shuffled_I_path_with_slur_constraint():
 	]
 
 	assert fragments == analysis
-
-# This is the weirdest bug I've ever seen. This test only passes if I call the
-# function below. 
-test_shuffled_I_path_with_slur_constraint()
-
-def test_frame_is_spanned_by_slur_a():
-	example_transcription_1 = filepath
-	num_slurs = 0
-	all_objects = utils.get_object_indices(example_transcription_1, 0)
-	for this_window_size in [2, 3, 4]:
-		for this_frame in utils.roll_window(all_objects, this_window_size):
-			check = search.frame_is_spanned_by_slur(this_frame)
-			if check == True:
-				num_slurs += 1
-	
-	assert num_slurs == 5
-
-def test_frame_is_spanned_by_slur_b():
-	example_transcription_2 = filepath_2
-	num_slurs = 0
-	all_objects = utils.get_object_indices(example_transcription_2, 0)
-	for this_window_size in [2, 3, 4]:
-		for this_frame in utils.roll_window(all_objects, this_window_size):
-			check = search.frame_is_spanned_by_slur(this_frame)
-			if check == True:
-				num_slurs += 1
-	
-	assert num_slurs == 3
 
 def test_rolling_search_on_array():
 	ght = hash_table.FragmentHashTable(
