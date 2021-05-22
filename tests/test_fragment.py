@@ -16,7 +16,7 @@ from decitala.fragment import (
 
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
-greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics/"
+greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics"
 
 def test_doctests():
 	assert doctest.testmod(fragment, raise_on_error=True)

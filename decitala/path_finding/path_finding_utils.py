@@ -47,8 +47,13 @@ def build_graph(data, weights):
 		for other in data:
 			if other == curr:
 				continue
+
+			# Check here, not `cost()`, as then we don't need to instantiate a fragment object.
+			elif curr["onset_range"][1] > other["onset_range"][0]:
+				continue
+
 			edge = cost(curr, other, weights)
-			if edge < 0:
+			if edge < 0:  # Just in case.
 				continue
 
 			curr_edges.append((other["id"], edge))
