@@ -330,7 +330,7 @@ def path_finder(
 			source,
 			target
 		)
-		best_path = sorted([x for x in fragments if x["id"] in best_path], key=lambda x: x["onset_range"][0]) # noqa
+		best_path = sorted([x for x in fragments if x.id_ in best_path], key=lambda x: x.onset_range[0]) # noqa
 	elif algorithm.lower() == "floyd-warshall":
 		best_source, best_sink = path_finding_utils.best_source_and_sink(fragments)
 		distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
