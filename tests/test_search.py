@@ -16,18 +16,26 @@ def fp1():
 def fp2():
 	return os.path.dirname(here) + "/tests/static/Shuffled_Transcription_2.xml"
 
-def test_doctests():
-	assert doctest.testmod(search, raise_on_error=True)
-
-def test_rolling_hash_search_num_fragments(fp1):
-	res = search.rolling_hash_search(
+@pytest.fixture
+def s1_res(fp1):
+	return search.rolling_hash_search(
 		filepath = fp1,
 		part_num = 0,
 		table = hash_table.GreekFootHashTable(),
 		allow_subdivision=False,
 		allow_contiguous_summation=False
 	)
-	assert len(res) == 18
+
+def test_doctests():
+	assert doctest.testmod(search, raise_on_error=True)
+
+class TestRollingHashSearch:
+
+	def test_num_fragments(self, s1_res):
+		assert len(s1_res) == 18
+
+	def test_id(self, s1_res):
+		assert s1_res[0].id_ == 12
 
 def test_frame_is_spanned_by_slur_a(fp1):
 	num_slurs = 0
@@ -52,9 +60,9 @@ def test_frame_is_spanned_by_slur_b(fp2):
 	assert num_slurs == 3
 
 # This also functions as an integration test with Floyd-Warshall. 
-def test_shuffled_I_path_with_slur_constraint():#fp1):
+def test_shuffled_I_path_with_slur_constraint(fp1):
 	path = search.path_finder(
-		filepath = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml",
+		filepath=fp1,
 		part_num=0,
 		table=hash_table.GreekFootHashTable(),
 		allow_subdivision=True,
