@@ -15,3 +15,9 @@ vis
    :scale: 30 %
 
    Fragment Roll diagram of Sept Haïkaï (Bois)
+
+.. figure:: ../_static/2D_plot.png
+   :scale: 30 %
+
+   2D Plot of Search and Path Results for Example Work. 
+
