@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>database &mdash; decitala 0.12.0 documentation</title>
+  <title>database &mdash; decitala 0.12.1 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.12.0
+                0.12.1
               </div>
             
           
@@ -103,6 +103,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage.html#rhythmic-manipulation">Rhythmic Manipulation</a></li>
 </ul>
 
             
@@ -186,9 +191,9 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – name of the composition.</p></li>
-<li><p><strong>part_num</strong> (<em>int</em>) – part number for the extraction.</p></li>
-<li><p><strong>local_filepath</strong> (<em>str</em>) – local filepath for the searched composition.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name of the composition.</p></li>
+<li><p><strong>part_num</strong> (<em>int</em>) – Part number for the extraction.</p></li>
+<li><p><strong>local_filepath</strong> (<em>str</em>) – Local filepath for the searched composition.</p></li>
 </ul>
 </dd>
 </dl>
@@ -203,18 +208,18 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>onset_start</strong> (<em>float</em>) – starting onset of the extracted fragment.</p></li>
-<li><p><strong>onset_stop</strong> (<em>float</em>) – ending onset of the extracted fragment
+<li><p><strong>onset_start</strong> (<em>float</em>) – Starting onset of the extracted fragment.</p></li>
+<li><p><strong>onset_stop</strong> (<em>float</em>) – Ending onset of the extracted fragment
 (onset of final object + quarter length)</p></li>
-<li><p><strong>fragment_type</strong> (<em>str</em>) – fragment type; options currently include
+<li><p><strong>fragment_type</strong> (<em>str</em>) – Fragment type; options currently include
 <cite>decitala</cite>, <cite>greek_foot</cite>, and <cite>general_fragment</cite>.</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – name of the fragment.</p></li>
-<li><p><strong>mod_type</strong> (<em>str</em>) – modification type of the fragment.</p></li>
-<li><p><strong>ratio</strong> (<em>float</em>) – ratio of the fragment’s values to the values in the database.</p></li>
-<li><p><strong>difference</strong> (<em>float</em>) – difference between the fragment’s values to the values
+<li><p><strong>name</strong> (<em>str</em>) – Name of the fragment.</p></li>
+<li><p><strong>mod_type</strong> (<em>str</em>) – Modification type of the fragment.</p></li>
+<li><p><strong>ratio</strong> (<em>float</em>) – Ratio of the fragment’s values to the values in the database.</p></li>
+<li><p><strong>difference</strong> (<em>float</em>) – Difference between the fragment’s values to the values
 in the database.</p></li>
-<li><p><strong>pitch_content</strong> (<em>str</em>) – pitch content of the extracted fragment.</p></li>
-<li><p><strong>is_slurred</strong> (<em>bool</em>) – whether the extracted fragment is spanned by a slur object.</p></li>
+<li><p><strong>pitch_content</strong> (<em>str</em>) – Pitch content of the extracted fragment.</p></li>
+<li><p><strong>is_slurred</strong> (<em>bool</em>) – Whether the extracted fragment is spanned by a slur object.</p></li>
 </ul>
 </dd>
 </dl>
@@ -229,10 +234,10 @@ in the database.</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>db_path</strong> (<em>str</em>) – Path to the database to be created.</p></li>
 <li><p><strong>filepath</strong> (<em>str</em>) – Path to the score to be analyzed.</p></li>
-<li><p><strong>table</strong> (<em>list</em>) – a <a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a> object.</p></li>
+<li><p><strong>table</strong> (<em>list</em>) – A <a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a> object.</p></li>
 <li><p><strong>part_nums</strong> (<em>list</em>) – Parts to be analyzed.</p></li>
 <li><p><strong>windows</strong> (<em>list</em>) – Possible lengths of the search frames.</p></li>
-<li><p><strong>echo</strong> (<em>bool</em>) – whether to echo the SQL calls. False by default.</p></li>
+<li><p><strong>echo</strong> (<em>bool</em>) – Whether to echo the SQL calls. False by default.</p></li>
 </ul>
 </dd>
 </dl>
@@ -248,9 +253,9 @@ to analyze.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>db_path</strong> (<em>str</em>) – Path to the database to be created.</p></li>
 <li><p><strong>data_in</strong> (<em>dict</em>) – Dictionary of filepaths (key) and part nums in a list (value).</p></li>
-<li><p><strong>table</strong> (<em>list</em>) – a <a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a> object.</p></li>
+<li><p><strong>table</strong> (<em>list</em>) – A <a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a> object.</p></li>
 <li><p><strong>windows</strong> (<em>list</em>) – Possible lengths of the search frames.</p></li>
-<li><p><strong>echo</strong> (<em>bool</em>) – whether to echo the SQL calls. False by default.</p></li>
+<li><p><strong>echo</strong> (<em>bool</em>) – Whether to echo the SQL calls. False by default.</p></li>
 </ul>
 </dd>
 </dl>
@@ -272,7 +277,7 @@ to analyze.</p>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Luke Poeppel.
+        &#169; Copyright 2020-2021, Luke Poeppel.
 
     </p>
   </div>

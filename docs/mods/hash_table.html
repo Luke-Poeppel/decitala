@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>hash_table &mdash; decitala 0.12.0 documentation</title>
+  <title>hash_table &mdash; decitala 0.12.1 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.12.0
+                0.12.1
               </div>
             
           
@@ -180,7 +180,7 @@
 
 <dl class="py function">
 <dt id="decitala.hash_table.generate_all_modifications">
-<code class="sig-prename descclassname"><span class="pre">decitala.hash_table.</span></code><code class="sig-name descname"><span class="pre">generate_all_modifications</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fragment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differences</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_retrograde</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_stretch_augmentation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_mixed_augmentation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hash_table.html#generate_all_modifications"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hash_table.generate_all_modifications" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.hash_table.</span></code><code class="sig-name descname"><span class="pre">generate_all_modifications</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fragment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differences</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_retrograde</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_stretch_augmentation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_mixed_augmentation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hash_table.html#generate_all_modifications"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hash_table.generate_all_modifications" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function for generating and storing all possible modifications of an input fragment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -209,8 +209,9 @@ Not yet supported.</p></li>
 supported input types to <code class="docutils literal notranslate"><span class="pre">datasets</span></code> are <code class="docutils literal notranslate"><span class="pre">&quot;decitala&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;greek_foot&quot;</span></code>. The
 <code class="docutils literal notranslate"><span class="pre">custom_fragments</span></code> parameter allows the addition of any desired fragments; for a search
 on a particular set of fragments, use this latter parameter. The factors, differences,
-and other modification parameters are class attributes. To change them, subclass
-<code class="docutils literal notranslate"><span class="pre">FragmentHashTable</span></code> with your own attributes.</p>
+and other modification parameters are instance attributes with defaults set in the module.
+To change them, just re-run the <code class="docutils literal notranslate"><span class="pre">load</span></code> method with the desired inputs; this will clear the
+data and set reload it with the new desired modification techniques.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span> <span class="o">=</span> <span class="n">FragmentHashTable</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">datasets</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;greek_foot&quot;</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">custom_fragments</span><span class="o">=</span><span class="p">[</span><span class="n">Decitala</span><span class="p">(</span><span class="s2">&quot;Ragavardhana&quot;</span><span class="p">)]</span>
@@ -253,7 +254,17 @@ parameter set to <code class="docutils literal notranslate"><span class="pre">[&
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.hash_table.</span></code><code class="sig-name descname"><span class="pre">GreekFootHashTable</span></code><a class="reference internal" href="../_modules/decitala/hash_table.html#GreekFootHashTable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hash_table.GreekFootHashTable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a></p>
 <p>This class subclasses <a class="reference internal" href="#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a> with the <code class="docutils literal notranslate"><span class="pre">datasets</span></code>
-parameter set to <code class="docutils literal notranslate"><span class="pre">[&quot;greek_foot&quot;]</span></code> and automatically loads.</p>
+parameter set to <code class="docutils literal notranslate"><span class="pre">[&quot;greek_foot&quot;]</span></code> and automatically loads. If you want to reload it
+with default modification techniques changed, simply run <code class="docutils literal notranslate"><span class="pre">load</span></code> with the desired
+parameters.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span> <span class="o">=</span> <span class="n">GreekFootHashTable</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span>
+<span class="go">&lt;decitala.hash_table.FragmentHashTable 2255 fragments&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">try_retrograde</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_stretch_augmentation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span>
+<span class="go">&lt;decitala.hash_table.FragmentHashTable 597 fragments&gt;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py class">
@@ -288,7 +299,7 @@ parameter set to all available datasets in the <code class="docutils literal not
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Luke Poeppel.
+        &#169; Copyright 2020-2021, Luke Poeppel.
 
     </p>
   </div>
