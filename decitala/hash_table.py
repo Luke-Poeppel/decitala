@@ -47,6 +47,7 @@ MODIFICATION_HIERARCHY = {
 	"retrograde-mixed": 10
 }
 
+# Defaults
 FACTORS = [0.125, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0]
 DIFFERENCES = [-0.375, -0.25, -0.125, 0.0, 0.125, 0.25, 0.375, 0.5, 0.75, 0.875, 1.75, 2.625, 3.5, 4.375] # noqa
 TRY_RETROGRADE = True
@@ -120,8 +121,8 @@ def generate_all_modifications(
 		factors,
 		differences,
 		try_retrograde,
-		allow_stretch_augmentation=True,
-		allow_mixed_augmentation=False,
+		allow_stretch_augmentation,
+		allow_mixed_augmentation,
 		force_override=False
 	):
 	"""
@@ -187,8 +188,9 @@ class FragmentHashTable:
 	supported input types to ``datasets`` are ``"decitala"`` and ``"greek_foot"``. The
 	``custom_fragments`` parameter allows the addition of any desired fragments; for a search
 	on a particular set of fragments, use this latter parameter. The factors, differences,
-	and other modification parameters are class attributes. To change them, subclass
-	``FragmentHashTable`` with your own attributes.
+	and other modification parameters are instance attributes with defaults set in the module.
+	To change them, just re-run the ``load`` method with the desired inputs; this will clear the
+	data and set reload it with the new desired modification techniques.
 
 	>>> fht = FragmentHashTable(
 	... 	datasets=["greek_foot"],
@@ -215,7 +217,6 @@ class FragmentHashTable:
 	try_retrograde = TRY_RETROGRADE
 	allow_mixed_augmentation = ALLOW_MIXED_AUGMENTATION
 	allow_stretch_augmentation = ALLOW_STRETCH_AUGMENTATION
-	modification_hierarchy = MODIFICATION_HIERARCHY
 	custom_overrides_datasets = CUSTOM_OVERRIDES_DATASETS
 
 	def __init__(self, datasets=[], custom_fragments=[]):
@@ -252,6 +253,7 @@ class FragmentHashTable:
 		"""
 		Function for loading the modifications. Allows the user to override the default attributes.
 		"""
+		self.data.clear()  # Clears the data first in case it is reloaded with new parameters.
 		for this_fragment in self.custom_fragments:
 			generate_all_modifications(
 				dict_in=self.data,
@@ -283,6 +285,7 @@ class FragmentHashTable:
 					factors=factors,
 					differences=differences,
 					try_retrograde=try_retrograde,
+					allow_stretch_augmentation=allow_stretch_augmentation,
 					allow_mixed_augmentation=allow_mixed_augmentation,
 					force_override=force_override
 				)
@@ -301,7 +304,14 @@ class DecitalaHashTable(FragmentHashTable):
 class GreekFootHashTable(FragmentHashTable):
 	"""
 	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``
-	parameter set to ``["greek_foot"]`` and automatically loads.
+	parameter set to ``["greek_foot"]`` and automatically loads. If you want to reload it
+	with default modification techniques changed, simply run ``load`` with the desired
+	parameters.
+
+	>>> ght = GreekFootHashTable()
+	<decitala.hash_table.FragmentHashTable 2255 fragments>
+	>>> ght.load(try_retrograde=False, allow_stretch_augmentation=False)
+	<decitala.hash_table.FragmentHashTable 597 fragments>
 	"""
 	def __init__(self):
 		super().__init__(datasets=["greek_foot"])
