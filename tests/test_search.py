@@ -2,9 +2,13 @@ import os
 import doctest
 import pytest
 
-from decitala import search, hash_table, utils
+from decitala import search, utils
 from decitala.fragment import GreekFoot, Decitala
-from decitala.hash_table import DecitalaHashTable
+from decitala.hash_table import (
+	FragmentHashTable,
+	DecitalaHashTable,
+	GreekFootHashTable
+)
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -16,12 +20,16 @@ def fp1():
 def fp2():
 	return os.path.dirname(here) + "/tests/static/Shuffled_Transcription_2.xml"
 
+#@pytest.fixture
+def povel_essen_example():
+	return os.path.dirname(here) + "/tests/static/deut2290.krn"
+
 @pytest.fixture
 def s1_res(fp1):
 	return search.rolling_hash_search(
 		filepath = fp1,
 		part_num = 0,
-		table = hash_table.GreekFootHashTable(),
+		table = GreekFootHashTable(),
 		allow_subdivision=False,
 		allow_contiguous_summation=False
 	)
@@ -58,45 +66,6 @@ def test_frame_is_spanned_by_slur_b(fp2):
 				num_slurs += 1
 	
 	assert num_slurs == 3
-
-# This also functions as an integration test with Floyd-Warshall. 
-def test_shuffled_I_path_with_slur_constraint(fp1):
-	path = search.path_finder(
-		filepath=fp1,
-		part_num=0,
-		table=hash_table.GreekFootHashTable(),
-		allow_subdivision=True,
-		allow_contiguous_summation=True,
-		algorithm="floyd-warshall",
-		slur_constraint=True
-	)
-	fragments = [x.fragment for x in path]
-	expected_fragments = [
-		GreekFoot("Peon_IV"),
-		GreekFoot("Iamb"),
-		GreekFoot("Peon_IV"),
-		GreekFoot("Peon_IV")
-	]
-
-	onset_ranges = [x.onset_range for x in path]
-	expected_onset_ranges = [
-		(0.0, 0.625),
-		(0.875, 1.25),
-		(1.25, 1.875),
-		(2.375, 3.0)
-	]
-	assert fragments == expected_fragments
-	assert onset_ranges == expected_onset_ranges
-
-def test_rolling_search_on_array():
-	ght = hash_table.FragmentHashTable(
-		datasets=["greek_foot"]
-	)
-	ght.load()
-	example_fragment = [0.25, 0.25, 0.5, 0.25, 1.0, 2.0, 1.0]
-	windows = [2, 3]
-	found = search.rolling_search_on_array(ql_array=example_fragment, table=ght, windows=windows)
-	assert len(found) == 9
 
 @pytest.fixture
 def extraction():
@@ -145,3 +114,58 @@ class Test_Extraction:
 
 	def test_id(self, extraction):
 		assert extraction.id_ == 43
+
+# This also functions as an integration test with Floyd-Warshall. 
+def test_shuffled_I_path_with_slur_constraint(fp1):
+	path = search.path_finder(
+		filepath=fp1,
+		part_num=0,
+		table=GreekFootHashTable(),
+		allow_subdivision=True,
+		allow_contiguous_summation=True,
+		algorithm="floyd-warshall",
+		slur_constraint=True
+	)
+	fragments = [x.fragment for x in path]
+	expected_fragments = [
+		GreekFoot("Peon_IV"),
+		GreekFoot("Iamb"),
+		GreekFoot("Peon_IV"),
+		GreekFoot("Peon_IV")
+	]
+
+	onset_ranges = [x.onset_range for x in path]
+	expected_onset_ranges = [
+		(0.0, 0.625),
+		(0.875, 1.25),
+		(1.25, 1.875),
+		(2.375, 3.0)
+	]
+	assert fragments == expected_fragments
+	assert onset_ranges == expected_onset_ranges
+
+def test_povel_essen_dijkstra():#povel_essen_example):
+	custom_ght = GreekFootHashTable()
+	custom_ght.load(allow_stretch_augmentation=False)
+	path = search.path_finder(
+		filepath=povel_essen_example(),
+		part_num=0,
+		table=custom_ght,
+		allow_subdivision=False,
+		allow_contiguous_summation=False,
+		algorithm="dijkstra",
+		slur_constraint=False
+	)
+	assert len(path) == 1
+	assert path[0].fragment == GreekFoot("Spondee")
+
+def test_rolling_search_on_array():
+	ght = FragmentHashTable(
+		datasets=["greek_foot"]
+	)
+	ght.load()
+	example_fragment = [0.25, 0.25, 0.5, 0.25, 1.0, 2.0, 1.0]
+	windows = [2, 3]
+	found = search.rolling_search_on_array(ql_array=example_fragment, table=ght, windows=windows)
+	assert len(found) == 9
+

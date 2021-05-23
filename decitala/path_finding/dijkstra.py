@@ -57,10 +57,17 @@ def dijkstra_best_source_and_sink(data):
 	sources, targets = path_finding_utils.sources_and_sinks(data)
 
 	# This checks if there exists a fragment in sources/sinks that spans the whole onset range.
+	# Alternatively if all extracted fragments are overlapping (see test_povel_essen_dijkstra).
+	def _all_overlap(data):
+		"""
+		Relies on the fact that the output data is sorted by onset range.
+		"""
+		return data[0].onset_range[1] > data[-1].onset_range[0]
+
 	min_onset = min(sources, key=lambda x: x.onset_range[0]).onset_range[0]
 	max_onset = max(targets, key=lambda x: x.onset_range[1]).onset_range[1]
 	for source in sources:
-		if source.onset_range == (min_onset, max_onset):
+		if source.onset_range == (min_onset, max_onset) or _all_overlap(data):
 			dist, pred = dijkstra(
 				data,
 				source
