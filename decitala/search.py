@@ -13,6 +13,8 @@ import copy
 import json
 import numpy as np
 
+from dataclasses import dataclass
+
 from .utils import (
 	successive_ratio_array,
 	successive_difference_array,
@@ -23,7 +25,8 @@ from .utils import (
 	get_logger
 )
 from .fragment import (
-	FragmentEncoder
+	FragmentEncoder,
+	GeneralFragment
 )
 from .hash_table import (
 	FragmentHashTable
@@ -141,6 +144,24 @@ def frame_lookup(frame, ql_array, curr_fragment_id, table, windows):
 			return None
 
 	return result
+
+@dataclass
+class Extraction:
+	fragment: GeneralFragment
+	onset_range: tuple
+
+	retrograde: bool
+	factor: float
+	difference: float
+	mod_hierarchy_val: int
+	contiguous_summation: bool
+
+	pitch_content: list
+	is_spanned_by_slur: bool
+	id_: int
+
+	def __repr__(self):
+		return f"<search.Extraction {self.id_}>"
 
 def rolling_hash_search(
 		filepath,
