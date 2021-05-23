@@ -3,7 +3,7 @@ import doctest
 import pytest
 
 from decitala import search, hash_table, utils
-from decitala.fragment import GreekFoot
+from decitala.fragment import GreekFoot, Decitala
 from decitala.hash_table import DecitalaHashTable
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -79,3 +79,50 @@ def test_rolling_search_on_array():
 	windows = [2, 3]
 	found = search.rolling_search_on_array(ql_array=example_fragment, table=ght, windows=windows)
 	assert len(found) == 9
+
+@pytest.fixture
+def extraction():
+	return search.Extraction(
+		fragment=Decitala("Gajajhampa"),
+		onset_range=(0.25, 0.75),
+		retrograde=False,
+		factor=1.0,
+		difference=0.25,
+		mod_hierarchy_val=3,
+		contiguous_summation=False,
+		pitch_content=[(61,), (62,), (65,), (69,)],
+		is_spanned_by_slur=True,
+		id_=43
+	)
+
+class Test_Extraction:	
+
+	def test_fragment(self, extraction):
+		assert extraction.fragment == Decitala("Gajajhampa")
+
+	def test_onset_range(self, extraction):
+		assert extraction.onset_range == (0.25, 0.75)
+
+	def test_retrograde(self, extraction):
+		assert extraction.retrograde == False
+
+	def test_factor(self, extraction):
+		assert extraction.factor == 1.0
+
+	def test_factor(self, extraction):
+		assert extraction.difference == 0.25
+
+	def test_mod_hierarchy_val(self, extraction):
+		assert extraction.mod_hierarchy_val == 3
+
+	def test_contiguous_summation(self, extraction):
+		assert extraction.contiguous_summation == False
+
+	def test_pitch_content(self, extraction):
+		assert extraction.pitch_content == [(61,), (62,), (65,), (69,)]
+
+	def test_is_spanned_by_slur(self, extraction):
+		assert extraction.is_spanned_by_slur == True
+
+	def test_id(self, extraction):
+		assert extraction.id_ == 43

@@ -163,6 +163,9 @@ class Extraction:
 	def __repr__(self):
 		return f"<search.Extraction {self.id_}>"
 
+	def show(self):
+		pass
+
 def rolling_hash_search(
 		filepath,
 		part_num,
