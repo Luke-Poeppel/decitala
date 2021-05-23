@@ -82,6 +82,7 @@ def test_generate_all_modifications():
 		factors=factors,
 		differences=differences,
 		allow_stretch_augmentation=False,
+		allow_mixed_augmentation=False,
 		try_retrograde=try_retrograde
 	)
 

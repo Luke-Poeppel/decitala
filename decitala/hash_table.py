@@ -309,8 +309,10 @@ class GreekFootHashTable(FragmentHashTable):
 	parameters.
 
 	>>> ght = GreekFootHashTable()
+	>>> ght
 	<decitala.hash_table.FragmentHashTable 2255 fragments>
 	>>> ght.load(try_retrograde=False, allow_stretch_augmentation=False)
+	>>> ght
 	<decitala.hash_table.FragmentHashTable 597 fragments>
 	"""
 	def __init__(self):
