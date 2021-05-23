@@ -28,10 +28,12 @@ Run the following::
 
 Basic Usage
 ====================================
-The ``decitala`` package includes a number of rhythmic fragments in the ``corpora`` directory. Currently, 
-two fragment types are supported: ``fragment.Decitala`` and ``fragment.GreekFoot``. More possibilities
-will become available in the future. These objects are normally instantiated with a name (as provided). 
-We can also create custom fragments with the ``fragment.GeneralFragment`` class. 
+The ``decitala`` package includes a number of rhythmic fragments in the ``corpora`` directory. We can
+access the data for these fragments using classes from the ``decitala.fragment`` module. 
+Fragment classes like `fragment.Decitala``, ``fragment.GreekFoot``, and  ``fragment.ProsodicFragment``
+are supported. More fragment types will become available in the future. (Note: rhythmic
+corpora would be gladly accepted as contributions.) These objects are normally instantiated with a 
+name (as provided). We can also create custom fragments with the ``fragment.GeneralFragment`` class. 
 
    >>> from decitala.fragment import Decitala, GreekFoot, GeneralFragment
    >>> ragavardhana = Decitala("Ragavardhana")
@@ -44,10 +46,10 @@ We can also create custom fragments with the ``fragment.GeneralFragment`` class.
    >>> my_fragment.std()
    1.5242185497821
 
-See the ``fragment`` module for more information. Also included in the package is a method for fast queries 
-on rhythmic datasets. The ``hash_table`` module stores a number of possible modifications to a given fragment 
-(based on Messiaen's well-documented modification techniques). To create and query a generic ``hash_table.FragmentHashTable``, 
-we may use the following:
+See the ``fragment`` module for more information on methods. Also included is a function for fast queries 
+on rhythmic datasets. The ``hash_table`` module allows the user to create and query a generic ``hash_table.FragmentHashTable``
+object as below. The modification types are based on Olivier Messiaen's well-documentation rhythmic manipulation
+techniques. 
 
    >>> from decitala.hash_table import FragmentHashTable
    >>> my_ht = FragmentHashTable(
@@ -63,10 +65,12 @@ we may use the following:
    >>> query["factor"]
    1.0
 
-The ``hash_table`` module subclasses ``hash_table.FragmentHashTable`` with the included datasets. These objects are pre-loaded
-and can be created by calling the classes ``GreekFootHashTable()`` or ``DecitalaHashTable()``, as below. Normally, this package 
-is used to find paths of rhythms through a given composition. If we're interested in finding the "best" path of Greek metrics 
-through a given part (as calculated by dynamic programming algorithms), we simply use the following: 
+The ``hash_table`` module also subclasses ``hash_table.FragmentHashTable`` with the included datasets. 
+These objects are pre-loaded and can be created by calling, for instance, ``GreekFootHashTable()`` 
+or ``DecitalaHashTable()`` (see the module for more options and information). Normally, this package 
+is used to find 'paths' of rhythms through a given composition. If we're interested in finding the "best" 
+path of Greek metrics through a given part (as calculated by dynamic programming algorithms), we could
+use the following: 
 
    >>> composition = "/Users/lukepoeppel/decitala/tests/static/Shuffled_Transcription_1.xml"
    >>> from decitala.search import path_finder
@@ -86,9 +90,11 @@ through a given part (as calculated by dynamic programming algorithms), we simpl
    <fragment.GreekFoot Peon_IV> (1.25, 1.875)
    <fragment.GreekFoot Peon_IV> (2.375, 3.0)
 
-Each element of ``path`` stores a number of pieces of information in a dictionary. It includes the fragment, its onset range, the
-associated pitch content of the region, whether it is slurred, the modification type of the fragment, etc... If a faster algorithm 
-than Floyd-Warshall is desired, replace it with ``"Dijkstra"`` (though this currently disables the possibility of ``slur_constraint``).
+Each element of ``path`` stores a number of pieces of information in a dictionary. It includes the fragment, 
+its onset range, the associated pitch content of the region, whether it is slurred, the modification type of 
+the fragment, etc... If a faster algorithm than Floyd-Warshall is desired, replace it with ``"Dijkstra"`` 
+(though this currently disables the possibility of ``slur_constraint``). By version 0.13.0, the ``path`` elements
+will be replaced by python dataclasses. 
 
 Rhythmic Manipulation
 ====================================
