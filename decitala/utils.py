@@ -214,23 +214,10 @@ def successive_ratio_array(ql_array):
 	>>> successive_ratio_array([1.0, 1.0, 2.0, 0.5, 0.5, 0.25, 1.0])
 	array([1.  , 1.  , 2.  , 0.25, 1.  , 0.5 , 4.  ])
 	"""
-	def _ratio(array, start_index):
-		"""Returns the ratio of an element in an array at index i to the value at index i + 1."""
-		if not (0 <= start_index and start_index <= len(array) - 1):
-			raise IndexError('Input ``start_index`` not in appropriate range!')
-		try:
-			ratio = array[start_index + 1] / array[start_index]
-			return round(ratio, 5)
-		except ZeroDivisionError:
-			raise Exception("There is a 0 at some point in the input array.")
-
-	ratio_lst = [1.0]
-	i = 0
-	while i < len(ql_array) - 1:
-		ratio_lst.append(_ratio(ql_array, i))
-		i += 1
-
-	return np.array(ratio_lst)
+	ql_array = np.array(ql_array)
+	end = ql_array[1:] / ql_array[:-1]
+	start = np.array([1])
+	return np.concatenate((start, end))
 
 def successive_difference_array(ql_array):
 	"""
@@ -243,21 +230,9 @@ def successive_difference_array(ql_array):
 	>>> successive_difference_array([0.25, 0.25, 0.75, 0.75, 0.5, 1.0, 1.5])
 	array([ 0.  ,  0.  ,  0.5 ,  0.  , -0.25,  0.5 ,  0.5 ])
 	"""
-	def _difference(array, start_index):
-		"""Returns the difference between two elements."""
-		try:
-			difference = array[start_index + 1] - array[start_index]
-			return difference
-		except IndexError:
-			pass
-
-	difference_lst = [0.0]
-	i = 0
-	while i < len(ql_array) - 1:
-		difference_lst.append(_difference(ql_array, i))
-		i += 1
-
-	return np.array(difference_lst)
+	end = np.diff(ql_array)
+	start = np.array([0.0])
+	return np.concatenate((start, end))
 
 def _remove_adjacent_equal_elements(array):
 	as_lst = list(array)

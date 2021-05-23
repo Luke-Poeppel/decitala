@@ -478,7 +478,7 @@ class Decitala(GeneralFragment):
 	>>> ragavardhana.ql_array()
 	array([0.25 , 0.375, 0.25 , 1.5  ])
 	>>> ragavardhana.successive_ratio_array()
-	array([1.     , 1.5    , 0.66667, 6.     ])
+	array([1.        , 1.5       , 0.66666667, 6.        ])
 	>>> ragavardhana.successive_difference_array()
 	array([ 0.   ,  0.125, -0.125,  1.25 ])
 	>>> ragavardhana.carnatic_string
