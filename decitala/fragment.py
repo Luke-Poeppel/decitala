@@ -664,3 +664,23 @@ class ProsodicFragment(GeneralFragment):
 
 # class TheorieKarnatique(GeneralFragment):
 # 	pass
+
+####################################################################################################
+# Some simple queries for quick access.
+def get_all_greek_feet():
+	engine = get_engine(fragment_db)
+	session = get_session(engine=engine)
+	all_greek_feet = session.query(GreekFootData)
+	return [GreekFoot(x.name) for x in all_greek_feet]
+
+def get_all_decitalas():
+	engine = get_engine(fragment_db)
+	session = get_session(engine=engine)
+	all_decitalas = session.query(DecitalaData)
+	return [Decitala(x.name) for x in all_decitalas]
+
+def get_all_prosodic_fragments():
+	engine = get_engine(fragment_db)
+	session = get_session(engine=engine)
+	all_prosodic_fragments = session.query(ProsodicFragmentData)
+	return [ProsodicFragment(x.name) for x in all_prosodic_fragments]

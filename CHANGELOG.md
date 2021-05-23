@@ -6,6 +6,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.13.0](https://github.com/Luke-Poeppel/decitala/tree/v0.13.0) ???
 #### Added
 - All results from `search.rolling_hash_search` are now stored as `Extraction` dataclasses. This new approach greatly simplifies the inconsistent dictionary-style search results. Also removes the need to store `frag_type`s in the hash tables. 
+- Added three functions to `fragment` for querying the fragment database for each fragment type: `get_all_greek_feet`, `get_all_decitalas`, and `get_all_prosodic_fragments`. 
 
 ## [v0.12.1](https://github.com/Luke-Poeppel/decitala/tree/v0.12.1) May 23, 2021
 #### Fixed
