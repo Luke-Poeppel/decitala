@@ -2,7 +2,7 @@
 [![Wiki][wiki-img]][wiki]
 [![Actions Status](https://github.com/Luke-Poeppel/decitala/workflows/Build/badge.svg)](https://github.com/Luke-Poeppel/decitala/actions)
 ![Coverage](./coverage.svg)
-![img](https://img.shields.io/badge/semver-0.12.1-green)
+![img](https://img.shields.io/badge/semver-0.13.0-green)
 [![DOI](https://zenodo.org/badge/275475667.svg)](https://zenodo.org/badge/latestdoi/275475667)
 
 The ``decitala`` package aims to make rhythmic analysis of encoded musical corpora easier. This toolkit can 
