@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('../decitala'))
 # -- Project information -----------------------------------------------------
 
 project = 'decitala'
-copyright = '2020, Luke Poeppel'
+copyright = '2020-2021, Luke Poeppel'
 author = 'Luke Poeppel'
 
 version = decitala.__version__

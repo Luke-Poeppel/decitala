@@ -3,10 +3,12 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.12.1](https://github.com/Luke-Poeppel/decitala/tree/v0.12.1) May 21, 2021
+## [v0.12.1](https://github.com/Luke-Poeppel/decitala/tree/v0.12.1) May 23, 2021
 #### Fixed
 - The `path_finding_utils.build_graph` function was calculating the cost between two vertices without checking if it needed to be calculated. 
 - Bug in `GreekFoot` returned incorrect `self.data` due to extra slash in path. 
+- Fixed incorrect presets for `generate_all_modifications` in the hash table module. Also now force clearing the dictionary before running load with new parameters. 
+- Documentation fixes; added screenshots of the visualization functions. 
 
 ## [v0.12.0](https://github.com/Luke-Poeppel/decitala/tree/v0.12.0) May 21, 2021
 #### Added

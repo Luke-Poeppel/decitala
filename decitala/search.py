@@ -47,8 +47,8 @@ class SearchException(Exception):
 # Hash table lookup.
 def frame_to_ql_array(frame):
 	"""
-	:param list frame: frame of data from :obj:`~decitala.utils.get_object_indices`.
-	:return: numpy array holding the associated quarter length of a given window.
+	:param list frame: Frame of data from :obj:`~decitala.utils.get_object_indices`.
+	:return: A numpy array holding the associated quarter length of a given window.
 	:rtype: numpy.array
 
 	>>> from music21 import note
@@ -72,8 +72,8 @@ def frame_to_ql_array(frame):
 
 def frame_to_midi(frame, ignore_graces=True):
 	"""
-	:param list frame: frame of data from :obj:`~decitala.utils.get_object_indices`.
-	:return: numpy array holding the pitches within the frame.
+	:param list frame: Frame of data from :obj:`~decitala.utils.get_object_indices`.
+	:return: A numpy array holding the pitches within the frame.
 	:rtype: numpy.array
 
 	>>> from music21 import note
@@ -105,8 +105,8 @@ def frame_to_midi(frame, ignore_graces=True):
 
 def frame_is_spanned_by_slur(frame):
 	"""
-	:param list frame: frame from :obj:`~decitala.utils.get_object_indices`.
-	:return: whether or not the frame is spanned by a music21.spanner.Slur object.
+	:param list frame: Frame from :obj:`~decitala.utils.get_object_indices`.
+	:return: Whether or not the frame is spanned by a music21.spanner.Slur object.
 	:rtype: bool
 	"""
 	is_spanned_by_slur = False
