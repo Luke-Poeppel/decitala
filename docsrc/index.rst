@@ -6,8 +6,14 @@
 Decitala Documentation
 ====================================
 
-Tools for automating ethnological rhythmic analysis of Olivier Messiaen's music. The basic
-pipeline used in this package is Search →→ Path Finding →→ Analysis.
+The ``decitala`` package aims to make rhythmic analysis of encoded musical corpora easier. This toolkit can 
+be used to both detect rhythmic fragments in a work and suggest possible alignments. ``decitala`` is being developed 
+to make the analysis of Olivier Messiaen's music easier, particularly with respect to his use of ethnological 
+rhythmic fragments. If you find the tools/corpora to be useful or discover a bug, feel free to 
+file an issue at https://github.com/Luke-Poeppel/decitala/issues or drop me a note (luke.poeppel@gmail.com).   
+I'd love to hear about how you used them and/or take suggestions. 
+
+Source Code: https://github.com/Luke-Poeppel/decitala. 
 
 Installation
 ====================================
@@ -17,7 +23,7 @@ Run the following::
    $ git clone https://github.com/Luke-Poeppel/decitala.git
    $ cd decitala
    $ pip3 install -e .
-   $ pre-commit install
+   $ pre-commit install # Only needed if you'd like to contribute code.
    $ decitala --version # Check for proper installation.
 
 Basic Usage
