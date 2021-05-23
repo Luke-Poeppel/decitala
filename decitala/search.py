@@ -45,6 +45,29 @@ class SearchException(Exception):
 
 ####################################################################################################
 # Hash table lookup.
+@dataclass
+class Extraction:
+	fragment: GeneralFragment
+	frag_type: str
+	onset_range: tuple
+
+	retrograde: bool
+	factor: float
+	difference: float
+	mod_hierarchy_val: int
+
+	pitch_content: list
+	is_spanned_by_slur: bool
+	id_: int
+
+	contiguous_summation: bool = False
+
+	def __repr__(self):
+		return f"<search.Extraction {self.id_}>"
+
+	def show(self):
+		pass
+
 def frame_to_ql_array(frame):
 	"""
 	:param list frame: Frame of data from :obj:`~decitala.utils.get_object_indices`.
@@ -125,46 +148,26 @@ def frame_lookup(frame, ql_array, curr_fragment_id, table, windows):
 	objects = [x[0] for x in frame]
 	if any(x.isRest for x in objects):
 		return None
-	else:
-		try:
-			searched = table.data[tuple(ql_array)]
-			if searched is not None:
-				result = copy.deepcopy(searched)
-				is_spanned_by_slur = frame_is_spanned_by_slur(frame)
-				pitch_content = frame_to_midi(frame)
 
-				offset_1 = frame[0][0]
-				offset_2 = frame[-1][0]
-
-				result["onset_range"] = (offset_1.offset, offset_2.offset + offset_2.quarterLength)
-				result["pitch_content"] = pitch_content
-				result["is_spanned_by_slur"] = is_spanned_by_slur
-				result["id"] = curr_fragment_id
-		except KeyError:
-			return None
-
-	return result
-
-@dataclass
-class Extraction:
-	fragment: GeneralFragment
-	onset_range: tuple
-
-	retrograde: bool
-	factor: float
-	difference: float
-	mod_hierarchy_val: int
-	contiguous_summation: bool
-
-	pitch_content: list
-	is_spanned_by_slur: bool
-	id_: int
-
-	def __repr__(self):
-		return f"<search.Extraction {self.id_}>"
-
-	def show(self):
-		pass
+	try:
+		searched = table.data[tuple(ql_array)]
+		if searched is not None:
+			offset_1 = frame[0][0]
+			offset_2 = frame[-1][0]
+			return Extraction(
+				fragment=searched["fragment"],
+				frag_type=searched["fragment"].frag_type,
+				onset_range=(offset_1.offset, offset_2.offset + offset_2.quarterLength),
+				retrograde=searched["retrograde"],
+				factor=searched["factor"],
+				difference=searched["difference"],
+				mod_hierarchy_val=searched["mod_hierarchy_val"],
+				pitch_content=frame_to_midi(frame),
+				is_spanned_by_slur=frame_is_spanned_by_slur(frame),
+				id_=curr_fragment_id
+			)
+	except KeyError:
+		return None
 
 def rolling_hash_search(
 		filepath,
@@ -238,15 +241,15 @@ def rolling_hash_search(
 						)
 						if lookup:
 							if i == 0:
-								lookup["mod_hierarchy_val"] = 5
+								lookup.mod_hierarchy_val = 5
 							else:
-								lookup["mod_hierarchy_val"] = 6
+								lookup.mod_hierarchy_val = 6
 
 							subdivision_results.append(lookup)
 							fragment_id += 1
 
 					if subdivision_results:
-						fragments_found.append(min(subdivision_results, key=lambda x: x["mod_hierarchy_val"]))
+						fragments_found.append(min(subdivision_results, key=lambda x: x.mod_hierarchy_val))
 
 			if allow_contiguous_summation:
 				if any(type(x[0]).__name__ == "Rest" for x in this_frame):
@@ -268,11 +271,11 @@ def rolling_hash_search(
 						windows=windows
 					)
 					if cs_lookup:
-						cs_lookup["contiguous_summation"] = True
+						cs_lookup.contiguous_summation = True
 						fragments_found.append(cs_lookup)
 						fragment_id += 1
 
-	return sorted(fragments_found, key=lambda x: x["onset_range"][0])
+	return sorted(fragments_found, key=lambda x: x.onset_range[0])
 
 def path_finder(
 		filepath,

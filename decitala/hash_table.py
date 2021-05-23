@@ -80,7 +80,6 @@ def _single_factor_or_difference_augmentation(
 		retrograde = False if i == 0 else True
 		elem_dict = {
 			"fragment": fragment,
-			"frag_type": fragment.frag_type,
 			"retrograde": retrograde,
 		}
 		if mode == "multiplicative":

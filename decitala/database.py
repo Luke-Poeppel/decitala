@@ -70,7 +70,7 @@ class CompositionData(Base):
 		self.local_filepath = local_filepath
 
 # TODO: rename to `ExtractionData`
-class Extraction(Base):
+class ExtractionData(Base):
 	"""
 	SQLAlchemy model representing a fragment extracted from a composition.
 
@@ -90,7 +90,7 @@ class Extraction(Base):
 	:param str pitch_content: Pitch content of the extracted fragment.
 	:param bool is_slurred: Whether the extracted fragment is spanned by a slur object.
 	"""
-	__tablename__ = "Extraction"
+	__tablename__ = "ExtractionData"
 
 	id = Column(Integer, primary_key=True)
 
@@ -160,16 +160,16 @@ def _add_results_to_session(
 
 		fragment_objects = []
 		for this_fragment in res:
-			f = Extraction(
-				onset_start=this_fragment["onset_range"][0],
-				onset_stop=this_fragment["onset_range"][1],
-				fragment_type=this_fragment["frag_type"],
-				name=this_fragment["fragment"].name,
-				mod_hierarchy_val=this_fragment["mod_hierarchy_val"],
-				ratio=this_fragment["factor"],
-				difference=this_fragment["difference"],
-				pitch_content=json.dumps(this_fragment["pitch_content"]),
-				is_slurred=this_fragment["is_spanned_by_slur"]
+			f = ExtractionData(
+				onset_start=this_fragment.onset_range[0],
+				onset_stop=this_fragment.onset_range[1],
+				fragment_type=this_fragment.frag_type,
+				name=this_fragment.fragment.name,
+				mod_hierarchy_val=this_fragment.mod_hierarchy_val,
+				ratio=this_fragment.factor,
+				difference=this_fragment.difference,
+				pitch_content=json.dumps(this_fragment.pitch_content),
+				is_slurred=this_fragment.is_spanned_by_slur
 			)
 			fragment_objects.append(f)
 			session.add(f)

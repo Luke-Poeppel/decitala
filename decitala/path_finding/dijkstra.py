@@ -29,7 +29,7 @@ def dijkstra(
 						``"gap"`` and ``"onsets"``.
 	"""
 	graph = path_finding_utils.build_graph(data, weights)
-	source = source["id"]
+	source = source.id_
 
 	q = []
 	dist = {x: np.inf for x in graph.keys()}
@@ -57,10 +57,10 @@ def dijkstra_best_source_and_sink(data):
 	sources, targets = path_finding_utils.sources_and_sinks(data)
 
 	# This checks if there exists a fragment in sources/sinks that spans the whole onset range.
-	min_onset = min(sources, key=lambda x: x["onset_range"][0])["onset_range"][0]
-	max_onset = max(targets, key=lambda x: x["onset_range"][1])["onset_range"][1]
+	min_onset = min(sources, key=lambda x: x.onset_range[0]).onset_range[0]
+	max_onset = max(targets, key=lambda x: x.onset_range[1]).onset_range[1]
 	for source in sources:
-		if source["onset_range"] == (min_onset, max_onset):
+		if source.onset_range == (min_onset, max_onset):
 			dist, pred = dijkstra(
 				data,
 				source
@@ -78,9 +78,9 @@ def dijkstra_best_source_and_sink(data):
 			source
 		)
 		for target in targets:
-			if (dist[target["id"]] < best_path_cost):
-				if source["onset_range"][1] <= target["onset_range"][0]:
-					best_path_cost = dist[target["id"]]
+			if (dist[target.id_] < best_path_cost):
+				if source.onset_range[1] <= target.onset_range[0]:
+					best_path_cost = dist[target.id_]
 					best_source = source
 					best_target = target
 					best_predecessor_set = pred
@@ -98,8 +98,8 @@ def generate_path(pred, source, target):
 	:param dict target: An element from the ``data`` input to
 						:obj:`decitala.path_finding.dijkstra.dijkstra`
 	"""
-	source_fragment_id = source["id"]
-	target_fragment_id = target["id"]
+	source_fragment_id = source.id_
+	target_fragment_id = target.id_
 
 	if not pred and source_fragment_id == target_fragment_id:  # Second condition is just a guardrail.
 		return [source_fragment_id]

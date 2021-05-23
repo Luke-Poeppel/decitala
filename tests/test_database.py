@@ -8,7 +8,7 @@ from decitala import database
 from decitala.database import (
 	create_database,
 	CompositionData,
-	Extraction,
+	ExtractionData,
 	get_engine,
 	get_session
 )
@@ -37,5 +37,5 @@ def test_create_database():
 		assert comps[0].name == "Shuffled_Transcription_2.xml"
 		assert comps[0].part_num == 0
 
-		frags = session.query(Extraction).all()
+		frags = session.query(ExtractionData).all()
 		assert [x.fragment_type == "greek_foot" for x in frags]

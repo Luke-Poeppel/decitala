@@ -43,14 +43,14 @@ def test_dijkstra_path_1(s1_fragments):
 		source,
 		target
 	)
-	path_frags = sorted([x for x in s1_fragments if x["id"] in best_path], key=lambda x: x["onset_range"][0])
+	path_frags = sorted([x for x in s1_fragments if x.id_ in best_path], key=lambda x: x.onset_range[0])
 	expected_fragments = [
 		GreekFoot("Peon_IV"),
 		GreekFoot("Peon_II"),
 		GreekFoot("Amphibrach"),
 		GreekFoot("Peon_IV"),
 	]
-	assert set(x["fragment"] for x in path_frags) == set(expected_fragments)
+	assert set(x.fragment for x in path_frags) == set(expected_fragments)
 
 def test_dijkstra_path_2(s3_fragments):
 	expected_fragments = [GreekFoot("Anapest"), GreekFoot("Choriamb")]
@@ -62,10 +62,10 @@ def test_dijkstra_path_2(s3_fragments):
 		source,
 		target
 	)
-	path_frags = sorted([x for x in s3_fragments if x["id"] in best_path], key=lambda x: x["onset_range"][0])
+	path_frags = sorted([x for x in s3_fragments if x.id_ in best_path], key=lambda x: x.onset_range[0])
 
-	assert [x["onset_range"] for x in path_frags] == expected_onset_ranges
-	assert set(x["fragment"] for x in path_frags) == set(expected_fragments)
+	assert [x.onset_range for x in path_frags] == expected_onset_ranges
+	assert set(x.fragment for x in path_frags) == set(expected_fragments)
 
 def test_dijkstra_path_3(s4_fragments):
 	expected_fragment = GreekFoot("Peon_IV")
@@ -75,7 +75,7 @@ def test_dijkstra_path_3(s4_fragments):
 		source,
 		target
 	)
-	path_frags = sorted([x for x in s4_fragments if x["id"] in best_path], key=lambda x: x["onset_range"][0])
+	path_frags = sorted([x for x in s4_fragments if x.id_ in best_path], key=lambda x: x.onset_range[0])
 
 	assert len(path_frags) == 1
-	assert path_frags[0]["fragment"] == expected_fragment
+	assert path_frags[0].fragment == expected_fragment

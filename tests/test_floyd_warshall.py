@@ -18,6 +18,7 @@ def s1_fragments():
 		table=GreekFootHashTable()
 	)
 
+# Should probably get better test... Too similar to test_search path_finder example. 
 def test_get_path(s1_fragments):
 	distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
 		s1_fragments,
@@ -41,4 +42,4 @@ def test_get_path(s1_fragments):
 		GreekFoot("Peon_IV"),
 		GreekFoot("Peon_IV")
 	]
-	assert set(x["fragment"] for x in best_path) == set(fragments)
+	assert set(x.fragment for x in best_path) == set(fragments)

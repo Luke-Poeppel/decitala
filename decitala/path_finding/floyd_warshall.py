@@ -122,17 +122,17 @@ def get_path(
 		path = reconstruct_standard_path(data, next_matrix, start, end)
 		return path
 	else:
-		slurred_fragments_indices = [data.index(x) for x in data if x["is_spanned_by_slur"] is True]
+		slurred_fragments_indices = [data.index(x) for x in data if x.is_spanned_by_slur]
 		if len(slurred_fragments_indices) == 0:
 			path = reconstruct_standard_path(data, next_matrix, start, end)
 			return path
 
-		start_index = next((index for (index, d) in enumerate(data) if d["id"] == start["id"]), None)
-		end_index = next((index for (index, d) in enumerate(data) if d["id"] == end["id"]), None)
+		start_index = next((index for (index, d) in enumerate(data) if d.id_ == start.id_), None)
+		end_index = next((index for (index, d) in enumerate(data) if d.id_ == end.id_), None)
 
 		if slurred_fragments_indices[0] <= start_index:
 			curr_start = data[slurred_fragments_indices[0]]
-		elif data[slurred_fragments_indices[0]]["onset_range"][0] < data[start_index]["onset_range"][1]:
+		elif data[slurred_fragments_indices[0]].onset_range[0] < data[start_index].onset_range[1]:
 			curr_start = data[slurred_fragments_indices[0]]
 		else:
 			curr_start = data[start_index]
@@ -142,7 +142,7 @@ def get_path(
 		if slurred_fragments_indices[-1] >= end_index:
 			overall_end = data[slurred_fragments_indices[-1]]
 			fragment_slur_is_ending = True
-		elif data[slurred_fragments_indices[-1]]["onset_range"][0] < data[end_index]["onset_range"][1]:
+		elif data[slurred_fragments_indices[-1]].onset_range[0] < data[end_index].onset_range[1]:
 			overall_end = data[slurred_fragments_indices[-1]]
 			fragment_slur_is_ending = True
 		else:
@@ -162,7 +162,7 @@ def get_path(
 
 		if fragment_slur_is_ending is True:
 			pass
-		elif overall_end["onset_range"][0] < path[-1]["onset_range"][1]:
+		elif overall_end.onset_range[0] < path[-1].onset_range[1]:
 			pass  # sink input clashes with final slurred fragment.
 		else:
 			while curr_start != overall_end:

@@ -24,8 +24,8 @@ def cost(
 	:return: The cost of moving from ``vertex_1`` to ``vertex_2``.
 	:rtype: float
 	"""
-	gap = vertex_2["onset_range"][0] - vertex_1["onset_range"][1]
-	onsets = 1 / (vertex_1["fragment"].num_onsets + vertex_2["fragment"].num_onsets)
+	gap = vertex_2.onset_range[0] - vertex_1.onset_range[1]
+	onsets = 1 / (vertex_1.fragment.num_onsets + vertex_2.fragment.num_onsets)
 	cost = (weights["gap"] * gap) + (weights["onsets"] * onsets)
 	return cost
 
@@ -49,16 +49,16 @@ def build_graph(data, weights):
 				continue
 
 			# Check here, not `cost()`, as then we don't need to instantiate a fragment object.
-			elif curr["onset_range"][1] > other["onset_range"][0]:
+			elif curr.onset_range[1] > other.onset_range[0]:
 				continue
 
 			edge = cost(curr, other, weights)
 			if edge < 0:  # Just in case.
 				continue
 
-			curr_edges.append((other["id"], edge))
+			curr_edges.append((other.id_, edge))
 
-		G[curr["id"]] = curr_edges
+		G[curr.id_] = curr_edges
 		i += 1
 
 	return G
@@ -67,8 +67,8 @@ def sources_and_sinks(data):
 	"""
 	Calculates all sources and sinks in a given dataset.
 	"""
-	sources = [x for x in data if not any(y["onset_range"][1] <= x["onset_range"][0] for y in data)]
-	sinks = [x for x in data if not any(x["onset_range"][1] <= y["onset_range"][0] for y in data)]
+	sources = [x for x in data if not any(y.onset_range[1] <= x.onset_range[0] for y in data)]
+	sinks = [x for x in data if not any(x.onset_range[1] <= y.onset_range[0] for y in data)]
 
 	return sources, sinks
 
@@ -85,10 +85,10 @@ def best_source_and_sink(data):
 	if len(sources) == 1:
 		pass
 	else:
-		lowest_point = min(sources, key=lambda x: x["onset_range"][0])["onset_range"][0]
+		lowest_point = min(sources, key=lambda x: x.onset_range[0]).onset_range[0]
 		for source in sources:
-			if source["onset_range"][0] == lowest_point:
-				if source["fragment"].num_onsets > curr_best_source["fragment"].num_onsets:
+			if source.onset_range[0] == lowest_point:
+				if source.fragment.num_onsets > curr_best_source.fragment.num_onsets:
 					curr_best_source = source
 			else:
 				continue
@@ -97,7 +97,7 @@ def best_source_and_sink(data):
 		pass
 	else:
 		for sink in sinks:
-			if sink["fragment"].num_onsets > curr_best_sink["fragment"].num_onsets:
+			if sink.fragment.num_onsets > curr_best_sink.fragment.num_onsets:
 				curr_best_sink = sink
 			else:
 				continue
