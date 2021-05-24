@@ -823,7 +823,7 @@ def rolling_SRR(
 	all_windows_ql = []
 	for window in all_windows:
 		if ignore_tuplets:
-			if any(x.duration.tuplets for x in window):
+			if any(x[0].duration.tuplets for x in window):
 				continue
 		qls = [x[0].quarterLength for x in window]
 		all_windows_ql.append(qls)
