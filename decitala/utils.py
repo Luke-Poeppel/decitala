@@ -71,6 +71,8 @@ NEUMES = {
 
 VALID_DENOMINATORS = [1, 2, 4, 8, 16, 32, 64, 128]
 
+flatten = lambda l: [item for sublist in l for item in sublist]
+
 class UtilsException(Exception):
 	pass
 
@@ -745,8 +747,8 @@ def reframe_ts(ts, new_denominator=None):
 	Function for reducing a `music21.meter.TimeSignature` object (lowest denominator of 1) to
 	a given denominiator.
 
-	:param ts: a music21.meter.TimeSignature object.
-	:return: a new time signature that is fully reduced by removing all possible powers of 2.
+	:param ts: A music21.meter.TimeSignature object.
+	:return: A new time signature that is fully reduced by removing all possible powers of 2.
 	:rtype: music21.meter.TimeSignature
 
 	>>> from music21.meter import TimeSignature
@@ -773,6 +775,58 @@ def reframe_ts(ts, new_denominator=None):
 
 	reduced_ts_str = f"{int(numerator)}/{int(denominator)}"
 	return TimeSignature(reduced_ts_str)
+
+def rolling_SRR(
+		filepath,
+		part_num,
+		window_size,
+		ignore_tuplets=True
+	):
+	"""
+	Given a filepath, part number, and window size, extracts all notes/chords in the work and,
+	on a rolling window, calculates the successive ratio representation (SRR) of each window.
+	Returning the results as a list.
+
+	:param str filepath: Path to file to be analyzed.
+	:param int part_num: Part number to be analyzed.
+	:param int window_size: Window size used in the calculations.
+	:param bool ignore_tuplets: Whether to ignore tuplets in the output. The use of tuplets will
+								add some erroneous ratios to the data. Default is ``True``.
+	:return: List holding successive ratio representations of each window on a rolling window of
+			size ``window_size``.
+	:rtype: list
+	"""
+	objects = get_object_indices(filepath, part_num, ignore_grace=True)
+
+	objects_without_rests_pre = []
+	grouped = groupby(objects, key=lambda x: x[0].isRest)
+	for k, g in grouped:
+		objects_without_rests_pre.append(list(g))
+
+	objects_without_rests = []
+	for grouping in objects_without_rests_pre:
+		first_elem = grouping[0][0]
+		if first_elem.isRest:
+			continue
+		else:
+			objects_without_rests.append(list(grouping))
+
+	all_windows = []
+	for this_grouping in objects_without_rests:
+		if len(this_grouping) < window_size:
+			continue
+		else:
+			all_windows.append(roll_window(this_grouping, window_size))
+
+	all_windows = flatten(all_windows)
+
+	all_windows_ql = []
+	for window in all_windows:
+		qls = [x[0].quarterLength for x in window]
+		all_windows_ql.append(qls)
+
+	SRRs = [[float(x) for x in successive_ratio_array(x)] for x in all_windows_ql]
+	return SRRs
 
 def contiguous_summation(data):
 	"""

@@ -78,6 +78,10 @@ def example_frame():
 	)
 	return frame
 
+@pytest.fixture
+def fp1():
+	return os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
+
 def test_carnatic_string_to_ql_array():
 	ex = "Sc S | | Sc S o |c Sc o oc o | S"
 	converted = np.array([1.5, 1.0, 0.5, 0.5, 1.5, 1.0, 0.25, 0.75, 1.5, 0.25, 0.375, 0.25, 0.5, 1.0])
@@ -185,3 +189,25 @@ def test_reframe_ts():
 	ex4_res = utils.reframe_ts(ex4)
 	expected_ex4 = meter.TimeSignature("13/2")
 	assert ex4_res.ratioEqual(expected_ex4)
+
+def test_rolling_SRR(fp1):
+	rolling_srr = utils.rolling_SRR(
+		filepath=fp1,
+		part_num=0,
+		window_size=3
+	)
+	expected = [
+		[1.0, 1.0, 1.0],
+		[1.0, 1.0, 2.0],
+		[1.0, 2.0, 0.5],
+		[1.0, 0.5, 1.0],
+		[1.0, 1.0, 1.0],
+		[1.0, 1.0, 2.0],
+		[1.0, 2.0, 0.5],
+		[1.0, 0.5, 3.0],
+		[1.0, 3.0, 0.3333333333333333],
+		[1.0, 0.3333333333333333, 1.0],
+		[1.0, 1.0, 1.0],
+		[1.0, 1.0, 2.0]
+	]
+	assert rolling_srr == expected
