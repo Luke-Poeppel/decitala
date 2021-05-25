@@ -823,6 +823,7 @@ def rolling_SRR(
 	all_windows_ql = []
 	for window in all_windows:
 		if ignore_tuplets:
+			# Ignore ratios of complex tuplets (not giving proper quarter lengths).
 			if any(x[0].duration.tuplets for x in window):
 				continue
 		qls = [x[0].quarterLength for x in window]
