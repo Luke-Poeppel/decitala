@@ -121,22 +121,22 @@ def fragment_roll(
 	plt.title(title, fontsize=14, fontname="Times")
 	highest_onset = 0
 	for fragment in data:
-		if highest_onset > fragment["onset_range"][1]:
+		if highest_onset > fragment.onset_range[1]:
 			pass
 		else:
-			highest_onset = fragment["onset_range"][1]
+			highest_onset = fragment.onset_range[1]
 
 	plt.xticks(list(range(0, int(highest_onset), 10)))
 	plt.xlim(-0.02, highest_onset + 2.0)
 	plt.xlabel("Onset", fontsize=12, fontname="Times")
 	plt.ylabel("Fragment", fontsize=12, fontname="Times")
 
-	for i, fragment in enumerate(sorted(data, key=lambda x: x["fragment"].name)):
+	for i, fragment in enumerate(sorted(data, key=lambda x: x.fragment.name)):
 		plt.barh(
-			y=fragment["fragment"].name,
-			width=fragment["onset_range"][1] - fragment["onset_range"][0],
+			y=fragment.fragment.name,
+			width=fragment.onset_range[1] - fragment.onset_range[0],
 			height=0.8,
-			left=fragment["onset_range"][0],
+			left=fragment.onset_range[0],
 			color='k'
 		)
 
@@ -216,13 +216,13 @@ def plot_2D_search_results(data=None, path=None, title=None, save_filepath=None)
 	:param str save_filepath: Optional path to save the plot (DPI=350). Default is `None`.
 	"""
 	if data:
-		xs = [x["onset_range"][0] for x in data]
-		ys = [x["onset_range"][1] for x in data]
+		xs = [x.onset_range[0] for x in data]
+		ys = [x.onset_range[1] for x in data]
 		plt.scatter(xs, ys, s=5, color="k")
 
 	if path:
-		xs = [x["onset_range"][0] for x in path]
-		ys = [x["onset_range"][1] for x in path]
+		xs = [x.onset_range[0] for x in path]
+		ys = [x.onset_range[1] for x in path]
 		plt.plot(xs, ys, "--o", color="r", markersize=3, linewidth=1, label="Extracted Path")
 
 	plt.xticks(fontname="Times")
