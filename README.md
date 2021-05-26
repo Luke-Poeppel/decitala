@@ -5,7 +5,7 @@
 ![img](https://img.shields.io/badge/semver-0.13.0-green)
 [![DOI](https://zenodo.org/badge/275475667.svg)](https://zenodo.org/badge/latestdoi/275475667)
 
-The ``decitala`` package aims to make rhythmic analysis of encoded musical corpora easier. This toolkit can 
+The ``decitala`` package aims to make rhythmic search and analysis of encoded musical corpora easier. This toolkit can 
 be used to both detect rhythmic fragments in a work and suggest possible alignments. ``decitala`` is being developed 
 to make the analysis of Olivier Messiaen's music easier, particularly with respect to his use of ethnological 
 rhythmic fragments. If you find the tools/corpora to be useful or discover a bug, feel free to file an 
