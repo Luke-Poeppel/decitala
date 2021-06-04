@@ -98,7 +98,7 @@ def test_decitala_hash_table():
 	for fragment in fragments:
 		modification_and_mod_val = random.choice(funcs)(fragment.ql_array())
 		if any(x <= 0 for x in modification_and_mod_val[0]):
-			continue
+			continue # This is ignoring a failed case! 
 		
 		modification = tuple(modification_and_mod_val[0])
 		mod_value = modification_and_mod_val[1]

@@ -49,7 +49,7 @@ def dijkstra(
 
 	return dist, pred
 
-def dijkstra_best_source_and_sink(data):
+def dijkstra_best_source_and_sink(data, weights):
 	"""
 	Function for agnostically choosing the best source and target (and associated predecessor set)
 	via Dijkstra. Only requires regular data input.
@@ -82,7 +82,8 @@ def dijkstra_best_source_and_sink(data):
 	for source in sources:
 		dist, pred = dijkstra(
 			data,
-			source
+			source,
+			weights
 		)
 		for target in targets:
 			if (dist[target.id_] < best_path_cost):

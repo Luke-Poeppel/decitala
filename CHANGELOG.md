@@ -12,6 +12,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 #### Changed
 - Greatly simplified the logic in `successive_ratio_array` and `successive_difference_array` using numpy. 
 
+#### Fixed
+- Issues #147: allow weight hyperparameters as input to Dijkstra; 
+
 ## [v0.12.1](https://github.com/Luke-Poeppel/decitala/tree/v0.12.1) May 23, 2021
 #### Fixed
 - The `path_finding_utils.build_graph` function was calculating the cost between two vertices without checking if it needed to be calculated. 
