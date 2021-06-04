@@ -285,7 +285,7 @@ def path_finder(
 		allow_subdivision=False,
 		allow_contiguous_summation=False,
 		algorithm="dijkstra",
-		weights=None,
+		weights={"gap": 0.75, "onsets": 0.25},
 		slur_constraint=False,
 		save_filepath=None,
 		verbose=False
