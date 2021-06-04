@@ -154,6 +154,7 @@ def test_povel_essen_dijkstra():#povel_essen_example):
 		allow_subdivision=False,
 		allow_contiguous_summation=False,
 		algorithm="dijkstra",
+		weights={"gap": 0.75, "onsets": 0.25},
 		slur_constraint=False
 	)
 	assert len(path) == 1

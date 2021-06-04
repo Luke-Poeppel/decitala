@@ -36,8 +36,13 @@ def s4_fragments():
 		table=GreekFootHashTable()
 	)
 
+WEIGHTS = {
+	"gap": 0.75,
+	"onsets": 0.25
+}
+
 def test_dijkstra_path_1(s1_fragments):
-	source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=s1_fragments)
+	source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=s1_fragments, weights=WEIGHTS)
 	best_path = dijkstra.generate_path(
 		best_pred, 
 		source,
@@ -56,7 +61,7 @@ def test_dijkstra_path_2(s3_fragments):
 	expected_fragments = [GreekFoot("Anapest"), GreekFoot("Choriamb")]
 	expected_onset_ranges = [(0.0, 0.5), (0.5, 1.25)]
 	
-	source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=s3_fragments)
+	source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=s3_fragments, weights=WEIGHTS)
 	best_path = dijkstra.generate_path(
 		best_pred, 
 		source,
@@ -69,7 +74,7 @@ def test_dijkstra_path_2(s3_fragments):
 
 def test_dijkstra_path_3(s4_fragments):
 	expected_fragment = GreekFoot("Peon_IV")
-	source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=s4_fragments)
+	source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=s4_fragments, weights=WEIGHTS)
 	best_path = dijkstra.generate_path(
 		best_pred, 
 		source,

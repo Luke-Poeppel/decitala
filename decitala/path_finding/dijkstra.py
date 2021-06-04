@@ -70,7 +70,8 @@ def dijkstra_best_source_and_sink(data, weights):
 		if source.onset_range == (min_onset, max_onset) or _all_overlap(data):
 			dist, pred = dijkstra(
 				data,
-				source
+				source,
+				weights
 			)
 			return source, source, pred
 
