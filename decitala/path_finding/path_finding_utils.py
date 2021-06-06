@@ -52,26 +52,13 @@ class DefaultCostFunction(CostFunction):
 	gap_weight = 0.75
 	onset_weight = 0.25
 
-	def cost(self, vertex_1, vertex_2):
-		gap = vertex_2.onset_range[0] - vertex_1.onset_range[1]
-		onsets = 1 / (vertex_1.fragment.num_onsets + vertex_2.fragment.num_onsets)
+	def cost(self, vertex_a, vertex_b):
+		gap = vertex_a.onset_range[0] - vertex_b.onset_range[1]
+		onsets = 1 / (vertex_a.fragment.num_onsets + vertex_b.fragment.num_onsets)
 		cost = (self.gap_weight * gap) + (self.onset_weight * onsets)
 		return cost
 
-def cost(
-		vertex_1,
-		vertex_2,
-		weights
-	):
-	"""
-	Cost function used in the path finding algorithms.
-	"""
-	gap = vertex_2.onset_range[0] - vertex_1.onset_range[1]
-	onsets = 1 / (vertex_1.fragment.num_onsets + vertex_2.fragment.num_onsets)
-	cost = (weights["gap"] * gap) + (weights["onsets"] * onsets)
-	return cost
-
-def build_graph(data, weights):
+def build_graph(data, cost_function_class):
 	"""
 	Function for building a "graph" of nodes and edges from a given set of data (each
 	vertex of the form as those required in the cost function) extracted from one of the
@@ -90,11 +77,11 @@ def build_graph(data, weights):
 			if other == curr:
 				continue
 
-			# Check here, not `cost()`, as then we don't need to instantiate a fragment object.
+			# Check here, not in cost function, as then we don't need to instantiate a fragment object.
 			elif curr.onset_range[1] > other.onset_range[0]:
 				continue
 
-			edge = cost(curr, other, weights)
+			edge = cost_function_class.cost(vertex_a=curr, vertex_b=other)
 			if edge < 0:  # Just in case.
 				continue
 

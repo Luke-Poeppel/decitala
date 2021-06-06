@@ -22,10 +22,6 @@ def s1_fragments():
 def test_get_path(s1_fragments):
 	distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
 		s1_fragments,
-		weights={
-			"gap": 0.75,
-			"onsets": 0.25
-		},
 		verbose=False
 	)
 	best_source, best_sink = path_finding_utils.best_source_and_sink(s1_fragments)
