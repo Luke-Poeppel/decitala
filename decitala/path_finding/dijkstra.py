@@ -53,6 +53,25 @@ def dijkstra_best_source_and_sink(data, weights):
 	"""
 	Function for agnostically choosing the best source and target (and associated predecessor set)
 	via Dijkstra. Only requires regular data input.
+
+	PSEUDOCODE:
+	all_sources = [...]
+	all_targets = [...]
+	best_path_cost = inf # arbitrarily high initial cost
+	best_source = None
+	best_target = None
+	best_predecessor_set = None
+	for source in all_sources:
+		distances, predecessors = dijkstra(
+			data, # search results
+			source # Dijkstra requires source input
+		)
+		for target in all_targets:
+			if distances[target] < best_path_cost: # Want minimal cost
+				best_path_cost = distances[target]
+				best_source = source
+				best_target = target
+				best_predecessor_set = predecessors
 	"""
 	sources, targets = path_finding_utils.sources_and_sinks(data)
 
