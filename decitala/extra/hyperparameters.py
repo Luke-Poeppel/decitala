@@ -193,12 +193,15 @@ def run_on_all_analyzed_transcriptions(
 
 ####################################################################################################
 # Plotting
-def get_results_for_composition(name, filepath):
+def get_individual_results(mode, name, data_filepath):
 	vals = []
-	with open(filepath) as results:
+	with open(data_filepath) as results:
 		loaded = json.load(results)
-		composition_results = loaded[name]
-		for key, val in composition_results.items():
+		if mode == "Compositions":
+			results = loaded[name]
+		elif mode == "Transcriptions":
+			results = loaded[name.name]
+		for key, val in results.items():
 			as_list = "[" + key[1:-1] + "]"
 			loaded_key = json.loads(as_list)
 			gap_weight = loaded_key[0]
@@ -208,10 +211,19 @@ def get_results_for_composition(name, filepath):
 
 	return vals
 
-def get_all_results(filepath):
+def get_all_composition_results(data_filepath):
 	all_points = []
 	for this_composition in compositions:
-		all_points.extend(get_results_for_composition(this_composition, filepath))
+		all_points.extend(get_individual_results("Compositions", this_composition, data_filepath))
+
+	return all_points
+
+def get_all_transcription_results(data_filepath):
+	all_points = []
+	for transcription in get_all_transcriptions():
+		if not(transcription.analysis):
+			continue
+		all_points.extend(get_individual_results("Transcriptions", transcription, data_filepath))
 
 	return all_points
 
@@ -223,7 +235,7 @@ def get_mean_and_std_by_gap_weight(weight, all_points):
 
 	return [weight, np.mean(results), np.std(results)]
 
-def plot_composition_results(filepath, resolution, title, save_fig=False):
+def plot_results(mode, data_filepath, resolution, title, save_path=False):
 	"""
 	The data_input should be of the form from get_average_result_by_weight
 	"""
@@ -236,7 +248,10 @@ def plot_composition_results(filepath, resolution, title, save_fig=False):
 	plt.yticks(list(range(0, 110, 10)), fontname="Times", fontsize=12)
 	plt.ylim(-8, 105)
 
-	ALL_RESULTS = get_all_results(filepath)
+	if mode == "Compositions":
+		ALL_RESULTS = get_all_composition_results(data_filepath)
+	elif mode == "Transcriptions":
+		ALL_RESULTS = get_all_transcription_results(data_filepath)
 
 	data = []
 	errors = []
@@ -260,20 +275,22 @@ def plot_composition_results(filepath, resolution, title, save_fig=False):
 		ls="-"
 	)
 
-	# These spanners come from looking at the data.
-	plt.axvspan(0.125, 0.975, facecolor="r", alpha=0.2, label="$\mu_{g}$=0.55") # noqa
-	plt.vlines(0.55, 0, 110, colors="k", linestyles="dashed")
-	plt.legend(prop="Times")
+	# # These spanners come from looking at the data.
+	# plt.axvspan(0.125, 0.975, facecolor="r", alpha=0.2, label="$\mu_{g}$=0.55") # noqa
+	# plt.vlines(0.55, 0, 110, colors="k", linestyles="dashed")
+	# plt.legend(prop="Times")
 
 	plt.tight_layout()
 
-	# if save is True:
-	# 	plt.savefig("/Users/lukepoeppel/Messiaen/Avg_Parameters_5_Compositions_0.05.png", dpi=400)
+	if save_path:
+		plt.savefig(save_path, dpi=350)
 
 	return plt
 
-fp = "/Users/lukepoeppel/decitala/decitala/extra/06-06-2021_composition_hyperparameters_0.025_decitala.json" # noqa
-print(plot_composition_results(fp, resolution=0.025, title="Average Accuracy From Dijkstra Algorithm for 5 Compositions").show()) # noqa
+# fp = "/Users/lukepoeppel/decitala/decitala/extra/06-06-2021_composition_hyperparameters_0.025_decitala.json" # noqa
+# fp = "/Users/lukepoeppel/decitala/decitala/extra/06-06-2021_transcription_hyperparameters_0.025_greek_foot.json" # noqa
+# print(plot_results(mode="Transcriptions", data_filepath=fp, resolution=0.025, title="Average Accuracy From Dijkstra Algorithm for Annotated Transcriptions").show()) # noqa
+
 
 if __name__ == "__main__":
 	if INTERACTIVE:
