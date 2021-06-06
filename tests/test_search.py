@@ -189,8 +189,7 @@ def test_found_liturgie_fragments(liturgie_reduction):
 	new_path = []
 	for x in path:
 		if x.fragment in {Decitala("Ragavardhana"), Decitala("Lakskmica"), Decitala("Candrakala")}:
-			print(x.fragment, x.onset_range)
-			new_path.append(x)#(x.fragment, x.onset_range)
+			new_path.append(x)
 
 	assert counted[Decitala("Ragavardhana")] == 10
 	assert counted[Decitala("Candrakala")] == 10

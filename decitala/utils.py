@@ -80,6 +80,13 @@ class UtilsException(Exception):
 # LOGGING
 ####################################################################################################
 def get_logger(name, print_to_console=True, write_to_file=None):
+	"""
+	A simple helper for logging.
+
+	:param str name: name of the logging object to be created.
+	:param bool print_to_console: whether to print the logs to the console.
+	:param str write_to_file: optional filepath to save the logs to.
+	"""
 	logger = logging.getLogger(name)
 	if not len(logger.handlers):
 		logger.setLevel(logging.INFO)
