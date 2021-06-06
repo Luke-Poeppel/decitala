@@ -72,29 +72,29 @@ def _single_factor_or_difference_augmentation(
 		mode
 	):
 	ql_array = fragment.ql_array()
-	searches = [ql_array]
+	ql_arrays = [ql_array]
 	if try_retrograde is True:
-		searches.append(ql_array[::-1])
+		ql_arrays.append(ql_array[::-1])
 
-	for i, search in enumerate(searches):
+	for i, ql_array in enumerate(ql_arrays):
 		retrograde = False if i == 0 else True
 		elem_dict = {
 			"fragment": fragment,
 			"retrograde": retrograde,
 		}
 		if mode == "multiplicative":
-			augmentation = tuple(augment(ql_array=search, factor=factor, difference=difference))
+			augmentation = tuple(augment(ql_array=ql_array, factor=factor, difference=difference))
 			elem_dict["factor"] = factor
 			elem_dict["difference"] = difference
 			elem_dict["mod_hierarchy_val"] = 1 if retrograde is False else 2
 		elif mode == "additive":
-			augmentation = tuple(augment(ql_array=search, factor=factor, difference=difference))
+			augmentation = tuple(augment(ql_array=ql_array, factor=factor, difference=difference))
 			elem_dict["factor"] = factor
 			elem_dict["difference"] = difference
 			elem_dict["mod_hierarchy_val"] = 3 if retrograde is False else 4
 		elif mode == "stretch":
 			stretch_augmentation = stretch_augment(
-				ql_array=search,
+				ql_array=ql_array,
 				factor=factor,
 				stretch_factor=stretch_factor
 			)
@@ -103,6 +103,10 @@ def _single_factor_or_difference_augmentation(
 			elem_dict["stretch_factor"] = stretch_factor
 			elem_dict["difference"] = difference
 			elem_dict["mod_hierarchy_val"] = 7 if retrograde is False else 8
+
+		# No ql-arrays should have quarter lengths of 0.
+		if any(x <= 0 for x in augmentation):
+			continue
 
 		if augmentation in dict_in:
 			existing = dict_in[augmentation]
@@ -200,7 +204,7 @@ class FragmentHashTable:
 	<decitala.hash_table.FragmentHashTable 0 fragments>
 	>>> fht.load()
 	>>> fht
-	<decitala.hash_table.FragmentHashTable 2301 fragments>
+	<decitala.hash_table.FragmentHashTable 2297 fragments>
 	>>> fht.datasets
 	['greek_foot']
 	>>> fht.custom_fragments
