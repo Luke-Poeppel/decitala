@@ -8907,9 +8907,13 @@
      <octave>4</octave>
     </pitch>
     <duration>64</duration>
+    <tie type="start" />
     <instrument id="P1-I1" />
     <type>16th</type>
     <staff>1</staff>
+    <notations>
+     <tied type="start" orientation="under" />
+    </notations>
    </note>
    <note color="#000000" default-x="252">
     <chord />
@@ -8955,9 +8959,13 @@
      <octave>4</octave>
     </pitch>
     <duration>128</duration>
+    <tie type="stop" />
     <instrument id="P1-I1" />
     <type>eighth</type>
     <staff>1</staff>
+    <notations>
+     <tied type="stop" orientation="under" />
+    </notations>
    </note>
    <note color="#000000" default-x="15">
     <chord />

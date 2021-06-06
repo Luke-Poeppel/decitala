@@ -39,7 +39,6 @@ setup(
 		"more-itertools",
 		"music21>=6.5.0",
 		"numpy>=1.16.5",
-		"pandas",
 		"progress",
 		"pre-commit",
 		"pytest",

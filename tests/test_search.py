@@ -2,6 +2,8 @@ import os
 import doctest
 import pytest
 
+from collections import Counter
+
 from decitala import search, utils
 from decitala.fragment import GreekFoot, Decitala
 from decitala.hash_table import (
@@ -20,9 +22,13 @@ def fp1():
 def fp2():
 	return os.path.dirname(here) + "/tests/static/Shuffled_Transcription_2.xml"
 
-#@pytest.fixture
+@pytest.fixture
 def povel_essen_example():
 	return os.path.dirname(here) + "/tests/static/deut2290.krn"
+
+@pytest.fixture
+def liturgie_reduction():
+	return os.path.dirname(here) + "/databases/liturgie_reduction.xml"
 
 @pytest.fixture
 def s1_res(fp1):
@@ -144,11 +150,11 @@ def test_shuffled_I_path_with_slur_constraint(fp1):
 	assert fragments == expected_fragments
 	assert onset_ranges == expected_onset_ranges
 
-def test_povel_essen_dijkstra():#povel_essen_example):
+def test_povel_essen_dijkstra(povel_essen_example):
 	custom_ght = GreekFootHashTable()
 	custom_ght.load(allow_stretch_augmentation=False)
 	path = search.path_finder(
-		filepath=povel_essen_example(),
+		filepath=povel_essen_example,
 		part_num=0,
 		table=custom_ght,
 		allow_subdivision=False,
@@ -169,4 +175,24 @@ def test_rolling_search_on_array():
 	windows = [2, 3]
 	found = search.rolling_search_on_array(ql_array=example_fragment, table=ght, windows=windows)
 	assert len(found) == 9
+
+def test_found_liturgie_fragments(liturgie_reduction):
+	path = search.rolling_hash_search(
+		filepath=liturgie_reduction,
+		part_num=0,
+		table=DecitalaHashTable(),
+		allow_subdivision=True,
+	)
+	fragments = [x.fragment for x in path]
+	counted = Counter(fragments)
+
+	new_path = []
+	for x in path:
+		if x.fragment in {Decitala("Ragavardhana"), Decitala("Lakskmica"), Decitala("Candrakala")}:
+			print(x.fragment, x.onset_range)
+			new_path.append(x)#(x.fragment, x.onset_range)
+
+	assert counted[Decitala("Ragavardhana")] == 10
+	assert counted[Decitala("Candrakala")] == 10
+	assert counted[Decitala("Lakskmica")] == 9
 
