@@ -8,6 +8,55 @@
 #
 # Location: NYC, 2021
 ####################################################################################################
+class CostFunction:
+	"""
+	Arbitrary cost function to use in the cost functions. The user should set weights as class
+	attributes that are referenced in the cost function (which the user must override), if needed.
+	If set, the weights should (probably) sum to 1.
+
+	The following is a cost function that doesn't rely on any weights.
+	>>> class MyFirstCostFunction(CostFunction):
+	>>> 	def cost(self, vertex_a, vertex_b):
+	>>> 		'''Cost function determined by the sum of the two extractions standard deviations.'''
+	>>> 		return vertex_a.std() + vertex_b.std()
+
+	The following is a cost function that relies on three weights summing to 1.
+	>>> class MySecondCostFunction(CostFunction):
+	>>> 	weight_a = 0.4213
+	>>> 	weight_b = 0.2599
+	>>> 	weight_c = 0.3188
+	>>> 	def cost(self, vertex_a, vertex_b):
+	>>> 		'''Cost function determined by the sum of the two extractions standard deviations.'''
+	>>> 		first_term = ((weight_a * vertex_a.num_onsets) + weight_b)
+	>>> 		second_term = ((weight_a * vertex_b.num_onsets) + weight_b)
+	>>> 		return first_term + second_term
+	"""
+	def cost(self, vertex_a, vertex_b):
+		"""
+		This function must be overrided by child classes. Cost function between two
+		:obj:`decitala.search.Extraction`: objects.
+
+		:param :obj:`decitala.search.Extraction` vertex_1: An extraction object from a composition.
+		:param :obj:`decitala.search.Extraction` vertex_2: A second extraction object from a composition.
+		:return: The cost of moving from ``vertex_1`` to ``vertex_2``.
+		:rtype: float
+		"""
+		raise NotImplementedError
+
+class DefaultCostFunction(CostFunction):
+	"""
+	Default cost function used in the path-finding algorithms. Weights optimized by
+	hyperparameter search.
+	"""
+	gap_weight = 0.75
+	onset_weight = 0.25
+
+	def cost(self, vertex_1, vertex_2):
+		gap = vertex_2.onset_range[0] - vertex_1.onset_range[1]
+		onsets = 1 / (vertex_1.fragment.num_onsets + vertex_2.fragment.num_onsets)
+		cost = (self.gap_weight * gap) + (self.onset_weight * onsets)
+		return cost
+
 def cost(
 		vertex_1,
 		vertex_2,
@@ -16,13 +65,7 @@ def cost(
 	"""
 	Cost function used in the path finding algorithms.
 
-	:param dict vertex_1: A dictionary holding (at least) a :obj:`~decitala.fragment.GeneralFragment`
-							object, as well as an ``onset_range``.
-	:param dict vertex_2: A dictionary holding (at least) a :obj:`~decitala.fragment.GeneralFragment`
-							object, as well as an ``onset_range``.
-	:param dict weights: weights used in the model. Must sum to 1. Requires "gap" and "onsets" values.
-	:return: The cost of moving from ``vertex_1`` to ``vertex_2``.
-	:rtype: float
+
 	"""
 	gap = vertex_2.onset_range[0] - vertex_1.onset_range[1]
 	onsets = 1 / (vertex_1.fragment.num_onsets + vertex_2.fragment.num_onsets)
