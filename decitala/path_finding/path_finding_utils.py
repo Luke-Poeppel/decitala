@@ -15,21 +15,22 @@ class CostFunction:
 	If set, the weights should (probably) sum to 1.
 
 	The following is a cost function that doesn't rely on any weights.
-	>>> class MyFirstCostFunction(CostFunction):
-	>>> 	def cost(self, vertex_a, vertex_b):
-	>>> 		'''Cost function determined by the sum of the two extractions standard deviations.'''
-	>>> 		return vertex_a.std() + vertex_b.std()
 
-	The following is a cost function that relies on three weights summing to 1.
+	>>> class MyFirstCostFunction(CostFunction):
+	... 	def cost(self, vertex_a, vertex_b):
+	... 		'''Cost function determined by the sum of the two extractions standard deviations.'''
+	... 		return vertex_a.std() + vertex_b.std()
+
+	# The following is a cost function that relies on three weights summing to 1.
 	>>> class MySecondCostFunction(CostFunction):
-	>>> 	weight_a = 0.4213
-	>>> 	weight_b = 0.2599
-	>>> 	weight_c = 0.3188
-	>>> 	def cost(self, vertex_a, vertex_b):
-	>>> 		'''Cost function determined by the sum of the two extractions standard deviations.'''
-	>>> 		first_term = ((weight_a * vertex_a.num_onsets) + weight_b)
-	>>> 		second_term = ((weight_a * vertex_b.num_onsets) + weight_b)
-	>>> 		return first_term + second_term
+	... 	weight_a = 0.4213
+	... 	weight_b = 0.2599
+	... 	weight_c = 0.3188
+	... 	def cost(self, vertex_a, vertex_b):
+	... 		'''Cost function determined by the sum of the two extractions standard deviations.'''
+	... 		first_term = ((weight_a * vertex_a.num_onsets) + weight_b)
+	... 		second_term = ((weight_a * vertex_b.num_onsets) + weight_b)
+	... 		return first_term + second_term
 	"""
 	def cost(self, vertex_a, vertex_b):
 		"""
@@ -64,8 +65,6 @@ def cost(
 	):
 	"""
 	Cost function used in the path finding algorithms.
-
-
 	"""
 	gap = vertex_2.onset_range[0] - vertex_1.onset_range[1]
 	onsets = 1 / (vertex_1.fragment.num_onsets + vertex_2.fragment.num_onsets)
