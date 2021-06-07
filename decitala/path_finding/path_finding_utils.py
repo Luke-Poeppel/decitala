@@ -53,7 +53,7 @@ class DefaultCostFunction(CostFunction):
 	onset_weight = 0.25
 
 	def cost(self, vertex_a, vertex_b):
-		gap = vertex_a.onset_range[0] - vertex_b.onset_range[1]
+		gap = vertex_b.onset_range[0] - vertex_a.onset_range[1]
 		onsets = 1 / (vertex_a.fragment.num_onsets + vertex_b.fragment.num_onsets)
 		cost = (self.gap_weight * gap) + (self.onset_weight * onsets)
 		return cost

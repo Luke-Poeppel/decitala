@@ -52,6 +52,7 @@ def test_dijkstra_path_1(s1_fragments):
 	]
 	assert set(x.fragment for x in path_frags) == set(expected_fragments)
 
+
 def test_dijkstra_path_2(s3_fragments):
 	expected_fragments = [GreekFoot("Anapest"), GreekFoot("Choriamb")]
 	expected_onset_ranges = [(0.0, 0.5), (0.5, 1.25)]
