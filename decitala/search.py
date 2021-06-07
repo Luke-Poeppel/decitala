@@ -285,7 +285,7 @@ def path_finder(
 		allow_subdivision=False,
 		allow_contiguous_summation=False,
 		algorithm="dijkstra",
-		weights={"gap": 0.75, "onsets": 0.25},
+		cost_function_class=path_finding_utils.CostFunction(),
 		slur_constraint=False,
 		save_filepath=None,
 		verbose=False
@@ -325,7 +325,7 @@ def path_finder(
 	if algorithm.lower() == "dijkstra":
 		if slur_constraint:
 			raise SearchException("This is not yet supported. Coming soon.")
-		source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=fragments, weights=weights) # noqa
+		source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=fragments) # noqa
 		best_path = dijkstra.generate_path(
 			best_pred,
 			source,
@@ -336,10 +336,6 @@ def path_finder(
 		best_source, best_sink = path_finding_utils.best_source_and_sink(fragments)
 		distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
 			fragments,
-			weights={
-				"gap": 0.75,
-				"onsets": 0.25
-			},
 			verbose=verbose
 		)
 		best_path = floyd_warshall.get_path(

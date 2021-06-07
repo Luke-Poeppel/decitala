@@ -58,7 +58,7 @@ class DefaultCostFunction(CostFunction):
 		cost = (self.gap_weight * gap) + (self.onset_weight * onsets)
 		return cost
 
-def build_graph(data, cost_function_class):
+def build_graph(data, cost_function_class=DefaultCostFunction()):
 	"""
 	Function for building a "graph" of nodes and edges from a given set of data (each
 	vertex of the form as those required in the cost function) extracted from one of the
