@@ -6,7 +6,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 ## [v0.13.0](https://github.com/Luke-Poeppel/decitala/tree/v0.13.0) ???
 #### Added
 - All results from `search.rolling_hash_search` are now stored as `Extraction` dataclasses. This new approach greatly simplifies the inconsistent dictionary-style search results. Also removes the need to store `frag_type`s in the hash tables. 
-- WIP: Added a `CostFunction` class to `decitala.path_finding_utils`. This cost function class is to be used as an input to `path_finder` and `dijkstra` (eventually to be added to Floyd-Warshall, as well), replacing the previously used `weights` parameter. This addition allows the user to input any cost function they like (see #152). 
+- Added a `CostFunction` class to `decitala.path_finding_utils`. This cost function class is to be used as an input to `path_finder` and `dijkstra` (and `floyd_warshall`, as well), replacing the previously used `weights` dictionaries. This addition allows the user to input any cost function they like (see PR#152). 
 - Added three functions to `fragment` for querying the fragment database for each fragment type: `get_all_greek_feet`, `get_all_decitalas`, and `get_all_prosodic_fragments`. 
 - Added `rolling_SRR` function to utils. 
 - Added `decitala.extra` module where miscellaneous scripts will be stored. Currently, it's holding a script for computing hyperparameters (`decitala.extra.hyperparameters`) and the formerly hidden script for remaking analysis files. 
