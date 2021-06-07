@@ -15,21 +15,19 @@ import numpy as np
 from progress.bar import Bar
 
 from ..utils import get_logger
-from .path_finding_utils import cost
+from .path_finding_utils import DefaultCostFunction
 
 logger = get_logger(name=__name__, print_to_console=True)
 
 def floyd_warshall(
 		data,
-		weights,
+		cost_function_class=DefaultCostFunction(),
 		verbose=False
 	):
 	"""
 	Calculates the distance and next matrices of the Floyd-Warshall path-finding algorithm.
 
 	:param list data: Data from :obj:`~decitala.search.rolling_search`.
-	:param dict weights: Weights to be used in the cost function. Must sum to 1. Requires "gap"
-			and "onsets" values.
 	:param bool verbose: Whether to log messages (including showing a progress bar).
 	:return: Two matrices of size len(data) x len(data): first is the weighted adjacency matrix, the
 			second is the matrix used for path reconstruction.
@@ -52,7 +50,7 @@ def floyd_warshall(
 		else:
 			index_1 = iterator.multi_index[0]
 			index_2 = iterator.multi_index[1]
-			cost_ = cost(data[index_1], data[index_2], weights)
+			cost_ = cost_function_class.cost(vertex_a=data[index_1], vertex_b=data[index_2])
 			if cost_ < 0:
 				dist_matrix[iterator.multi_index] = np.inf
 				next_matrix[iterator.multi_index] = None

@@ -8,28 +8,57 @@
 #
 # Location: NYC, 2021
 ####################################################################################################
-def cost(
-		vertex_1,
-		vertex_2,
-		weights
-	):
+class CostFunction:
 	"""
-	Cost function used in the path finding algorithms.
+	Arbitrary cost function to use in the cost functions. The user should set weights as class
+	attributes that are referenced in the cost function (which the user must override), if needed.
+	If set, the weights should (probably) sum to 1.
 
-	:param dict vertex_1: A dictionary holding (at least) a :obj:`~decitala.fragment.GeneralFragment`
-							object, as well as an ``onset_range``.
-	:param dict vertex_2: A dictionary holding (at least) a :obj:`~decitala.fragment.GeneralFragment`
-							object, as well as an ``onset_range``.
-	:param dict weights: weights used in the model. Must sum to 1. Requires "gap" and "onsets" values.
-	:return: The cost of moving from ``vertex_1`` to ``vertex_2``.
-	:rtype: float
+	The following is a cost function that doesn't rely on any weights.
+
+	>>> class MyFirstCostFunction(CostFunction):
+	... 	def cost(self, vertex_a, vertex_b):
+	... 		'''Cost function determined by the sum of the two extractions standard deviations.'''
+	... 		return vertex_a.std() + vertex_b.std()
+
+	# The following is a cost function that relies on three weights summing to 1.
+	>>> class MySecondCostFunction(CostFunction):
+	... 	weight_a = 0.4213
+	... 	weight_b = 0.2599
+	... 	weight_c = 0.3188
+	... 	def cost(self, vertex_a, vertex_b):
+	... 		'''Cost function determined by the sum of the two extractions standard deviations.'''
+	... 		first_term = ((weight_a * vertex_a.num_onsets) + weight_b)
+	... 		second_term = ((weight_a * vertex_b.num_onsets) + weight_b)
+	... 		return first_term + second_term
 	"""
-	gap = vertex_2.onset_range[0] - vertex_1.onset_range[1]
-	onsets = 1 / (vertex_1.fragment.num_onsets + vertex_2.fragment.num_onsets)
-	cost = (weights["gap"] * gap) + (weights["onsets"] * onsets)
-	return cost
+	def cost(self, vertex_a, vertex_b):
+		"""
+		This function must be overrided by child classes. Cost function between two
+		:obj:`decitala.search.Extraction`: objects.
 
-def build_graph(data, weights):
+		:param :obj:`decitala.search.Extraction` vertex_1: An extraction object from a composition.
+		:param :obj:`decitala.search.Extraction` vertex_2: A second extraction object from a composition.
+		:return: The cost of moving from ``vertex_1`` to ``vertex_2``.
+		:rtype: float
+		"""
+		raise NotImplementedError
+
+class DefaultCostFunction(CostFunction):
+	"""
+	Default cost function used in the path-finding algorithms. Weights optimized by
+	hyperparameter search.
+	"""
+	gap_weight = 0.75
+	onset_weight = 0.25
+
+	def cost(self, vertex_a, vertex_b):
+		gap = vertex_b.onset_range[0] - vertex_a.onset_range[1]
+		onsets = 1 / (vertex_a.fragment.num_onsets + vertex_b.fragment.num_onsets)
+		cost = (self.gap_weight * gap) + (self.onset_weight * onsets)
+		return cost
+
+def build_graph(data, cost_function_class=DefaultCostFunction()):
 	"""
 	Function for building a "graph" of nodes and edges from a given set of data (each
 	vertex of the form as those required in the cost function) extracted from one of the
@@ -48,11 +77,11 @@ def build_graph(data, weights):
 			if other == curr:
 				continue
 
-			# Check here, not `cost()`, as then we don't need to instantiate a fragment object.
+			# Check here, not in cost function, as then we don't need to instantiate a fragment object.
 			elif curr.onset_range[1] > other.onset_range[0]:
 				continue
 
-			edge = cost(curr, other, weights)
+			edge = cost_function_class.cost(vertex_a=curr, vertex_b=other)
 			if edge < 0:  # Just in case.
 				continue
 
