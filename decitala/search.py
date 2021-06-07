@@ -325,7 +325,10 @@ def path_finder(
 	if algorithm.lower() == "dijkstra":
 		if slur_constraint:
 			raise SearchException("This is not yet supported. Coming soon.")
-		source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=fragments) # noqa
+		source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(
+			data=fragments,
+			cost_function_class=cost_function_class
+		)
 		best_path = dijkstra.generate_path(
 			best_pred,
 			source,

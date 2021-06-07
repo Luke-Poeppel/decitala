@@ -32,6 +32,9 @@ class CostFunction:
 	... 		second_term = ((weight_a * vertex_b.num_onsets) + weight_b)
 	... 		return first_term + second_term
 	"""
+	def __init__(self, **kwargs):
+		self.__dict__.update(kwargs)
+
 	def cost(self, vertex_a, vertex_b):
 		"""
 		This function must be overrided by child classes. Cost function between two
@@ -49,8 +52,9 @@ class DefaultCostFunction(CostFunction):
 	Default cost function used in the path-finding algorithms. Weights optimized by
 	hyperparameter search.
 	"""
-	gap_weight = 0.75
-	onset_weight = 0.25
+	def __init__(self, gap_weight=0.75, onset_weight=0.25):
+		self.gap_weight = gap_weight  # Theoretically I shouldn't have to set these...
+		self.onset_weight = onset_weight
 
 	def cost(self, vertex_a, vertex_b):
 		gap = vertex_b.onset_range[0] - vertex_a.onset_range[1]
