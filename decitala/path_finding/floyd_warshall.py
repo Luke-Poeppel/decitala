@@ -87,7 +87,7 @@ def reconstruct_standard_path(
 		end
 	):
 	path = [start]
-	if end["onset_range"][0] <= start["onset_range"][-1]:
+	if end.onset_range[0] <= start.onset_range[-1]:
 		return path
 
 	while start != end:
