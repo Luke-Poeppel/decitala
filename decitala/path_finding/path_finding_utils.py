@@ -159,3 +159,25 @@ def make_3D_grid(resolution):
 					combos.append(collection)
 
 	return combos
+
+def make_4D_grid(resolution):
+	"""
+	Function for generating a grid of four numbers that sum to 1, iterated over the given resolution.
+
+	:param float resolution: resolution of the grid, $0 < x <= 1$.
+	"""
+	spaces = []
+	for i in range(4):
+		parameter_space = np.array([round(x, 3) for x in np.linspace(0, 1, int(1 / resolution) + 1)])
+		spaces.append(parameter_space)
+
+	combos = []
+	for param_a in spaces[0]:
+		for param_b in spaces[1]:
+			for param_c in spaces[2]:
+				for param_d in spaces[3]:
+					collection = [param_a, param_b, param_c, param_d]
+					if sum(collection) == 1.0:
+						combos.append(collection)
+
+	return combos
