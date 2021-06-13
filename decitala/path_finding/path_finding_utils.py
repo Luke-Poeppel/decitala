@@ -139,6 +139,26 @@ def best_source_and_sink(data):
 
 	return curr_best_source, curr_best_sink
 
+def make_2D_grid(resolution):
+	"""
+	Function for generating a grid of two numbers that sum to 1, iterated over the given resolution.
+
+	:param float resolution: resolution of the grid, $0 < x <= 1$.
+	"""
+	spaces = []
+	for i in range(2):
+		parameter_space = np.array([round(x, 3) for x in np.linspace(0, 1, int(1 / resolution) + 1)])
+		spaces.append(parameter_space)
+
+	combos = []
+	for param_a in spaces[0]:
+		for param_b in spaces[1]:
+			collection = [param_a, param_b]
+			if sum(collection) == 1.0:
+				combos.append(collection)
+
+	return combos
+
 def make_3D_grid(resolution):
 	"""
 	Function for generating a grid of three numbers that sum to 1, iterated over the given resolution.

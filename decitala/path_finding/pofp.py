@@ -43,8 +43,8 @@ def check_break_point(data, i):
 	"""
 	check = []
 	for this_data in data[0:i]:
-		range_data = this_data["onset_range"]
-		if data[i]["onset_range"][0] >= range_data[0] and data[i]["onset_range"][0] >= range_data[1]:
+		range_data = this_data.onset_range
+		if data[i].onset_range[0] >= range_data[0] and data[i].onset_range[0] >= range_data[1]:
 			check.append(1)
 		else:
 			check.append(0)
@@ -123,7 +123,7 @@ def _min_successor_to_elem(elem, all_min_successors):
 	{'fragment': 'info6', 'mod': ('r', 1.0), 'onset_range': (4.0, 5.5), 'id': 6}
 	"""
 	for data in all_min_successors:
-		if data[0]["id"] == elem["id"]:
+		if data[0].id_ == elem.id_:
 			return data[1]
 
 def get_pareto_optimal_longest_paths(data):
@@ -166,23 +166,23 @@ def get_pareto_optimal_longest_paths(data):
 	{'fragment': <fragment.GeneralFragment cs-test2: [0.25  0.125]>, 'mod': ('cs', 2.0), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], 'id': 4}
 	-----
 	"""
-	sources = [x for x in data if not any(y["onset_range"][1] <= x["onset_range"][0] for y in data)]
-	sinks = [x for x in data if not any(x["onset_range"][1] <= y["onset_range"][0] for y in data)]
+	sources = [x for x in data if not any(y.onset_range[1] <= x.onset_range[0] for y in data)]
+	sinks = [x for x in data if not any(x.onset_range[1] <= y.onset_range[0] for y in data)]
 
-	all_ids = [x["id"] for x in data]
-	sink_ids = [x["id"] for x in sinks]
+	all_ids = [x.id_ for x in data]
+	sink_ids = [x.id_ for x in sinks]
 	remaining = set(all_ids) - set(sink_ids)
-	filtered_data = [x for x in data if x["id"] in remaining]
+	filtered_data = [x for x in data if x.id_ in remaining]
 
 	min_successors = []
 	for x in filtered_data:
-		candidates = [y for y in data if y["onset_range"][0] >= x["onset_range"][1]] # noqa and y["onset_range"] != x["onset_range"]]  
-		min_successor = min(candidates, key=lambda x: x["onset_range"][0])
+		candidates = [y for y in data if y.onset_range[0] >= x.onset_range[1]] # noqa and y["onset_range"] != x["onset_range"]]  
+		min_successor = min(candidates, key=lambda x: x.onset_range[0])
 		min_successors.append([x, min_successor])
 
 	successors = []
 	for x in data:
-		successor = [y for y in data if x["onset_range"][1] <= y["onset_range"][0] <= y["onset_range"][1] and y["onset_range"][0] < _min_successor_to_elem(x, min_successors)["onset_range"][1]] # noqa
+		successor = [y for y in data if x.onset_range[1] <= y.onset_range[0] <= y.onset_range[1] and y.onset_range[0] < _min_successor_to_elem(x, min_successors).onset_range[1]] # noqa
 		successors.append([x, successor])
 
 	def print_path_rec(node, path):
@@ -209,7 +209,7 @@ def get_pareto_optimal_longest_paths(data):
 		new_path = []
 		for this_range in this_path:
 			for this_data in data:
-				if this_range == this_data["onset_range"]:
+				if this_range == this_data.onset_range:
 					new_path.append([this_data, this_range])
 					continue
 		stupid_out.append(new_path)
