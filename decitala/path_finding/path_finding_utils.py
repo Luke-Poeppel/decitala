@@ -55,7 +55,7 @@ class DefaultCostFunction(CostFunction):
 	hyperparameter search.
 	"""
 	def __init__(self, gap_weight=0.75, onset_weight=0.25):
-		self.gap_weight = gap_weight  # Theoretically I shouldn't have to set these...
+		self.gap_weight = gap_weight
 		self.onset_weight = onset_weight
 
 	def cost(self, vertex_a, vertex_b):
@@ -109,6 +109,7 @@ def sources_and_sinks(data):
 
 def best_source_and_sink(data):
 	"""
+	TODO: this is bad. I should be using the agnostic approach of Dijkstra here.
 	Calculates the "best" source and sink from a dataset based on two simple heuristics: (1) the
 	fragment with the earliest (or latest, for sink) starting point, (2) the fragment with the
 	greatest number of onsets.

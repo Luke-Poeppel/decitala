@@ -338,7 +338,8 @@ def path_finder(
 	elif algorithm.lower() == "floyd-warshall":
 		best_source, best_sink = path_finding_utils.best_source_and_sink(fragments)
 		distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
-			fragments,
+			data=fragments,
+			cost_function_class=cost_function_class,
 			verbose=verbose
 		)
 		best_path = floyd_warshall.get_path(
