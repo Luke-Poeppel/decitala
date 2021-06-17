@@ -7,8 +7,11 @@
 # Location: Kent, 2020 / Frankfurt, 2020
 ####################################################################################################
 import os
-import treeplotter
 
+from treeplotter.tree import (
+	Node,
+	Tree
+)
 from wand.image import Image
 
 from .fragment import (
@@ -53,7 +56,7 @@ class KDTree:
 	def __init__(self):
 		pass
 
-class FragmentTree(treeplotter.tree.Tree):
+class FragmentTree(Tree):
 	"""
 	NaryTree that holds multiplicative or additive representations of a rhythmic dataset.
 
@@ -111,14 +114,14 @@ class FragmentTree(treeplotter.tree.Tree):
 		self.sorted_data = sorted(self.data, key=lambda x: len(x.ql_array()))
 
 		if self.rep_type == "ratio":
-			root_node = treeplotter.tree.Node(value=1.0, name="ROOT")
+			root_node = Node(value=1.0, name="ROOT")
 			for this_fragment in self.sorted_data:
 				path = list(this_fragment.successive_ratio_array())
 				root_node.add_path_of_children(path=path, final_node_name=this_fragment)
 			self.root = root_node
 
 		if self.rep_type == "difference":
-			root_node = treeplotter.tree.Node(value=0.0, name="ROOT")
+			root_node = Node(value=0.0, name="ROOT")
 			for this_fragment in self.sorted_data:
 				path = list(this_fragment.successive_difference_array())
 				root_node.add_path_of_children(path=path, final_node_name=this_fragment)
