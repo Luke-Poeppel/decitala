@@ -12,6 +12,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added `decitala.extra` module where miscellaneous scripts will be stored. Currently, it's holding a script for computing hyperparameters (`decitala.extra.hyperparameters`) and the formerly hidden script for remaking analysis files. 
 
 #### Changed
+- WIP: All tree creation has migrated to the [treeplotter](https://github.com/Luke-Poeppel/treeplotter) package. 
 - Greatly simplified the logic in `successive_ratio_array` and `successive_difference_array` using numpy. 
 
 #### Fixed
