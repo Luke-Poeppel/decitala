@@ -551,7 +551,7 @@ def get_by_ql_array(
 			search = search_tree.search_for_path(search_ql_array, allow_unnamed)
 
 		if search is not None:
-			fragment = search
+			fragment = search.name
 			change = config._get_modification_data(fragment, curr_modification)
 			break
 		else:
