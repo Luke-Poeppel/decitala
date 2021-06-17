@@ -22,6 +22,7 @@ from decitala import (
 	search,
 	utils,
 )
+from decitala.path_finding import path_finding_utils
 from decitala.hash_table import (
 	GreekFootHashTable,
 	DecitalaHashTable,
@@ -29,14 +30,11 @@ from decitala.hash_table import (
 )
 
 from moiseaux.db import (
-	Transcription,
 	get_all_transcriptions
 )
 
 INTERACTIVE = False
 mpl.style.use("bmh")
-
-ex26 = Transcription("Ex26")
 
 ####################################################################################################
 # Annotated works.
@@ -45,12 +43,12 @@ liturgie_path = "/Users/lukepoeppel/Messiaen/Encodings/Messiaen_Qt/Messiaen_I_Li
 livre_dorgue_path = "/Users/lukepoeppel/Messiaen/Encodings/Livre_d\'Orgue/V_Piece_En_Trio_Corrected.xml" # noqa
 
 compositions = {
-	"sept_haïkaï_0": {
+	"sept_haikai_0": {
 		"filepath": sept_haikai_path,
 		"part_num": 0,
 		"training_data": utils.loader("/Users/lukepoeppel/decitala/databases/analyses/sept_haïkaï_0_analysis.json") # noqa
 	},
-	"sept_haïkaï_1": {
+	"sept_haikai_1": {
 		"filepath": sept_haikai_path,
 		"part_num": 1,
 		"training_data": utils.loader("/Users/lukepoeppel/decitala/databases/analyses/sept_haïkaï_1_analysis.json") # noqa
@@ -71,6 +69,27 @@ compositions = {
 		"training_data": utils.loader("/Users/lukepoeppel/decitala/databases/analyses/livre_dorgue_1_analysis.json") # noqa
 	},
 }
+
+####################################################################################################
+# Cost functions and Misc.
+# class CostFunction3D(CostFunction):
+# 	def __init__(self, gap_weight, onset_weight, recycle_weight):
+# 		self.gap_weight = gap_weight
+# 		self.onset_weight = onset_weight
+# 		self.recycle_weight = recycle_weight
+
+# 	def cost(self, vertex_a, vertex_b):
+# 		gap = vertex_b.onset_range[0] - vertex_a.onset_range[1]
+# 		onsets = 1 / (vertex_a.fragment.num_onsets + vertex_b.fragment.num_onsets)
+# 		recycle = 0
+# 		if vertex_a.fragment == vertex_b.fragment:
+# 			# jitter term found by hyper-hyperparameter search.
+# 			recycle -= 0.08 # Decrease cost if fragment is identical. Favor repetition. # jitter term
+# 		else:
+# 			recycle += 1.84 # Increase cost if different fragment.
+
+# 		cost = (self.gap_weight * gap) + (self.onset_weight * onsets) + (self.recycle_weight * recycle)
+# 		return cost
 
 ####################################################################################################
 # Accuracy checking.
@@ -96,7 +115,7 @@ def check_accuracy(training_data, calculated_data, mode):
 # Running on Compositions
 def run_on_all_compositions(
 		frag_type,
-		resolution
+		resolution,
 	):
 	# Useful if writing to a file.
 	date = datetime.today().strftime("%m-%d-%Y")
@@ -145,7 +164,8 @@ def run_on_all_compositions(
 # Running on Transcriptions.
 def run_on_all_analyzed_transcriptions(
 		frag_type,
-		resolution
+		resolution,
+		cost_function_class
 	):
 	date = datetime.today().strftime("%m-%d-%Y")
 
@@ -177,7 +197,10 @@ def run_on_all_analyzed_transcriptions(
 				part_num=0,
 				table=hash_table,
 				allow_subdivision=True,
-				weights={"gap": gap_weight, "onsets": onset_weight}
+				cost_function=path_finding_utils.DefaultCostFunction(
+					gap_weight=gap_weight,
+					onset_weight=onset_weight
+				)
 			)
 
 			training_data = transcription.analysis
@@ -190,6 +213,65 @@ def run_on_all_analyzed_transcriptions(
 	filepath = f"/Users/lukepoeppel/decitala/decitala/extra/{date}_transcription_hyperparameters_{resolution}_{frag_type}.json" # noqa
 	with open(filepath, "w") as fp:
 		json.dump(obj=all_results, fp=fp, ensure_ascii=False, indent=4)
+
+def run_on_all_analyzed_transcriptions_3D_cost(
+		frag_type,
+		resolution,
+	):
+	date = datetime.today().strftime("%m-%d-%Y")
+
+	logger = utils.get_logger(
+		name=__name__,
+		print_to_console=True,
+	)
+	logger.info(f"Running Dijkstra on the Compositions (with the {frag_type} corpus) at a resolution of {resolution}.") # noqa
+
+	if frag_type == "greek_foot":
+		hash_table = GreekFootHashTable()
+	elif frag_type == "decitala":
+		hash_table = DecitalaHashTable()
+	elif frag_type == "combined":
+		hash_table = AllCorporaHashTable()
+
+	GRID_3D = path_finding_utils.make_3D_grid(resolution=resolution)
+	all_results = dict()
+	for transcription in get_all_transcriptions():
+		if transcription.analysis is None:
+			continue
+
+		transcription_results = dict()
+		for combo in GRID_3D:
+			gap_weight = combo[0]
+			onset_weight = combo[1]
+			recycle_weight = combo[2]
+			logger.info("\nRunning Dijkstra for ({0}, {1}, {2}).".format(
+				gap_weight,
+				onset_weight,
+				recycle_weight
+			))
+			path = search.path_finder(
+				filepath=transcription.filepath,
+				part_num=0,
+				table=hash_table,
+				allow_subdivision=True,
+				cost_function_class=path_finding_utils.DefaultCostFunction(
+					gap_weight=gap_weight,
+					onset_weight=onset_weight,
+				)
+			)
+
+			training_data = transcription.analysis
+			accuracy = check_accuracy(training_data=training_data, calculated_data=path, mode="Transcriptions") # noqa
+			logger.info("{0} -> ({1}, {2}, {3}): {4}%".format(transcription, gap_weight, onset_weight, recycle_weight, accuracy)) # noqa
+			transcription_results[str((gap_weight, onset_weight))] = accuracy
+
+		all_results[transcription.name] = transcription_results
+
+	filepath = f"/Users/lukepoeppel/decitala/decitala/extra/{date}_transcription_hyperparameters_{resolution}_{frag_type}_3D_cost.json" # noqa
+	with open(filepath, "w") as fp:
+		json.dump(obj=all_results, fp=fp, ensure_ascii=False, indent=4)
+
+# run_on_all_analyzed_transcriptions_3D_cost(frag_type="greek_foot", resolution=0.1)
 
 ####################################################################################################
 # Plotting
@@ -223,6 +305,7 @@ def get_all_transcription_results(data_filepath):
 	for transcription in get_all_transcriptions():
 		if not(transcription.analysis):
 			continue
+
 		all_points.extend(get_individual_results("Transcriptions", transcription, data_filepath))
 
 	return all_points
@@ -231,7 +314,7 @@ def get_mean_and_std_by_gap_weight(weight, all_points):
 	results = []
 	for this_point in all_points:
 		if this_point[0] == weight:
-			results.append(this_point[2])
+			results.append(this_point[-1])
 
 	return [weight, np.mean(results), np.std(results)]
 
@@ -287,9 +370,14 @@ def plot_results(mode, data_filepath, resolution, title, save_path=False):
 
 	return plt
 
-# fp = "/Users/lukepoeppel/decitala/decitala/extra/06-06-2021_composition_hyperparameters_0.025_decitala.json" # noqa
+# # fp = "/Users/lukepoeppel/decitala/decitala/extra/06-06-2021_composition_hyperparameters_0.025_decitala.json" # noqa
 # fp = "/Users/lukepoeppel/decitala/decitala/extra/06-06-2021_transcription_hyperparameters_0.025_greek_foot.json" # noqa
-# print(plot_results(mode="Transcriptions", data_filepath=fp, resolution=0.025, title="Average Accuracy From Dijkstra Algorithm for Annotated Transcriptions").show()) # noqa
+# fp_3D_cost = "/Users/lukepoeppel/decitala/decitala/extra/06-07-2021_transcription_hyperparameters_0.1_greek_foot_3D_cost.json" # noqa
+# print(plot_results(mode="Transcriptions", data_filepath=fp_3D_cost, resolution=0.1, title="Average Accuracy From Dijkstra Algorithm for Annotated Transcriptions").show()) # noqa
+####################################################################################################
+# Testing
+
+# ex23 = Transcription("Ex23")
 
 
 if __name__ == "__main__":

@@ -88,7 +88,7 @@ def build_graph(data, cost_function_class=DefaultCostFunction()):
 				continue
 
 			edge = cost_function_class.cost(vertex_a=curr, vertex_b=other)
-			if edge < 0:  # Just in case.
+			if edge < 0:  # Just in case. Dijkstra edges must be negative.
 				continue
 
 			curr_edges.append((other.id_, edge))
