@@ -71,27 +71,6 @@ compositions = {
 }
 
 ####################################################################################################
-# Cost functions and Misc.
-# class CostFunction3D(CostFunction):
-# 	def __init__(self, gap_weight, onset_weight, recycle_weight):
-# 		self.gap_weight = gap_weight
-# 		self.onset_weight = onset_weight
-# 		self.recycle_weight = recycle_weight
-
-# 	def cost(self, vertex_a, vertex_b):
-# 		gap = vertex_b.onset_range[0] - vertex_a.onset_range[1]
-# 		onsets = 1 / (vertex_a.fragment.num_onsets + vertex_b.fragment.num_onsets)
-# 		recycle = 0
-# 		if vertex_a.fragment == vertex_b.fragment:
-# 			# jitter term found by hyper-hyperparameter search.
-# 			recycle -= 0.08 # Decrease cost if fragment is identical. Favor repetition. # jitter term
-# 		else:
-# 			recycle += 1.84 # Increase cost if different fragment.
-
-# 		cost = (self.gap_weight * gap) + (self.onset_weight * onsets) + (self.recycle_weight * recycle)
-# 		return cost
-
-####################################################################################################
 # Accuracy checking.
 def check_accuracy(training_data, calculated_data, mode):
 	"""

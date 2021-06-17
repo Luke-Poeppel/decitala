@@ -64,7 +64,7 @@ class DefaultCostFunction(CostFunction):
 		cost = (self.gap_weight * gap) + (self.onset_weight * onsets)
 		return cost
 
-class Cost3D(CostFunction):
+class CostFunction3D(CostFunction):
 	def __init__(
 			self,
 			gap_weight,
