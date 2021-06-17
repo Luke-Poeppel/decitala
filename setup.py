@@ -45,7 +45,6 @@ setup(
 		"treeplotter",
 		"unidecode",
 		"Wand",
-
 	],
 	extras_require={
 		"dev": [
