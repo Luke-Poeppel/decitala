@@ -33,22 +33,28 @@ setup(
 	package_data={"decitala": ["VERSION"]},
 	install_requires=[
 		"click",
-		"flake8",
 		"jsonpickle",
 		"matplotlib",
 		"more-itertools",
 		"music21>=6.5.0",
+		"natsort",
 		"numpy>=1.16.5",
 		"progress",
-		"pre-commit",
-		"pytest",
 		"sqlalchemy",
 		"scipy",
-		"sphinx_rtd_theme",
+		"treeplotter",
+		"unidecode",
 		"Wand",
-		"natsort",
-		"unidecode"
+
 	],
+	extras_require={
+		"dev": [
+			"flake8",
+			"pre-commit",
+			"pytest",
+			"sphinx_rtd_theme",
+		]
+	},
 	entry_points={
 		"console_scripts": [
 			"decitala = decitala.cli:decitala"
