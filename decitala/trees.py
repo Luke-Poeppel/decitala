@@ -73,7 +73,7 @@ class FragmentTree(Tree):
 	>>> ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
 	>>> ratio_tree
 	<trees.FragmentTree greek_foot_ratio: nodes=31>
-	>>> ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0])
+	>>> ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0]).name
 	<fragment.GreekFoot Peon_II>
 	>>> # We can also give it a name.
 	>>> g1 = GeneralFragment([1.0, 1.0, 1.0, 1.0, 1.0], name="myfragment")
@@ -83,11 +83,11 @@ class FragmentTree(Tree):
 	>>> mytree = FragmentTree(data = data, rep_type="difference", name="MyCoolTree")
 	>>> mytree
 	<trees.FragmentTree MyCoolTree: nodes=10>
-	>>> for path in mytree.all_named_paths():
-	...     print(path)
+	>>> for frag in sorted(mytree.all_named_paths(), key=lambda x: x.name):
+	...     print(frag)
 	<fragment.Decitala 93_Ragavardhana>
-	<fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]>
 	<fragment.GreekFoot Ionic_Major>
+	<fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]>
 	"""
 	def __init__(self, data, rep_type, name=None, **kwargs):
 		assert rep_type.lower() in ["ratio", "difference"], FragmentTreeException("The only possible rep_types are `ratio` and `difference`") # noqa
