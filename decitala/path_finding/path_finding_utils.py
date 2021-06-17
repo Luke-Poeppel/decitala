@@ -64,6 +64,28 @@ class DefaultCostFunction(CostFunction):
 		cost = (self.gap_weight * gap) + (self.onset_weight * onsets)
 		return cost
 
+class Cost3D(CostFunction):
+	def __init__(
+			self,
+			gap_weight,
+			onset_weight,
+			reuse_weight,
+		):
+		self.gap_weight = gap_weight
+		self.onset_weight = onset_weight
+		self.reuse_weight = reuse_weight
+
+	def cost(self, vertex_a, vertex_b):
+		gap = vertex_b.onset_range[0] - vertex_a.onset_range[1]
+		onsets = 1 / (vertex_a.fragment.num_onsets + vertex_b.fragment.num_onsets)
+
+		reuse = 0
+		if vertex_a.fragment != vertex_b.fragment:
+			reuse = vertex_a.fragment.num_onsets
+
+		cost = (self.reuse_weight * reuse) + (self.onset_weight * onsets) + (self.gap_weight * gap)
+		return cost
+
 def build_graph(data, cost_function_class=DefaultCostFunction()):
 	"""
 	Function for building a "graph" of nodes and edges from a given set of data (each
