@@ -163,7 +163,7 @@ def test_povel_essen_dijkstra(povel_essen_example):
 		slur_constraint=False
 	)
 	assert len(path) == 1
-	assert path[0].fragment == GreekFoot("Spondee")
+	assert path[0].fragment == GreekFoot("Tribrach") # see ms. 8-9.  
 
 def test_rolling_search_on_array():
 	ght = FragmentHashTable(

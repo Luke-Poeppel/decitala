@@ -88,14 +88,19 @@ def dijkstra_best_source_and_sink(
 
 	min_onset = min(sources, key=lambda x: x.onset_range[0]).onset_range[0]
 	max_onset = max(targets, key=lambda x: x.onset_range[1]).onset_range[1]
-	for source in sources:
-		if source.onset_range == (min_onset, max_onset) or _all_overlap(data):
-			dist, pred = dijkstra(
-				data,
-				source,
-				cost_function_class
-			)
-			return source, source, pred
+
+	if _all_overlap(data):
+		for possible_source in sources:
+			if possible_source.onset_range == (min_onset, max_onset):
+				dist, pred = dijkstra(
+					data,
+					possible_source,
+					cost_function_class
+				)
+				return possible_source, possible_source, pred
+
+		# otherwise choose the longest source.
+		return max(sources, key=lambda x: x.fragment.num_onsets)
 
 	best_path_cost = np.inf
 	best_source = None

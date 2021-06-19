@@ -11,7 +11,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added `rolling_SRR` function to utils. 
 - Added `decitala.extra` module where miscellaneous scripts will be stored. Currently, it's holding a script for computing hyperparameters (`decitala.extra.hyperparameters`) and the formerly hidden script for remaking analysis files. 
 - Added `decitala dtest --module` CLI tool for quickly running doctests (hindered by relative imports). Consequently removed the `tests/doctest_runner.py` file. 
-- Restructured the DB approach. Added a DB directory that will store all the database-related material. 
+- Restructured the DB approach. Added a `database` directory that will store all the database-related material. 
 
 #### Changed
 - All tree creation has migrated to the [treeplotter](https://github.com/Luke-Poeppel/treeplotter) package. Removed the Treant templates accordingly. 

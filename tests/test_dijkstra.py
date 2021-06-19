@@ -77,6 +77,5 @@ def test_dijkstra_path_3(s4_fragments):
 		target
 	)
 	path_frags = sorted([x for x in s4_fragments if x.id_ in best_path], key=lambda x: x.onset_range[0])
-
 	assert len(path_frags) == 1
 	assert path_frags[0].fragment == expected_fragment
