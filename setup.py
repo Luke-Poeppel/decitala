@@ -42,7 +42,7 @@ setup(
 		"progress",
 		"sqlalchemy",
 		"scipy",
-		"treeplotter",
+		"treeplotter==0.4.2",
 		"unidecode",
 		"Wand",
 	],
