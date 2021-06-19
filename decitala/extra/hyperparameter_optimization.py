@@ -64,6 +64,9 @@
 # 				calculated_data=path,
 # 				mode="Transcriptions"
 # 			)
+# 			logger.info(
+# 				"curr_accuracy: {}".format((accurate / total) * 100)
+# 			)
 # 			res.append((accurate, total))
 
 # 	total_accurate = sum([x[0] for x in res])
