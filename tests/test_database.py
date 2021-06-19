@@ -5,7 +5,7 @@ import uuid
 import doctest
 
 from decitala import database
-from decitala.database import (
+from decitala.database.database import (
 	create_database,
 	CompositionData,
 	ExtractionData,

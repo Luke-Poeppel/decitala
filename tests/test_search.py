@@ -46,10 +46,10 @@ def test_doctests():
 class TestRollingHashSearch:
 
 	def test_num_fragments(self, s1_res):
-		assert len(s1_res) == 18
+		assert len(s1_res) == 21
 
 	def test_id(self, s1_res):
-		assert s1_res[0].id_ == 12
+		assert s1_res[0].id_ == 6
 
 def test_frame_is_spanned_by_slur_a(fp1):
 	num_slurs = 0
@@ -122,9 +122,9 @@ class Test_Extraction:
 		assert extraction.id_ == 43
 
 # This also functions as an integration test with Floyd-Warshall. 
-def test_shuffled_I_path_with_slur_constraint(fp1):
+def test_shuffled_I_path_with_slur_constraint():#fp1):
 	path = search.path_finder(
-		filepath=fp1,
+		filepath=os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml",
 		part_num=0,
 		table=GreekFootHashTable(),
 		allow_subdivision=True,

@@ -285,7 +285,7 @@ def path_finder(
 		allow_subdivision=False,
 		allow_contiguous_summation=False,
 		algorithm="dijkstra",
-		cost_function_class=path_finding_utils.CostFunction(),
+		cost_function_class=path_finding_utils.DefaultCostFunction(),
 		slur_constraint=False,
 		save_filepath=None,
 		verbose=False
@@ -387,6 +387,7 @@ def rolling_search_on_array(
 	<fragment.GreekFoot Iamb>
 	<fragment.GreekFoot Amphibrach>
 	<fragment.GreekFoot Amphimacer>
+	<fragment.GreekFoot Diiamb>
 	"""
 	max_dataset_length = len(max(table.data, key=lambda x: len(x)))
 	max_window_size = min(max_dataset_length, len(ql_array))

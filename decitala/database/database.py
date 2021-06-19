@@ -25,8 +25,8 @@ from sqlalchemy.orm import (
 	backref,
 )
 
-from .search import rolling_hash_search
-from .utils import get_logger
+from ..search import rolling_hash_search
+from ..utils import get_logger
 
 Base = declarative_base()
 

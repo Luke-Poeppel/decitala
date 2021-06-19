@@ -25,9 +25,9 @@ from music21 import converter
 from music21 import note
 
 here = os.path.abspath(os.path.dirname(__file__))
-decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
-greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics/"
-prosody_path = os.path.dirname(here) + "/corpora/Prosody/"
+decitala_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Decitalas/"
+greek_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Greek_Metrics/"
+prosody_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Prosody/"
 
 Base = declarative_base()
 
@@ -77,7 +77,7 @@ class ProsodicFragmentData(Base):
 def _make_corpora_database(echo):
 	abspath_databases_directory = os.path.abspath("./databases/")
 	engine = get_engine(
-		filepath=os.path.join(abspath_databases_directory, "fragment_database.db"),
+		filepath=os.path.join(abspath_databases_directory, "FRAGMENT_DATABASE.db"),
 		echo=echo
 	)
 	session = get_session(engine=engine)

@@ -19,7 +19,7 @@ from decitala.fragment import (
 	GreekFoot,
 	ProsodicFragment
 )
-from decitala.corpora_models import (
+from decitala.database.corpora_models import (
 	get_engine,
 	get_session,
 	DecitalaData,

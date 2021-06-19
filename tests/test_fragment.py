@@ -19,8 +19,8 @@ here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
 greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics"
 
-# def test_doctests():
-# 	assert doctest.testmod(fragment, raise_on_error=True)
+def test_doctests():
+	assert doctest.testmod(fragment, raise_on_error=True)
 
 def test_general_fragment_encoder():
 	g1 = GeneralFragment(data=[1.0, 2.0, 3.0, 4.0, 5.0], name="longerrrr")

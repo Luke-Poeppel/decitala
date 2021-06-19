@@ -23,7 +23,7 @@ from .utils import (
 	roll_window,
 	get_object_indices,
 )
-from .corpora_models import (
+from .database.corpora_models import (
 	get_engine,
 	get_session,
 	DecitalaData,
@@ -72,7 +72,7 @@ class FragmentTree(Tree):
 
 	>>> ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
 	>>> ratio_tree
-	<trees.FragmentTree greek_foot_ratio: nodes=31>
+	<trees.FragmentTree greek_foot_ratio: nodes=36>
 	>>> ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0]).name
 	<fragment.GreekFoot Peon_II>
 	>>> # We can also give it a name.
@@ -135,9 +135,9 @@ class FragmentTree(Tree):
 
 	@classmethod
 	def from_frag_type(
-		cls,
-		frag_type,
-		rep_type
+			cls,
+			frag_type,
+			rep_type
 		):
 		"""
 		Create a fragment tree from the data in fragment_database.db in the databases directory.
