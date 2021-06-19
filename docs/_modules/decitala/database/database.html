@@ -1,0 +1,481 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>decitala.database.database &mdash; decitala 0.13.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.13.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/path_finding.html">path_finding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/vis.html">vis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic_usage.html">Basic Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">decitala</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>decitala.database.database</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for decitala.database.database</h1><div class="highlight"><pre>
+<span></span><span class="c1">####################################################################################################</span>
+<span class="c1"># File:     database.py</span>
+<span class="c1"># Purpose:  Data structure for creating and representing databases using sqlite.</span>
+<span class="c1">#</span>
+<span class="c1"># Author:   Luke Poeppel</span>
+<span class="c1">#</span>
+<span class="c1"># Location: Kent, CT 2020 / Frankfurt, DE 2020 / NYC, 2021</span>
+<span class="c1">####################################################################################################</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">Column</span><span class="p">,</span>
+	<span class="n">String</span><span class="p">,</span>
+	<span class="n">Float</span><span class="p">,</span>
+	<span class="n">Boolean</span><span class="p">,</span>
+	<span class="n">Integer</span><span class="p">,</span>
+	<span class="n">ForeignKey</span><span class="p">,</span>
+	<span class="n">create_engine</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.ext.declarative</span> <span class="kn">import</span> <span class="n">declarative_base</span>
+<span class="kn">from</span> <span class="nn">sqlalchemy.orm</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">sessionmaker</span><span class="p">,</span>
+	<span class="n">relationship</span><span class="p">,</span>
+	<span class="n">backref</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">..search</span> <span class="kn">import</span> <span class="n">rolling_hash_search</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">get_logger</span>
+
+<span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sqlite:////</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="n">echo</span><span class="p">)</span>
+	<span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">engine</span>
+
+<span class="k">def</span> <span class="nf">get_session</span><span class="p">(</span><span class="n">engine</span><span class="p">):</span>
+	<span class="n">Session</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+	<span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">session</span>
+
+<div class="viewcode-block" id="DatabaseException"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.database.DatabaseException">[docs]</a><span class="k">class</span> <span class="nc">DatabaseException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+	<span class="k">pass</span></div>
+
+<div class="viewcode-block" id="CompositionData"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.database.CompositionData">[docs]</a><span class="k">class</span> <span class="nc">CompositionData</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	SQLAlchemy model representing the basic composition data for a composition.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+
+<span class="sd">	:param str name: Name of the composition.</span>
+<span class="sd">	:param int part_num: Part number for the extraction.</span>
+<span class="sd">	:param str local_filepath: Local filepath for the searched composition.</span>
+
+<span class="sd">	TODO: could add a `search_constraint` column that stores a JSON of the rolling_search parameters.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;CompositionData&quot;</span>
+
+	<span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
+	<span class="n">part_num</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">local_filepath</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">part_num</span><span class="p">,</span> <span class="n">local_filepath</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">part_num</span> <span class="o">=</span> <span class="n">part_num</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">local_filepath</span> <span class="o">=</span> <span class="n">local_filepath</span></div>
+
+<span class="c1"># TODO: rename to `ExtractionData`</span>
+<div class="viewcode-block" id="ExtractionData"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.database.ExtractionData">[docs]</a><span class="k">class</span> <span class="nc">ExtractionData</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	SQLAlchemy model representing a fragment extracted from a composition.</span>
+
+<span class="sd">	Parameters</span>
+<span class="sd">	----------</span>
+
+<span class="sd">	:param float onset_start: Starting onset of the extracted fragment.</span>
+<span class="sd">	:param float onset_stop: Ending onset of the extracted fragment</span>
+<span class="sd">							(onset of final object + quarter length)</span>
+<span class="sd">	:param str fragment_type: Fragment type; options currently include</span>
+<span class="sd">							`decitala`, `greek_foot`, and `general_fragment`.</span>
+<span class="sd">	:param str name: Name of the fragment.</span>
+<span class="sd">	:param str mod_type: Modification type of the fragment.</span>
+<span class="sd">	:param float ratio: Ratio of the fragment&#39;s values to the values in the database.</span>
+<span class="sd">	:param float difference: Difference between the fragment&#39;s values to the values</span>
+<span class="sd">							in the database.</span>
+<span class="sd">	:param str pitch_content: Pitch content of the extracted fragment.</span>
+<span class="sd">	:param bool is_slurred: Whether the extracted fragment is spanned by a slur object.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;ExtractionData&quot;</span>
+
+	<span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="n">onset_start</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">)</span>
+	<span class="n">onset_stop</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">)</span>
+
+	<span class="c1"># TODO: just make this fragment with the JSON output from FragmentEncoder.</span>
+	<span class="n">fragment_type</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
+	<span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
+
+	<span class="n">mod_hierarchy_val</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">)</span>
+	<span class="n">ratio</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">)</span>
+	<span class="n">difference</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Float</span><span class="p">)</span>
+
+	<span class="n">pitch_content</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
+	<span class="n">is_slurred</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Boolean</span><span class="p">)</span>
+
+	<span class="n">composition_data_id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;CompositionData.id&quot;</span><span class="p">))</span>
+	<span class="n">composition_data</span> <span class="o">=</span> <span class="n">relationship</span><span class="p">(</span><span class="s2">&quot;CompositionData&quot;</span><span class="p">,</span> <span class="n">backref</span><span class="o">=</span><span class="n">backref</span><span class="p">(</span><span class="s2">&quot;composition_data&quot;</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+			<span class="bp">self</span><span class="p">,</span>
+			<span class="n">onset_start</span><span class="p">,</span>
+			<span class="n">onset_stop</span><span class="p">,</span>
+			<span class="n">fragment_type</span><span class="p">,</span>
+			<span class="n">name</span><span class="p">,</span>
+			<span class="n">mod_hierarchy_val</span><span class="p">,</span>
+			<span class="n">ratio</span><span class="p">,</span>
+			<span class="n">difference</span><span class="p">,</span>
+			<span class="n">pitch_content</span><span class="p">,</span>
+			<span class="n">is_slurred</span><span class="p">,</span>
+		<span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">onset_start</span> <span class="o">=</span> <span class="n">onset_start</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">onset_stop</span> <span class="o">=</span> <span class="n">onset_stop</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">fragment_type</span> <span class="o">=</span> <span class="n">fragment_type</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mod_hierarchy_val</span> <span class="o">=</span> <span class="n">mod_hierarchy_val</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ratio</span> <span class="o">=</span> <span class="n">ratio</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">difference</span> <span class="o">=</span> <span class="n">difference</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pitch_content</span> <span class="o">=</span> <span class="n">pitch_content</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">is_slurred</span> <span class="o">=</span> <span class="n">is_slurred</span></div>
+
+<span class="k">def</span> <span class="nf">_add_results_to_session</span><span class="p">(</span>
+		<span class="n">filepath</span><span class="p">,</span>
+		<span class="n">part_nums</span><span class="p">,</span>
+		<span class="n">table</span><span class="p">,</span>
+		<span class="n">windows</span><span class="p">,</span>
+		<span class="n">session</span>
+	<span class="p">):</span>
+	<span class="n">filepath_name</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">this_part</span> <span class="ow">in</span> <span class="n">part_nums</span><span class="p">:</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">CompositionData</span><span class="p">(</span>
+			<span class="n">name</span><span class="o">=</span><span class="n">filepath_name</span><span class="p">,</span>
+			<span class="n">part_num</span><span class="o">=</span><span class="n">this_part</span><span class="p">,</span>
+			<span class="n">local_filepath</span><span class="o">=</span><span class="n">filepath</span>
+		<span class="p">)</span>
+		<span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+		<span class="n">res</span> <span class="o">=</span> <span class="n">rolling_hash_search</span><span class="p">(</span>
+			<span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span>
+			<span class="n">part_num</span><span class="o">=</span><span class="n">this_part</span><span class="p">,</span>
+			<span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span>
+			<span class="n">windows</span><span class="o">=</span><span class="n">windows</span>
+		<span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
+			<span class="k">return</span> <span class="s2">&quot;No fragments extracted –– stopping.&quot;</span>
+
+		<span class="n">fragment_objects</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+			<span class="n">f</span> <span class="o">=</span> <span class="n">ExtractionData</span><span class="p">(</span>
+				<span class="n">onset_start</span><span class="o">=</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+				<span class="n">onset_stop</span><span class="o">=</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+				<span class="n">fragment_type</span><span class="o">=</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">frag_type</span><span class="p">,</span>
+				<span class="n">name</span><span class="o">=</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+				<span class="n">mod_hierarchy_val</span><span class="o">=</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">mod_hierarchy_val</span><span class="p">,</span>
+				<span class="n">ratio</span><span class="o">=</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">factor</span><span class="p">,</span>
+				<span class="n">difference</span><span class="o">=</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">difference</span><span class="p">,</span>
+				<span class="n">pitch_content</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">pitch_content</span><span class="p">),</span>
+				<span class="n">is_slurred</span><span class="o">=</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">is_spanned_by_slur</span>
+			<span class="p">)</span>
+			<span class="n">fragment_objects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+			<span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+		<span class="n">data</span><span class="o">.</span><span class="n">composition_data</span> <span class="o">=</span> <span class="n">fragment_objects</span>
+
+<div class="viewcode-block" id="create_database"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.database.create_database">[docs]</a><span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span>
+		<span class="n">db_path</span><span class="p">,</span>
+		<span class="n">filepath</span><span class="p">,</span>
+		<span class="n">table</span><span class="p">,</span>
+		<span class="n">part_nums</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+		<span class="n">windows</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">19</span><span class="p">)),</span>
+		<span class="n">echo</span><span class="o">=</span><span class="kc">False</span>
+	<span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for creating a database from a single filepath.</span>
+
+<span class="sd">	:param str db_path: Path to the database to be created.</span>
+<span class="sd">	:param str filepath: Path to the score to be analyzed.</span>
+<span class="sd">	:param list table: A :obj:`decitala.hash_table.FragmentHashTable` object.</span>
+<span class="sd">	:param list part_nums: Parts to be analyzed.</span>
+<span class="sd">	:param list windows: Possible lengths of the search frames.</span>
+<span class="sd">	:param bool echo: Whether to echo the SQL calls. False by default.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filepath</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;✗ The path provided is not a valid file.&quot;</span><span class="p">)</span>
+	<span class="k">assert</span> <span class="n">db_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.db&quot;</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;✗ The db_path must end with &#39;.db&#39;.&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+		<span class="k">return</span> <span class="s2">&quot;That database already exists ✔&quot;</span>
+
+	<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__file__</span><span class="p">,</span> <span class="n">print_to_console</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Preparing database at </span><span class="si">{</span><span class="n">db_path</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+
+	<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sqlite:////</span><span class="si">{</span><span class="n">db_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="n">echo</span><span class="p">)</span>
+	<span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+
+	<span class="n">Session</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+	<span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
+
+	<span class="n">_add_results_to_session</span><span class="p">(</span>
+		<span class="n">filepath</span><span class="p">,</span>
+		<span class="n">part_nums</span><span class="p">,</span>
+		<span class="n">table</span><span class="p">,</span>
+		<span class="n">windows</span><span class="p">,</span>
+		<span class="n">session</span>
+	<span class="p">)</span>
+
+	<span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="k">return</span></div>
+
+<div class="viewcode-block" id="batch_create_database"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.database.batch_create_database">[docs]</a><span class="k">def</span> <span class="nf">batch_create_database</span><span class="p">(</span>
+		<span class="n">db_path</span><span class="p">,</span>
+		<span class="n">data_in</span><span class="p">,</span>
+		<span class="n">table</span><span class="p">,</span>
+		<span class="n">windows</span><span class="p">,</span>
+		<span class="n">echo</span><span class="o">=</span><span class="kc">False</span>
+	<span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This function creates a database from a dictionary of filepaths and desires ``part_nums``</span>
+<span class="sd">	to analyze.</span>
+
+<span class="sd">	:param str db_path: Path to the database to be created.</span>
+<span class="sd">	:param dict data_in: Dictionary of filepaths (key) and part nums in a list (value).</span>
+<span class="sd">	:param list table: A :obj:`decitala.hash_table.FragmentHashTable` object.</span>
+<span class="sd">	:param list windows: Possible lengths of the search frames.</span>
+<span class="sd">	:param bool echo: Whether to echo the SQL calls. False by default.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="n">db_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.db&quot;</span><span class="p">),</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="s2">&quot;✗ The db_path must end with &#39;.db&#39;.&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">db_path</span><span class="p">):</span>
+		<span class="k">return</span> <span class="s2">&quot;That database already exists ✔&quot;</span>
+
+	<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__file__</span><span class="p">,</span> <span class="n">print_to_console</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+	<span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Preparing database at </span><span class="si">{</span><span class="n">db_path</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+
+	<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sqlite:////</span><span class="si">{</span><span class="n">db_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="n">echo</span><span class="p">)</span>
+	<span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+
+	<span class="n">Session</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+	<span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
+
+	<span class="k">for</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">part_nums</span> <span class="ow">in</span> <span class="n">data_in</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+		<span class="n">_add_results_to_session</span><span class="p">(</span>
+			<span class="n">filepath</span><span class="p">,</span>
+			<span class="n">part_nums</span><span class="p">,</span>
+			<span class="n">table</span><span class="p">,</span>
+			<span class="n">windows</span><span class="p">,</span>
+			<span class="n">session</span>
+		<span class="p">)</span>
+
+	<span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+	<span class="k">return</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020-2021, Luke Poeppel.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

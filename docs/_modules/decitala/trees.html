@@ -1,0 +1,456 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>decitala.trees &mdash; decitala 0.13.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.13.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/path_finding.html">path_finding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/vis.html">vis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../basic_usage.html">Basic Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">decitala</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>decitala.trees</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for decitala.trees</h1><div class="highlight"><pre>
+<span></span><span class="c1">####################################################################################################</span>
+<span class="c1"># File:     trees.py</span>
+<span class="c1"># Purpose:  NAry Tree representation of Fragment Trees and Search algorithms.</span>
+<span class="c1">#</span>
+<span class="c1"># Author:   Luke Poeppel</span>
+<span class="c1">#</span>
+<span class="c1"># Location: Kent, 2020 / Frankfurt, 2020</span>
+<span class="c1">####################################################################################################</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">treeplotter.tree</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">Node</span><span class="p">,</span>
+	<span class="n">Tree</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
+
+<span class="kn">from</span> <span class="nn">.fragment</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">Decitala</span><span class="p">,</span>
+	<span class="n">GreekFoot</span><span class="p">,</span>
+	<span class="n">GeneralFragment</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">roll_window</span><span class="p">,</span>
+	<span class="n">get_object_indices</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.database.corpora_models</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">get_engine</span><span class="p">,</span>
+	<span class="n">get_session</span><span class="p">,</span>
+	<span class="n">DecitalaData</span><span class="p">,</span>
+	<span class="n">GreekFootData</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">vis</span>
+
+<span class="n">here</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">decitala_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/corpora/Decitalas&quot;</span>
+<span class="n">greek_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/corpora/Greek_Metrics/&quot;</span>
+
+<span class="n">fragment_db</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/databases/fragment_database.db&quot;</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="n">fragment_db</span><span class="p">)</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TreeException"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.TreeException">[docs]</a><span class="k">class</span> <span class="nc">TreeException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+	<span class="k">pass</span></div>
+
+<div class="viewcode-block" id="FragmentTreeException"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTreeException">[docs]</a><span class="k">class</span> <span class="nc">FragmentTreeException</span><span class="p">(</span><span class="n">TreeException</span><span class="p">):</span>
+	<span class="k">pass</span></div>
+
+<span class="c1">####################################################################################################</span>
+<span class="c1"># KD-Tree (TODO)</span>
+<span class="k">class</span> <span class="nc">KDTree</span><span class="p">:</span>
+	<span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
+		<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+			<span class="k">pass</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">pass</span>
+
+<div class="viewcode-block" id="FragmentTree"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTree">[docs]</a><span class="k">class</span> <span class="nc">FragmentTree</span><span class="p">(</span><span class="n">Tree</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	NaryTree that holds multiplicative or additive representations of a rhythmic dataset.</span>
+
+<span class="sd">	:param str data: either a frag_type/rep_type combo, a path to folder of music21-readable files,</span>
+<span class="sd">					or a list of fragments.</span>
+<span class="sd">	:param str frag_type: determines the class defining the set of fragments.</span>
+<span class="sd">					If the ``frag_type==&#39;decitala&#39;``, creates :class:`~decitala.fragment.Decitala` objects;</span>
+<span class="sd">					if ``frag_type==&#39;greek_foot&#39;``, creates :class:`~decitala.fragment.GreekFoot`.</span>
+<span class="sd">					Otherwise creates :class:`~decitala.fragment.GeneralFragment` (default) objects.</span>
+<span class="sd">	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` (default)</span>
+<span class="sd">						and ``difference``.</span>
+<span class="sd">	:raises `~decitala.trees.FragmentTreeException`: if an invalid path or rep_type is given.</span>
+
+<span class="sd">	&gt;&gt;&gt; ratio_tree = FragmentTree.from_frag_type(frag_type=&#39;greek_foot&#39;, rep_type=&#39;ratio&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; ratio_tree</span>
+<span class="sd">	&lt;trees.FragmentTree greek_foot_ratio: nodes=36&gt;</span>
+<span class="sd">	&gt;&gt;&gt; ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0]).name</span>
+<span class="sd">	&lt;fragment.GreekFoot Peon_II&gt;</span>
+<span class="sd">	&gt;&gt;&gt; # We can also give it a name.</span>
+<span class="sd">	&gt;&gt;&gt; g1 = GeneralFragment([1.0, 1.0, 1.0, 1.0, 1.0], name=&quot;myfragment&quot;)</span>
+<span class="sd">	&gt;&gt;&gt; g2 = Decitala(&quot;Ragavardhana&quot;)</span>
+<span class="sd">	&gt;&gt;&gt; g3 = GreekFoot(&quot;Ionic_Major&quot;)</span>
+<span class="sd">	&gt;&gt;&gt; data = [g1, g2, g3]</span>
+<span class="sd">	&gt;&gt;&gt; mytree = FragmentTree(data = data, rep_type=&quot;difference&quot;, name=&quot;MyCoolTree&quot;)</span>
+<span class="sd">	&gt;&gt;&gt; mytree</span>
+<span class="sd">	&lt;trees.FragmentTree MyCoolTree: nodes=10&gt;</span>
+<span class="sd">	&gt;&gt;&gt; for frag in sorted(mytree.all_named_paths(), key=lambda x: x.name):</span>
+<span class="sd">	...     print(frag)</span>
+<span class="sd">	&lt;fragment.Decitala 93_Ragavardhana&gt;</span>
+<span class="sd">	&lt;fragment.GreekFoot Ionic_Major&gt;</span>
+<span class="sd">	&lt;fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]&gt;</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">rep_type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="n">rep_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;difference&quot;</span><span class="p">],</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The only possible rep_types are `ratio` and `difference`&quot;</span><span class="p">)</span> <span class="c1"># noqa</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">=</span> <span class="n">rep_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+			<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;Invalid path provided.&quot;</span><span class="p">)</span>
+			<span class="n">new_data</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
+				<span class="n">new_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">this_file</span><span class="p">))</span>
+
+			<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+			<span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;GeneralFragment&quot;</span><span class="p">,</span> <span class="s2">&quot;Decitala&quot;</span><span class="p">,</span> <span class="s2">&quot;GreekFoot&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">),</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The elements of data must be GeneralFragment, </span><span class="se">\</span>
+<span class="s2">																																Decitala, or GreekFoot objects.&quot;</span><span class="p">)</span> <span class="c1"># noqa</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">])</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">sorted_data</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()))</span>
+
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
+			<span class="n">root_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ROOT&quot;</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_data</span><span class="p">:</span>
+				<span class="n">path</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">successive_ratio_array</span><span class="p">())</span>
+				<span class="n">root_node</span><span class="o">.</span><span class="n">add_path_of_children</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">final_node_name</span><span class="o">=</span><span class="n">this_fragment</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root_node</span>
+
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;difference&quot;</span><span class="p">:</span>
+			<span class="n">root_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ROOT&quot;</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_data</span><span class="p">:</span>
+				<span class="n">path</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">successive_difference_array</span><span class="p">())</span>
+				<span class="n">root_node</span><span class="o">.</span><span class="n">add_path_of_children</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">final_node_name</span><span class="o">=</span><span class="n">this_fragment</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root_node</span>
+
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s1">&#39;&lt;trees.FragmentTree </span><span class="si">{0}</span><span class="s1">: nodes=</span><span class="si">{1}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s1">&#39;&lt;trees.FragmentTree: nodes=</span><span class="si">{}</span><span class="s1">&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">())</span>
+
+<div class="viewcode-block" id="FragmentTree.from_frag_type"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTree.from_frag_type">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">from_frag_type</span><span class="p">(</span>
+			<span class="bp">cls</span><span class="p">,</span>
+			<span class="n">frag_type</span><span class="p">,</span>
+			<span class="n">rep_type</span>
+		<span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Create a fragment tree from the data in fragment_database.db in the databases directory.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="n">frag_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;decitala&quot;</span><span class="p">,</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">],</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The only </span><span class="se">\</span>
+<span class="s2">																					possible frag_types are `decitala` and `greek_foot`.&quot;</span><span class="p">)</span>
+		<span class="k">assert</span> <span class="n">rep_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;difference&quot;</span><span class="p">],</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The only possible </span><span class="se">\</span>
+<span class="s2">																				rep_types are `ratio` and `difference`&quot;</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;decitala&quot;</span><span class="p">:</span>
+			<span class="n">fragment_data</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DecitalaData</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">Decitala</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragment_data</span><span class="p">]</span>
+		<span class="k">elif</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">:</span>
+			<span class="n">fragment_data</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">GreekFootData</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragment_data</span><span class="p">]</span>
+
+		<span class="k">return</span> <span class="n">FragmentTree</span><span class="p">(</span>
+			<span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+			<span class="n">rep_type</span><span class="o">=</span><span class="n">rep_type</span><span class="p">,</span>
+			<span class="n">name</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">_</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frag_type</span><span class="p">,</span> <span class="n">rep_type</span><span class="p">),</span>
+		<span class="p">)</span></div>
+
+<div class="viewcode-block" id="FragmentTree.from_composition"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTree.from_composition">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">from_composition</span><span class="p">(</span>
+			<span class="bp">cls</span><span class="p">,</span>
+			<span class="n">filepath</span><span class="p">,</span>
+			<span class="n">part</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+			<span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span>
+			<span class="n">windows</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+		<span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Class method for generating a FragmentTree from a composition.</span>
+
+<span class="sd">		:param str filepath: path to file.</span>
+<span class="sd">		:param int part: part number.</span>
+<span class="sd">		:return: a FragmentTree made from a rolling window of a part in a composition.</span>
+<span class="sd">		:rtype: :obj:`~decitala.trees.FragmentTree`</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+		<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span>
+
+		<span class="n">object_list</span> <span class="o">=</span> <span class="n">get_object_indices</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span> <span class="n">part_num</span><span class="o">=</span><span class="n">part</span><span class="p">)</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">this_window</span> <span class="ow">in</span> <span class="n">windows</span><span class="p">:</span>
+			<span class="n">frames</span> <span class="o">=</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">object_list</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="n">this_window</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
+				<span class="n">objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_frame</span><span class="p">]</span>
+				<span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_frame</span><span class="p">]</span>
+				<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">isRest</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">):</span>  <span class="c1"># Skip any window that has a rest in it.</span>
+					<span class="k">continue</span>
+				<span class="k">else</span><span class="p">:</span>
+					<span class="n">as_quarter_lengths</span> <span class="o">=</span> <span class="p">[]</span>
+					<span class="k">for</span> <span class="n">this_obj</span><span class="p">,</span> <span class="n">this_range</span> <span class="ow">in</span> <span class="n">this_frame</span><span class="p">:</span>
+						<span class="n">as_quarter_lengths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)</span>
+					<span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">indices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+					<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">as_quarter_lengths</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
+
+		<span class="k">return</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="n">rep_type</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FragmentTree.from_multiple_paths"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTree.from_multiple_paths">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">from_multiple_paths</span><span class="p">(</span>
+			<span class="bp">self</span><span class="p">,</span>
+			<span class="n">paths</span><span class="p">,</span>
+			<span class="n">rep_type</span><span class="p">,</span>
+			<span class="n">name</span><span class="o">=</span><span class="kc">None</span>
+		<span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Create a FragmentTree from a list of paths (each a directory of music21-readable files).</span>
+
+<span class="sd">		:param list paths: list of paths (each a string), each a directory of music21-readable</span>
+<span class="sd">						files of rhythmic fragments.</span>
+<span class="sd">		:return: a Fragment tree holding multiple paths of data.</span>
+<span class="sd">		:rtype: :obj:`~decitala.trees.FragmentTree`</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">),</span> <span class="n">TreeException</span><span class="p">(</span><span class="s2">&quot;Not all provided paths </span><span class="se">\</span>
+<span class="s2">																		are valid.&quot;</span><span class="p">)</span>
+
+		<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">this_path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">this_path</span><span class="p">):</span>
+				<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">this_file</span><span class="p">))</span>
+
+		<span class="k">return</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="n">rep_type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FragmentTree.show"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTree.show">[docs]</a>	<span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		The vis module uses the Treant.js library to create a tree diagram. The diagram is</span>
+<span class="sd">		stored in an HTML file, but is saved as a PDF using the R webshot package. This function</span>
+<span class="sd">		does not save the directory, but returns a wand.Image object (with optionally saving it).</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">pdf_filepath</span> <span class="o">=</span> <span class="n">vis</span><span class="o">.</span><span class="n">create_tree_diagram</span><span class="p">(</span><span class="n">FragmentTree</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+		<span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">pdf_filepath</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">save_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+			<span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">save_path</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">img</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020-2021, Luke Poeppel.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

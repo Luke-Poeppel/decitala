@@ -6,4 +6,3 @@ dist/
 *.egg-info/
 htmlcov/
 docsrc/_build/
-docs/_modules/

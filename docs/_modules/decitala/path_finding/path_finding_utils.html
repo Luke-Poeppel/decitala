@@ -1,0 +1,445 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>decitala.path_finding.path_finding_utils &mdash; decitala 0.13.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.13.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/path_finding.html">path_finding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/vis.html">vis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic_usage.html">Basic Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">decitala</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>decitala.path_finding.path_finding_utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for decitala.path_finding.path_finding_utils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">####################################################################################################</span>
+<span class="c1"># File:     path_finding_utils.py</span>
+<span class="c1"># Purpose:  Path finding utility functions used in the various algorithms. Includes the main cost</span>
+<span class="c1">#           function used as the metric on the graphs.</span>
+<span class="c1">#</span>
+<span class="c1"># Author:   Luke Poeppel</span>
+<span class="c1">#</span>
+<span class="c1"># Location: NYC, 2021</span>
+<span class="c1">####################################################################################################</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="CostFunction"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.CostFunction">[docs]</a><span class="k">class</span> <span class="nc">CostFunction</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Arbitrary cost function to use in the cost functions. The user should set weights as class</span>
+<span class="sd">	attributes that are referenced in the cost function (which the user must override), if needed.</span>
+<span class="sd">	If set, the weights should (probably) sum to 1.</span>
+
+<span class="sd">	The following is a cost function that doesn&#39;t rely on any weights.</span>
+
+<span class="sd">	&gt;&gt;&gt; class MyFirstCostFunction(CostFunction):</span>
+<span class="sd">	... 	def cost(self, vertex_a, vertex_b):</span>
+<span class="sd">	... 		&#39;&#39;&#39;Cost function determined by the sum of the two extractions standard deviations.&#39;&#39;&#39;</span>
+<span class="sd">	... 		return vertex_a.std() + vertex_b.std()</span>
+
+<span class="sd">	# The following is a cost function that relies on three weights summing to 1.</span>
+<span class="sd">	&gt;&gt;&gt; class MySecondCostFunction(CostFunction):</span>
+<span class="sd">	... 	weight_a = 0.4213</span>
+<span class="sd">	... 	weight_b = 0.2599</span>
+<span class="sd">	... 	weight_c = 0.3188</span>
+<span class="sd">	... 	def cost(self, vertex_a, vertex_b):</span>
+<span class="sd">	... 		&#39;&#39;&#39;Cost function determined by the sum of the two extractions standard deviations.&#39;&#39;&#39;</span>
+<span class="sd">	... 		first_term = ((weight_a * vertex_a.num_onsets) + weight_b)</span>
+<span class="sd">	... 		second_term = ((weight_a * vertex_b.num_onsets) + weight_b)</span>
+<span class="sd">	... 		return first_term + second_term</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CostFunction.cost"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.CostFunction.cost">[docs]</a>	<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex_a</span><span class="p">,</span> <span class="n">vertex_b</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This function must be overrided by child classes. Cost function between two</span>
+<span class="sd">		:obj:`decitala.search.Extraction`: objects.</span>
+
+<span class="sd">		:param :obj:`decitala.search.Extraction` vertex_1: An extraction object from a composition.</span>
+<span class="sd">		:param :obj:`decitala.search.Extraction` vertex_2: A second extraction object from a composition.</span>
+<span class="sd">		:return: The cost of moving from ``vertex_1`` to ``vertex_2``.</span>
+<span class="sd">		:rtype: float</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+
+<div class="viewcode-block" id="DefaultCostFunction"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.DefaultCostFunction">[docs]</a><span class="k">class</span> <span class="nc">DefaultCostFunction</span><span class="p">(</span><span class="n">CostFunction</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Default cost function used in the path-finding algorithms. Weights optimized by</span>
+<span class="sd">	hyperparameter search.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gap_weight</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">onset_weight</span><span class="o">=</span><span class="mf">0.25</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">gap_weight</span> <span class="o">=</span> <span class="n">gap_weight</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">onset_weight</span> <span class="o">=</span> <span class="n">onset_weight</span>
+
+<div class="viewcode-block" id="DefaultCostFunction.cost"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.DefaultCostFunction.cost">[docs]</a>	<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex_a</span><span class="p">,</span> <span class="n">vertex_b</span><span class="p">):</span>
+		<span class="n">gap</span> <span class="o">=</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">vertex_a</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">onsets</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">vertex_a</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span> <span class="o">+</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span><span class="p">)</span>
+		<span class="n">cost</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gap_weight</span> <span class="o">*</span> <span class="n">gap</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onset_weight</span> <span class="o">*</span> <span class="n">onsets</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">cost</span></div></div>
+
+<div class="viewcode-block" id="CostFunction3D"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.CostFunction3D">[docs]</a><span class="k">class</span> <span class="nc">CostFunction3D</span><span class="p">(</span><span class="n">CostFunction</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+			<span class="bp">self</span><span class="p">,</span>
+			<span class="n">gap_weight</span><span class="p">,</span>
+			<span class="n">onset_weight</span><span class="p">,</span>
+			<span class="n">reuse_weight</span><span class="p">,</span>
+		<span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">gap_weight</span> <span class="o">=</span> <span class="n">gap_weight</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">onset_weight</span> <span class="o">=</span> <span class="n">onset_weight</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">reuse_weight</span> <span class="o">=</span> <span class="n">reuse_weight</span>
+
+<div class="viewcode-block" id="CostFunction3D.cost"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.CostFunction3D.cost">[docs]</a>	<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex_a</span><span class="p">,</span> <span class="n">vertex_b</span><span class="p">):</span>
+		<span class="n">gap</span> <span class="o">=</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">vertex_a</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">onsets</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">vertex_a</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span> <span class="o">+</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span><span class="p">)</span>
+
+		<span class="n">reuse</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">if</span> <span class="n">vertex_a</span><span class="o">.</span><span class="n">fragment</span> <span class="o">!=</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">fragment</span><span class="p">:</span>
+			<span class="n">reuse</span> <span class="o">=</span> <span class="n">vertex_a</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span>
+
+		<span class="n">cost</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reuse_weight</span> <span class="o">*</span> <span class="n">reuse</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onset_weight</span> <span class="o">*</span> <span class="n">onsets</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gap_weight</span> <span class="o">*</span> <span class="n">gap</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">cost</span></div></div>
+
+<div class="viewcode-block" id="build_graph"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.build_graph">[docs]</a><span class="k">def</span> <span class="nf">build_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cost_function_class</span><span class="o">=</span><span class="n">DefaultCostFunction</span><span class="p">()):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for building a &quot;graph&quot; of nodes and edges from a given set of data (each</span>
+<span class="sd">	vertex of the form as those required in the cost function) extracted from one of the</span>
+<span class="sd">	search algorithms. Requires ``id`` keys in each dictionary input.</span>
+
+<span class="sd">	:param dict weights: weights used in the model. Must sum to 1. Requires &quot;gap&quot; and &quot;onsets&quot; values.</span>
+<span class="sd">	:return: A &quot;graph&quot; holding vertices and the associated cost between all other non-negative edges.</span>
+<span class="sd">	:rtype: dict</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">G</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+		<span class="n">curr</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+		<span class="n">curr_edges</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">other</span> <span class="o">==</span> <span class="n">curr</span><span class="p">:</span>
+				<span class="k">continue</span>
+
+			<span class="c1"># Check here, not in cost function, as then we don&#39;t need to instantiate a fragment object.</span>
+			<span class="k">elif</span> <span class="n">curr</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+				<span class="k">continue</span>
+
+			<span class="n">edge</span> <span class="o">=</span> <span class="n">cost_function_class</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="n">vertex_a</span><span class="o">=</span><span class="n">curr</span><span class="p">,</span> <span class="n">vertex_b</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">edge</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Just in case. Dijkstra edges must be negative.</span>
+				<span class="k">continue</span>
+
+			<span class="n">curr_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">other</span><span class="o">.</span><span class="n">id_</span><span class="p">,</span> <span class="n">edge</span><span class="p">))</span>
+
+		<span class="n">G</span><span class="p">[</span><span class="n">curr</span><span class="o">.</span><span class="n">id_</span><span class="p">]</span> <span class="o">=</span> <span class="n">curr_edges</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+	<span class="k">return</span> <span class="n">G</span></div>
+
+<div class="viewcode-block" id="sources_and_sinks"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.sources_and_sinks">[docs]</a><span class="k">def</span> <span class="nf">sources_and_sinks</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Calculates all sources and sinks in a given dataset.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)]</span>
+	<span class="n">sinks</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)]</span>
+
+	<span class="k">return</span> <span class="n">sources</span><span class="p">,</span> <span class="n">sinks</span></div>
+
+<div class="viewcode-block" id="best_source_and_sink"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.best_source_and_sink">[docs]</a><span class="k">def</span> <span class="nf">best_source_and_sink</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	TODO: this is bad. I should be using the agnostic approach of Dijkstra here.</span>
+<span class="sd">	Calculates the &quot;best&quot; source and sink from a dataset based on two simple heuristics: (1) the</span>
+<span class="sd">	fragment with the earliest (or latest, for sink) starting point, (2) the fragment with the</span>
+<span class="sd">	greatest number of onsets.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">sources</span><span class="p">,</span> <span class="n">sinks</span> <span class="o">=</span> <span class="n">sources_and_sinks</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="n">curr_best_source</span> <span class="o">=</span> <span class="n">sources</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">curr_best_sink</span> <span class="o">=</span> <span class="n">sinks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="k">pass</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">lowest_point</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">lowest_point</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span> <span class="o">&gt;</span> <span class="n">curr_best_source</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span><span class="p">:</span>
+					<span class="n">curr_best_source</span> <span class="o">=</span> <span class="n">source</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">continue</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sinks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="k">pass</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">sink</span> <span class="ow">in</span> <span class="n">sinks</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">sink</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span> <span class="o">&gt;</span> <span class="n">curr_best_sink</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span><span class="p">:</span>
+				<span class="n">curr_best_sink</span> <span class="o">=</span> <span class="n">sink</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">continue</span>
+
+	<span class="k">return</span> <span class="n">curr_best_source</span><span class="p">,</span> <span class="n">curr_best_sink</span></div>
+
+<div class="viewcode-block" id="make_2D_grid"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.make_2D_grid">[docs]</a><span class="k">def</span> <span class="nf">make_2D_grid</span><span class="p">(</span><span class="n">resolution</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for generating a grid of two numbers that sum to 1, iterated over the given resolution.</span>
+
+<span class="sd">	:param float resolution: resolution of the grid, $0 &lt; x &lt;= 1$.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">spaces</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+		<span class="n">parameter_space</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span>
+		<span class="n">spaces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parameter_space</span><span class="p">)</span>
+
+	<span class="n">combos</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">param_a</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+		<span class="k">for</span> <span class="n">param_b</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+			<span class="n">collection</span> <span class="o">=</span> <span class="p">[</span><span class="n">param_a</span><span class="p">,</span> <span class="n">param_b</span><span class="p">]</span>
+			<span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+				<span class="n">combos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">combos</span></div>
+
+<div class="viewcode-block" id="make_3D_grid"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.make_3D_grid">[docs]</a><span class="k">def</span> <span class="nf">make_3D_grid</span><span class="p">(</span><span class="n">resolution</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for generating a grid of three numbers that sum to 1, iterated over the given resolution.</span>
+
+<span class="sd">	:param float resolution: resolution of the grid, $0 &lt; x &lt;= 1$.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">spaces</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+		<span class="n">parameter_space</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span>
+		<span class="n">spaces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parameter_space</span><span class="p">)</span>
+
+	<span class="n">combos</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">param_a</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+		<span class="k">for</span> <span class="n">param_b</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+			<span class="k">for</span> <span class="n">param_c</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+				<span class="n">collection</span> <span class="o">=</span> <span class="p">[</span><span class="n">param_a</span><span class="p">,</span> <span class="n">param_b</span><span class="p">,</span> <span class="n">param_c</span><span class="p">]</span>
+				<span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+					<span class="n">combos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">combos</span></div>
+
+<div class="viewcode-block" id="make_4D_grid"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.make_4D_grid">[docs]</a><span class="k">def</span> <span class="nf">make_4D_grid</span><span class="p">(</span><span class="n">resolution</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for generating a grid of four numbers that sum to 1, iterated over the given resolution.</span>
+
+<span class="sd">	:param float resolution: resolution of the grid, $0 &lt; x &lt;= 1$.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">spaces</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+		<span class="n">parameter_space</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">resolution</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)])</span>
+		<span class="n">spaces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parameter_space</span><span class="p">)</span>
+
+	<span class="n">combos</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">param_a</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+		<span class="k">for</span> <span class="n">param_b</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+			<span class="k">for</span> <span class="n">param_c</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+				<span class="k">for</span> <span class="n">param_d</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span>
+					<span class="n">collection</span> <span class="o">=</span> <span class="p">[</span><span class="n">param_a</span><span class="p">,</span> <span class="n">param_b</span><span class="p">,</span> <span class="n">param_c</span><span class="p">,</span> <span class="n">param_d</span><span class="p">]</span>
+					<span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+						<span class="n">combos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">combos</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020-2021, Luke Poeppel.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,367 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>decitala.path_finding.pofp &mdash; decitala 0.13.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.13.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/path_finding.html">path_finding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/vis.html">vis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic_usage.html">Basic Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">decitala</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>decitala.path_finding.pofp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for decitala.path_finding.pofp</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">####################################################################################################</span>
+<span class="c1"># File:     po_non_overlapping_onsets.py</span>
+<span class="c1"># Purpose:  M. Raynards technique for solving the non-overlapping onset ranges problem using</span>
+<span class="c1">#           Pareto optimal frontiers of sequences.</span>
+<span class="c1">#</span>
+<span class="c1"># Author:   Luke Poeppel</span>
+<span class="c1">#</span>
+<span class="c1"># Location: Kent, CT 2020</span>
+<span class="c1">####################################################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">**NOTE**: M. Raynard helpfully provided a technique for solving the given problem (an iterative</span>
+<span class="sd">approach to the end-overlapping indices problem) in a StackOverflow post from Summer, 2020. The link</span>
+<span class="sd">to the original post is:</span>
+<span class="sd">https://stackoverflow.com/questions/62734114/iterative-solution-to-end-overlapping-indices.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<div class="viewcode-block" id="check_break_point"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.pofp.check_break_point">[docs]</a><span class="k">def</span> <span class="nf">check_break_point</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Helper function for :obj:`~decitala.pofp.get_break_points`. Checks index i of the onset_list that</span>
+<span class="sd">	all values prior to it are less than or equal to :math:`b_i` and :math:`s_i`. If True, this means</span>
+<span class="sd">	that the data at index i is &gt;= all previous.</span>
+
+<span class="sd">	:param list data: data from :obj:`~decitala.trees.rolling_search`.</span>
+<span class="sd">	:param int i: index of the data to check.</span>
+<span class="sd">	:return: whether or not the queried index is a break point.</span>
+<span class="sd">	:rtype: bool</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">check</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">]:</span>
+		<span class="n">range_data</span> <span class="o">=</span> <span class="n">this_data</span><span class="o">.</span><span class="n">onset_range</span>
+		<span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">range_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">range_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+			<span class="n">check</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">check</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">check</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="mi">1</span><span class="p">}:</span>
+		<span class="k">return</span> <span class="kc">True</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="get_break_points"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.pofp.get_break_points">[docs]</a><span class="k">def</span> <span class="nf">get_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:param list data: data from :obj:`~decitala.trees.rolling_search`.</span>
+<span class="sd">	:return: every index in the input at which the data is at most end-overlapping.</span>
+<span class="sd">	:rtype: list</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">break_points</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">check_break_point</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+			<span class="n">break_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+		<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+	<span class="k">return</span> <span class="n">break_points</span></div>
+
+<div class="viewcode-block" id="partition_data_by_break_points"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.pofp.partition_data_by_break_points">[docs]</a><span class="k">def</span> <span class="nf">partition_data_by_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Partitions the input data according to all calculated breakpoints.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">break_points</span> <span class="o">=</span> <span class="n">get_break_points</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">break_points</span><span class="p">,</span> <span class="n">break_points</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">])]</span>
+
+	<span class="k">return</span> <span class="n">out</span></div>
+
+<span class="c1">####################################################################################################</span>
+<span class="k">def</span> <span class="nf">_min_successor_to_elem</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">all_min_successors</span><span class="p">):</span>
+	<span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">all_min_successors</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">id_</span> <span class="o">==</span> <span class="n">elem</span><span class="o">.</span><span class="n">id_</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<div class="viewcode-block" id="get_pareto_optimal_longest_paths"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.pofp.get_pareto_optimal_longest_paths">[docs]</a><span class="k">def</span> <span class="nf">get_pareto_optimal_longest_paths</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	&gt;&gt;&gt; from decitala.search import Extraction</span>
+<span class="sd">	&gt;&gt;&gt; from decitala.fragment import GreekFoot, GeneralFragment</span>
+<span class="sd">	&gt;&gt;&gt; data = [</span>
+<span class="sd">	... 	Extraction(fragment=GreekFoot(&quot;Spondee&quot;), frag_type=&quot;greek_foot&quot;, onset_range=(0.0, 0.5), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=1), # noqa</span>
+<span class="sd">	... 	Extraction(fragment=GeneralFragment([0.25, 0.25], name=&quot;cs-test1&quot;), frag_type=&quot;general_fragment&quot;, onset_range=(0.0, 0.5), retrograde=False, factor=2.0, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=2), # noqa</span>
+<span class="sd">	... 	Extraction(fragment=GreekFoot(&quot;Trochee&quot;), frag_type=&quot;greek_foot&quot;, onset_range=(0.25, 0.625), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=3), # noqa</span>
+<span class="sd">	... 	Extraction(fragment=GeneralFragment([0.25, 0.125], name=&quot;cs-test2&quot;), frag_type=&quot;general_fragment&quot;, onset_range=(0.25, 0.625), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=4), # noqa</span>
+<span class="sd">	... 	Extraction(fragment=GreekFoot(&quot;Dactyl&quot;), frag_type=&quot;greek_foot&quot;, onset_range=(0.5, 1.0), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=5) # noqa</span>
+<span class="sd">	... ]</span>
+<span class="sd">	&gt;&gt;&gt; for path in get_pareto_optimal_longest_paths(data):</span>
+<span class="sd">	... 	for fragment in path:</span>
+<span class="sd">	... 		print(fragment.fragment, fragment.onset_range)</span>
+<span class="sd">	... 	print(&quot;-----&quot;)</span>
+<span class="sd">	&lt;fragment.GreekFoot Spondee&gt; (0.0, 0.5)</span>
+<span class="sd">	&lt;fragment.GreekFoot Dactyl&gt; (0.5, 1.0)</span>
+<span class="sd">	-----</span>
+<span class="sd">	&lt;fragment.GeneralFragment cs-test1: [0.25 0.25]&gt; (0.0, 0.5)</span>
+<span class="sd">	&lt;fragment.GreekFoot Dactyl&gt; (0.5, 1.0)</span>
+<span class="sd">	-----</span>
+<span class="sd">	&lt;fragment.GreekFoot Trochee&gt; (0.25, 0.625)</span>
+<span class="sd">	-----</span>
+<span class="sd">	&lt;fragment.GeneralFragment cs-test2: [0.25  0.125]&gt; (0.25, 0.625)</span>
+<span class="sd">	-----</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)]</span>
+	<span class="n">sinks</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)]</span>
+
+	<span class="n">all_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">id_</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+	<span class="n">sink_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">id_</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sinks</span><span class="p">]</span>
+	<span class="n">remaining</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">all_ids</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">sink_ids</span><span class="p">)</span>
+	<span class="n">filtered_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">id_</span> <span class="ow">in</span> <span class="n">remaining</span><span class="p">]</span>
+
+	<span class="n">min_successors</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">filtered_data</span><span class="p">:</span>
+		<span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="c1"># noqa and y[&quot;onset_range&quot;] != x[&quot;onset_range&quot;]]  </span>
+		<span class="n">min_successor</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="n">min_successors</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">min_successor</span><span class="p">])</span>
+
+	<span class="n">successors</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+		<span class="n">successor</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">y</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">_min_successor_to_elem</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">min_successors</span><span class="p">)</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="c1"># noqa</span>
+		<span class="n">successors</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">successor</span><span class="p">])</span>
+
+	<span class="k">def</span> <span class="nf">print_path_rec</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">sinks</span><span class="p">:</span>
+			<span class="n">solutions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">path</span> <span class="o">+</span> <span class="p">[</span><span class="n">node</span><span class="p">]])</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">successor</span> <span class="ow">in</span> <span class="n">_min_successor_to_elem</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">successors</span><span class="p">):</span>
+				<span class="n">print_path_rec</span><span class="p">(</span><span class="n">successor</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="p">[</span><span class="n">node</span><span class="p">])</span>
+
+	<span class="n">solutions</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+		<span class="n">print_path_rec</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="p">[])</span>
+
+	<span class="n">flatten</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">l</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+	<span class="n">flattened</span> <span class="o">=</span> <span class="n">flatten</span><span class="p">(</span><span class="n">solutions</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">flattened</span>
+
+	<span class="c1"># flattened.sort()</span>
+	<span class="n">pareto_optimal_paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">flattened</span> <span class="k">for</span> <span class="n">flattened</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">flattened</span><span class="p">))</span>
+
+	<span class="n">stupid_out</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">this_path</span> <span class="ow">in</span> <span class="n">pareto_optimal_paths</span><span class="p">:</span>
+		<span class="n">new_path</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">this_range</span> <span class="ow">in</span> <span class="n">this_path</span><span class="p">:</span>
+			<span class="k">for</span> <span class="n">this_data</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">this_range</span> <span class="o">==</span> <span class="n">this_data</span><span class="o">.</span><span class="n">onset_range</span><span class="p">:</span>
+					<span class="n">new_path</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">this_data</span><span class="p">,</span> <span class="n">this_range</span><span class="p">])</span>
+					<span class="k">continue</span>
+		<span class="n">stupid_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">stupid_out</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020-2021, Luke Poeppel.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
