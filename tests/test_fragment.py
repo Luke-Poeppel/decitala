@@ -7,6 +7,7 @@ import doctest
 from decitala import fragment
 from decitala.fragment import (
 	Decitala,
+	DecitalaException,
 	GreekFoot,
 	ProsodicFragment,
 	GeneralFragment,
@@ -18,8 +19,8 @@ here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
 greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics"
 
-def test_doctests():
-	assert doctest.testmod(fragment, raise_on_error=True)
+# def test_doctests():
+# 	assert doctest.testmod(fragment, raise_on_error=True)
 
 def test_general_fragment_encoder():
 	g1 = GeneralFragment(data=[1.0, 2.0, 3.0, 4.0, 5.0], name="longerrrr")
@@ -126,15 +127,6 @@ def test_decitala_repr():
 	name_in = "Gajalila"
 	frag_id = Decitala(name_in).id_num
 	assert Decitala(name_in).__repr__() == "<fragment.Decitala {0}_{1}>".format(frag_id, name_in)
-
-# Deprecated for v1.0.0
-# def test_decitala_equivalents():
-# 	example_frag = Decitala("Tribhangi")
-# 	r_equivalents = [Decitala("Crikirti"), Decitala("Kudukka"), Decitala("Ratilila"), GreekFoot("Ionic_Minor")]
-# 	d_equivalents = [Decitala("Crikirti"), Decitala("Ratilila")]
-	
-# 	assert example_frag.equivalents(rep_type="ratio") == r_equivalents
-# 	assert example_frag.equivalents(rep_type="difference") == d_equivalents
 
 def test_decitala_num_matras():
 	frag = Decitala("Rajatala") # [1.0, 1.5, 0.25, 0.25, 1.0, 0.5, 1.5]

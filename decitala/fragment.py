@@ -19,7 +19,7 @@ from music21 import converter
 from music21 import note
 
 from . import utils
-from .corpora_models import (
+from .database.corpora_models import (
 	DecitalaData,
 	GreekFootData,
 	ProsodicFragmentData,
@@ -33,7 +33,7 @@ decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
 greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics"
 prosody_path = os.path.dirname(here) + "/corpora/Prosody"
 
-fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
+fragment_db = os.path.dirname(here) + "/databases/FRAGMENT_DATABASE.db"
 
 # ID's of decitalas with "subtalas"
 subdecitala_array = np.array([26, 38, 55, 65, 68])
@@ -540,9 +540,9 @@ class Decitala(GeneralFragment):
 	@classmethod
 	def get_by_id(cls, input_id):
 		"""
-		A class method which retrieves a :obj:`~decitala.fragment.Decitala` object based \
-		on a given ID number. These numbers are listed in the Lavignac Encyclopédie (1921) \
-		and Messiaen Traité. Some talas have "sub-talas," meaning that their id is not \
+		A class method which retrieves a :obj:`~decitala.fragment.Decitala` object based
+		on a given ID number. These numbers are listed in the Lavignac Encyclopédie (1921)
+		and Messiaen Traité. Some talas have "sub-talas," meaning that their id is not
 		unique.
 
 		:return: A :obj:`~decitala.fragment.Decitala` object
