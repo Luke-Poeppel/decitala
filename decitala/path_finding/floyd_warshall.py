@@ -112,7 +112,7 @@ def get_path(
 	:param `~decitala.fragment.GeneralFragment` end: ending fragment in the path.
 	:param numpy.array next_matrix: second matrix from
 			:obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.
-	:param list data: data from :obj:`~decitala.search.rolling_search``.
+	:param list data: data from :obj:`~decitala.search.rolling_search`.
 	:return: best path extracted using the Floyd-Warshall algorithm.
 	:rtype: list
 	"""
