@@ -18,7 +18,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Greatly simplified the logic in `successive_ratio_array` and `successive_difference_array` using numpy. 
 
 #### Fixed
-- Issues #147: allow weight hyperparameters as input to Dijkstra; #143: `0` as possible quarter length in `FragmentHashTable`.  
+- Issues #147: allow weight hyperparameters as input to Dijkstra; #143: `0` as possible quarter length in `FragmentHashTable`; #157: broken source button in docs (as well as missing section). 
 
 ## [v0.12.1](https://github.com/Luke-Poeppel/decitala/tree/v0.12.1) May 23, 2021
 #### Fixed
