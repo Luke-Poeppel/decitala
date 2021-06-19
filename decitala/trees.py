@@ -62,12 +62,9 @@ class FragmentTree(Tree):
 
 	:param str data: either a frag_type/rep_type combo, a path to folder of music21-readable files,
 					or a list of fragments.
-	:param str frag_type: determines the class defining the set of fragments.
-					If the ``frag_type=='decitala'``, creates :class:`~decitala.fragment.Decitala` objects;
-					if ``frag_type=='greek_foot'``, creates :class:`~decitala.fragment.GreekFoot`.
-					Otherwise creates :class:`~decitala.fragment.GeneralFragment` (default) objects.
 	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` (default)
 						and ``difference``.
+	:param str name: optional name of the Fragment Tree.
 	:raises `~decitala.trees.FragmentTreeException`: if an invalid path or rep_type is given.
 
 	>>> ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
@@ -141,6 +138,15 @@ class FragmentTree(Tree):
 		):
 		"""
 		Create a fragment tree from the data in fragment_database.db in the databases directory.
+
+		:param str frag_type: determines the class defining the set of fragments.
+							If the ``frag_type=='decitala'``, creates
+							:obj:`~decitala.fragment.Decitala` objects; if
+							``frag_type=='greek_foot'``,
+							creates :obj:`~decitala.fragment.GreekFoot`.
+							Otherwise creates
+							:obj:`~decitala.fragment.GeneralFragment`
+							(default) objects.
 		"""
 		assert frag_type.lower() in ["decitala", "greek_foot"], FragmentTreeException("The only \
 																					possible frag_types are `decitala` and `greek_foot`.")
