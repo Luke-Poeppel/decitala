@@ -10,6 +10,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added three functions to `fragment` for querying the fragment database for each fragment type: `get_all_greek_feet`, `get_all_decitalas`, and `get_all_prosodic_fragments`. 
 - Added `rolling_SRR` function to utils. 
 - Added `decitala.extra` module where miscellaneous scripts will be stored. Currently, it's holding a script for computing hyperparameters (`decitala.extra.hyperparameters`) and the formerly hidden script for remaking analysis files. 
+- Added `decitala dtest --module` CLI tool for quickly running doctests (hindered by relative imports). 
 
 #### Changed
 - All tree creation has migrated to the [treeplotter](https://github.com/Luke-Poeppel/treeplotter) package. Removed the Treant templates accordingly. 

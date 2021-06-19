@@ -7,8 +7,6 @@
 #
 # Location: Kent, CT 2020 / NYC, 2021
 ####################################################################################################
-from __future__ import division, print_function, unicode_literals
-
 import json
 import numpy as np
 import os

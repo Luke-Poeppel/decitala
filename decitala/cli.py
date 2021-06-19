@@ -8,20 +8,67 @@
 ####################################################################################################
 import click
 import json
+import sys
+import doctest
 
 from decitala import __version__
-from .search import path_finder
-from .fragment import FragmentEncoder
-from .utils import get_logger
-from .hash_table import DecitalaHashTable, GreekFootHashTable
+from . import (
+	search,
+	fragment,
+	utils,
+	hash_table,
+	database,
+	trees
+)
 
-logger = get_logger(name=__file__)
+from .path_finding import (
+	dijkstra,
+	floyd_warshall,
+	path_finding_utils,
+	# pofp
+)
+
+ALL_MODULES = [
+	database,
+	fragment,
+	utils,
+	trees,
+	search,
+	hash_table,
+	dijkstra,
+	floyd_warshall,
+	path_finding_utils,
+	# pofp
+]
+
+logger = utils.get_logger(name=__file__)
 
 @click.group()
 @click.version_option(__version__, "--version", "-v", message="%(version)s")
 def decitala():
 	"""Returns the version of the module."""
 	pass
+
+def doctest_runner(module=None):
+	if module:
+		logger.info("Testing: {}".format(module))
+		logger.info(doctest.testmod(module))
+	else:
+		logger.info("Running all doctests...")
+		for this_module in ALL_MODULES:
+			logger.info("Testing: {}".format(this_module))
+			logger.info(doctest.testmod(this_module))
+
+@decitala.command()
+@click.option("--module", default="", help="A module in the decitala package to doctest")
+def dtest(module):
+	if module:
+		arg_in = sys.argv[-1]
+		if arg_in:
+			mod = globals()[arg_in]
+			doctest_runner(module=mod)
+	else:
+		doctest_runner()
 
 @decitala.command()
 @click.option("--filepath", default="", help="Path to filepath parsed for analysis.")
@@ -30,9 +77,9 @@ def decitala():
 @click.option("--verbose", default=True)
 def path_finder(filepath, part_num, frag_type, verbose): # noqa
 	if frag_type == "decitala":
-		table = DecitalaHashTable()
+		table = hash_table.DecitalaHashTable()
 	elif frag_type == "greek_foot":
-		table = GreekFootHashTable()
+		table = hash_table.GreekFootHashTable()
 
 	best_path = path_finder(
 		filepath=filepath,
@@ -40,11 +87,11 @@ def path_finder(filepath, part_num, frag_type, verbose): # noqa
 		table=table,
 		verbose=verbose
 	)
-	json_dumped_res = json.dumps(obj=best_path, cls=FragmentEncoder, indent=4)
+	json_dumped_res = json.dumps(obj=best_path, cls=fragment.FragmentEncoder, indent=4)
 	logger.info(json_dumped_res)
 	filename = filepath.split("/")[-1][:-4] + f"_part_num={part_num}_frag_type={frag_type}.json"
 	with open(filename, "w") as output:
-		json.dump(obj=best_path, fp=output, cls=FragmentEncoder, indent=4)
+		json.dump(obj=best_path, fp=output, cls=fragment.FragmentEncoder, indent=4)
 	logger.info(f"Result saved in: {filename}")
 
 
