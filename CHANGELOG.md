@@ -3,13 +3,13 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.13.0](https://github.com/Luke-Poeppel/decitala/tree/v0.13.0) ???
+## [v0.13.0](https://github.com/Luke-Poeppel/decitala/tree/v0.13.0) June 19, 2021
 #### Added
 - All results from `search.rolling_hash_search` are now stored as `Extraction` dataclasses. This new approach greatly simplifies the inconsistent dictionary-style search results. Also removes the need to store `frag_type`s in the hash tables. 
 - Added a `CostFunction` class to `decitala.path_finding_utils`. This cost function class is to be used as an input to `path_finder` and `dijkstra` (and `floyd_warshall`, as well), replacing the previously used `weights` dictionaries. This addition allows the user to input any cost function they like (see PR#152). 
 - Added three functions to `fragment` for querying the fragment database for each fragment type: `get_all_greek_feet`, `get_all_decitalas`, and `get_all_prosodic_fragments`. 
 - Added `rolling_SRR` function to utils. 
-- Added `decitala.extra` module where miscellaneous scripts will be stored. Currently, it's holding a script for computing hyperparameters (`decitala.extra.hyperparameters`) and the formerly hidden script for remaking analysis files. 
+- Added `decitala.extra` module where miscellaneous scripts will be stored. This will eventually hold the script for computing hyperparameters (`decitala.extra.hyperparameters`) and the formerly hidden script for remaking analysis files. 
 - Added `decitala dtest --module` CLI tool for quickly running doctests (hindered by relative imports). Consequently removed the `tests/doctest_runner.py` file. 
 - Restructured the DB approach. Added a `database` directory that will store all the database-related material. 
 
