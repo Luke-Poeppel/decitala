@@ -25,7 +25,7 @@ from .path_finding import (
 	dijkstra,
 	floyd_warshall,
 	path_finding_utils,
-	# pofp
+	pofp
 )
 
 ALL_MODULES = [
@@ -38,7 +38,7 @@ ALL_MODULES = [
 	dijkstra,
 	floyd_warshall,
 	path_finding_utils,
-	# pofp
+	pofp
 ]
 
 logger = utils.get_logger(name=__file__)

@@ -1,7 +1,7 @@
 [run]
 omit = 
     tests/*
-    decitala/cli.py # I don't know how to test these modules... 
+    decitala/cli.py
     decitala/vis.py
     decitala/extra/hyperparameters.py
     setup.py

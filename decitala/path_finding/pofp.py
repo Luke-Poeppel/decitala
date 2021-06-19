@@ -26,20 +26,6 @@ def check_break_point(data, i):
 	:param int i: index of the data to check.
 	:return: whether or not the queried index is a break point.
 	:rtype: bool
-
-	>>> data = [
-	...		{"fragment": "info1", "mod": ("r", 1.0), "onset_range": (0.0, 2.0)},
-	... 	{"fragment": "info2", "mod": ("r", 2.0), "onset_range": (0.0, 4.0)},
-	... 	{"fragment": "info3", "mod": ("d", 0.25), "onset_range": (2.0, 4.0)},
-	... 	{"fragment": "info4", "mod": ("rd", 0.25), "onset_range": (2.0, 5.75)},
-	... 	{"fragment": "info5", "mod": ("r", 3.0), "onset_range": (2.5, 4.5)},
-	... 	{"fragment": "info6", "mod": ("r", 1.0), "onset_range": (4.0, 5.5)},
-	... 	{"fragment": "info7", "mod": ("rd", 0.25), "onset_range": (6.0, 7.25)}
-	... ]
-	>>> print(check_break_point(data, 2))
-	False
-	>>> print(check_break_point(data, 6))
-	True
 	"""
 	check = []
 	for this_data in data[0:i]:
@@ -59,18 +45,6 @@ def get_break_points(data):
 	:param list data: data from :obj:`~decitala.trees.rolling_search`.
 	:return: every index in the input at which the data is at most end-overlapping.
 	:rtype: list
-
-	>>> data = [
-	...		{"fragment": "info1", "mod": ("r", 1.0), "onset_range": (0.0, 2.0)},
-	... 	{"fragment": "info2", "mod": ("r", 2.0), "onset_range": (0.0, 4.0)},
-	... 	{"fragment": "info3", "mod": ("d", 0.25), "onset_range": (2.0, 4.0)},
-	... 	{"fragment": "info4", "mod": ("rd", 0.25), "onset_range": (2.0, 5.75)},
-	... 	{"fragment": "info5", "mod": ("r", 3.0), "onset_range": (2.5, 4.5)},
-	... 	{"fragment": "info6", "mod": ("r", 1.0), "onset_range": (4.0, 5.5)},
-	... 	{"fragment": "info7", "mod": ("rd", 0.25), "onset_range": (6.0, 7.25)}
-	... ]
-	>>> get_break_points(data)
-	[6]
 	"""
 	i = 0
 	break_points = []
@@ -85,20 +59,6 @@ def get_break_points(data):
 def partition_data_by_break_points(data):
 	"""
 	Partitions the input data according to all calculated breakpoints.
-
-	>>> data = [
-	...		{"fragment": "info1", "mod": ("r", 1.0), "onset_range": (0.0, 2.0)},
-	... 	{"fragment": "info2", "mod": ("r", 2.0), "onset_range": (0.0, 4.0)},
-	... 	{"fragment": "info3", "mod": ("d", 0.25), "onset_range": (2.0, 4.0)},
-	... 	{"fragment": "info4", "mod": ("rd", 0.25), "onset_range": (2.0, 5.75)},
-	... 	{"fragment": "info5", "mod": ("r", 3.0), "onset_range": (2.5, 4.5)},
-	... 	{"fragment": "info6", "mod": ("r", 1.0), "onset_range": (4.0, 5.5)},
-	... 	{"fragment": "info7", "mod": ("rd", 0.25), "onset_range": (6.0, 7.25)}
-	... ]
-	>>> for this_partition in partition_data_by_break_points(data):
-	...    print(this_partition)
-	[{'fragment': 'info1', 'mod': ('r', 1.0), 'onset_range': (0.0, 2.0)}, {'fragment': 'info2', 'mod': ('r', 2.0), 'onset_range': (0.0, 4.0)}, {'fragment': 'info3', 'mod': ('d', 0.25), 'onset_range': (2.0, 4.0)}, {'fragment': 'info4', 'mod': ('rd', 0.25), 'onset_range': (2.0, 5.75)}, {'fragment': 'info5', 'mod': ('r', 3.0), 'onset_range': (2.5, 4.5)}, {'fragment': 'info6', 'mod': ('r', 1.0), 'onset_range': (4.0, 5.5)}] # noqa
-	[{'fragment': 'info7', 'mod': ('rd', 0.25), 'onset_range': (6.0, 7.25)}]
 	"""
 	break_points = get_break_points(data)
 	out = [data[i:j] for i, j in zip([0] + break_points, break_points + [None])]
@@ -107,63 +67,34 @@ def partition_data_by_break_points(data):
 
 ####################################################################################################
 def _min_successor_to_elem(elem, all_min_successors):
-	"""
-	>>> all_min_successors = [
-	...		[{'fragment': 'info1', 'mod': ('r', 1.0), 'onset_range': (0.0, 2.0), 'id': 1}, {'fragment': 'info3', 'mod': ('d', 0.25), 'onset_range': (2.0, 4.0), 'id': 3}], # noqa
-	... 	[{'fragment': 'info2', 'mod': ('r', 2.0), 'onset_range': (0.0, 4.0), 'id': 2}, {'fragment': 'info6', 'mod': ('r', 1.0), 'onset_range': (4.0, 5.5), 'id': 6}], # noqa
-	... 	[{'fragment': 'info3', 'mod': ('d', 0.25), 'onset_range': (2.0, 4.0), 'id': 3}, {'fragment': 'info6', 'mod': ('r', 1.0), 'onset_range': (4.0, 5.5), 'id': 6}], # noqa
-	... 	[{'fragment': 'info4', 'mod': ('rd', 0.25), 'onset_range': (2.0, 5.75), 'id': 4}, {'fragment': 'info7', 'mod': ('rd', 0.25), 'onset_range': (6.0, 7.25), 'id': 7}], # noqa
-	... 	[{'fragment': 'info5', 'mod': ('r', 3.0), 'onset_range': (2.5, 4.5), 'id': 5}, {'fragment': 'info7', 'mod': ('rd', 0.25), 'onset_range': (6.0, 7.25), 'id': 7}], # noqa
-	... 	[{'fragment': 'info6', 'mod': ('r', 1.0), 'onset_range': (4.0, 5.5), 'id': 6}, {'fragment': 'info7', 'mod': ('rd', 0.25), 'onset_range': (6.0, 7.25), 'id': 7}] # noqa
-	... ]
-	>>> elem = all_min_successors[2][0]
-	>>> elem
-	{'fragment': 'info3', 'mod': ('d', 0.25), 'onset_range': (2.0, 4.0), 'id': 3}
-	>>> _min_successor_to_elem(elem, all_min_successors)
-	{'fragment': 'info6', 'mod': ('r', 1.0), 'onset_range': (4.0, 5.5), 'id': 6}
-	"""
 	for data in all_min_successors:
 		if data[0].id_ == elem.id_:
 			return data[1]
 
 def get_pareto_optimal_longest_paths(data):
 	"""
-	>>> data_1 = [
-	... 	{"fragment": "info1", "mod": ("r", 1.0), "onset_range": (0.0, 2.0), "id":1},
-	... 	{"fragment": "info2", "mod": ("r", 2.0), "onset_range": (0.0, 4.0), "id":2},
-	... 	{"fragment": "info3", "mod": ("d", 0.25), "onset_range": (2.0, 4.0), "id":3},
-	... 	{"fragment": "info4", "mod": ("rd", 0.25), "onset_range": (2.0, 5.75), "id":4},
-	... 	{"fragment": "info5", "mod": ("r", 3.0), "onset_range": (2.5, 4.5), "id":5},
-	... 	{"fragment": "info6", "mod": ("r", 1.0), "onset_range": (4.0, 5.5), "id":6},
-	... 	{"fragment": "info7", "mod": ("rd", 0.25), "onset_range": (6.0, 7.25), "id":7}
+	>>> from decitala.search import Extraction
+	>>> from decitala.fragment import GreekFoot, GeneralFragment
+	>>> data = [
+	... 	Extraction(fragment=GreekFoot("Spondee"), frag_type="greek_foot", onset_range=(0.0, 0.5), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=1), # noqa
+	... 	Extraction(fragment=GeneralFragment([0.25, 0.25], name="cs-test1"), frag_type="general_fragment", onset_range=(0.0, 0.5), retrograde=False, factor=2.0, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=2), # noqa
+	... 	Extraction(fragment=GreekFoot("Trochee"), frag_type="greek_foot", onset_range=(0.25, 0.625), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=3), # noqa
+	... 	Extraction(fragment=GeneralFragment([0.25, 0.125], name="cs-test2"), frag_type="general_fragment", onset_range=(0.25, 0.625), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=4), # noqa
+	... 	Extraction(fragment=GreekFoot("Dactyl"), frag_type="greek_foot", onset_range=(0.5, 1.0), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=5) # noqa
 	... ]
-	>>> for path in get_pareto_optimal_longest_paths(data_1):
-	... 	onset_ranges = [x["onset_range"] for x in path]
-	... 	print(onset_ranges)
-	[(0.0, 2.0), (2.0, 4.0), (4.0, 5.5), (6.0, 7.25)]
-	[(0.0, 2.0), (2.0, 5.75), (6.0, 7.25)]
-	[(0.0, 2.0), (2.5, 4.5), (6.0, 7.25)]
-	[(0.0, 4.0), (4.0, 5.5), (6.0, 7.25)]
-	>>> data_2 = [
-	... 	{'fragment': GreekFoot("Spondee"), 'mod': ('r', 0.125), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], "id":1}, # noqa
-	... 	{'fragment': GeneralFragment([0.25, 0.25], name="cs-test1"), 'mod': ('cs', 2.0), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], "id":2}, # noqa
-	... 	{'fragment': GreekFoot("Trochee"), 'mod': ('r', 0.125), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,)], "id":3}, # noqa
-	... 	{'fragment': GeneralFragment([0.25, 0.125], name="cs-test2"), 'mod': ('cs', 2.0), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], "id":4}, # noqa
-	... 	{'fragment': GreekFoot("Dactyl"), 'mod': ('r', 0.125), 'onset_range': (0.5, 1.0), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,), (85,)], "id":5} # noqa
-	... ]
-	>>> for path in get_pareto_optimal_longest_paths(data_2):
+	>>> for path in get_pareto_optimal_longest_paths(data):
 	... 	for fragment in path:
-	... 		print(fragment)
+	... 		print(fragment.fragment, fragment.onset_range)
 	... 	print("-----")
-	{'fragment': <fragment.GreekFoot Spondee>, 'mod': ('r', 0.125), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], 'id': 1}
-	{'fragment': <fragment.GreekFoot Dactyl>, 'mod': ('r', 0.125), 'onset_range': (0.5, 1.0), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,), (85,)], 'id': 5}
+	<fragment.GreekFoot Spondee> (0.0, 0.5)
+	<fragment.GreekFoot Dactyl> (0.5, 1.0)
 	-----
-	{'fragment': <fragment.GeneralFragment cs-test1: [0.25 0.25]>, 'mod': ('cs', 2.0), 'onset_range': (0.0, 0.5), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], 'id': 2}
-	{'fragment': <fragment.GreekFoot Dactyl>, 'mod': ('r', 0.125), 'onset_range': (0.5, 1.0), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,), (85,)], 'id': 5}
+	<fragment.GeneralFragment cs-test1: [0.25 0.25]> (0.0, 0.5)
+	<fragment.GreekFoot Dactyl> (0.5, 1.0)
 	-----
-	{'fragment': <fragment.GreekFoot Trochee>, 'mod': ('r', 0.125), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(91,), (78,)], 'id': 3}
+	<fragment.GreekFoot Trochee> (0.25, 0.625)
 	-----
-	{'fragment': <fragment.GeneralFragment cs-test2: [0.25  0.125]>, 'mod': ('cs', 2.0), 'onset_range': (0.25, 0.625), 'is_spanned_by_slur': False, 'pitch_content': [(80,), (91,)], 'id': 4}
+	<fragment.GeneralFragment cs-test2: [0.25  0.125]> (0.25, 0.625)
 	-----
 	"""
 	sources = [x for x in data if not any(y.onset_range[1] <= x.onset_range[0] for y in data)]
