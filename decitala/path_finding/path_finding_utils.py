@@ -167,7 +167,7 @@ def make_2D_grid(resolution):
 	"""
 	Function for generating a grid of two numbers that sum to 1, iterated over the given resolution.
 
-	:param float resolution: resolution of the grid, $0 < x <= 1$.
+	:param float resolution: resolution of the grid, :math:`0 < x <= 1`.
 	"""
 	spaces = []
 	for i in range(2):
@@ -187,7 +187,7 @@ def make_3D_grid(resolution):
 	"""
 	Function for generating a grid of three numbers that sum to 1, iterated over the given resolution.
 
-	:param float resolution: resolution of the grid, $0 < x <= 1$.
+	:param float resolution: resolution of the grid, :math:`0 < x <= 1`.
 	"""
 	spaces = []
 	for i in range(3):
@@ -208,7 +208,7 @@ def make_4D_grid(resolution):
 	"""
 	Function for generating a grid of four numbers that sum to 1, iterated over the given resolution.
 
-	:param float resolution: resolution of the grid, $0 < x <= 1$.
+	:param float resolution: resolution of the grid, :math:`0 < x <= 1`.
 	"""
 	spaces = []
 	for i in range(4):
