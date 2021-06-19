@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>search &mdash; decitala 0.12.1 documentation</title>
+  <title>search &mdash; decitala 0.13.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.12.1
+                0.13.0
               </div>
             
           
@@ -107,7 +107,6 @@
 <p class="caption"><span class="caption-text">Basic Usage</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../basic_usage.html">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../basic_usage.html#rhythmic-manipulation">Rhythmic Manipulation</a></li>
 </ul>
 
             
@@ -182,6 +181,12 @@
 <dt id="decitala.search.SearchException">
 <em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">SearchException</span></code><a class="reference internal" href="../_modules/decitala/search.html#SearchException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.SearchException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="decitala.search.Extraction">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">Extraction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fragment</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="fragment.html#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><span class="pre">decitala.fragment.GeneralFragment</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">frag_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_range</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retrograde</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_hierarchy_val</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pitch_content</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_spanned_by_slur</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contiguous_summation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#Extraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.Extraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="py function">
@@ -281,7 +286,7 @@ object or one of its subclasses.</p></li>
 
 <dl class="py function">
 <dt id="decitala.search.path_finder">
-<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">path_finder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_subdivision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_contiguous_summation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dijkstra'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slur_constraint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#path_finder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.path_finder" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.search.</span></code><code class="sig-name descname"><span class="pre">path_finder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">filepath,</span> <span class="pre">part_num,</span> <span class="pre">table,</span> <span class="pre">windows=[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18],</span> <span class="pre">allow_subdivision=False,</span> <span class="pre">allow_contiguous_summation=False,</span> <span class="pre">algorithm='dijkstra',</span> <span class="pre">cost_function_class=&lt;decitala.path_finding.path_finding_utils.DefaultCostFunction</span> <span class="pre">object&gt;,</span> <span class="pre">slur_constraint=False,</span> <span class="pre">save_filepath=None,</span> <span class="pre">verbose=False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/search.html#path_finder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.search.path_finder" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function combines a number of tools for effectively finding a path of fragments
 through a provided composition and part number. It first runs
 <a class="reference internal" href="#decitala.search.rolling_hash_search" title="decitala.search.rolling_hash_search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.rolling_hash_search</span></code></a> to extract all fragments from the provided
@@ -341,6 +346,7 @@ object or one of its subclasses.</p></li>
 <span class="go">&lt;fragment.GreekFoot Iamb&gt;</span>
 <span class="go">&lt;fragment.GreekFoot Amphibrach&gt;</span>
 <span class="go">&lt;fragment.GreekFoot Amphimacer&gt;</span>
+<span class="go">&lt;fragment.GreekFoot Diiamb&gt;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -393,7 +399,7 @@ and searches. See <a class="reference internal" href="utils.html#decitala.utils.
 <li><p><strong>windows</strong> (<em>list</em>) – possible lengths of the search frames.</p></li>
 <li><p><strong>allow_unnamed</strong> (<em>bool</em>) – whether or not to include unnamed fragments (in the fragment tree(s)) 
 in the return.</p></li>
-<li><p><strong>logger</strong> (<em>bool</em>) – logger object (see <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_logger</span></code>).</p></li>
+<li><p><strong>logger</strong> (<em>bool</em>) – logger object (see <a class="reference internal" href="utils.html#decitala.utils.get_logger" title="decitala.utils.get_logger"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_logger</span></code></a>).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

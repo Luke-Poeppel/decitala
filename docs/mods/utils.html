@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>utils &mdash; decitala 0.12.1 documentation</title>
+  <title>utils &mdash; decitala 0.13.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.12.1
+                0.13.0
               </div>
             
           
@@ -103,6 +103,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage.html">Basic Usage</a></li>
 </ul>
 
             
@@ -176,6 +180,21 @@
 <dt id="decitala.utils.UtilsException">
 <em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">UtilsException</span></code><a class="reference internal" href="../_modules/decitala/utils.html#UtilsException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.UtilsException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.get_logger">
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">get_logger</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_to_console</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_to_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#get_logger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.get_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple helper for logging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of the logging object to be created.</p></li>
+<li><p><strong>print_to_console</strong> (<em>bool</em>) – whether to print the logs to the console.</p></li>
+<li><p><strong>write_to_file</strong> (<em>str</em>) – optional filepath to save the logs to.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -581,10 +600,10 @@ by “phrases,” <strong>only</strong> as defined by the appearance of rests an
 a given denominiator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>ts</strong> – a music21.meter.TimeSignature object.</p>
+<dd class="field-odd"><p><strong>ts</strong> – A music21.meter.TimeSignature object.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a new time signature that is fully reduced by removing all possible powers of 2.</p>
+<dd class="field-even"><p>A new time signature that is fully reduced by removing all possible powers of 2.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>music21.meter.TimeSignature</p>
@@ -597,6 +616,32 @@ a given denominiator.</p>
 <span class="go">&lt;music21.meter.TimeSignature 2/2&gt;</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.utils.rolling_SRR">
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">rolling_SRR</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_tuplets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#rolling_SRR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.rolling_SRR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a filepath, part number, and window size, extracts all notes/chords in the work and,
+on a rolling window, calculates the successive ratio representation (SRR) of each window.
+Returning the results as a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – Path to file to be analyzed.</p></li>
+<li><p><strong>part_num</strong> (<em>int</em>) – Part number to be analyzed.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em>) – Window size used in the calculations.</p></li>
+<li><p><strong>ignore_tuplets</strong> (<em>bool</em>) – Whether to ignore tuplets in the output. The use of tuplets will
+add some erroneous ratios to the data. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List holding successive ratio representations of each window on a rolling window of
+size <code class="docutils literal notranslate"><span class="pre">window_size</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

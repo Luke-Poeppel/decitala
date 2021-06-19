@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>database &mdash; decitala 0.12.1 documentation</title>
+  <title>database &mdash; decitala 0.13.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.12.1
+                0.13.0
               </div>
             
           
@@ -90,7 +90,11 @@
             
               <p class="caption"><span class="caption-text">Modules</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">database</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">database</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-decitala.database.corpora_models">corpora_models</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hash_table.html">hash_table</a></li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">path_finding</a></li>
@@ -107,7 +111,6 @@
 <p class="caption"><span class="caption-text">Basic Usage</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../basic_usage.html">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../basic_usage.html#rhythmic-manipulation">Rhythmic Manipulation</a></li>
 </ul>
 
             
@@ -175,17 +178,19 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-decitala.database">
-<span id="database"></span><h1>database<a class="headerlink" href="#module-decitala.database" title="Permalink to this headline">¶</a></h1>
-<dl class="py exception">
-<dt id="decitala.database.DatabaseException">
-<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.database.</span></code><code class="sig-name descname"><span class="pre">DatabaseException</span></code><a class="reference internal" href="../_modules/decitala/database.html#DatabaseException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.DatabaseException" title="Permalink to this definition">¶</a></dt>
+  <div class="section" id="database">
+<h1>database<a class="headerlink" href="#database" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>database<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-decitala.database.database"></span><dl class="py exception">
+<dt id="decitala.database.database.DatabaseException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.database.database.</span></code><code class="sig-name descname"><span class="pre">DatabaseException</span></code><a class="reference internal" href="../_modules/decitala/database/database.html#DatabaseException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.database.DatabaseException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="decitala.database.CompositionData">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.database.</span></code><code class="sig-name descname"><span class="pre">CompositionData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_filepath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database.html#CompositionData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.CompositionData" title="Permalink to this definition">¶</a></dt>
+<dt id="decitala.database.database.CompositionData">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.database.database.</span></code><code class="sig-name descname"><span class="pre">CompositionData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_filepath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/database.html#CompositionData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.database.CompositionData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.orm.decl_api.Base</span></code></p>
 <p>SQLAlchemy model representing the basic composition data for a composition.</p>
 <dl class="field-list simple">
@@ -201,8 +206,8 @@
 </dd></dl>
 
 <dl class="py class">
-<dt id="decitala.database.Extraction">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.database.</span></code><code class="sig-name descname"><span class="pre">Extraction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onset_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_stop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fragment_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_hierarchy_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pitch_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_slurred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database.html#Extraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.Extraction" title="Permalink to this definition">¶</a></dt>
+<dt id="decitala.database.database.ExtractionData">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.database.database.</span></code><code class="sig-name descname"><span class="pre">ExtractionData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onset_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_stop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fragment_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_hierarchy_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pitch_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_slurred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/database.html#ExtractionData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.database.ExtractionData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.orm.decl_api.Base</span></code></p>
 <p>SQLAlchemy model representing a fragment extracted from a composition.</p>
 <dl class="field-list simple">
@@ -226,8 +231,8 @@ in the database.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="decitala.database.create_database">
-<code class="sig-prename descclassname"><span class="pre">decitala.database.</span></code><code class="sig-name descname"><span class="pre">create_database</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_nums</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">echo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database.html#create_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.create_database" title="Permalink to this definition">¶</a></dt>
+<dt id="decitala.database.database.create_database">
+<code class="sig-prename descclassname"><span class="pre">decitala.database.database.</span></code><code class="sig-name descname"><span class="pre">create_database</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_nums</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">echo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/database.html#create_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.database.create_database" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for creating a database from a single filepath.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -244,8 +249,8 @@ in the database.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="decitala.database.batch_create_database">
-<code class="sig-prename descclassname"><span class="pre">decitala.database.</span></code><code class="sig-name descname"><span class="pre">batch_create_database</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">echo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database.html#batch_create_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.batch_create_database" title="Permalink to this definition">¶</a></dt>
+<dt id="decitala.database.database.batch_create_database">
+<code class="sig-prename descclassname"><span class="pre">decitala.database.database.</span></code><code class="sig-name descname"><span class="pre">batch_create_database</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">echo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/database.html#batch_create_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.database.batch_create_database" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function creates a database from a dictionary of filepaths and desires <code class="docutils literal notranslate"><span class="pre">part_nums</span></code>
 to analyze.</p>
 <dl class="field-list simple">
@@ -261,6 +266,32 @@ to analyze.</p>
 </dl>
 </dd></dl>
 
+</div>
+<div class="section" id="module-decitala.database.corpora_models">
+<span id="corpora-models"></span><h2>corpora_models<a class="headerlink" href="#module-decitala.database.corpora_models" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="decitala.database.corpora_models.DecitalaData">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.database.corpora_models.</span></code><code class="sig-name descname"><span class="pre">DecitalaData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/corpora_models.html#DecitalaData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.corpora_models.DecitalaData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.orm.decl_api.Base</span></code></p>
+<p>SQLAlchemy model representing a decitala fragment from the encoded datasets (given in <code class="docutils literal notranslate"><span class="pre">corpora</span></code>).</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="decitala.database.corpora_models.GreekFootData">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.database.corpora_models.</span></code><code class="sig-name descname"><span class="pre">GreekFootData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/corpora_models.html#GreekFootData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.corpora_models.GreekFootData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.orm.decl_api.Base</span></code></p>
+<p>SQLAlchemy model representing a greek foot fragment from the encoded datasets (given
+in <code class="docutils literal notranslate"><span class="pre">corpora</span></code>).</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="decitala.database.corpora_models.ProsodicFragmentData">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.database.corpora_models.</span></code><code class="sig-name descname"><span class="pre">ProsodicFragmentData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/corpora_models.html#ProsodicFragmentData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.corpora_models.ProsodicFragmentData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.orm.decl_api.Base</span></code></p>
+<p>SQLAlchemy model representing a prosodic fragment from the encoded datasets (given in <code class="docutils literal notranslate"><span class="pre">corpora</span></code>).</p>
+</dd></dl>
+
+</div>
 </div>
 
 

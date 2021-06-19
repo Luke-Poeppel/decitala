@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>vis &mdash; decitala 0.12.1 documentation</title>
+  <title>vis &mdash; decitala 0.13.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.12.1
+                0.13.0
               </div>
             
           
@@ -103,6 +103,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage.html">Basic Usage</a></li>
 </ul>
 
             
@@ -173,8 +177,8 @@
   <div class="section" id="module-decitala.vis">
 <span id="vis"></span><h1>vis<a class="headerlink" href="#module-decitala.vis" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="decitala.vis.create_tree_diagram">
-<code class="sig-prename descclassname"><span class="pre">decitala.vis.</span></code><code class="sig-name descname"><span class="pre">create_tree_diagram</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FragmentTree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/vis.html#create_tree_diagram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.vis.create_tree_diagram" title="Permalink to this definition">¶</a></dt>
+<dt id="decitala.vis.create_diagram">
+<code class="sig-prename descclassname"><span class="pre">decitala.vis.</span></code><code class="sig-name descname"><span class="pre">create_diagram</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FragmentTree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">webshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/vis.html#create_diagram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.vis.create_diagram" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function creates a visualization of a given <a class="reference internal" href="trees.html#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FragmentTree</span></code></a>
 using the Treant.js library. If a path is provided, all the files will be stored there. Otherwise,
 they will be stored in a tempfile for the display.</p>

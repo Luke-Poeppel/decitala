@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>trees &mdash; decitala 0.12.1 documentation</title>
+  <title>trees &mdash; decitala 0.13.0 documentation</title>
   
 
   
@@ -32,7 +32,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -64,7 +63,7 @@
             
             
               <div class="version">
-                0.12.1
+                0.13.0
               </div>
             
           
@@ -104,6 +103,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage.html">Basic Usage</a></li>
 </ul>
 
             
@@ -186,262 +189,9 @@
 </dd></dl>
 
 <dl class="py class">
-<dt id="decitala.trees.NaryTree">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.trees.</span></code><code class="sig-name descname"><span class="pre">NaryTree</span></code><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A single-rooted nary tree for ratio and difference representations of rhythmic fragments. Nodes
-are hashed by their value and are stored in a set. For demonstration, we will create the
-following tree: (If a string appears next to a node value, this means the path from the root to
-that node is an encoded fragment.)</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">root</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="c1"># LEVEL 1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c1</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="c1"># LEVEL 2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c3</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;A&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c3</span><span class="o">.</span><span class="n">value</span>
-<span class="go">3.0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">gc1</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="c1"># LEVEL 3</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">gc2</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">gc3</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;C&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ggc</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;D&#39;</span><span class="p">)</span> <span class="c1"># LEVEL 4</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="p">{</span><span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">,</span> <span class="n">c3</span><span class="p">}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">children</span>
-<span class="go">{&lt;NODE: value=0.5, name=None&gt;, &lt;NODE: value=1.0, name=None&gt;, &lt;NODE: value=3.0, name=A&gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c1</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">children</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">ordered_children</span><span class="p">()</span>
-<span class="go">[&lt;NODE: value=0.5, name=None&gt;, &lt;NODE: value=1.0, name=None&gt;, &lt;NODE: value=3.0, name=A&gt;]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c1</span><span class="o">.</span><span class="n">add_children</span><span class="p">([</span><span class="n">gc1</span><span class="p">,</span> <span class="n">gc2</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c1</span><span class="o">.</span><span class="n">num_children</span>
-<span class="go">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">gc3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">gc1</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">ggc</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">example_path</span> <span class="o">=</span> <span class="p">[</span><span class="n">root</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">add_path_of_children</span><span class="p">(</span><span class="n">path</span> <span class="o">=</span> <span class="n">example_path</span><span class="p">,</span> <span class="n">final_node_name</span> <span class="o">=</span> <span class="s1">&#39;Full Path&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
-<span class="go">&lt;NODE: value=0.5, name=None&gt;</span>
-<span class="go">&lt;NODE: value=1.0, name=None&gt;</span>
-<span class="go">&lt;NODE: value=3.0, name=A&gt;</span>
-<span class="go">&lt;NODE: value=4.0, name=None&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Check for overwriting data...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">example_path_2</span> <span class="o">=</span> <span class="p">[</span><span class="n">root</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">root</span><span class="o">.</span><span class="n">add_path_of_children</span><span class="p">(</span><span class="n">path</span> <span class="o">=</span> <span class="n">example_path_2</span><span class="p">,</span> <span class="n">final_node_name</span> <span class="o">=</span> <span class="s1">&#39;Test Overwrite&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># We can access children by referencing a node or by calling to its representative value.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">newValue</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">get_child_by_value</span><span class="p">(</span><span class="mf">4.0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">newValue</span><span class="o">.</span><span class="n">children</span>
-<span class="go">{&lt;NODE: value=1.0, name=None&gt;}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span><span class="o">.</span><span class="n">get_child</span><span class="p">(</span><span class="n">gc3</span><span class="p">)</span>
-<span class="go">&lt;NODE: value=2.0, name=C&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span><span class="o">.</span><span class="n">get_child_by_value</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
-<span class="go">&lt;NODE: value=2.0, name=C&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span><span class="o">.</span><span class="n">get_child_by_value</span><span class="p">(</span><span class="mf">4.0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span> <span class="o">=</span> <span class="n">NaryTree</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span>
-<span class="go">&lt;trees.NaryTree: nodes=13&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span>
-<span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Calling the size returns the number of nodes in the tree.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
-<span class="go">13</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">all_possible_paths</span><span class="p">()</span>
-<span class="go">[1.0]</span>
-<span class="go">[1.0, 0.5]</span>
-<span class="go">[1.0, 0.5, 0.5]</span>
-<span class="go">[1.0, 0.5, 0.5, 1.0]</span>
-<span class="go">[1.0, 0.5, 3.0]</span>
-<span class="go">[1.0, 1.0]</span>
-<span class="go">[1.0, 1.0, 2.0]</span>
-<span class="go">[1.0, 1.0, 2.0, 1.0]</span>
-<span class="go">[1.0, 3.0]</span>
-<span class="go">[1.0, 4.0]</span>
-<span class="go">[1.0, 4.0, 1.0]</span>
-<span class="go">[1.0, 4.0, 1.0, 0.5]</span>
-<span class="go">[1.0, 4.0, 1.0, 0.5, 2.0]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get paths of a particular length:</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_path</span> <span class="ow">in</span> <span class="n">TestTree</span><span class="o">.</span><span class="n">all_named_paths</span><span class="p">(</span><span class="n">cutoff</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">this_path</span><span class="p">)</span>
-<span class="go">B</span>
-<span class="go">C</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># We can search for paths as follows.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
-<span class="go">&#39;D&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">])</span>
-<span class="go">&#39;B&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
-<span class="go">&#39;C&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Allow for unnamed paths to be found.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">allow_unnamed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="go">[1.0, 0.5, 0.5]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Level order traversal</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">TestTree</span><span class="o">.</span><span class="n">level_order_traversal</span><span class="p">()</span>
-<span class="go">[[1.0], [0.5, 1.0, 3.0, 4.0], [0.5, 3.0, 2.0, 1.0], [1.0, 1.0, 0.5], [2.0]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># We can serialize an NaryTree with NaryTree.serialize()</span>
-</pre></div>
-</div>
-<dl class="py class">
-<dt id="decitala.trees.NaryTree.Node">
-<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Node</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.Node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.Node" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A Node object stores an item and references its parent and children. In an Nary tree, a parent
-may have any arbitrary number of children, but each child has only 1 parent.</p>
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.Node.add_child">
-<code class="sig-name descname"><span class="pre">add_child</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">child_node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.Node.add_child"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.Node.add_child" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.Node.add_children">
-<code class="sig-name descname"><span class="pre">add_children</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">children_nodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.Node.add_children"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.Node.add_children" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.Node.add_path_of_children">
-<code class="sig-name descname"><span class="pre">add_path_of_children</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_node_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.Node.add_path_of_children"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.Node.add_path_of_children" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds a path of Nodes through <code class="docutils literal notranslate"><span class="pre">self.children</span></code>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.Node.remove_child">
-<code class="sig-name descname"><span class="pre">remove_child</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">child_node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.Node.remove_child"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.Node.remove_child" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.Node.remove_children">
-<code class="sig-name descname"><span class="pre">remove_children</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">children_nodes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.Node.remove_children"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.Node.remove_children" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.Node.get_child">
-<code class="sig-name descname"><span class="pre">get_child</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.Node.get_child"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.Node.get_child" title="Permalink to this definition">¶</a></dt>
-<dd><p>Given another Node, returns the node in the set of children with the same value.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.Node.get_child_by_value">
-<code class="sig-name descname"><span class="pre">get_child_by_value</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.Node.get_child_by_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.Node.get_child_by_value" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.Node.num_children">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">num_children</span></code><a class="headerlink" href="#decitala.trees.NaryTree.Node.num_children" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.Node.has_children">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">has_children</span></code><a class="headerlink" href="#decitala.trees.NaryTree.Node.has_children" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.Node.ordered_children">
-<code class="sig-name descname"><span class="pre">ordered_children</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.Node.ordered_children"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.Node.ordered_children" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the children of a node in list format, ordered by value.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.Node.write_to_json">
-<code class="sig-name descname"><span class="pre">write_to_json</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.Node.write_to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.Node.write_to_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used in the Treant.js visualization of Fragment trees.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.size">
-<code class="sig-name descname"><span class="pre">size</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the number of nodes in the nary tree.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.serialize">
-<code class="sig-name descname"><span class="pre">serialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">for_treant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.serialize" title="Permalink to this definition">¶</a></dt>
-<dd><p>tree=pickled tree will not be needed in the actual tree.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.all_possible_paths">
-<code class="sig-name descname"><span class="pre">all_possible_paths</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.all_possible_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.all_possible_paths" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all possible paths from the root node, not all of which are necesarrily named.
-Currently returns a numpy error.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.all_named_paths">
-<code class="sig-name descname"><span class="pre">all_named_paths</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.all_named_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.all_named_paths" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all named paths from the root. An optional <code class="docutils literal notranslate"><span class="pre">cutoff</span></code> parameter restricts to paths of
-length <span class="math notranslate nohighlight">\(n\)</span>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.level_order_traversal">
-<code class="sig-name descname"><span class="pre">level_order_traversal</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.level_order_traversal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.level_order_traversal" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the level order traversal of an NaryTree.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.search_for_path">
-<code class="sig-name descname"><span class="pre">search_for_path</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_from_root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_unnamed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.search_for_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.search_for_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Searches for <code class="docutils literal notranslate"><span class="pre">path_from_root</span></code> through the tree for a continuous path to a node.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path_from_root</strong> (<em>numpy.array</em>) – path to search in tree.</p></li>
-<li><p><strong>allow_unnamed</strong> (<em>bool</em>) – whether or not to allow for unnamed paths to be found.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>either the name of the final node or, if <code class="docutils literal notranslate"><span class="pre">allow_unnamed=True</span></code>,
-possibly <code class="docutils literal notranslate"><span class="pre">path_from_root</span></code>.</p>
-</dd>
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#decitala.trees.TreeException" title="decitala.trees.TreeException"><strong>TreeException</strong></a> – when an invalid path or representation type is provided.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="decitala.trees.NaryTree.ld_search">
-<code class="sig-name descname"><span class="pre">ld_search</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_from_root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_unnamed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#NaryTree.ld_search"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.NaryTree.ld_search" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is a special use-case in <code class="xref py py-obj docutils literal notranslate"><span class="pre">get_by_ql_array</span></code> based on the observation
-that the difference representation of mixed augmentations are linearly dependent. In this search
-tool, rather than checking if a path exists in a tree, we check on a level-order basis
-for a node for which the input is linearly dependent.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>NotImplementedError</strong> – </p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt id="decitala.trees.filter_data">
-<code class="sig-prename descclassname"><span class="pre">decitala.trees.</span></code><code class="sig-name descname"><span class="pre">filter_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#filter_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.filter_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is used in the instantiation of the <a class="reference internal" href="#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><code class="xref py py-class docutils literal notranslate"><span class="pre">FragmentTree</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>raw_data</strong> (<em>list</em>) – a list of <a class="reference internal" href="fragment.html#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decitala</span></code></a>,
-<a class="reference internal" href="fragment.html#decitala.fragment.GreekFoot" title="decitala.fragment.GreekFoot"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreekFoot</span></code></a>, or
-<a class="reference internal" href="fragment.html#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralFragment</span></code></a> objects.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a filtered list that removes single-onset fragments and fragments with equivalent
-successive difference representations (see <a class="reference internal" href="utils.html#decitala.utils.successive_ratio_array" title="decitala.utils.successive_ratio_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">successive_ratio_array</span></code></a>)
-using the Cauchy-Schwartz inequality.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
 <dt id="decitala.trees.FragmentTree">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.trees.</span></code><code class="sig-name descname"><span class="pre">FragmentTree</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rep_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#FragmentTree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.FragmentTree" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#decitala.trees.NaryTree" title="decitala.trees.NaryTree"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.trees.NaryTree</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">treeplotter.tree.Tree</span></code></p>
 <p>NaryTree that holds multiplicative or additive representations of a rhythmic dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -462,8 +212,8 @@ and <code class="docutils literal notranslate"><span class="pre">difference</spa
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span>
-<span class="go">&lt;trees.FragmentTree greek_foot_ratio: nodes=31&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+<span class="go">&lt;trees.FragmentTree greek_foot_ratio: nodes=36&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span><span class="o">.</span><span class="n">name</span>
 <span class="go">&lt;fragment.GreekFoot Peon_II&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># We can also give it a name.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">GeneralFragment</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;myfragment&quot;</span><span class="p">)</span>
@@ -473,11 +223,11 @@ and <code class="docutils literal notranslate"><span class="pre">difference</spa
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mytree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;difference&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;MyCoolTree&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mytree</span>
 <span class="go">&lt;trees.FragmentTree MyCoolTree: nodes=10&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">mytree</span><span class="o">.</span><span class="n">all_named_paths</span><span class="p">():</span>
-<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">frag</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">mytree</span><span class="o">.</span><span class="n">all_named_paths</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">frag</span><span class="p">)</span>
 <span class="go">&lt;fragment.Decitala 93_Ragavardhana&gt;</span>
-<span class="go">&lt;fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]&gt;</span>
 <span class="go">&lt;fragment.GreekFoot Ionic_Major&gt;</span>
+<span class="go">&lt;fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]&gt;</span>
 </pre></div>
 </div>
 <dl class="py method">

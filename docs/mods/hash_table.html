@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>hash_table &mdash; decitala 0.12.1 documentation</title>
+  <title>hash_table &mdash; decitala 0.13.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.12.1
+                0.13.0
               </div>
             
           
@@ -103,6 +103,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage.html">Basic Usage</a></li>
 </ul>
 
             
@@ -221,7 +225,7 @@ data and set reload it with the new desired modification techniques.</p>
 <span class="go">&lt;decitala.hash_table.FragmentHashTable 0 fragments&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span>
-<span class="go">&lt;decitala.hash_table.FragmentHashTable 2301 fragments&gt;</span>
+<span class="go">&lt;decitala.hash_table.FragmentHashTable 2645 fragments&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span><span class="o">.</span><span class="n">datasets</span>
 <span class="go">[&#39;greek_foot&#39;]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span><span class="o">.</span><span class="n">custom_fragments</span>
@@ -259,10 +263,10 @@ with default modification techniques changed, simply run <code class="docutils l
 parameters.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span> <span class="o">=</span> <span class="n">GreekFootHashTable</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span>
-<span class="go">&lt;decitala.hash_table.FragmentHashTable 2255 fragments&gt;</span>
+<span class="go">&lt;decitala.hash_table.FragmentHashTable 2603 fragments&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">try_retrograde</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_stretch_augmentation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span>
-<span class="go">&lt;decitala.hash_table.FragmentHashTable 597 fragments&gt;</span>
+<span class="go">&lt;decitala.hash_table.FragmentHashTable 706 fragments&gt;</span>
 </pre></div>
 </div>
 </dd></dl>
