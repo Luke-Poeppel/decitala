@@ -72,32 +72,11 @@ compositions = {
 }
 
 ####################################################################################################
-# Accuracy checking.
-def check_accuracy(training_data, calculated_data, mode):
-	"""
-	The `training_data` is the analysis as provided by Messiean. The `input_data`
-	is the data calculated by Dijkstra path-finding.
-	NOTE: the data is stored in two different formats, hence the use of `mode`.
-	"""
-	accuracy = 0
-	for this_training_fragment in training_data:
-		for this_fragment in calculated_data:
-			if mode == "Compositions":
-				if (this_training_fragment["fragment"] == this_fragment.fragment) and (tuple(this_training_fragment["onset_range"]) == this_fragment.onset_range): # noqa
-					accuracy += 1
-			elif mode == "Transcriptions":
-				if (this_training_fragment[0] == this_fragment.fragment) and (tuple(this_training_fragment[1]) == this_fragment.onset_range): # noqa
-					accuracy += 1
-
-	return (accuracy / len(training_data)) * 100
-
-####################################################################################################
 # Running on Compositions
 def run_on_all_compositions(
 		frag_type,
 		resolution,
 	):
-	# Useful if writing to a file.
 	date = datetime.today().strftime("%m-%d-%Y")
 
 	logger = utils.get_logger(
@@ -145,7 +124,6 @@ def run_on_all_compositions(
 def run_on_all_analyzed_transcriptions(
 		frag_type,
 		resolution,
-		cost_function_class
 	):
 	date = datetime.today().strftime("%m-%d-%Y")
 
@@ -167,9 +145,16 @@ def run_on_all_analyzed_transcriptions(
 		if transcription.analysis is None:
 			continue
 
+		ALL_EXTRACTED = search.rolling_hash_search(
+			filepath=transcription.filepath,
+			part_num=0,
+			table=hash_table,
+			allow_subdivision=True
+		)
+
 		transcription_results = dict()
 		for point in path_finding_utils.make_3D_grid(resolution=0.1):
-			logger.info(f"\nRunning Dijkstra for ({point}).")
+			logger.info(f"\nRunning Dijkstra for {point}.")
 			path = search.path_finder(
 				filepath=transcription.filepath,
 				part_num=0,
@@ -183,7 +168,8 @@ def run_on_all_analyzed_transcriptions(
 			)
 			path = path_finding_utils.split_extractions(
 				data=path,
-				split_dict={GreekFoot("Diiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb")]}
+				split_dict={GreekFoot("Diiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb")]},
+				all_res=ALL_EXTRACTED
 			)
 
 			training_data = transcription.analysis
@@ -197,7 +183,7 @@ def run_on_all_analyzed_transcriptions(
 	with open(filepath, "w") as fp:
 		json.dump(obj=all_results, fp=fp, ensure_ascii=False, indent=4)
 
-# run_on_all_analyzed_transcriptions_3D_cost(frag_type="greek_foot", resolution=0.1)
+# run_on_all_analyzed_transcriptions(frag_type="greek_foot", resolution=0.1)
 
 ####################################################################################################
 # Plotting
