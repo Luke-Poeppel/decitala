@@ -705,14 +705,16 @@ def get_object_indices(
 		if measure_divider_mode == "str":
 			data_out = []
 			for this_measure in ms:
+				measure_objs = []
 				for this_obj in this_measure.recurse().stream().iter.notesAndRests:
 					start = this_obj.offset
 					stop = this_obj.offset + this_obj.quarterLength
 					if ignore_grace:
 						if start == stop:
 							continue
-					data_out.append((this_obj, (start, stop)))
 
+					measure_objs.append((this_obj, (start, stop)))
+				data_out.append(measure_objs)
 				if not(this_measure.number == ms[-1].number):
 					data_out.append("B")
 		else:
