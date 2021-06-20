@@ -241,10 +241,12 @@ def make_4D_grid(resolution):
 
 	return combos
 
-def split_extractions(data, split_dict):
+def split_extractions(data, split_dict, all_res):
 	split_extractions = []
 	for extraction in data:
 		if extraction.fragment in split_dict:
-			components = extraction.split(split_dict=split_dict)
+			components = extraction.split(split_dict=split_dict, all_res=all_res)
 			split_extractions.extend(components)
+		else:
+			split_extractions.append(extraction)
 	return split_extractions
