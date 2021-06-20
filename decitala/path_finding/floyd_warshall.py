@@ -27,7 +27,9 @@ def floyd_warshall(
 	"""
 	Calculates the distance and next matrices of the Floyd-Warshall path-finding algorithm.
 
-	:param list data: Data from :obj:`~decitala.search.rolling_search`.
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost
+		function that will be used in calculating the weights between vertices.
 	:param bool verbose: Whether to log messages (including showing a progress bar).
 	:return: Two matrices of size len(data) x len(data): first is the weighted adjacency matrix, the
 			second is the matrix used for path reconstruction.
@@ -86,6 +88,9 @@ def reconstruct_standard_path(
 		start,
 		end
 	):
+	"""
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	"""
 	path = [start]
 	if end.onset_range[0] <= start.onset_range[-1]:
 		return path

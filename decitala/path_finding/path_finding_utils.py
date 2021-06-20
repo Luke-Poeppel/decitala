@@ -43,7 +43,7 @@ class CostFunction:
 	def cost(self, vertex_a, vertex_b):
 		"""
 		This function must be overrided by child classes. Cost function between two
-		:obj:`decitala.search.Extraction`: objects.
+		:obj:`decitala.search.Extraction` objects.
 
 		:param `decitala.search.Extraction` vertex_1: An extraction object from a composition.
 		:param `decitala.search.Extraction` vertex_2: A second extraction object from a composition.
@@ -143,6 +143,7 @@ def sources_and_sinks(data):
 def best_source_and_sink(data):
 	"""
 	TODO: this is bad. I should be using the agnostic approach of Dijkstra here.
+
 	Calculates the "best" source and sink from a dataset based on two simple heuristics: (1) the
 	fragment with the earliest (or latest, for sink) starting point, (2) the fragment with the
 	greatest number of onsets.
