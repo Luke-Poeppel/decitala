@@ -68,6 +68,12 @@ class Extraction:
 	def show(self):
 		pass
 
+@dataclass
+class Frame:
+	"""
+	A frame of the objects in the score.
+	"""
+
 def frame_to_ql_array(frame):
 	"""
 	:param list frame: Frame of data from :obj:`~decitala.utils.get_object_indices`.
@@ -128,8 +134,8 @@ def frame_to_midi(frame, ignore_graces=True):
 
 def frame_is_spanned_by_slur(frame):
 	"""
-	:param list frame: Frame from :obj:`~decitala.utils.get_object_indices`.
-	:return: Whether or not the frame is spanned by a music21.spanner.Slur object.
+	:param list frame: frame from :obj:`~decitala.utils.get_object_indices`.
+	:return: whether or not the frame is spanned by a music21.spanner.Slur object.
 	:rtype: bool
 	"""
 	is_spanned_by_slur = False
@@ -143,6 +149,37 @@ def frame_is_spanned_by_slur(frame):
 					is_spanned_by_slur = True
 
 	return is_spanned_by_slur
+
+def frame_slur_count(frame, allow_overlap=False):
+	"""
+	:param list frame: frame from :obj:`~decitala.utils.get_object_indices`.
+	:param bool allow_overlap: whether to allow overlaps in the appearing slurs. If ``False``,
+								all the appearing slurs must start and end within
+								the frame's boundaries.
+	:return: The number of slurs in a frame.
+	:rtype: int
+	"""
+	count = 0
+	first_offset = frame[0][1][0]
+	last_offset = frame[-1][1][-1]
+	all_slurs = []
+	for this_obj in frame:
+		obj_spanners = this_obj[0].getSpannerSites()
+		for this_spanner in obj_spanners:
+			if type(this_spanner).__name__ == "Slur":
+				all_slurs.append(this_spanner)
+
+	if allow_overlap:
+		count = len(all_slurs) // 2
+	else:
+		for this_slur in all_slurs:
+			starting_offset = this_slur.getFirst().offset
+			ending_offset = this_slur.getLast().offset
+			if starting_offset >= first_offset and ending_offset <= last_offset:
+				count += 1
+		count = count // 2
+
+	return count
 
 def frame_lookup(frame, ql_array, curr_fragment_id, table, windows):
 	objects = [x[0] for x in frame]
