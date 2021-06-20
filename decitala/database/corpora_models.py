@@ -77,7 +77,7 @@ class ProsodicFragmentData(Base):
 def _make_corpora_database(echo):
 	abspath_databases_directory = os.path.abspath("./databases/")
 	engine = get_engine(
-		filepath=os.path.join(abspath_databases_directory, "FRAGMENT_DATABASE.db"),
+		filepath=os.path.join(abspath_databases_directory, "fragment_database.db"),
 		echo=echo
 	)
 	session = get_session(engine=engine)
