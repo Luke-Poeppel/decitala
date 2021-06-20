@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.path_finding.dijkstra &mdash; decitala 0.13.1 documentation</title>
+  <title>decitala.path_finding.dijkstra &mdash; decitala 0.13.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.13.1
+                0.13.2
               </div>
             
           
@@ -186,22 +186,27 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">path_finding_utils</span>
 
 <span class="c1"># Useful info here: https://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python.</span>
-<span class="c1"># Weights found from hyperparameter search on pre-annotated compositions.</span>
 <div class="viewcode-block" id="dijkstra"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.dijkstra.dijkstra">[docs]</a><span class="k">def</span> <span class="nf">dijkstra</span><span class="p">(</span>
 		<span class="n">data</span><span class="p">,</span>
 		<span class="n">source</span><span class="p">,</span>
-		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">path_finding_utils</span><span class="o">.</span><span class="n">DefaultCostFunction</span><span class="p">()</span>
+		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">path_finding_utils</span><span class="o">.</span><span class="n">DefaultCostFunction</span><span class="p">(),</span>
+		<span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
 	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Dijkstra path-finding algorithm from dynamic programming. Uses a min-heap</span>
 <span class="sd">	data structure for efficiency.</span>
 
-<span class="sd">	:param list data: Data from one of the search algorithms (each result being a dictionary.)</span>
-<span class="sd">	:param dict source: Any element from ``data``.</span>
-<span class="sd">	:param dict weights: Dictionary with two keys and values (must sum to 1.0):</span>
-<span class="sd">						``&quot;gap&quot;`` and ``&quot;onsets&quot;``.</span>
+<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
+<span class="sd">	:param source: an :obj:`decitala.search.Extraction` object.</span>
+<span class="sd">	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost</span>
+<span class="sd">		function that will be used in calculating the weights between vertices.</span>
+<span class="sd">	:param bool verbose: whether to print logs.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">graph</span> <span class="o">=</span> <span class="n">path_finding_utils</span><span class="o">.</span><span class="n">build_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cost_function_class</span><span class="p">)</span>
+	<span class="n">graph</span> <span class="o">=</span> <span class="n">path_finding_utils</span><span class="o">.</span><span class="n">build_graph</span><span class="p">(</span>
+		<span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">cost_function_class</span><span class="p">,</span>
+		<span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+	<span class="p">)</span>
 	<span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">id_</span>
 
 	<span class="n">q</span> <span class="o">=</span> <span class="p">[]</span>
@@ -229,6 +234,10 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Function for agnostically choosing the best source and target (and associated predecessor set)</span>
 <span class="sd">	via Dijkstra. Only requires regular data input.</span>
+
+<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
+<span class="sd">	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost</span>
+<span class="sd">		function that will be used in calculating the weights between vertices.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">sources</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">path_finding_utils</span><span class="o">.</span><span class="n">sources_and_sinks</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
@@ -281,12 +290,10 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Returns the optimal path extracted from Dijkstra.</span>
 
-<span class="sd">	:param dict pred: The ``pred`` dictionary returned from</span>
+<span class="sd">	:param dict pred: the ``pred`` dictionary returned from</span>
 <span class="sd">						:obj:`decitala.path_finding.dijkstra.dijkstra`.</span>
-<span class="sd">	:param dict source: An element from the ``data`` input to</span>
-<span class="sd">						:obj:`decitala.path_finding.dijkstra.dijkstra`</span>
-<span class="sd">	:param dict target: An element from the ``data`` input to</span>
-<span class="sd">						:obj:`decitala.path_finding.dijkstra.dijkstra`</span>
+<span class="sd">	:param dict source: a :obj:`decitala.search.Extraction` object.</span>
+<span class="sd">	:param dict target: a :obj:`decitala.search.Extraction` object.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">source_fragment_id</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">id_</span>
 	<span class="n">target_fragment_id</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">id_</span>

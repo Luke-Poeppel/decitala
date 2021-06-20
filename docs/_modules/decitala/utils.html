@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.utils &mdash; decitala 0.13.1 documentation</title>
+  <title>decitala.utils &mdash; decitala 0.13.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.13.1
+                0.13.2
               </div>
             
           
@@ -878,14 +878,16 @@
 		<span class="k">if</span> <span class="n">measure_divider_mode</span> <span class="o">==</span> <span class="s2">&quot;str&quot;</span><span class="p">:</span>
 			<span class="n">data_out</span> <span class="o">=</span> <span class="p">[]</span>
 			<span class="k">for</span> <span class="n">this_measure</span> <span class="ow">in</span> <span class="n">ms</span><span class="p">:</span>
+				<span class="n">measure_objs</span> <span class="o">=</span> <span class="p">[]</span>
 				<span class="k">for</span> <span class="n">this_obj</span> <span class="ow">in</span> <span class="n">this_measure</span><span class="o">.</span><span class="n">recurse</span><span class="p">()</span><span class="o">.</span><span class="n">stream</span><span class="p">()</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notesAndRests</span><span class="p">:</span>
 					<span class="n">start</span> <span class="o">=</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span>
 					<span class="n">stop</span> <span class="o">=</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span>
 					<span class="k">if</span> <span class="n">ignore_grace</span><span class="p">:</span>
 						<span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="n">stop</span><span class="p">:</span>
 							<span class="k">continue</span>
-					<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">this_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)))</span>
 
+					<span class="n">measure_objs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">this_obj</span><span class="p">,</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)))</span>
+				<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">measure_objs</span><span class="p">)</span>
 				<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">this_measure</span><span class="o">.</span><span class="n">number</span> <span class="o">==</span> <span class="n">ms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">number</span><span class="p">):</span>
 					<span class="n">data_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>

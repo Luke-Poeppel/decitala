@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>trees &mdash; decitala 0.13.1 documentation</title>
+  <title>trees &mdash; decitala 0.13.2 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.13.1
+                0.13.2
               </div>
             
           
@@ -198,12 +198,9 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<em>str</em>) – either a frag_type/rep_type combo, a path to folder of music21-readable files,
 or a list of fragments.</p></li>
-<li><p><strong>frag_type</strong> (<em>str</em>) – determines the class defining the set of fragments.
-If the <code class="docutils literal notranslate"><span class="pre">frag_type=='decitala'</span></code>, creates <a class="reference internal" href="fragment.html#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decitala</span></code></a> objects;
-if <code class="docutils literal notranslate"><span class="pre">frag_type=='greek_foot'</span></code>, creates <a class="reference internal" href="fragment.html#decitala.fragment.GreekFoot" title="decitala.fragment.GreekFoot"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreekFoot</span></code></a>.
-Otherwise creates <a class="reference internal" href="fragment.html#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralFragment</span></code></a> (default) objects.</p></li>
 <li><p><strong>rep_type</strong> (<em>str</em>) – determines the representation of the fragment. Options are <code class="docutils literal notranslate"><span class="pre">ratio</span></code> (default)
 and <code class="docutils literal notranslate"><span class="pre">difference</span></code>.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – optional name of the Fragment Tree.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -234,6 +231,18 @@ and <code class="docutils literal notranslate"><span class="pre">difference</spa
 <dt id="decitala.trees.FragmentTree.from_frag_type">
 <em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_frag_type</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frag_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rep_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#FragmentTree.from_frag_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.FragmentTree.from_frag_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a fragment tree from the data in fragment_database.db in the databases directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>frag_type</strong> (<em>str</em>) – determines the class defining the set of fragments.
+If the <code class="docutils literal notranslate"><span class="pre">frag_type=='decitala'</span></code>, creates
+<a class="reference internal" href="fragment.html#decitala.fragment.Decitala" title="decitala.fragment.Decitala"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Decitala</span></code></a> objects; if
+<code class="docutils literal notranslate"><span class="pre">frag_type=='greek_foot'</span></code>,
+creates <a class="reference internal" href="fragment.html#decitala.fragment.GreekFoot" title="decitala.fragment.GreekFoot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GreekFoot</span></code></a>.
+Otherwise creates
+<a class="reference internal" href="fragment.html#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GeneralFragment</span></code></a>
+(default) objects.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

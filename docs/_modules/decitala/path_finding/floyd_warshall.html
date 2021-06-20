@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.path_finding.floyd_warshall &mdash; decitala 0.13.1 documentation</title>
+  <title>decitala.path_finding.floyd_warshall &mdash; decitala 0.13.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.13.1
+                0.13.2
               </div>
             
           
@@ -200,7 +200,9 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Calculates the distance and next matrices of the Floyd-Warshall path-finding algorithm.</span>
 
-<span class="sd">	:param list data: Data from :obj:`~decitala.search.rolling_search`.</span>
+<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
+<span class="sd">	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost</span>
+<span class="sd">		function that will be used in calculating the weights between vertices.</span>
 <span class="sd">	:param bool verbose: Whether to log messages (including showing a progress bar).</span>
 <span class="sd">	:return: Two matrices of size len(data) x len(data): first is the weighted adjacency matrix, the</span>
 <span class="sd">			second is the matrix used for path reconstruction.</span>
@@ -253,12 +255,15 @@
 
 	<span class="k">return</span> <span class="n">dist_matrix</span><span class="p">,</span> <span class="n">next_matrix</span></div>
 
-<span class="k">def</span> <span class="nf">reconstruct_standard_path</span><span class="p">(</span>
+<div class="viewcode-block" id="reconstruct_standard_path"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.floyd_warshall.reconstruct_standard_path">[docs]</a><span class="k">def</span> <span class="nf">reconstruct_standard_path</span><span class="p">(</span>
 		<span class="n">data</span><span class="p">,</span>
 		<span class="n">next_matrix</span><span class="p">,</span>
 		<span class="n">start</span><span class="p">,</span>
 		<span class="n">end</span>
 	<span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="n">start</span><span class="p">]</span>
 	<span class="k">if</span> <span class="n">end</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">start</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
 		<span class="k">return</span> <span class="n">path</span>
@@ -269,7 +274,7 @@
 		<span class="n">start</span> <span class="o">=</span> <span class="n">next_matrix</span><span class="p">[</span><span class="n">start_index</span><span class="p">][</span><span class="n">end_index</span><span class="p">]</span>
 		<span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
 
-	<span class="k">return</span> <span class="n">path</span>
+	<span class="k">return</span> <span class="n">path</span></div>
 
 <div class="viewcode-block" id="get_path"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.floyd_warshall.get_path">[docs]</a><span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span>
 		<span class="n">start</span><span class="p">,</span>
@@ -281,11 +286,11 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Function for retriving the best path extracted from the Floyd-Warshall algorithm.</span>
 
-<span class="sd">	:param `~decitala.fragment.GeneralFragment` start: starting fragment in the path.</span>
-<span class="sd">	:param `~decitala.fragment.GeneralFragment` end: ending fragment in the path.</span>
+<span class="sd">	:param start: an :obj:`decitala.search.Extraction` object.</span>
+<span class="sd">	:param end: an :obj:`decitala.search.Extraction` object.</span>
 <span class="sd">	:param numpy.array next_matrix: second matrix from</span>
 <span class="sd">			:obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.</span>
-<span class="sd">	:param list data: data from :obj:`~decitala.search.rolling_search``.</span>
+<span class="sd">	:param list data: data from :obj:`~decitala.search.rolling_search`.</span>
 <span class="sd">	:return: best path extracted using the Floyd-Warshall algorithm.</span>
 <span class="sd">	:rtype: list</span>
 <span class="sd">	&quot;&quot;&quot;</span>
