@@ -17,7 +17,8 @@ from . import path_finding_utils
 def dijkstra(
 		data,
 		source,
-		cost_function_class=path_finding_utils.DefaultCostFunction()
+		cost_function_class=path_finding_utils.DefaultCostFunction(),
+		verbose=False
 	):
 	"""
 	Dijkstra path-finding algorithm from dynamic programming. Uses a min-heap
@@ -28,7 +29,11 @@ def dijkstra(
 	:param dict weights: Dictionary with two keys and values (must sum to 1.0):
 						``"gap"`` and ``"onsets"``.
 	"""
-	graph = path_finding_utils.build_graph(data, cost_function_class)
+	graph = path_finding_utils.build_graph(
+		data=data,
+		cost_function_class=cost_function_class,
+		verbose=verbose
+	)
 	source = source.id_
 
 	q = []

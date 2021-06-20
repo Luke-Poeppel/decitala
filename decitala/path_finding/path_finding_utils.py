@@ -10,6 +10,8 @@
 ####################################################################################################
 import numpy as np
 
+from tqdm import tqdm
+
 class CostFunction:
 	"""
 	Arbitrary cost function to use in the cost functions. The user should set weights as class
@@ -86,37 +88,45 @@ class CostFunction3D(CostFunction):
 		cost = (self.reuse_weight * reuse) + (self.onset_weight * onsets) + (self.gap_weight * gap)
 		return cost
 
-def build_graph(data, cost_function_class=DefaultCostFunction()):
+def build_graph(
+		data,
+		cost_function_class=DefaultCostFunction(),
+		verbose=False
+	):
 	"""
 	Function for building a "graph" of nodes and edges from a given set of data (each
 	vertex of the form as those required in the cost function) extracted from one of the
 	search algorithms. Requires ``id`` keys in each dictionary input.
 
-	:param dict weights: weights used in the model. Must sum to 1. Requires "gap" and "onsets" values.
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost
+		function that will be used in calculating the weights between vertices.
 	:return: A "graph" holding vertices and the associated cost between all other non-negative edges.
 	:rtype: dict
 	"""
 	G = {}
 	i = 0
-	while i < len(data):
-		curr = data[i]
-		curr_edges = []
-		for other in data:
-			if other == curr:
-				continue
+	with tqdm(total=len(data), disable=not(verbose)) as bar:
+		while i < len(data):
+			curr = data[i]
+			curr_edges = []
+			for other in data:
+				if other == curr:
+					continue
 
-			# Check here, not in cost function, as then we don't need to instantiate a fragment object.
-			elif curr.onset_range[1] > other.onset_range[0]:
-				continue
+				# Check here, not in cost function, as then we don't need to instantiate a fragment object.
+				elif curr.onset_range[1] > other.onset_range[0]:
+					continue
 
-			edge = cost_function_class.cost(vertex_a=curr, vertex_b=other)
-			if edge < 0:  # Just in case. Dijkstra edges must be negative.
-				continue
+				edge = cost_function_class.cost(vertex_a=curr, vertex_b=other)
+				if edge < 0:  # Just in case. Dijkstra edges must be negative.
+					continue
 
-			curr_edges.append((other.id_, edge))
+				curr_edges.append((other.id_, edge))
 
-		G[curr.id_] = curr_edges
-		i += 1
+			G[curr.id_] = curr_edges
+			bar.update(1)
+			i += 1
 
 	return G
 
