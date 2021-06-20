@@ -109,7 +109,11 @@ def run_on_all_compositions(
 			)
 
 			training_data = data["training_data"]
-			accuracy = check_accuracy(training_data=training_data, calculated_data=path, mode="Compositions") # noqa
+			accuracy = path_finding_utils.check_accuracy(
+				training_data=training_data,
+				calculated_data=path,
+				mode="Compositions"
+			)
 			logger.info("{0} -> ({1}, {2}): {3}%".format(composition, gap_weight, onset_weight, accuracy)) # noqa
 			composition_results[str((gap_weight, onset_weight))] = accuracy
 
@@ -153,7 +157,7 @@ def run_on_all_analyzed_transcriptions(
 		)
 
 		transcription_results = dict()
-		for point in path_finding_utils.make_3D_grid(resolution=0.1):
+		for point in path_finding_utils.make_3D_grid(resolution=resolution):
 			logger.info(f"\nRunning Dijkstra for {point}.")
 			path = search.path_finder(
 				filepath=transcription.filepath,
@@ -173,7 +177,11 @@ def run_on_all_analyzed_transcriptions(
 			)
 
 			training_data = transcription.analysis
-			accuracy = check_accuracy(training_data=training_data, calculated_data=path, mode="Transcriptions") # noqa
+			accuracy = path_finding_utils.check_accuracy(
+				training_data=training_data,
+				calculated_data=path,
+				mode="Transcriptions"
+			)
 			logger.info("{0} -> ({1}): {2}%".format(transcription, point, accuracy)) # noqa
 			transcription_results[str(point)] = accuracy
 
@@ -183,7 +191,7 @@ def run_on_all_analyzed_transcriptions(
 	with open(filepath, "w") as fp:
 		json.dump(obj=all_results, fp=fp, ensure_ascii=False, indent=4)
 
-# run_on_all_analyzed_transcriptions(frag_type="greek_foot", resolution=0.1)
+# run_on_all_analyzed_transcriptions(frag_type="greek_foot", resolution=0.2)
 
 ####################################################################################################
 # Plotting
