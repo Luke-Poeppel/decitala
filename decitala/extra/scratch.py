@@ -23,7 +23,7 @@ def test_cost_function(transcription):
 	good = 0
 	for point in path_finding_utils.make_3D_grid(resolution=0.1):
 		count += 1
-		cost = path_finding_utils.ScratchCost(
+		cost = path_finding_utils.CostFunction3D(
 			gap_weight=point[0],
 			onset_weight=point[1],
 			articulation_weight=point[2]
@@ -42,11 +42,12 @@ def test_cost_function(transcription):
 				allow_subdivision=True,
 				cost_function_class=cost
 			)
+			print(point)
 			for x in path:
 				print(x.fragment, x.onset_range)
 			print()
 	return good / count
 
 
-ex1 = Transcription("Ex1")
+ex1 = Transcription("Ex3")
 print(test_cost_function(ex1))
