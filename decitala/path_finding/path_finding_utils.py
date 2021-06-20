@@ -250,3 +250,23 @@ def split_extractions(data, split_dict, all_res):
 		else:
 			split_extractions.append(extraction)
 	return split_extractions
+
+def check_accuracy(training_data, calculated_data, mode):
+	"""
+	The `training_data` is the analysis as provided by Messiean. The `input_data`
+	is the data calculated by path-finding.
+
+	NOTE: the data is stored in two different formats, hence the use of `mode`. This will
+	(hopefully) be fixed in the future.
+	"""
+	accuracy = 0
+	for this_training_fragment in training_data:
+		for this_fragment in calculated_data:
+			if mode == "Compositions":
+				if (this_training_fragment["fragment"] == this_fragment.fragment) and (tuple(this_training_fragment["onset_range"]) == this_fragment.onset_range): # noqa
+					accuracy += 1
+			elif mode == "Transcriptions":
+				if (this_training_fragment[0] == this_fragment.fragment) and (tuple(this_training_fragment[1]) == this_fragment.onset_range): # noqa
+					accuracy += 1
+
+	return (accuracy / len(training_data)) * 100
