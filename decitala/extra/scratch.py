@@ -11,33 +11,6 @@ from decitala.path_finding import (
 	dijkstra
 )
 
-class ScratchCost(path_finding_utils.CostFunction):
-	def __init__(
-			self,
-			gap_weight,
-			onset_weight,
-			articulation_weight,
-		):
-		self.gap_weight = gap_weight
-		self.onset_weight = onset_weight
-		self.articulation_weight = articulation_weight
-
-	def cost(self, vertex_a, vertex_b):
-		gap = vertex_b.onset_range[0] - vertex_a.onset_range[1]
-		onsets = 1 / (vertex_a.fragment.num_onsets + vertex_b.fragment.num_onsets)
-		total_slurs = vertex_a.slur_count + vertex_b.slur_count
-		if total_slurs == 0:
-			slur_val = 1 / 0.5  # force non-zero
-		else:
-			slur_val = 1 / total_slurs
-
-		values = [gap, onsets, slur_val]
-		cost = 0
-		for weight, val in zip([self.gap_weight, self.onset_weight, self.articulation_weight], values): # noqa
-			cost += weight * val
-
-		return cost
-
 def test_cost_function(transcription):
 	print(f'testing {transcription}')
 	all_results = search.rolling_hash_search(
@@ -50,7 +23,7 @@ def test_cost_function(transcription):
 	good = 0
 	for point in path_finding_utils.make_3D_grid(resolution=0.1):
 		count += 1
-		cost = ScratchCost(
+		cost = path_finding_utils.ScratchCost(
 			gap_weight=point[0],
 			onset_weight=point[1],
 			articulation_weight=point[2]
