@@ -69,21 +69,26 @@ class CostFunction3D(CostFunction):
 			self,
 			gap_weight,
 			onset_weight,
-			reuse_weight,
+			articulation_weight,
 		):
 		self.gap_weight = gap_weight
 		self.onset_weight = onset_weight
-		self.reuse_weight = reuse_weight
+		self.articulation_weight = articulation_weight
 
 	def cost(self, vertex_a, vertex_b):
 		gap = vertex_b.onset_range[0] - vertex_a.onset_range[1]
 		onsets = 1 / (vertex_a.fragment.num_onsets + vertex_b.fragment.num_onsets)
+		total_slurs = vertex_a.slur_count + vertex_b.slur_count
+		if total_slurs == 0:
+			slur_val = 1 / 0.5  # force non-zero
+		else:
+			slur_val = 1 / total_slurs
 
-		reuse = 0
-		if vertex_a.fragment != vertex_b.fragment:
-			reuse = vertex_a.fragment.num_onsets
+		values = [gap, onsets, slur_val]
+		cost = 0
+		for weight, val in zip([self.gap_weight, self.onset_weight, self.articulation_weight], values): # noqa
+			cost += weight * val
 
-		cost = (self.reuse_weight * reuse) + (self.onset_weight * onsets) + (self.gap_weight * gap)
 		return cost
 
 def build_graph(data, cost_function_class=DefaultCostFunction()):
