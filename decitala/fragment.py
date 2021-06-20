@@ -295,6 +295,11 @@ class GeneralFragment:
 		"""
 		return sum(self.ql_array())
 
+	def split(self, *args):
+		full_qls = utils.flatten([list(fragment.ql_array()) for fragment in args])
+		assert full_qls == list(self.ql_array())
+		return [fragment for fragment in args]
+
 	def dseg(self, reduced=False, as_str=False):
 		"""See docstring of :obj:`decitala.utils.dseg`."""
 		return utils.dseg(self.ql_array(), reduced=reduced, as_str=as_str)

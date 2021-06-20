@@ -3,6 +3,10 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.14.0](https://github.com/Luke-Poeppel/decitala/tree/v0.14.0) ???
+- WIP: Hyperparameters
+- Added `split()` method to `GeneralFragment` that 
+
 ## [v0.13.2](https://github.com/Luke-Poeppel/decitala/tree/v0.13.2) June 19, 2021
 #### Fixed
 - Added the missing progress bar for `path_finding_utils.build_graph` (`verbose=True` did nothing). 

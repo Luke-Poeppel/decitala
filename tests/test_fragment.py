@@ -131,6 +131,12 @@ def test_decitala_repr():
 def test_decitala_num_matras():
 	frag = Decitala("Rajatala") # [1.0, 1.5, 0.25, 0.25, 1.0, 0.5, 1.5]
 	assert frag.num_matras == 12
+
+def test_greek_split():
+	diiamb = GreekFoot("Diiamb")
+	split = diiamb.split(GreekFoot("Iamb"), GreekFoot("Iamb"))
+	expected = [GreekFoot("Iamb"), GreekFoot("Iamb")]
+	assert split == expected
 	
 class TestMorrisSymmetryClass():
 	
