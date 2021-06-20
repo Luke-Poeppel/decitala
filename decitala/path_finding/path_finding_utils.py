@@ -30,7 +30,6 @@ class CostFunction:
 	>>> class MySecondCostFunction(CostFunction):
 	... 	weight_a = 0.4213
 	... 	weight_b = 0.2599
-	... 	weight_c = 0.3188
 	... 	def cost(self, vertex_a, vertex_b):
 	... 		'''Cost function determined by the sum of the two extractions standard deviations.'''
 	... 		first_term = ((weight_a * vertex_a.num_onsets) + weight_b)

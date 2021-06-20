@@ -13,7 +13,6 @@ import heapq
 from . import path_finding_utils
 
 # Useful info here: https://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python.
-# Weights found from hyperparameter search on pre-annotated compositions.
 def dijkstra(
 		data,
 		source,
@@ -28,6 +27,7 @@ def dijkstra(
 	:param source: an :obj:`decitala.search.Extraction` object.
 	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost
 		function that will be used in calculating the weights between vertices.
+	:param bool verbose: whether to print logs.
 	"""
 	graph = path_finding_utils.build_graph(
 		data=data,
