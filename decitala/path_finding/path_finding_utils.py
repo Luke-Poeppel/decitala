@@ -12,6 +12,8 @@ import numpy as np
 
 from tqdm import tqdm
 
+from ..fragment import GreekFoot
+
 class CostFunction:
 	"""
 	Arbitrary cost function to use in the cost functions. The user should set weights as class
@@ -270,3 +272,11 @@ def check_accuracy(training_data, calculated_data, mode):
 					accuracy += 1
 
 	return (accuracy / len(training_data)) * 100
+
+def default_split_dict():
+	return {
+		GreekFoot("Diiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb")],
+		GreekFoot("Triiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb"), GreekFoot("Iamb")],
+		GreekFoot("Dicretic"): [GreekFoot("Amphimacer"), GreekFoot("Amphimacer")],
+		GreekFoot("Tritrochee"): [GreekFoot("Trochee"), GreekFoot("Trochee"), GreekFoot("Trochee")]
+	},
