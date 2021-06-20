@@ -86,6 +86,7 @@ def extraction():
 		contiguous_summation=False,
 		pitch_content=[(61,), (62,), (65,), (69,)],
 		is_spanned_by_slur=True,
+		slur_count=1,
 		id_=43
 	)
 

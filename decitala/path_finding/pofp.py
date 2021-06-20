@@ -76,11 +76,11 @@ def get_pareto_optimal_longest_paths(data):
 	>>> from decitala.search import Extraction
 	>>> from decitala.fragment import GreekFoot, GeneralFragment
 	>>> data = [
-	... 	Extraction(fragment=GreekFoot("Spondee"), frag_type="greek_foot", onset_range=(0.0, 0.5), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=1), # noqa
-	... 	Extraction(fragment=GeneralFragment([0.25, 0.25], name="cs-test1"), frag_type="general_fragment", onset_range=(0.0, 0.5), retrograde=False, factor=2.0, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=2), # noqa
-	... 	Extraction(fragment=GreekFoot("Trochee"), frag_type="greek_foot", onset_range=(0.25, 0.625), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=3), # noqa
-	... 	Extraction(fragment=GeneralFragment([0.25, 0.125], name="cs-test2"), frag_type="general_fragment", onset_range=(0.25, 0.625), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=4), # noqa
-	... 	Extraction(fragment=GreekFoot("Dactyl"), frag_type="greek_foot", onset_range=(0.5, 1.0), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, id_=5) # noqa
+	... 	Extraction(fragment=GreekFoot("Spondee"), frag_type="greek_foot", onset_range=(0.0, 0.5), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, id_=1), # noqa
+	... 	Extraction(fragment=GeneralFragment([0.25, 0.25], name="cs-test1"), frag_type="general_fragment", onset_range=(0.0, 0.5), retrograde=False, factor=2.0, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, id_=2), # noqa
+	... 	Extraction(fragment=GreekFoot("Trochee"), frag_type="greek_foot", onset_range=(0.25, 0.625), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, id_=3), # noqa
+	... 	Extraction(fragment=GeneralFragment([0.25, 0.125], name="cs-test2"), frag_type="general_fragment", onset_range=(0.25, 0.625), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, id_=4), # noqa
+	... 	Extraction(fragment=GreekFoot("Dactyl"), frag_type="greek_foot", onset_range=(0.5, 1.0), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, id_=5) # noqa
 	... ]
 	>>> for path in get_pareto_optimal_longest_paths(data):
 	... 	for fragment in path:

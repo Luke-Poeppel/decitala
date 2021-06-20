@@ -58,6 +58,7 @@ class Extraction:
 
 	pitch_content: list
 	is_spanned_by_slur: bool
+	slur_count: int
 	id_: int
 
 	contiguous_summation: bool = False
@@ -201,6 +202,7 @@ def frame_lookup(frame, ql_array, curr_fragment_id, table, windows):
 				mod_hierarchy_val=searched["mod_hierarchy_val"],
 				pitch_content=frame_to_midi(frame),
 				is_spanned_by_slur=frame_is_spanned_by_slur(frame),
+				slur_count=frame_slur_count(frame),
 				id_=curr_fragment_id
 			)
 	except KeyError:
