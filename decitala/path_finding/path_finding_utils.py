@@ -25,7 +25,8 @@ class CostFunction:
 	... 		'''Cost function determined by the sum of the two extractions standard deviations.'''
 	... 		return vertex_a.std() + vertex_b.std()
 
-	# The following is a cost function that relies on three weights summing to 1.
+	The following is a cost function that relies on three weights summing to 1.
+
 	>>> class MySecondCostFunction(CostFunction):
 	... 	weight_a = 0.4213
 	... 	weight_b = 0.2599
@@ -44,8 +45,8 @@ class CostFunction:
 		This function must be overrided by child classes. Cost function between two
 		:obj:`decitala.search.Extraction`: objects.
 
-		:param :obj:`decitala.search.Extraction` vertex_1: An extraction object from a composition.
-		:param :obj:`decitala.search.Extraction` vertex_2: A second extraction object from a composition.
+		:param `decitala.search.Extraction` vertex_1: An extraction object from a composition.
+		:param `decitala.search.Extraction` vertex_2: A second extraction object from a composition.
 		:return: The cost of moving from ``vertex_1`` to ``vertex_2``.
 		:rtype: float
 		"""
@@ -176,7 +177,7 @@ def make_2D_grid(resolution):
 	"""
 	Function for generating a grid of two numbers that sum to 1, iterated over the given resolution.
 
-	:param float resolution: resolution of the grid, $0 < x <= 1$.
+	:param float resolution: resolution of the grid, :math:`0 < x <= 1`.
 	"""
 	spaces = []
 	for i in range(2):
@@ -196,7 +197,7 @@ def make_3D_grid(resolution):
 	"""
 	Function for generating a grid of three numbers that sum to 1, iterated over the given resolution.
 
-	:param float resolution: resolution of the grid, $0 < x <= 1$.
+	:param float resolution: resolution of the grid, :math:`0 < x <= 1`.
 	"""
 	spaces = []
 	for i in range(3):
@@ -217,7 +218,7 @@ def make_4D_grid(resolution):
 	"""
 	Function for generating a grid of four numbers that sum to 1, iterated over the given resolution.
 
-	:param float resolution: resolution of the grid, $0 < x <= 1$.
+	:param float resolution: resolution of the grid, :math:`0 < x <= 1`.
 	"""
 	spaces = []
 	for i in range(4):
