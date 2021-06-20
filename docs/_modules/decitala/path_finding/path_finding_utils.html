@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.path_finding.path_finding_utils &mdash; decitala 0.13.1 documentation</title>
+  <title>decitala.path_finding.path_finding_utils &mdash; decitala 0.13.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.13.1
+                0.13.2
               </div>
             
           
@@ -183,6 +183,8 @@
 <span class="c1">####################################################################################################</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
 <div class="viewcode-block" id="CostFunction"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.CostFunction">[docs]</a><span class="k">class</span> <span class="nc">CostFunction</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Arbitrary cost function to use in the cost functions. The user should set weights as class</span>
@@ -196,11 +198,11 @@
 <span class="sd">	... 		&#39;&#39;&#39;Cost function determined by the sum of the two extractions standard deviations.&#39;&#39;&#39;</span>
 <span class="sd">	... 		return vertex_a.std() + vertex_b.std()</span>
 
-<span class="sd">	# The following is a cost function that relies on three weights summing to 1.</span>
+<span class="sd">	The following is a cost function that relies on three weights summing to 1.</span>
+
 <span class="sd">	&gt;&gt;&gt; class MySecondCostFunction(CostFunction):</span>
 <span class="sd">	... 	weight_a = 0.4213</span>
 <span class="sd">	... 	weight_b = 0.2599</span>
-<span class="sd">	... 	weight_c = 0.3188</span>
 <span class="sd">	... 	def cost(self, vertex_a, vertex_b):</span>
 <span class="sd">	... 		&#39;&#39;&#39;Cost function determined by the sum of the two extractions standard deviations.&#39;&#39;&#39;</span>
 <span class="sd">	... 		first_term = ((weight_a * vertex_a.num_onsets) + weight_b)</span>
@@ -213,10 +215,10 @@
 <div class="viewcode-block" id="CostFunction.cost"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.CostFunction.cost">[docs]</a>	<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex_a</span><span class="p">,</span> <span class="n">vertex_b</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		This function must be overrided by child classes. Cost function between two</span>
-<span class="sd">		:obj:`decitala.search.Extraction`: objects.</span>
+<span class="sd">		:obj:`decitala.search.Extraction` objects.</span>
 
-<span class="sd">		:param :obj:`decitala.search.Extraction` vertex_1: An extraction object from a composition.</span>
-<span class="sd">		:param :obj:`decitala.search.Extraction` vertex_2: A second extraction object from a composition.</span>
+<span class="sd">		:param `decitala.search.Extraction` vertex_1: An extraction object from a composition.</span>
+<span class="sd">		:param `decitala.search.Extraction` vertex_2: A second extraction object from a composition.</span>
 <span class="sd">		:return: The cost of moving from ``vertex_1`` to ``vertex_2``.</span>
 <span class="sd">		:rtype: float</span>
 <span class="sd">		&quot;&quot;&quot;</span>
@@ -259,37 +261,45 @@
 		<span class="n">cost</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reuse_weight</span> <span class="o">*</span> <span class="n">reuse</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onset_weight</span> <span class="o">*</span> <span class="n">onsets</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gap_weight</span> <span class="o">*</span> <span class="n">gap</span><span class="p">)</span>
 		<span class="k">return</span> <span class="n">cost</span></div></div>
 
-<div class="viewcode-block" id="build_graph"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.build_graph">[docs]</a><span class="k">def</span> <span class="nf">build_graph</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cost_function_class</span><span class="o">=</span><span class="n">DefaultCostFunction</span><span class="p">()):</span>
+<div class="viewcode-block" id="build_graph"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.build_graph">[docs]</a><span class="k">def</span> <span class="nf">build_graph</span><span class="p">(</span>
+		<span class="n">data</span><span class="p">,</span>
+		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">DefaultCostFunction</span><span class="p">(),</span>
+		<span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
+	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Function for building a &quot;graph&quot; of nodes and edges from a given set of data (each</span>
 <span class="sd">	vertex of the form as those required in the cost function) extracted from one of the</span>
 <span class="sd">	search algorithms. Requires ``id`` keys in each dictionary input.</span>
 
-<span class="sd">	:param dict weights: weights used in the model. Must sum to 1. Requires &quot;gap&quot; and &quot;onsets&quot; values.</span>
+<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
+<span class="sd">	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost</span>
+<span class="sd">		function that will be used in calculating the weights between vertices.</span>
 <span class="sd">	:return: A &quot;graph&quot; holding vertices and the associated cost between all other non-negative edges.</span>
 <span class="sd">	:rtype: dict</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">G</span> <span class="o">=</span> <span class="p">{}</span>
 	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-		<span class="n">curr</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-		<span class="n">curr_edges</span> <span class="o">=</span> <span class="p">[]</span>
-		<span class="k">for</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">other</span> <span class="o">==</span> <span class="n">curr</span><span class="p">:</span>
-				<span class="k">continue</span>
+	<span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span><span class="p">(</span><span class="n">verbose</span><span class="p">))</span> <span class="k">as</span> <span class="n">bar</span><span class="p">:</span>
+		<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+			<span class="n">curr</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+			<span class="n">curr_edges</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">other</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">other</span> <span class="o">==</span> <span class="n">curr</span><span class="p">:</span>
+					<span class="k">continue</span>
 
-			<span class="c1"># Check here, not in cost function, as then we don&#39;t need to instantiate a fragment object.</span>
-			<span class="k">elif</span> <span class="n">curr</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-				<span class="k">continue</span>
+				<span class="c1"># Check here, not in cost function, as then we don&#39;t need to instantiate a fragment object.</span>
+				<span class="k">elif</span> <span class="n">curr</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">other</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+					<span class="k">continue</span>
 
-			<span class="n">edge</span> <span class="o">=</span> <span class="n">cost_function_class</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="n">vertex_a</span><span class="o">=</span><span class="n">curr</span><span class="p">,</span> <span class="n">vertex_b</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
-			<span class="k">if</span> <span class="n">edge</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Just in case. Dijkstra edges must be negative.</span>
-				<span class="k">continue</span>
+				<span class="n">edge</span> <span class="o">=</span> <span class="n">cost_function_class</span><span class="o">.</span><span class="n">cost</span><span class="p">(</span><span class="n">vertex_a</span><span class="o">=</span><span class="n">curr</span><span class="p">,</span> <span class="n">vertex_b</span><span class="o">=</span><span class="n">other</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">edge</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Just in case. Dijkstra edges must be negative.</span>
+					<span class="k">continue</span>
 
-			<span class="n">curr_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">other</span><span class="o">.</span><span class="n">id_</span><span class="p">,</span> <span class="n">edge</span><span class="p">))</span>
+				<span class="n">curr_edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">other</span><span class="o">.</span><span class="n">id_</span><span class="p">,</span> <span class="n">edge</span><span class="p">))</span>
 
-		<span class="n">G</span><span class="p">[</span><span class="n">curr</span><span class="o">.</span><span class="n">id_</span><span class="p">]</span> <span class="o">=</span> <span class="n">curr_edges</span>
-		<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="n">G</span><span class="p">[</span><span class="n">curr</span><span class="o">.</span><span class="n">id_</span><span class="p">]</span> <span class="o">=</span> <span class="n">curr_edges</span>
+			<span class="n">bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+			<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
 	<span class="k">return</span> <span class="n">G</span></div>
 
@@ -305,6 +315,7 @@
 <div class="viewcode-block" id="best_source_and_sink"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.best_source_and_sink">[docs]</a><span class="k">def</span> <span class="nf">best_source_and_sink</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	TODO: this is bad. I should be using the agnostic approach of Dijkstra here.</span>
+
 <span class="sd">	Calculates the &quot;best&quot; source and sink from a dataset based on two simple heuristics: (1) the</span>
 <span class="sd">	fragment with the earliest (or latest, for sink) starting point, (2) the fragment with the</span>
 <span class="sd">	greatest number of onsets.</span>
@@ -339,7 +350,7 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Function for generating a grid of two numbers that sum to 1, iterated over the given resolution.</span>
 
-<span class="sd">	:param float resolution: resolution of the grid, $0 &lt; x &lt;= 1$.</span>
+<span class="sd">	:param float resolution: resolution of the grid, :math:`0 &lt; x &lt;= 1`.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">spaces</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
@@ -359,7 +370,7 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Function for generating a grid of three numbers that sum to 1, iterated over the given resolution.</span>
 
-<span class="sd">	:param float resolution: resolution of the grid, $0 &lt; x &lt;= 1$.</span>
+<span class="sd">	:param float resolution: resolution of the grid, :math:`0 &lt; x &lt;= 1`.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">spaces</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
@@ -380,7 +391,7 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Function for generating a grid of four numbers that sum to 1, iterated over the given resolution.</span>
 
-<span class="sd">	:param float resolution: resolution of the grid, $0 &lt; x &lt;= 1$.</span>
+<span class="sd">	:param float resolution: resolution of the grid, :math:`0 &lt; x &lt;= 1`.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">spaces</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>

@@ -27,7 +27,9 @@ def floyd_warshall(
 	"""
 	Calculates the distance and next matrices of the Floyd-Warshall path-finding algorithm.
 
-	:param list data: Data from :obj:`~decitala.search.rolling_search`.
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost
+		function that will be used in calculating the weights between vertices.
 	:param bool verbose: Whether to log messages (including showing a progress bar).
 	:return: Two matrices of size len(data) x len(data): first is the weighted adjacency matrix, the
 			second is the matrix used for path reconstruction.
@@ -86,6 +88,9 @@ def reconstruct_standard_path(
 		start,
 		end
 	):
+	"""
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	"""
 	path = [start]
 	if end.onset_range[0] <= start.onset_range[-1]:
 		return path
@@ -108,11 +113,11 @@ def get_path(
 	"""
 	Function for retriving the best path extracted from the Floyd-Warshall algorithm.
 
-	:param `~decitala.fragment.GeneralFragment` start: starting fragment in the path.
-	:param `~decitala.fragment.GeneralFragment` end: ending fragment in the path.
+	:param start: an :obj:`decitala.search.Extraction` object.
+	:param end: an :obj:`decitala.search.Extraction` object.
 	:param numpy.array next_matrix: second matrix from
 			:obj:`~decitala.path_finding.floyd_warshall.floyd_warshall`.
-	:param list data: data from :obj:`~decitala.search.rolling_search``.
+	:param list data: data from :obj:`~decitala.search.rolling_search`.
 	:return: best path extracted using the Floyd-Warshall algorithm.
 	:rtype: list
 	"""

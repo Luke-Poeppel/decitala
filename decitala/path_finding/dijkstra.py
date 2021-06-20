@@ -13,22 +13,27 @@ import heapq
 from . import path_finding_utils
 
 # Useful info here: https://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python.
-# Weights found from hyperparameter search on pre-annotated compositions.
 def dijkstra(
 		data,
 		source,
-		cost_function_class=path_finding_utils.DefaultCostFunction()
+		cost_function_class=path_finding_utils.DefaultCostFunction(),
+		verbose=False
 	):
 	"""
 	Dijkstra path-finding algorithm from dynamic programming. Uses a min-heap
 	data structure for efficiency.
 
-	:param list data: Data from one of the search algorithms (each result being a dictionary.)
-	:param dict source: Any element from ``data``.
-	:param dict weights: Dictionary with two keys and values (must sum to 1.0):
-						``"gap"`` and ``"onsets"``.
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	:param source: an :obj:`decitala.search.Extraction` object.
+	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost
+		function that will be used in calculating the weights between vertices.
+	:param bool verbose: whether to print logs.
 	"""
-	graph = path_finding_utils.build_graph(data, cost_function_class)
+	graph = path_finding_utils.build_graph(
+		data=data,
+		cost_function_class=cost_function_class,
+		verbose=verbose
+	)
 	source = source.id_
 
 	q = []
@@ -56,6 +61,10 @@ def dijkstra_best_source_and_sink(
 	"""
 	Function for agnostically choosing the best source and target (and associated predecessor set)
 	via Dijkstra. Only requires regular data input.
+
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost
+		function that will be used in calculating the weights between vertices.
 	"""
 	sources, targets = path_finding_utils.sources_and_sinks(data)
 
@@ -108,12 +117,10 @@ def generate_path(pred, source, target):
 	"""
 	Returns the optimal path extracted from Dijkstra.
 
-	:param dict pred: The ``pred`` dictionary returned from
+	:param dict pred: the ``pred`` dictionary returned from
 						:obj:`decitala.path_finding.dijkstra.dijkstra`.
-	:param dict source: An element from the ``data`` input to
-						:obj:`decitala.path_finding.dijkstra.dijkstra`
-	:param dict target: An element from the ``data`` input to
-						:obj:`decitala.path_finding.dijkstra.dijkstra`
+	:param dict source: a :obj:`decitala.search.Extraction` object.
+	:param dict target: a :obj:`decitala.search.Extraction` object.
 	"""
 	source_fragment_id = source.id_
 	target_fragment_id = target.id_

@@ -10,6 +10,8 @@
 ####################################################################################################
 import numpy as np
 
+from tqdm import tqdm
+
 class CostFunction:
 	"""
 	Arbitrary cost function to use in the cost functions. The user should set weights as class
@@ -23,11 +25,11 @@ class CostFunction:
 	... 		'''Cost function determined by the sum of the two extractions standard deviations.'''
 	... 		return vertex_a.std() + vertex_b.std()
 
-	# The following is a cost function that relies on three weights summing to 1.
+	The following is a cost function that relies on three weights summing to 1.
+
 	>>> class MySecondCostFunction(CostFunction):
 	... 	weight_a = 0.4213
 	... 	weight_b = 0.2599
-	... 	weight_c = 0.3188
 	... 	def cost(self, vertex_a, vertex_b):
 	... 		'''Cost function determined by the sum of the two extractions standard deviations.'''
 	... 		first_term = ((weight_a * vertex_a.num_onsets) + weight_b)
@@ -40,10 +42,10 @@ class CostFunction:
 	def cost(self, vertex_a, vertex_b):
 		"""
 		This function must be overrided by child classes. Cost function between two
-		:obj:`decitala.search.Extraction`: objects.
+		:obj:`decitala.search.Extraction` objects.
 
-		:param :obj:`decitala.search.Extraction` vertex_1: An extraction object from a composition.
-		:param :obj:`decitala.search.Extraction` vertex_2: A second extraction object from a composition.
+		:param `decitala.search.Extraction` vertex_1: An extraction object from a composition.
+		:param `decitala.search.Extraction` vertex_2: A second extraction object from a composition.
 		:return: The cost of moving from ``vertex_1`` to ``vertex_2``.
 		:rtype: float
 		"""
@@ -91,37 +93,45 @@ class CostFunction3D(CostFunction):
 
 		return cost
 
-def build_graph(data, cost_function_class=DefaultCostFunction()):
+def build_graph(
+		data,
+		cost_function_class=DefaultCostFunction(),
+		verbose=False
+	):
 	"""
 	Function for building a "graph" of nodes and edges from a given set of data (each
 	vertex of the form as those required in the cost function) extracted from one of the
 	search algorithms. Requires ``id`` keys in each dictionary input.
 
-	:param dict weights: weights used in the model. Must sum to 1. Requires "gap" and "onsets" values.
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost
+		function that will be used in calculating the weights between vertices.
 	:return: A "graph" holding vertices and the associated cost between all other non-negative edges.
 	:rtype: dict
 	"""
 	G = {}
 	i = 0
-	while i < len(data):
-		curr = data[i]
-		curr_edges = []
-		for other in data:
-			if other == curr:
-				continue
+	with tqdm(total=len(data), disable=not(verbose)) as bar:
+		while i < len(data):
+			curr = data[i]
+			curr_edges = []
+			for other in data:
+				if other == curr:
+					continue
 
-			# Check here, not in cost function, as then we don't need to instantiate a fragment object.
-			elif curr.onset_range[1] > other.onset_range[0]:
-				continue
+				# Check here, not in cost function, as then we don't need to instantiate a fragment object.
+				elif curr.onset_range[1] > other.onset_range[0]:
+					continue
 
-			edge = cost_function_class.cost(vertex_a=curr, vertex_b=other)
-			if edge < 0:  # Just in case. Dijkstra edges must be negative.
-				continue
+				edge = cost_function_class.cost(vertex_a=curr, vertex_b=other)
+				if edge < 0:  # Just in case. Dijkstra edges must be negative.
+					continue
 
-			curr_edges.append((other.id_, edge))
+				curr_edges.append((other.id_, edge))
 
-		G[curr.id_] = curr_edges
-		i += 1
+			G[curr.id_] = curr_edges
+			bar.update(1)
+			i += 1
 
 	return G
 
@@ -137,6 +147,7 @@ def sources_and_sinks(data):
 def best_source_and_sink(data):
 	"""
 	TODO: this is bad. I should be using the agnostic approach of Dijkstra here.
+
 	Calculates the "best" source and sink from a dataset based on two simple heuristics: (1) the
 	fragment with the earliest (or latest, for sink) starting point, (2) the fragment with the
 	greatest number of onsets.
@@ -171,7 +182,7 @@ def make_2D_grid(resolution):
 	"""
 	Function for generating a grid of two numbers that sum to 1, iterated over the given resolution.
 
-	:param float resolution: resolution of the grid, $0 < x <= 1$.
+	:param float resolution: resolution of the grid, :math:`0 < x <= 1`.
 	"""
 	spaces = []
 	for i in range(2):
@@ -191,7 +202,7 @@ def make_3D_grid(resolution):
 	"""
 	Function for generating a grid of three numbers that sum to 1, iterated over the given resolution.
 
-	:param float resolution: resolution of the grid, $0 < x <= 1$.
+	:param float resolution: resolution of the grid, :math:`0 < x <= 1`.
 	"""
 	spaces = []
 	for i in range(3):
@@ -212,7 +223,7 @@ def make_4D_grid(resolution):
 	"""
 	Function for generating a grid of four numbers that sum to 1, iterated over the given resolution.
 
-	:param float resolution: resolution of the grid, $0 < x <= 1$.
+	:param float resolution: resolution of the grid, :math:`0 < x <= 1`.
 	"""
 	spaces = []
 	for i in range(4):

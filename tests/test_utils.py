@@ -211,3 +211,12 @@ def test_rolling_SRR(fp1):
 		[1.0, 1.0, 2.0]
 	]
 	assert rolling_srr == expected
+
+def test_measure_divider_mode():
+	fp = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
+	objs = utils.get_object_indices(
+		filepath=fp,
+		part_num=0,
+		measure_divider_mode="str"
+	)
+	assert len(objs) == 3

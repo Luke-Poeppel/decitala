@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.trees &mdash; decitala 0.13.1 documentation</title>
+  <title>decitala.trees &mdash; decitala 0.13.2 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.13.1
+                0.13.2
               </div>
             
           
@@ -235,12 +235,9 @@
 
 <span class="sd">	:param str data: either a frag_type/rep_type combo, a path to folder of music21-readable files,</span>
 <span class="sd">					or a list of fragments.</span>
-<span class="sd">	:param str frag_type: determines the class defining the set of fragments.</span>
-<span class="sd">					If the ``frag_type==&#39;decitala&#39;``, creates :class:`~decitala.fragment.Decitala` objects;</span>
-<span class="sd">					if ``frag_type==&#39;greek_foot&#39;``, creates :class:`~decitala.fragment.GreekFoot`.</span>
-<span class="sd">					Otherwise creates :class:`~decitala.fragment.GeneralFragment` (default) objects.</span>
 <span class="sd">	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` (default)</span>
 <span class="sd">						and ``difference``.</span>
+<span class="sd">	:param str name: optional name of the Fragment Tree.</span>
 <span class="sd">	:raises `~decitala.trees.FragmentTreeException`: if an invalid path or rep_type is given.</span>
 
 <span class="sd">	&gt;&gt;&gt; ratio_tree = FragmentTree.from_frag_type(frag_type=&#39;greek_foot&#39;, rep_type=&#39;ratio&#39;)</span>
@@ -314,6 +311,15 @@
 		<span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Create a fragment tree from the data in fragment_database.db in the databases directory.</span>
+
+<span class="sd">		:param str frag_type: determines the class defining the set of fragments.</span>
+<span class="sd">							If the ``frag_type==&#39;decitala&#39;``, creates</span>
+<span class="sd">							:obj:`~decitala.fragment.Decitala` objects; if</span>
+<span class="sd">							``frag_type==&#39;greek_foot&#39;``,</span>
+<span class="sd">							creates :obj:`~decitala.fragment.GreekFoot`.</span>
+<span class="sd">							Otherwise creates</span>
+<span class="sd">							:obj:`~decitala.fragment.GeneralFragment`</span>
+<span class="sd">							(default) objects.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">assert</span> <span class="n">frag_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;decitala&quot;</span><span class="p">,</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">],</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The only </span><span class="se">\</span>
 <span class="s2">																					possible frag_types are `decitala` and `greek_foot`.&quot;</span><span class="p">)</span>

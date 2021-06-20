@@ -3,6 +3,12 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.13.2](https://github.com/Luke-Poeppel/decitala/tree/v0.13.2) June 19, 2021
+#### Fixed
+- Added the missing progress bar for `path_finding_utils.build_graph` (`verbose=True` did nothing). 
+- Fixed bug (#144) in `measure_divide_mode` of `utils.get_object_indices`. 
+- Fixed several documentation errors. 
+
 ## [v0.13.1](https://github.com/Luke-Poeppel/decitala/tree/v0.13.1) June 19, 2021
 #### Fixed
 - Issue #157: broken `source` button. 
