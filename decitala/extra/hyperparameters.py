@@ -1,6 +1,6 @@
 ####################################################################################################
 # File:     hyperparameters.py
-# Purpose:  Script for calculating the best weights (hyperparameter search) to Dijkstra.
+# Purpose:  Script for calculating the best weights (hyperparameter search) for Dijkstra.
 #
 # Author:   Luke Poeppel
 #
@@ -23,6 +23,7 @@ from decitala import (
 	utils,
 )
 from decitala.path_finding import path_finding_utils
+from decitala.fragment import GreekFoot
 from decitala.hash_table import (
 	GreekFootHashTable,
 	DecitalaHashTable,
@@ -161,92 +162,38 @@ def run_on_all_analyzed_transcriptions(
 	elif frag_type == "combined":
 		hash_table = AllCorporaHashTable()
 
-	parameter_space = [round(x, 3) for x in np.linspace(0, 1, int(1 / resolution) + 1)]
 	all_results = dict()
 	for transcription in get_all_transcriptions():
 		if transcription.analysis is None:
 			continue
 
 		transcription_results = dict()
-		for gap_weight in parameter_space:
-			onset_weight = round(1.0 - gap_weight, 3)
-			logger.info("\nRunning Dijkstra for ({0}, {1}).".format(gap_weight, onset_weight))
+		for point in path_finding_utils.make_3D_grid(resolution=0.1):
+			logger.info(f"\nRunning Dijkstra for ({point}).")
 			path = search.path_finder(
 				filepath=transcription.filepath,
 				part_num=0,
 				table=hash_table,
 				allow_subdivision=True,
-				cost_function=path_finding_utils.DefaultCostFunction(
-					gap_weight=gap_weight,
-					onset_weight=onset_weight
-				)
+				cost_function_class=path_finding_utils.CostFunction3D(
+					gap_weight=point[0],
+					onset_weight=point[1],
+					articulation_weight=point[2]
+				),
+			)
+			path = path_finding_utils.split_extractions(
+				data=path,
+				split_dict={GreekFoot("Diiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb")]}
 			)
 
 			training_data = transcription.analysis
 			accuracy = check_accuracy(training_data=training_data, calculated_data=path, mode="Transcriptions") # noqa
-			logger.info("{0} -> ({1}, {2}): {3}%".format(transcription, gap_weight, onset_weight, accuracy)) # noqa
-			transcription_results[str((gap_weight, onset_weight))] = accuracy
+			logger.info("{0} -> ({1}): {2}%".format(transcription, point, accuracy)) # noqa
+			transcription_results[str(point)] = accuracy
 
 		all_results[transcription.name] = transcription_results
 
 	filepath = f"/Users/lukepoeppel/decitala/decitala/extra/{date}_transcription_hyperparameters_{resolution}_{frag_type}.json" # noqa
-	with open(filepath, "w") as fp:
-		json.dump(obj=all_results, fp=fp, ensure_ascii=False, indent=4)
-
-def run_on_all_analyzed_transcriptions_3D_cost(
-		frag_type,
-		resolution,
-	):
-	date = datetime.today().strftime("%m-%d-%Y")
-
-	logger = utils.get_logger(
-		name=__name__,
-		print_to_console=True,
-	)
-	logger.info(f"Running Dijkstra on the Compositions (with the {frag_type} corpus) at a resolution of {resolution}.") # noqa
-
-	if frag_type == "greek_foot":
-		hash_table = GreekFootHashTable()
-	elif frag_type == "decitala":
-		hash_table = DecitalaHashTable()
-	elif frag_type == "combined":
-		hash_table = AllCorporaHashTable()
-
-	GRID_3D = path_finding_utils.make_3D_grid(resolution=resolution)
-	all_results = dict()
-	for transcription in get_all_transcriptions():
-		if transcription.analysis is None:
-			continue
-
-		transcription_results = dict()
-		for combo in GRID_3D:
-			gap_weight = combo[0]
-			onset_weight = combo[1]
-			recycle_weight = combo[2]
-			logger.info("\nRunning Dijkstra for ({0}, {1}, {2}).".format(
-				gap_weight,
-				onset_weight,
-				recycle_weight
-			))
-			path = search.path_finder(
-				filepath=transcription.filepath,
-				part_num=0,
-				table=hash_table,
-				allow_subdivision=True,
-				cost_function_class=path_finding_utils.DefaultCostFunction(
-					gap_weight=gap_weight,
-					onset_weight=onset_weight,
-				)
-			)
-
-			training_data = transcription.analysis
-			accuracy = check_accuracy(training_data=training_data, calculated_data=path, mode="Transcriptions") # noqa
-			logger.info("{0} -> ({1}, {2}, {3}): {4}%".format(transcription, gap_weight, onset_weight, recycle_weight, accuracy)) # noqa
-			transcription_results[str((gap_weight, onset_weight))] = accuracy
-
-		all_results[transcription.name] = transcription_results
-
-	filepath = f"/Users/lukepoeppel/decitala/decitala/extra/{date}_transcription_hyperparameters_{resolution}_{frag_type}_3D_cost.json" # noqa
 	with open(filepath, "w") as fp:
 		json.dump(obj=all_results, fp=fp, ensure_ascii=False, indent=4)
 

@@ -240,3 +240,11 @@ def make_4D_grid(resolution):
 						combos.append(collection)
 
 	return combos
+
+def split_extractions(data, split_dict):
+	split_extractions = []
+	for extraction in data:
+		if extraction.fragment in split_dict:
+			components = extraction.split(split_dict=split_dict)
+			split_extractions.extend(components)
+	return split_extractions

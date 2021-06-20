@@ -67,7 +67,44 @@ class Extraction:
 		return f"<search.Extraction {self.id_}>"
 
 	def show(self):
-		pass
+		raise NotImplementedError
+
+	def split(self, split_dict, all_res):
+		"""
+		NOTE: this will fail when using contiguous summation. be warned...
+		"""
+		if not(self.fragment in split_dict):
+			return [self]
+		else:
+			split = []
+			# This is hilariously stupid, but it should be ok as a temporary solution.
+			filtered_all_res = []
+			for extraction in all_res:
+				if (extraction.onset_range[0] >= self.onset_range[0]) and \
+					(extraction.onset_range[1] <= self.onset_range[1]):
+					filtered_all_res.append(extraction)
+
+			res_copy = copy.deepcopy(filtered_all_res)
+			for i, split_elem in enumerate(split_dict[self.fragment]):
+				for j, extraction in enumerate(res_copy):
+					if extraction.fragment == split_elem:
+						extraction_obj = Extraction(
+							fragment=extraction.fragment,
+							frag_type=extraction.frag_type,
+							onset_range=extraction.onset_range,
+							retrograde=extraction.retrograde,
+							factor=extraction.factor,
+							difference=extraction.difference,
+							mod_hierarchy_val=extraction.mod_hierarchy_val,
+							pitch_content=extraction.pitch_content,
+							is_spanned_by_slur=extraction.is_spanned_by_slur,
+							slur_count=extraction.slur_count,
+							id_=1000 + i  # Random scale to differentiate between standard.
+						)
+						split.append(extraction_obj)
+						res_copy = res_copy[:j]
+
+			return split
 
 @dataclass
 class Frame:
