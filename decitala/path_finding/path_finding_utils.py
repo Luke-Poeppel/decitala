@@ -258,10 +258,11 @@ def default_split_dict():
 		GreekFoot("Diiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb")],
 		GreekFoot("Triiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb"), GreekFoot("Iamb")],
 		GreekFoot("Dicretic"): [GreekFoot("Amphimacer"), GreekFoot("Amphimacer")],
-		GreekFoot("Tritrochee"): [GreekFoot("Trochee"), GreekFoot("Trochee"), GreekFoot("Trochee")]
+		GreekFoot("Tritrochee"): [GreekFoot("Trochee"), GreekFoot("Trochee"), GreekFoot("Trochee")],
+		GreekFoot("Dianapest"): [GreekFoot("Anapest"), GreekFoot("Anapest")]
 	}
 
-def check_accuracy(training_data, calculated_data, mode, return_tuple):
+def check_accuracy(training_data, calculated_data, mode, return_list):
 	"""
 	The `training_data` is the analysis as provided by Messiean. The `input_data`
 	is the data calculated by path-finding.
@@ -279,7 +280,7 @@ def check_accuracy(training_data, calculated_data, mode, return_tuple):
 				if (this_training_fragment[0] == this_fragment.fragment) and (tuple(this_training_fragment[1]) == this_fragment.onset_range): # noqa
 					accurate += 1
 
-	if not(return_tuple):
+	if not(return_list):
 		return (accurate / len(training_data)) * 100
 	else:
-		return (accurate, len(training_data))
+		return [accurate, len(training_data)]
