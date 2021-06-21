@@ -253,6 +253,14 @@ def split_extractions(data, split_dict, all_res):
 			split_extractions.append(extraction)
 	return split_extractions
 
+def default_split_dict():
+	return {
+		GreekFoot("Diiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb")],
+		GreekFoot("Triiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb"), GreekFoot("Iamb")],
+		GreekFoot("Dicretic"): [GreekFoot("Amphimacer"), GreekFoot("Amphimacer")],
+		GreekFoot("Tritrochee"): [GreekFoot("Trochee"), GreekFoot("Trochee"), GreekFoot("Trochee")]
+	}
+
 def check_accuracy(training_data, calculated_data, mode):
 	"""
 	The `training_data` is the analysis as provided by Messiean. The `input_data`
@@ -272,11 +280,3 @@ def check_accuracy(training_data, calculated_data, mode):
 					accuracy += 1
 
 	return (accuracy / len(training_data)) * 100
-
-def default_split_dict():
-	return {
-		GreekFoot("Diiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb")],
-		GreekFoot("Triiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb"), GreekFoot("Iamb")],
-		GreekFoot("Dicretic"): [GreekFoot("Amphimacer"), GreekFoot("Amphimacer")],
-		GreekFoot("Tritrochee"): [GreekFoot("Trochee"), GreekFoot("Trochee"), GreekFoot("Trochee")]
-	},
