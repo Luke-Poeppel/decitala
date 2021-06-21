@@ -109,6 +109,7 @@ def annotate_score(
 		data,
 		filepath,
 		part_num,
+		transcription_mode=False
 	):
 	"""
 	Function for annotating a score with data.
@@ -122,11 +123,18 @@ def annotate_score(
 	converted = converter.parse(filepath)
 	for this_fragment in data:
 		for this_obj in converted.flat.iter.notes:
-			if this_obj.offset == this_fragment.onset_range[0]:
-				this_obj.lyric = this_fragment.fragment.name
-				this_obj.style.color = "green"
-			elif this_obj.offset == this_fragment.onset_range[-1] - this_obj.quarterLength:
-				this_obj.style.color = "red"
+			if not(transcription_mode):
+				if this_obj.offset == this_fragment.onset_range[0]:
+					this_obj.lyric = this_fragment.fragment.name
+					this_obj.style.color = "green"
+				elif this_obj.offset == this_fragment.onset_range[-1] - this_obj.quarterLength:
+					this_obj.style.color = "red"
+			else:
+				if this_obj.offset == this_fragment[1][0]:
+					this_obj.lyric = this_fragment[0].name
+					this_obj.style.color = "green"
+				elif this_obj.offset == this_fragment[1][1] - this_obj.quarterLength:
+					this_obj.style.color = "red"
 
 	return converted
 
