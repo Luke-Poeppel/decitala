@@ -204,7 +204,7 @@ class FragmentHashTable:
 	<decitala.hash_table.FragmentHashTable 0 fragments>
 	>>> fht.load()
 	>>> fht
-	<decitala.hash_table.FragmentHashTable 2645 fragments>
+	<decitala.hash_table.FragmentHashTable 2491 fragments>
 	>>> fht.datasets
 	['greek_foot']
 	>>> fht.custom_fragments
@@ -313,7 +313,7 @@ class GreekFootHashTable(FragmentHashTable):
 
 	>>> ght = GreekFootHashTable()
 	>>> ght
-	<decitala.hash_table.FragmentHashTable 2603 fragments>
+	<decitala.hash_table.FragmentHashTable 2449 fragments>
 	>>> ght.load(try_retrograde=False, allow_stretch_augmentation=False)
 	>>> ght
 	<decitala.hash_table.FragmentHashTable 706 fragments>
