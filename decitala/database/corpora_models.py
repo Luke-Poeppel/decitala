@@ -7,9 +7,6 @@
 #
 # Location: NYC, 2021
 ####################################################################################################
-import json
-import os
-
 from sqlalchemy import (
 	Column,
 	Integer,
@@ -24,17 +21,7 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy.ext.declarative import declarative_base
 
-here = os.path.abspath(os.path.dirname(__file__))
-decitala_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Decitalas/"
-greek_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Greek_Metrics/"
-prosody_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Prosody/"
-
-oiseaux_de_nouvelle_caledonie = "/Users/lukepoeppel/Messiaen/Oiseaux_De_Nouvelle_Calédonie"
 ODNC_Database = "/Users/lukepoeppel/moiseaux/databases/ODNC.db"
-
-REGIONS = {
-	"NC": "Nouvelle Calédonie",
-}
 
 Base = declarative_base()
 
@@ -81,49 +68,6 @@ class ProsodicFragmentData(Base):
 
 ####################################################################################################
 # ODNC
-def serialize_species_info(filepath):
-	expected_tags = {
-		"group",
-		"name",
-		"local_name",
-		"latin",
-		"locations",
-		"datetimes",
-		"reported_size",
-		"description"
-	}
-	species_json = dict()
-	with open(filepath, "r") as f:
-		lines = list(line for line in (l.strip() for l in f) if line)  # noqa Ignores newlines
-		i = 0
-		while i < len(lines):
-			if lines[i].startswith("description"):
-				species_json["description"] = lines[i + 1:]
-				break
-
-			split = lines[i].split("=")
-			if split[0] == "group":
-				species_json["group"] = int(split[1])
-			if split[0] == "locations":  # separated by comma (if multiple)
-				split_loc = split[1].split(",")
-				species_json["locations"] = split_loc
-			elif split[0] == "datetimes":
-				split_dat = split[1].split(";")  # separated by semicolon (if multiple)
-				species_json["datetimes"] = split_dat
-			else:
-				if split[0] not in expected_tags:
-					raise Exception(f"The tag: {split[0]} is unexpected.")
-				else:
-					species_json[split[0]] = split[1]
-			i += 1
-
-		existing_tags = set(species_json.keys())
-		diff = expected_tags - existing_tags
-		for remaining_tag in diff:
-			species_json[remaining_tag] = None
-
-	return json.dumps(species_json, ensure_ascii=False)
-
 class CategoryData(Base):
 	"""
 	Category table of the database, (possibly) holding multiple subcategories, i.e., species.
