@@ -14,6 +14,7 @@ import treeplotter
 from collections import Counter
 
 from music21 import converter
+from music21 import pitch
 
 here = os.path.abspath(os.path.dirname(__file__))
 treant_templates = here + "/treant_templates"
@@ -195,5 +196,33 @@ def plot_2D_search_results(data=None, path=None, title=None, save_filepath=None)
 
 	if save_filepath:
 		plt.savefig(save_filepath, dpi=350)
+
+	return plt
+
+def plot_pitch_class_distribution_by_species(species, save_path=None):
+	combined_pc_dict = species.aggregate_pc_distribution(as_vector=False)
+	keys = list(combined_pc_dict.keys())
+	values = list(combined_pc_dict.values())
+
+	plt.title(
+		"Net Pitch Class Distribution for {}".format(species.name),
+		fontname="Times",
+		fontsize=14
+	)
+	plt.xlabel("Pitch Class", fontname="Times", fontsize=12)
+	plt.ylabel("Proportion (%)", fontname="Times", fontsize=12)
+
+	plt.xticks(list(range(0, 12)), fontname="Times")
+	plt.yticks(fontname="Times")
+
+	plt.bar(keys, values, color="k")
+	for i in range(12):
+		pc = pitch.Pitch(i)
+		if pc.accidental.name == "flat":
+			pc = pc.getEnharmonic()
+		plt.annotate(pc.name, xy=(keys[i], values[i]), ha='center', va='bottom', fontname="Times")
+
+	if save_path:
+		plt.savefig(save_path, dpi=350)
 
 	return plt
