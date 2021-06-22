@@ -19,7 +19,6 @@ from .utils import (
 	get_logger
 )
 from .database.corpora_models import (
-	get_engine,
 	get_session,
 	GreekFootData,
 	DecitalaData,
@@ -29,8 +28,7 @@ from .database.corpora_models import (
 here = os.path.abspath(os.path.dirname(__file__))
 fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
 
-engine = get_engine(fragment_db)
-session = get_session(engine=engine)
+session = get_session(db_path=fragment_db)
 
 logger = get_logger(name=__file__, print_to_console=True)
 
