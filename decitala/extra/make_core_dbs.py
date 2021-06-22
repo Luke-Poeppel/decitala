@@ -21,7 +21,6 @@ from .database.corpora_models import (
 	TranscriptionData,
 	SubcategoryData,
 	CategoryData,
-	get_engine,
 	get_session
 )
 from .utils import (
@@ -45,11 +44,7 @@ logger = get_logger(name=__file__)
 
 def make_corpora_database(echo=False):
 	abspath_databases_directory = os.path.abspath("./databases/")
-	engine = get_engine(
-		filepath=os.path.join(abspath_databases_directory, "FRAGMENT_DATABASE.db"),
-		echo=echo
-	)
-	session = get_session(engine=engine)
+	session = get_session(db_path=os.path.join(abspath_databases_directory, "fragment_database.db"))
 
 	for this_file in natsort.natsorted(os.listdir(decitala_path)):
 		# Will use the utils function eventually. Annoying bug.

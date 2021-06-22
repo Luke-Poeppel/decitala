@@ -21,7 +21,7 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy.ext.declarative import declarative_base
 
-ODNC_Database = "/Users/lukepoeppel/moiseaux/databases/ODNC.db"
+ODNC_Database = "/Users/lukepoeppel/decitala/databases/ODNC.db"
 
 Base = declarative_base()
 
