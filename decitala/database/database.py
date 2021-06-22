@@ -34,7 +34,6 @@ from ..search import rolling_hash_search
 from ..utils import get_logger
 from ..hm import molt
 from .corpora_models import (
-	get_session,
 	SubcategoryData,
 	TranscriptionData
 )
@@ -42,6 +41,14 @@ from .corpora_models import (
 ODNC_Database = "/Users/lukepoeppel/decitala/databases/ODNC.db"
 
 Base = declarative_base()
+
+def get_session(db_path, echo=False):
+	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
+	Base.metadata.create_all(engine)
+
+	Session = sessionmaker(bind=engine)
+	session = Session()
+	return session
 
 class DatabaseException(Exception):
 	pass
