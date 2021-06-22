@@ -5,10 +5,15 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 
 ## [v0.14.0](https://github.com/Luke-Poeppel/decitala/tree/v0.14.0) ???
 #### Added
-- Added `split()` method to both `GeneralFragment` and `Extraction`. Used for splitting Di- and Tri- partitible
-metrics. 
+- Added `split()` method to both `GeneralFragment` and `Extraction`. Used for splitting Di- and Tri- partite
+greek prosodic feet. 
 - Added Dipartite and Tripartite Hexasyllabic Metrics. 
 - WIP: Hyperparameter scripts. 
+
+#### Fixed
+- Graph calculation for Dijkstra was being done _within_ the function. This would make sense if I wasn't doing the agnostic source/target
+picking (which I am). Now, the graph is generated once in the `dijkstra_best_source_and_sink` function. This speeds things up significantly. 
+I think there are still potentially ways to speed things up. 
 
 ## [v0.13.2](https://github.com/Luke-Poeppel/decitala/tree/v0.13.2) June 19, 2021
 #### Fixed
