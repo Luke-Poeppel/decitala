@@ -6,8 +6,10 @@
 #
 # Location: Kent, CT 2020 / Frankfurt, DE 2020 / NYC, 2021
 ####################################################################################################
-import os
 import json
+import natsort
+import numpy as np
+import os
 
 from sqlalchemy import (
 	Column,
@@ -25,20 +27,21 @@ from sqlalchemy.orm import (
 	backref,
 )
 
+from music21 import converter
+
+from ..fragment import FragmentDecoder
 from ..search import rolling_hash_search
 from ..utils import get_logger
+from ..hm import molt
+from .corpora_models import (
+	get_session,
+	SubcategoryData,
+	TranscriptionData
+)
+
+ODNC_Database = "/Users/lukepoeppel/decitala/databases/ODNC.db"
 
 Base = declarative_base()
-
-def get_engine(filepath, echo=False):
-	engine = create_engine(f"sqlite:////{filepath}", echo=echo)
-	Base.metadata.create_all(engine)
-	return engine
-
-def get_session(engine):
-	Session = sessionmaker(bind=engine)
-	session = Session()
-	return session
 
 class DatabaseException(Exception):
 	pass
@@ -260,3 +263,85 @@ def batch_create_database(
 
 	session.commit()
 	return
+
+####################################################################################################
+# ODNC
+class Species:
+	"""
+	This class allows a user to access the SubcategoryData results without relying on SQLAlchemy.
+	It only requires a name (and also supports class methods).
+	"""
+	def __init__(self, name):
+		self.session = get_session(ODNC_Database)
+		res = self.session.query(SubcategoryData).filter(SubcategoryData.name == name).first()
+		if not res:
+			raise DatabaseException(f"No matches found for '{name}'")
+
+		self.name = res.name
+		self.latin = res.latin
+		self.local_name = res.local_name
+		self.reported_size = res.reported_size
+		self.description = json.loads(res.description)
+		self.locations = json.loads(res.locations)
+
+		self.transcriptions = [Transcription(transcription.name) for transcription in res.transcriptions]
+
+	def __repr__(self):
+		return f"<database.Species {self.name}>"
+
+	@property
+	def num_transcriptions(self):
+		return len(self.transcriptions)
+
+	def aggregate_pc_distribution(self, as_vector=True):
+		combined_pc_counter = []
+		for transcription in self.transcriptions:
+			fp = transcription.filepath
+			pc_counter_dict = molt.pc_counter(fp, 0, normalize_over_duration=True)
+			pc_counter_vector = molt.pc_dict_to_vector(pc_counter_dict)
+			combined_pc_counter.append(pc_counter_vector)
+
+		combined_pc_counter = np.sum(np.array(combined_pc_counter), axis=0)
+		combined_pc_counter = combined_pc_counter / sum(combined_pc_counter)
+		if as_vector:
+			return combined_pc_counter
+		else:
+			combined_pc_dict = dict()
+			for i, val in enumerate(combined_pc_counter):
+				combined_pc_dict[str(i)] = val
+			return combined_pc_dict
+
+class Transcription:
+	"""
+	This class allows a user to access the TranscriptionData results without relying on SQLAlchemy.
+	It only requires a name (and also supports class methods).
+	"""
+	def __init__(self, name):
+		self.session = get_session(ODNC_Database)
+		res = self.session.query(TranscriptionData).filter(TranscriptionData.name == name).first()
+		if not res:
+			raise DatabaseException(f"No matches found for '{name}'")
+
+		self.name = res.name
+		self.filepath = res.filepath
+		if not(res.analysis):
+			self.analysis = None
+		else:
+			self.analysis = json.loads(res.analysis, cls=FragmentDecoder)
+
+	def __repr__(self):
+		return f"<database.Transcription {self.name}>"
+
+	def show(self):
+		converted = converter.parse(self.filepath)
+		converted.show()
+
+def get_all_species():
+	session = get_session(ODNC_Database)
+	res = session.query(SubcategoryData).all()
+	return [Species(x.name) for x in res]
+
+def get_all_transcriptions():
+	session = get_session(ODNC_Database)
+	res = session.query(TranscriptionData).all()
+	return natsort.natsorted([Transcription(x.name) for x in res], key=lambda x: x.name)

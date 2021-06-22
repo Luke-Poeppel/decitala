@@ -9,8 +9,8 @@ from decitala.database.database import (
 	create_database,
 	CompositionData,
 	ExtractionData,
-	get_engine,
-	get_session
+	get_session,
+	Transcription
 )
 from decitala.hash_table import (
 	GreekFootHashTable
@@ -30,8 +30,7 @@ def test_create_database():
 			table = GreekFootHashTable(),
 			part_nums = [0],
 		)
-		engine = get_engine(filepath=db_path)
-		session = get_session(engine=engine)
+		session = get_session(db_path=db_path)
 
 		comps = session.query(CompositionData).all()
 		assert comps[0].name == "Shuffled_Transcription_2.xml"

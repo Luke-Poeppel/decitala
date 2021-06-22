@@ -21,11 +21,9 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy.ext.declarative import declarative_base
 
-ODNC_Database = "/Users/lukepoeppel/decitala/databases/ODNC.db"
-
 Base = declarative_base()
 
-def get_session(db_path=ODNC_Database, echo=False):
+def get_session(db_path, echo=False):
 	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
 	Base.metadata.create_all(engine)
 
