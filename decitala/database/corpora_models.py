@@ -9,34 +9,39 @@
 ####################################################################################################
 import json
 import os
-import natsort
-import unidecode
 
 from sqlalchemy import (
 	Column,
 	Integer,
 	String,
-	create_engine
+	create_engine,
+	ForeignKey,
+)
+from sqlalchemy.orm import (
+	sessionmaker,
+	relationship,
+	backref
 )
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-
-from music21 import converter
-from music21 import note
 
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Decitalas/"
 greek_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Greek_Metrics/"
 prosody_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Prosody/"
 
+oiseaux_de_nouvelle_caledonie = "/Users/lukepoeppel/Messiaen/Oiseaux_De_Nouvelle_Calédonie"
+ODNC_Database = "/Users/lukepoeppel/moiseaux/databases/ODNC.db"
+
+REGIONS = {
+	"NC": "Nouvelle Calédonie",
+}
+
 Base = declarative_base()
 
-def get_engine(filepath, echo=False):
-	engine = create_engine(f"sqlite:////{filepath}", echo=echo)
+def get_session(db_path=ODNC_Database, echo=False):
+	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
 	Base.metadata.create_all(engine)
-	return engine
 
-def get_session(engine):
 	Session = sessionmaker(bind=engine)
 	session = Session()
 	return session
@@ -74,57 +79,95 @@ class ProsodicFragmentData(Base):
 	source = Column(String)
 	ql_array = Column(String)
 
-def _make_corpora_database(echo):
-	abspath_databases_directory = os.path.abspath("./databases/")
-	engine = get_engine(
-		filepath=os.path.join(abspath_databases_directory, "FRAGMENT_DATABASE.db"),
-		echo=echo
-	)
-	session = get_session(engine=engine)
+####################################################################################################
+# ODNC
+def serialize_species_info(filepath):
+	expected_tags = {
+		"group",
+		"name",
+		"local_name",
+		"latin",
+		"locations",
+		"datetimes",
+		"reported_size",
+		"description"
+	}
+	species_json = dict()
+	with open(filepath, "r") as f:
+		lines = list(line for line in (l.strip() for l in f) if line)  # noqa Ignores newlines
+		i = 0
+		while i < len(lines):
+			if lines[i].startswith("description"):
+				species_json["description"] = lines[i + 1:]
+				break
 
-	for this_file in natsort.natsorted(os.listdir(decitala_path)):
-		# Will use the utils function eventually. Annoying bug.
-		split = this_file.split("_")
-		if len(split) == 2:
-			full_id = split[0]
-		elif len(split) >= 3:
-			if len(split[1]) == 1:  # e.g. ["80", "B", "..."]
-				full_id = "_".join([split[0], split[1]])
+			split = lines[i].split("=")
+			if split[0] == "group":
+				species_json["group"] = int(split[1])
+			if split[0] == "locations":  # separated by comma (if multiple)
+				split_loc = split[1].split(",")
+				species_json["locations"] = split_loc
+			elif split[0] == "datetimes":
+				split_dat = split[1].split(";")  # separated by semicolon (if multiple)
+				species_json["datetimes"] = split_dat
 			else:
-				full_id = split[0]
+				if split[0] not in expected_tags:
+					raise Exception(f"The tag: {split[0]} is unexpected.")
+				else:
+					species_json[split[0]] = split[1]
+			i += 1
 
-		converted = converter.parse(os.path.join(decitala_path, this_file))
-		ql_array = json.dumps([x.quarterLength for x in converted.flat.getElementsByClass(note.Note)])
-		decitala = DecitalaData(
-			full_id=full_id,
-			name=this_file[:-4],
-			ql_array=ql_array
-		)
-		session.add(decitala)
+		existing_tags = set(species_json.keys())
+		diff = expected_tags - existing_tags
+		for remaining_tag in diff:
+			species_json[remaining_tag] = None
 
-	for this_file in os.listdir(greek_path):
-		converted = converter.parse(os.path.join(greek_path, this_file))
-		ql_array = json.dumps([x.quarterLength for x in converted.flat.getElementsByClass(note.Note)])
-		greek_foot = GreekFootData(
-			name=this_file[:-4],
-			ql_array=ql_array
-		)
-		session.add(greek_foot)
+	return json.dumps(species_json, ensure_ascii=False)
 
-	for this_dir in os.listdir(prosody_path):
-		if this_dir == "README.md":
-			continue
-		subdir = os.path.join(prosody_path, this_dir)
-		for this_file in os.listdir(subdir):
-			converted = converter.parse(os.path.join(subdir, this_file))
-			ql_array = json.dumps([x.quarterLength for x in converted.flat.getElementsByClass(note.Note)])
-			prosodic_fragment = ProsodicFragmentData(
-				name=unidecode.unidecode(this_file[:-4]),
-				source=unidecode.unidecode(this_dir),
-				ql_array=ql_array
-			)
-			session.add(prosodic_fragment)
+class CategoryData(Base):
+	"""
+	Category table of the database, (possibly) holding multiple subcategories, i.e., species.
+	"""
+	__tablename__ = "CategoryData"
 
-	session.commit()
+	id = Column(Integer, primary_key=True)
+	name = Column(String)
+	group_number = Column(Integer)
 
-# _make_corpora_database(echo=False)
+	def __repr__(self):
+		return f"<moiseaux.CategoryData {self.name}>"
+
+class SubcategoryData(Base):
+	"""
+	Subcategory table of the database. Holds data for each species.
+	"""
+	__tablename__ = "SubcategoryData"
+
+	id = Column(Integer, primary_key=True)
+	name = Column(String)
+	category_id = Column(Integer, ForeignKey("CategoryData.id"))
+	category = relationship("CategoryData", backref=backref("subcategories"))
+	latin = Column(String)
+	local_name = Column(String, nullable=True)
+	reported_size = Column(Integer)
+	description = Column(String)
+	locations = Column(String)
+
+	def __repr__(self):
+		return f"<moiseaux.SubcategoryData {self.name}>"
+
+class TranscriptionData(Base):
+	"""
+	Transcription-level table of the database.
+	"""
+	__tablename__ = "TranscriptionData"
+
+	id = Column(Integer, primary_key=True)
+	name = Column(String)
+	subcategory_id = Column(Integer, ForeignKey("SubcategoryData.id"))
+	subcategory = relationship("SubcategoryData", backref=backref("transcriptions"))
+	analysis = Column(String)
+	filepath = Column(String)
+
+	def __repr__(self):
+		return f"<moiseaux.TranscriptionData {self.name}>"
