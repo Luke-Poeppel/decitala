@@ -22,7 +22,11 @@ from decitala.database.corpora_models import (
 	SubcategoryData,
 	CategoryData
 )
-from decitala.database.db_utils import get_session
+from decitala.database.db_utils import (
+	get_session,
+	FRAGMENT_BASE,
+	TRANSCRIPTION_BASE
+)
 from decitala.fragment import FragmentEncoder
 from decitala.utils import loader, get_logger
 
@@ -38,7 +42,10 @@ logger = get_logger(__file__, print_to_console=True)
 
 def make_corpora_database(echo):
 	abspath_databases_directory = os.path.abspath("./databases/")
-	session = get_session(db_path=os.path.join(abspath_databases_directory, "fragment_database.db"))
+	session = get_session(
+		db_path=os.path.join(abspath_databases_directory, "fragment_database.db"),
+		base=FRAGMENT_BASE
+	)
 
 	for this_file in natsort.natsorted(os.listdir(decitala_path)):
 		# Will use the utils function eventually. Annoying bug.
@@ -131,7 +138,10 @@ def serialize_species_info(filepath):
 	return json.dumps(species_json, ensure_ascii=False)
 
 def make_transcription_database(db_path):
-	session = get_session(db_path=db_path)
+	session = get_session(
+		db_path=db_path,
+		base=TRANSCRIPTION_BASE
+	)
 
 	dirs = os.listdir(oiseaux_de_nouvelle_caledonie)
 	for i, directory in enumerate(dirs):
