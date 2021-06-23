@@ -22,6 +22,7 @@ from decitala.path_finding import (
 )
 from decitala import utils
 from decitala import hash_table
+from decitala import fragment
 
 logger = utils.get_logger(name=__file__, print_to_console=True)
 
@@ -33,7 +34,7 @@ class SearchException(Exception):
 # Hash table lookup.
 @dataclass
 class Extraction:
-	fragment: 'decitala.fragment.GeneralFragment'  # Only way I could solve import issues...
+	fragment: 'fragment.GeneralFragment'  # Only way I could solve import issues...
 	frag_type: str
 	onset_range: tuple
 

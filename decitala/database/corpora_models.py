@@ -11,11 +11,9 @@ from sqlalchemy import (
 	Column,
 	Integer,
 	String,
-	create_engine,
 	ForeignKey,
 )
 from sqlalchemy.orm import (
-	sessionmaker,
 	relationship,
 	backref
 )

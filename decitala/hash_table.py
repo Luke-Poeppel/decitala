@@ -6,17 +6,10 @@
 #
 # Location: NYC, 2021.
 ####################################################################################################
-import os
-
 from decitala.utils import (
 	augment,
 	stretch_augment,
 	get_logger
-)
-from decitala.database.corpora_models import (
-	GreekFootData,
-	DecitalaData,
-	ProsodicFragmentData
 )
 from decitala import fragment
 

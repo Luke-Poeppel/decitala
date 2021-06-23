@@ -15,8 +15,6 @@ from treeplotter.tree import (
 from wand.image import Image
 
 from decitala.fragment import (
-	Decitala,
-	GreekFoot,
 	GeneralFragment,
 	get_all_decitalas,
 	get_all_greek_feet
@@ -25,10 +23,6 @@ from decitala.fragment import (
 from decitala.utils import (
 	roll_window,
 	get_object_indices,
-)
-from decitala.database.corpora_models import (
-	DecitalaData,
-	GreekFootData
 )
 from decitala import vis
 
