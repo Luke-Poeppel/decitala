@@ -30,16 +30,6 @@ from ..utils import get_logger
 
 Base = declarative_base()
 
-def get_engine(filepath, echo=False):
-	engine = create_engine(f"sqlite:////{filepath}", echo=echo)
-	Base.metadata.create_all(engine)
-	return engine
-
-def get_session(engine):
-	Session = sessionmaker(bind=engine)
-	session = Session()
-	return session
-
 class DatabaseException(Exception):
 	pass
 
