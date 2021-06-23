@@ -18,14 +18,11 @@ from functools import lru_cache
 from music21 import converter
 from music21 import note
 
-from . import utils
-from .database.corpora_models import (
-	DecitalaData,
-	GreekFootData,
-	ProsodicFragmentData,
-	get_session
+from decitala import utils
+from decitala.database import (
+	corpora_models,
+	database
 )
-
 # Fragments
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
@@ -37,7 +34,7 @@ fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
 # ID's of decitalas with "subtalas"
 subdecitala_array = np.array([26, 38, 55, 65, 68])
 
-session = get_session(db_path=fragment_db)
+session = database.get_session(db_path=fragment_db)
 
 ####################################################################################################
 class FragmentException(Exception):
@@ -512,7 +509,7 @@ class Decitala(GeneralFragment):
 		if name.endswith(".xml"):
 			name = name[:-4]
 
-		matches = session.query(DecitalaData).filter(DecitalaData.name.contains(name)).all()
+		matches = session.query(corpora_models.DecitalaData).filter(corpora_models.DecitalaData.name.contains(name)).all() # noqa
 		matches = [x.name + ".xml" for x in matches]
 
 		if not matches:
@@ -551,7 +548,7 @@ class Decitala(GeneralFragment):
 		>>> Decitala.get_by_id("89")
 		<fragment.Decitala 89_Lalitapriya>
 		"""
-		res = session.query(DecitalaData).filter(DecitalaData.full_id == input_id).all()
+		res = session.query(corpora_models.DecitalaData).filter(corpora_models.DecitalaData.full_id == input_id).all() # noqa
 		if len(res) > 1:
 			raise DecitalaException("Something is wrong. File an issue at https://github.com/Luke-Poeppel/decitala/issues.") # noqa
 		return Decitala(res[0].name)
@@ -600,7 +597,7 @@ class GreekFoot(GeneralFragment):
 	def __init__(self, name, **kwargs):
 		if name.endswith(".xml"):
 			name = name[:-4]
-		matches = session.query(GreekFootData).filter(GreekFootData.name == name).all()
+		matches = session.query(corpora_models.GreekFootData).filter(corpora_models.GreekFootData.name == name).all() # noqa
 		matches = [x.name + ".xml" for x in matches]
 
 		if not matches:
@@ -642,7 +639,7 @@ class ProsodicFragment(GeneralFragment):
 			name = name[:-4]
 
 		name = unidecode.unidecode(name)
-		match = session.query(ProsodicFragmentData).filter(ProsodicFragmentData.name == name).first()
+		match = session.query(corpora_models.ProsodicFragmentData).filter(corpora_models.ProsodicFragmentData.name == name).first() # noqa
 		if not match:
 			raise ProsodicException(f"No matches were found for name {name}.")
 
@@ -664,13 +661,13 @@ class ProsodicFragment(GeneralFragment):
 ####################################################################################################
 # Some simple queries for quick access.
 def get_all_greek_feet():
-	all_greek_feet = session.query(GreekFootData)
+	all_greek_feet = session.query(corpora_models.GreekFootData)
 	return [GreekFoot(x.name) for x in all_greek_feet]
 
 def get_all_decitalas():
-	all_decitalas = session.query(DecitalaData)
+	all_decitalas = session.query(corpora_models.DecitalaData)
 	return [Decitala(x.name) for x in all_decitalas]
 
 def get_all_prosodic_fragments():
-	all_prosodic_fragments = session.query(ProsodicFragmentData)
+	all_prosodic_fragments = session.query(corpora_models.ProsodicFragmentData)
 	return [ProsodicFragment(x.name) for x in all_prosodic_fragments]
