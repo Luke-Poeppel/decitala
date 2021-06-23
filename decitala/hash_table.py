@@ -8,27 +8,17 @@
 ####################################################################################################
 import os
 
-from .fragment import (
-	Decitala,
-	GreekFoot,
-	ProsodicFragment
-)
-from .utils import (
+from decitala.utils import (
 	augment,
 	stretch_augment,
 	get_logger
 )
-from .database.corpora_models import (
-	get_session,
+from decitala.database.corpora_models import (
 	GreekFootData,
 	DecitalaData,
 	ProsodicFragmentData
 )
-
-here = os.path.abspath(os.path.dirname(__file__))
-fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
-
-session = get_session(db_path=fragment_db)
+from decitala import fragment
 
 logger = get_logger(name=__file__, print_to_console=True)
 
@@ -270,14 +260,11 @@ class FragmentHashTable:
 		# Process datasets
 		for this_dataset in self.datasets:
 			if this_dataset == "greek_foot":
-				data = session.query(GreekFootData).all()
-				fragments = [GreekFoot(x.name) for x in data]
+				fragments = fragment.get_all_greek_feet()
 			elif this_dataset == "decitala":
-				data = session.query(DecitalaData).all()
-				fragments = [Decitala(x.name) for x in data]
+				fragments = fragment.get_all_decitalas()
 			elif this_dataset == "prosodic_fragment":
-				data = session.query(ProsodicFragmentData).all()
-				fragments = [ProsodicFragment(x.name) for x in data]
+				fragments = fragment.get_all_prosodic_fragments()
 
 			for this_fragment in fragments:
 				generate_all_modifications(

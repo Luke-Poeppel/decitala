@@ -3,5 +3,5 @@ repos:
   rev: v0.9.5
   hooks:
   -  id: no-commit-to-branch
-  -  id: flake8
-     exclude: ^tests/ # (^foo/|^bar/)
+  # -  id: flake8
+  #    exclude: ^tests/ # (^foo/|^bar/)

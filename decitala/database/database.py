@@ -29,11 +29,11 @@ from sqlalchemy.orm import (
 
 from music21 import converter
 
-from ..fragment import FragmentDecoder
-from ..search import rolling_hash_search
-from ..utils import get_logger
-from ..hm import molt
-from .corpora_models import (
+from decitala import fragment
+from decitala import search
+from decitala import utils
+from decitala.hm import molt
+from decitala.database.corpora_models import (
 	SubcategoryData,
 	TranscriptionData
 )
@@ -159,7 +159,7 @@ def _add_results_to_session(
 		)
 		session.add(data)
 
-		res = rolling_hash_search(
+		res = search.rolling_hash_search(
 			filepath=filepath,
 			part_num=this_part,
 			table=table,
@@ -209,7 +209,7 @@ def create_database(
 	if os.path.isfile(db_path):
 		return "That database already exists ✔"
 
-	logger = get_logger(name=__file__, print_to_console=True)
+	logger = utils.get_logger(name=__file__, print_to_console=True)
 	logger.info(f"Preparing database at {db_path}...")
 
 	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
@@ -250,7 +250,7 @@ def batch_create_database(
 	if os.path.isfile(db_path):
 		return "That database already exists ✔"
 
-	logger = get_logger(name=__file__, print_to_console=True)
+	logger = utils.get_logger(name=__file__, print_to_console=True)
 	logger.info(f"Preparing database at {db_path}...")
 
 	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
@@ -334,7 +334,7 @@ class Transcription:
 		if not(res.analysis):
 			self.analysis = None
 		else:
-			self.analysis = json.loads(res.analysis, cls=FragmentDecoder)
+			self.analysis = json.loads(res.analysis, cls=fragment.FragmentDecoder)
 
 	def __repr__(self):
 		return f"<database.Transcription {self.name}>"

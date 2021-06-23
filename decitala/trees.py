@@ -14,31 +14,23 @@ from treeplotter.tree import (
 )
 from wand.image import Image
 
-from .fragment import (
+from decitala.fragment import (
 	Decitala,
 	GreekFoot,
-	GeneralFragment
+	GeneralFragment,
+	get_all_decitalas,
+	get_all_greek_feet
+
 )
-from .utils import (
+from decitala.utils import (
 	roll_window,
 	get_object_indices,
 )
-from .database.corpora_models import (
-	get_engine,
-	get_session,
+from decitala.database.corpora_models import (
 	DecitalaData,
 	GreekFootData
 )
-from . import vis
-
-here = os.path.abspath(os.path.dirname(__file__))
-decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
-greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics/"
-
-fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
-
-engine = get_engine(fragment_db)
-session = get_session(engine=engine)
+from decitala import vis
 
 class TreeException(Exception):
 	pass
@@ -154,11 +146,9 @@ class FragmentTree(Tree):
 																				rep_types are `ratio` and `difference`")
 
 		if frag_type == "decitala":
-			fragment_data = session.query(DecitalaData).all()
-			data = [Decitala(x.name) for x in fragment_data]
+			data = get_all_decitalas()
 		elif frag_type == "greek_foot":
-			fragment_data = session.query(GreekFootData).all()
-			data = [GreekFoot(x.name) for x in fragment_data]
+			data = get_all_greek_feet()
 
 		return FragmentTree(
 			data=data,

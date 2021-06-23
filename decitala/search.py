@@ -15,29 +15,15 @@ import numpy as np
 
 from dataclasses import dataclass
 
-from .utils import (
-	successive_ratio_array,
-	successive_difference_array,
-	find_possible_superdivisions,
-	get_object_indices,
-	roll_window,
-	contiguous_summation,
-	get_logger
-)
-from .fragment import (
-	FragmentEncoder,
-	GeneralFragment
-)
-from .hash_table import (
-	FragmentHashTable
-)
-from .path_finding import (
+from decitala.path_finding import (
 	floyd_warshall,
 	dijkstra,
 	path_finding_utils
 )
+from decitala import utils
+from decitala import hash_table
 
-logger = get_logger(name=__file__, print_to_console=True)
+logger = utils.get_logger(name=__file__, print_to_console=True)
 
 ####################################################################################################
 class SearchException(Exception):
@@ -47,7 +33,7 @@ class SearchException(Exception):
 # Hash table lookup.
 @dataclass
 class Extraction:
-	fragment: GeneralFragment
+	fragment: 'decitala.fragment.GeneralFragment'  # Only way I could solve import issues...
 	frag_type: str
 	onset_range: tuple
 
@@ -188,9 +174,9 @@ def rolling_hash_search(
 	:param list windows: The allowed window sizes for search. Default is all integers in range 2-19.
 	:param bool allow_subdivision: Whether to check for subdivisions of a frame in the search.
 	"""
-	object_list = get_object_indices(filepath=filepath, part_num=part_num, ignore_grace=True)
+	object_list = utils.get_object_indices(filepath=filepath, part_num=part_num, ignore_grace=True)
 
-	if type(table) == FragmentHashTable:
+	if type(table) == hash_table.FragmentHashTable:
 		table.load()
 
 	max_dataset_length = len(max(table.data, key=lambda x: len(x)))
@@ -202,7 +188,7 @@ def rolling_hash_search(
 	fragment_id = 0
 	fragments_found = []
 	for this_win in windows:
-		frames = roll_window(array=object_list, window_length=this_win)
+		frames = utils.roll_window(array=object_list, window_length=this_win)
 		for this_frame in frames:
 			frame_ql_array = frame_to_ql_array(this_frame)
 			if len(frame_ql_array) < 2:
@@ -220,7 +206,7 @@ def rolling_hash_search(
 				fragment_id += 1
 
 			if allow_subdivision:
-				all_superdivisions = find_possible_superdivisions(
+				all_superdivisions = utils.find_possible_superdivisions(
 					ql_array=frame_ql_array,
 					include_self=False
 				)
@@ -255,7 +241,7 @@ def rolling_hash_search(
 				if any(type(x[0]).__name__ == "Rest" for x in this_frame):
 					continue
 
-				cs_frame = tuple(contiguous_summation(this_frame))
+				cs_frame = tuple(utils.contiguous_summation(this_frame))
 				if cs_frame == this_frame:
 					continue
 
@@ -354,7 +340,7 @@ def path_finder(
 
 	if save_filepath:
 		with open(save_filepath, "w") as output:
-			json.dump(obj=best_path, fp=output, cls=FragmentEncoder, indent=4)
+			json.dump(obj=best_path, fp=output, cls=fragment.FragmentEncoder, indent=4)
 		logger.info(f"Result saved in: {save_filepath}")
 
 	return best_path
@@ -375,7 +361,7 @@ def rolling_search_on_array(
 	:return: A list holding fragments in the array that were detected in the table.
 	:rtype: list
  
-	>>> ght = FragmentHashTable(
+	>>> ght = hash_table.FragmentHashTable(
 	... 	datasets=["greek_foot"]
 	... )
 	>>> ght.load()
@@ -397,7 +383,7 @@ def rolling_search_on_array(
 
 	fragments_found = []
 	for this_window in windows:
-		for this_frame in roll_window(array=ql_array, window_length=this_window):
+		for this_frame in utils.roll_window(array=ql_array, window_length=this_window):
 			try:
 				searched = table.data[tuple(this_frame)]
 				if searched:
@@ -439,15 +425,15 @@ class _SearchConfig():
 
 		retrograde = self.ql_array[::-1]
 
-		ratio_array = successive_ratio_array(self.ql_array)
-		difference_array = successive_difference_array(self.ql_array)
-		retrograde_ratio_array = successive_ratio_array(retrograde)
-		retrograde_difference_array = successive_difference_array(retrograde)
+		ratio_array = utils.successive_ratio_array(self.ql_array)
+		difference_array = utils.successive_difference_array(self.ql_array)
+		retrograde_ratio_array = utils.successive_ratio_array(retrograde)
+		retrograde_difference_array = utils.successive_difference_array(retrograde)
 
-		all_superdivisions = find_possible_superdivisions(self.ql_array)
-		superdivisions_ratio = [successive_ratio_array(x) for x in all_superdivisions]
+		all_superdivisions = utils.find_possible_superdivisions(self.ql_array)
+		superdivisions_ratio = [utils.successive_ratio_array(x) for x in all_superdivisions]
 		retrograde_superdivisions_pre = [x[::-1] for x in all_superdivisions]
-		retrograde_superdivisions_ratio = [successive_ratio_array(x) for x in retrograde_superdivisions_pre] # noqa
+		retrograde_superdivisions_ratio = [utils.successive_ratio_array(x) for x in retrograde_superdivisions_pre] # noqa
 
 		if modification == "r":
 			return (self.ratio_tree, ratio_array)
@@ -627,7 +613,7 @@ def rolling_tree_search(
 	if difference_tree is not None:
 		depths.append(difference_tree.depth)
 
-	object_list = get_object_indices(filepath=filepath, part_num=part_num)
+	object_list = utils.get_object_indices(filepath=filepath, part_num=part_num)
 	object_list = [x for x in object_list if x[1][1] - x[1][0] != 0]
 
 	max_window_size = min(max(depths), len(object_list))
@@ -640,7 +626,7 @@ def rolling_tree_search(
 	for this_win in windows:
 		# logger.info("Searching window of size {}.".format(this_win))
 
-		frames = roll_window(array=object_list, window_length=this_win)
+		frames = utils.roll_window(array=object_list, window_length=this_win)
 		for this_frame in frames:
 			objects = [x[0] for x in this_frame]
 			if any(x.isRest for x in objects):  # Skip any window that has a rest in it.
@@ -679,7 +665,7 @@ def rolling_tree_search(
 
 				if try_contiguous_summation:
 					copied_frame = copy.copy(this_frame)
-					new_frame = contiguous_summation(copied_frame)
+					new_frame = utils.contiguous_summation(copied_frame)
 					contiguous_summation_ql_array = frame_to_ql_array(new_frame)
 
 					if len(contiguous_summation_ql_array) < 2 or np.array_equal(ql_array, contiguous_summation_ql_array): # noqa

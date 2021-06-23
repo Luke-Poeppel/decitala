@@ -14,10 +14,7 @@ import numpy as np
 
 from progress.bar import Bar
 
-from ..utils import get_logger
-from .path_finding_utils import DefaultCostFunction
-
-logger = get_logger(name=__name__, print_to_console=True)
+from decitala.path_finding.path_finding_utils import DefaultCostFunction
 
 def floyd_warshall(
 		data,

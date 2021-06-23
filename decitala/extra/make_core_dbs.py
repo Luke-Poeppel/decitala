@@ -14,7 +14,7 @@ import unidecode
 from music21 import converter
 from music21 import note
 
-from .database.corpora_models import (
+from decitala.database.corpora_models import (
 	GreekFootData,
 	DecitalaData,
 	ProsodicFragmentData,
@@ -23,11 +23,11 @@ from .database.corpora_models import (
 	CategoryData,
 	get_session
 )
-from .utils import (
+from decitala.utils import (
 	get_logger,
 	loader
 )
-from .fragment import FragmentEncoder
+from decitala.fragment import FragmentEncoder
 
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Decitalas/"

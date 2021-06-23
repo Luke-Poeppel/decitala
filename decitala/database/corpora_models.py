@@ -23,14 +23,6 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-def get_session(db_path, echo=False):
-	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
-	Base.metadata.create_all(engine)
-
-	Session = sessionmaker(bind=engine)
-	session = Session()
-	return session
-
 class DecitalaData(Base):
 	"""
 	SQLAlchemy model representing a decitala fragment from the encoded datasets (given in ``corpora``).

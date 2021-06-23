@@ -21,7 +21,7 @@ from music21 import note
 from music21 import stream
 from music21.meter import TimeSignature
 
-from . import fragment
+from decitala import fragment
 
 """
 NOTE: Normally a crescent moon superscript is used. Since it serves the same function as viramas, we
