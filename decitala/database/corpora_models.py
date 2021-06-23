@@ -7,12 +7,17 @@
 #
 # Location: NYC, 2021
 ####################################################################################################
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (
 	Column,
 	Integer,
 	String,
+	ForeignKey
 )
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import (
+	relationship,
+	backref
+)
 
 Base = declarative_base()
 
@@ -48,3 +53,53 @@ class ProsodicFragmentData(Base):
 	name = Column(String)
 	source = Column(String)
 	ql_array = Column(String)
+
+####################################################################################################
+# Transcriptions
+class CategoryData(Base):
+	"""
+	Category table of the database, (possibly) holding multiple subcategories, i.e., species.
+	"""
+	__tablename__ = "CategoryData"
+
+	id = Column(Integer, primary_key=True)
+	name = Column(String)
+	group_number = Column(Integer)
+
+	def __repr__(self):
+		return f"<moiseaux.CategoryData {self.name}>"
+
+class SubcategoryData(Base):
+	"""
+	Subcategory table of the database. Holds data for each species.
+	"""
+	__tablename__ = "SubcategoryData"
+
+	id = Column(Integer, primary_key=True)
+	name = Column(String)
+	category_id = Column(Integer, ForeignKey("CategoryData.id"))
+	category = relationship("CategoryData", backref=backref("subcategories"))
+	latin = Column(String)
+	local_name = Column(String, nullable=True)
+	reported_size = Column(Integer)
+	description = Column(String)
+	locations = Column(String)
+
+	def __repr__(self):
+		return f"<moiseaux.SubcategoryData {self.name}>"
+
+class TranscriptionData(Base):
+	"""
+	Transcription-level table of the database.
+	"""
+	__tablename__ = "TranscriptionData"
+
+	id = Column(Integer, primary_key=True)
+	name = Column(String)
+	subcategory_id = Column(Integer, ForeignKey("SubcategoryData.id"))
+	subcategory = relationship("SubcategoryData", backref=backref("transcriptions"))
+	analysis = Column(String)
+	filepath = Column(String)
+
+	def __repr__(self):
+		return f"<moiseaux.TranscriptionData {self.name}>"
