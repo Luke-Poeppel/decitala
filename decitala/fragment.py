@@ -23,9 +23,8 @@ from .database.corpora_models import (
 	DecitalaData,
 	GreekFootData,
 	ProsodicFragmentData,
-	get_engine,
-	get_session
 )
+from .database.db_utils import get_session
 
 # Fragments
 here = os.path.abspath(os.path.dirname(__file__))
@@ -33,13 +32,12 @@ decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
 greek_path = os.path.dirname(here) + "/corpora/Greek_Metrics"
 prosody_path = os.path.dirname(here) + "/corpora/Prosody"
 
-fragment_db = os.path.dirname(here) + "/databases/FRAGMENT_DATABASE.db"
+fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
 
 # ID's of decitalas with "subtalas"
 subdecitala_array = np.array([26, 38, 55, 65, 68])
 
-engine = get_engine(fragment_db)
-session = get_session(engine=engine)
+session = get_session(db_path=fragment_db)
 
 ####################################################################################################
 class FragmentException(Exception):
@@ -671,19 +669,13 @@ class ProsodicFragment(GeneralFragment):
 ####################################################################################################
 # Some simple queries for quick access.
 def get_all_greek_feet():
-	engine = get_engine(fragment_db)
-	session = get_session(engine=engine)
 	all_greek_feet = session.query(GreekFootData)
 	return [GreekFoot(x.name) for x in all_greek_feet]
 
 def get_all_decitalas():
-	engine = get_engine(fragment_db)
-	session = get_session(engine=engine)
 	all_decitalas = session.query(DecitalaData)
 	return [Decitala(x.name) for x in all_decitalas]
 
 def get_all_prosodic_fragments():
-	engine = get_engine(fragment_db)
-	session = get_session(engine=engine)
 	all_prosodic_fragments = session.query(ProsodicFragmentData)
 	return [ProsodicFragment(x.name) for x in all_prosodic_fragments]
