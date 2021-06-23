@@ -1,3 +1,11 @@
+####################################################################################################
+# File:     make_core_dbs.py
+# Purpose:  Scripts for generating the core databases in the package.
+#
+# Author:   Luke Poeppel
+#
+# Location: Kent, 2021
+####################################################################################################
 import json
 import natsort
 import os
@@ -24,6 +32,7 @@ greek_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Greek_Metrics/"
 prosody_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Prosody/"
 
 oiseaux_de_nouvelle_caledonie = "/Users/lukepoeppel/Messiaen/Oiseaux_De_Nouvelle_Calédonie"
+ODNC_Database = os.path.dirname(os.path.dirname(here)) + "/databases/ODNC.db"
 
 logger = get_logger(__file__, print_to_console=True)
 
@@ -122,7 +131,7 @@ def serialize_species_info(filepath):
 	return json.dumps(species_json, ensure_ascii=False)
 
 def make_transcription_database(db_path):
-	session = get_session(db_path)
+	session = get_session(db_path=db_path)
 
 	dirs = os.listdir(oiseaux_de_nouvelle_caledonie)
 	for i, directory in enumerate(dirs):
@@ -191,3 +200,5 @@ def make_transcription_database(db_path):
 		category.subcategories = subcategory_objects
 
 	session.commit()
+
+# make_transcription_database(db_path=ODNC_Database)
