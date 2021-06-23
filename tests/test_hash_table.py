@@ -17,21 +17,11 @@ from decitala.fragment import (
 	Decitala,
 	GeneralFragment,
 	GreekFoot,
-	ProsodicFragment
+	ProsodicFragment,
+	get_all_decitalas,
+	get_all_greek_feet,
+	get_all_prosodic_fragments
 )
-from decitala.database.corpora_models import (
-	get_engine,
-	get_session,
-	DecitalaData,
-	GreekFootData,
-	ProsodicFragmentData
-)
-
-here = os.path.abspath(os.path.dirname(__file__))
-fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
-
-engine = get_engine(fragment_db)
-session = get_session(engine=engine)
 
 FACTORS = [0.125, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0]
 DIFFERENCES = [-0.375, -0.25, -0.125, 0.0, 0.125, 0.25, 0.375, 0.5, 0.75, 0.875, 1.75, 2.625, 3.5, 4.375]
@@ -93,8 +83,7 @@ def test_generate_all_modifications():
 
 def test_decitala_hash_table():
 	DHT = DecitalaHashTable()
-	fragment_data = session.query(DecitalaData).all()
-	fragments = [Decitala(x.name) for x in fragment_data]
+	fragments = get_all_decitalas()
 	for fragment in fragments:
 		modification_and_mod_val = random.choice(funcs)(fragment.ql_array())
 		if any(x <= 0 for x in modification_and_mod_val[0]):
@@ -108,8 +97,7 @@ def test_decitala_hash_table():
 
 def test_greek_foot_hash_table():
 	GFHT = GreekFootHashTable()
-	fragment_data = session.query(GreekFootData).all()
-	fragments = [GreekFoot(x.name) for x in fragment_data]
+	fragments = get_all_greek_feet()
 	for fragment in fragments:
 		modification_and_mod_val = random.choice(funcs)(fragment.ql_array())
 		if any(x <= 0 for x in modification_and_mod_val[0]):
@@ -123,8 +111,7 @@ def test_greek_foot_hash_table():
 
 def test_prosodic_fragment_hash_table():
 	PFHT = ProsodicFragmentHashTable()
-	fragment_data = session.query(ProsodicFragmentData).all()
-	fragments = [ProsodicFragment(x.name) for x in fragment_data]
+	fragments = get_all_prosodic_fragments()
 	for fragment in fragments:
 		modification_and_mod_val = random.choice(funcs)(fragment.ql_array())
 		if any(x <= 0 for x in modification_and_mod_val[0]):

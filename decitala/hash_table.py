@@ -6,31 +6,16 @@
 #
 # Location: NYC, 2021.
 ####################################################################################################
-import os
-
 from .fragment import (
-	Decitala,
-	GreekFoot,
-	ProsodicFragment
+	get_all_decitalas,
+	get_all_greek_feet,
+	get_all_prosodic_fragments
 )
 from .utils import (
 	augment,
 	stretch_augment,
 	get_logger
 )
-from .database.corpora_models import (
-	get_engine,
-	get_session,
-	GreekFootData,
-	DecitalaData,
-	ProsodicFragmentData
-)
-
-here = os.path.abspath(os.path.dirname(__file__))
-fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
-
-engine = get_engine(fragment_db)
-session = get_session(engine=engine)
 
 logger = get_logger(name=__file__, print_to_console=True)
 
@@ -195,6 +180,7 @@ class FragmentHashTable:
 	To change them, just re-run the ``load`` method with the desired inputs; this will clear the
 	data and set reload it with the new desired modification techniques.
 
+	>>> from decitala.fragment import Decitala
 	>>> fht = FragmentHashTable(
 	... 	datasets=["greek_foot"],
 	... 	custom_fragments=[Decitala("Ragavardhana")]
@@ -272,14 +258,11 @@ class FragmentHashTable:
 		# Process datasets
 		for this_dataset in self.datasets:
 			if this_dataset == "greek_foot":
-				data = session.query(GreekFootData).all()
-				fragments = [GreekFoot(x.name) for x in data]
+				fragments = get_all_greek_feet()
 			elif this_dataset == "decitala":
-				data = session.query(DecitalaData).all()
-				fragments = [Decitala(x.name) for x in data]
+				fragments = get_all_decitalas()
 			elif this_dataset == "prosodic_fragment":
-				data = session.query(ProsodicFragmentData).all()
-				fragments = [ProsodicFragment(x.name) for x in data]
+				fragments = get_all_prosodic_fragments()
 
 			for this_fragment in fragments:
 				generate_all_modifications(
