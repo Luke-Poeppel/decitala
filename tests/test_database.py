@@ -8,7 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from decitala import database
 from decitala.database.db_utils import get_session
-from decitala.database.database import (
+from decitala.database.db import (
 	create_database,
 	CompositionData,
 	ExtractionData,
