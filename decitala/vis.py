@@ -26,7 +26,7 @@ FONTSIZE_LABEL = 14
 mpl.style.use("bmh")
 
 ####################################################################################################
-def create_diagram(
+def create_tree_diagram(
 		FragmentTree,
 		path=None,
 		webshot=False,

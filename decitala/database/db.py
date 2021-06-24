@@ -32,6 +32,7 @@ from ..fragment import FragmentDecoder
 from ..search import rolling_hash_search
 from ..utils import get_logger
 from ..hm import molt
+from ..vis import annotate_score
 from .db_utils import (
 	get_session,
 	TRANSCRIPTION_BASE
@@ -334,6 +335,18 @@ class Transcription:
 	def __repr__(self):
 		return f"<database.Transcription {self.name}>"
 
-	def show(self):
-		converted = converter.parse(self.filepath)
-		converted.show()
+	def show(self, show_analysis=False):
+		if not(show_analysis):
+			converted = converter.parse(self.filepath)
+			converted.show()
+		else:
+			if self.analysis:
+				annotate_score(
+					data=self.analysis,
+					filepath=self.filepath,
+					part_num=0,
+					transcription_mode=True
+				).show()
+			else:
+				converted = converter.parse(self.filepath)
+				converted.show()
