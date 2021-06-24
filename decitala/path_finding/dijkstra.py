@@ -10,6 +10,8 @@
 import numpy as np
 import heapq
 
+from tqdm import tqdm
+
 from . import path_finding_utils
 
 # Useful info here: https://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python.
@@ -99,7 +101,7 @@ def dijkstra_best_source_and_sink(
 	best_target = None
 	best_predecessor_set = None
 
-	for source in sources:
+	for source in tqdm(sources, disable=not(verbose)):
 		dist, pred = dijkstra(
 			data,
 			graph,

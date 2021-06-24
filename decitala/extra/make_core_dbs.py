@@ -40,7 +40,7 @@ ODNC_Database = os.path.dirname(os.path.dirname(here)) + "/databases/ODNC.db"
 
 logger = get_logger(__file__, print_to_console=True)
 
-def make_corpora_database(echo):
+def make_corpora_database(echo=False):
 	abspath_databases_directory = os.path.abspath("./databases/")
 	session = get_session(
 		db_path=os.path.join(abspath_databases_directory, "fragment_database.db"),
@@ -91,6 +91,8 @@ def make_corpora_database(echo):
 			session.add(prosodic_fragment)
 
 	session.commit()
+
+# make_corpora_database()
 
 ####################################################################################################
 # NC Transcriptions
