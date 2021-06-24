@@ -7,6 +7,7 @@
 # Location: Kent, CT 2020, 2021 / Frankfurt, DE 2020 / NYC, 2021
 ####################################################################################################
 import json
+import natsort
 import numpy as np
 import os
 
@@ -350,3 +351,13 @@ class Transcription:
 			else:
 				converted = converter.parse(self.filepath)
 				converted.show()
+
+def get_all_species():
+	session = get_session(db_path=ODNC_Database, base=TRANSCRIPTION_BASE)
+	res = session.query(SubcategoryData).all()
+	return [Species(x.name) for x in res]
+
+def get_all_transcriptions():
+	session = get_session(db_path=ODNC_Database, base=TRANSCRIPTION_BASE)
+	res = session.query(TranscriptionData).all()
+	return natsort.natsorted([Transcription(x.name) for x in res], key=lambda x: x.name)
