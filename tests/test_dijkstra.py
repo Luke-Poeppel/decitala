@@ -17,7 +17,8 @@ def s1_fragments():
 	return rolling_hash_search(
 		filepath=s1_fp,
 		part_num=0,
-		table=GreekFootHashTable()
+		table=GreekFootHashTable(),
+		allow_subdivision=False
 	)
 
 @pytest.fixture
@@ -37,21 +38,33 @@ def s4_fragments():
 	)
 
 def test_dijkstra_path_1(s1_fragments):
-	source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=s1_fragments)
+	source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(
+		data=s1_fragments,
+		cost_function_class=path_finding_utils.CostFunction3D(0.8, 0.1, 0.1)
+	)
 	best_path = dijkstra.generate_path(
 		best_pred, 
 		source,
 		target
 	)
 	path_frags = sorted([x for x in s1_fragments if x.id_ in best_path], key=lambda x: x.onset_range[0])
+
 	expected_fragments = [
 		GreekFoot("Peon_IV"),
-		GreekFoot("Peon_II"),
-		GreekFoot("Amphibrach"),
+		GreekFoot("Iamb"),
+		GreekFoot("Peon_IV"),
+		GreekFoot("Iamb"),
 		GreekFoot("Peon_IV"),
 	]
+	expected_onset_ranges = [
+		(0.0, 0.625),
+		(0.875, 1.25),
+		(1.25, 1.875),
+		(1.875, 2.375),
+		(2.375, 3.0)
+	]
 	assert set(x.fragment for x in path_frags) == set(expected_fragments)
-
+	assert [x.onset_range for x in path_frags] == expected_onset_ranges
 
 def test_dijkstra_path_2(s3_fragments):
 	expected_fragments = [GreekFoot("Anapest"), GreekFoot("Choriamb")]

@@ -212,3 +212,12 @@ def test_measure_divider_mode():
 		measure_divider_mode="str"
 	)
 	assert len(objs) == 3
+
+def test_stretch_augment():
+	nc_ex2 = GreekFoot("Iamb")
+	stretched = utils.stretch_augment(
+		ql_array=nc_ex2.ql_array(),
+		factor=0.125,
+		stretch_factor=0.1875
+	)
+	assert list(stretched) == [0.125, 0.375]

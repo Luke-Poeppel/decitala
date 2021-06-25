@@ -141,7 +141,14 @@ def test_peons():
 
 def test_stretch_augmentation():
 	GFHT = GreekFootHashTable()
-	nc_ex2 = [0.125, 0.5] # Described as "Iambique". 
-	found = GFHT.data[tuple(nc_ex2)]
-	assert found["fragment"].name == "Iamb"
-	assert found["mod_hierarchy_val"] == 7 # Stretch augmentation
+	
+	# Both described as being Iambic:
+	nc_ex2_1 = [0.125, 0.375]
+	found_1 = GFHT.data[tuple(nc_ex2_1)]
+	assert found_1["fragment"].name == "Iamb"
+	assert found_1["mod_hierarchy_val"] == 7 # Stretch augmentation
+
+	nc_ex2_2 = [0.125, 0.5]
+	found_2 = GFHT.data[tuple(nc_ex2_2)]
+	assert found_2["fragment"].name == "Iamb"
+	assert found_2["mod_hierarchy_val"] == 7 # Stretch augmentation

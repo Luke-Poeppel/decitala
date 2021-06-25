@@ -11,6 +11,7 @@ from decitala.hash_table import (
 	DecitalaHashTable,
 	GreekFootHashTable
 )
+from decitala.path_finding.path_finding_utils import CostFunction3D
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -50,10 +51,10 @@ def test_doctests():
 class TestRollingHashSearch:
 
 	def test_num_fragments(self, s1_res):
-		assert len(s1_res) == 21
+		assert len(s1_res) == 27
 
 	def test_id(self, s1_res):
-		assert s1_res[0].id_ == 6
+		assert s1_res[0].id_ == 8
 
 def test_frame_is_spanned_by_slur_a(fp1):
 	num_slurs = 0
@@ -134,13 +135,13 @@ class Test_Extraction:
 		assert extraction.id_ == 43
 
 # This also functions as an integration test with Floyd-Warshall. 
-def test_shuffled_I_path_with_slur_constraint():#fp1):
+def test_shuffled_I_path_with_slur_constraint():
 	path = search.path_finder(
 		filepath=os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml",
 		part_num=0,
 		table=GreekFootHashTable(),
-		allow_subdivision=True,
-		allow_contiguous_summation=True,
+		allow_subdivision=False,
+		allow_contiguous_summation=False,
 		algorithm="floyd-warshall",
 		slur_constraint=True
 	)
@@ -152,15 +153,17 @@ def test_shuffled_I_path_with_slur_constraint():#fp1):
 		GreekFoot("Peon_IV"),
 		GreekFoot("Iamb"),
 		GreekFoot("Peon_IV"),
+		GreekFoot("Iamb"),
 		GreekFoot("Peon_IV")
 	]
 	expected_onset_ranges = [
 		(0.0, 0.625),
 		(0.875, 1.25),
 		(1.25, 1.875),
+		(1.875, 2.375),
 		(2.375, 3.0)
 	]
-	expected_slur_start_end_counts = [2, 2, 2, 2]
+	expected_slur_start_end_counts = [2, 2, 2, 2, 2]
 
 	assert fragments == expected_fragments
 	assert onset_ranges == expected_onset_ranges
