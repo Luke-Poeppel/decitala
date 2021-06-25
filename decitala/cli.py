@@ -27,8 +27,12 @@ from .path_finding import (
 	path_finding_utils,
 	pofp
 )
+from .hm import (
+	contour
+)
 
 ALL_MODULES = [
+	contour,
 	database,
 	fragment,
 	utils,
