@@ -65,7 +65,10 @@ def dijkstra_best_source_and_sink(
 		function that will be used in calculating the weights between vertices.
 	:param bool verbose: whether to print logs.
 	"""
-	sources, targets = path_finding_utils.sources_and_sinks(data)
+	sources, targets = path_finding_utils.sources_and_sinks(
+		data=data,
+		enforce_earliest_start=enforce_earliest_start
+	)
 	graph = path_finding_utils.build_graph(
 		data=data,
 		cost_function_class=cost_function_class,
