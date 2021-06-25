@@ -254,11 +254,13 @@ def split_extractions(data, split_dict, all_res):
 	return split_extractions
 
 def default_split_dict():
+	"""
+	Splits for common compound, repeated metrics.
+	"""
 	return {
 		GreekFoot("Diiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb")],
 		GreekFoot("Triiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb"), GreekFoot("Iamb")],
 		GreekFoot("Dicretic"): [GreekFoot("Amphimacer"), GreekFoot("Amphimacer")],
-		GreekFoot("Tritrochee"): [GreekFoot("Trochee"), GreekFoot("Trochee"), GreekFoot("Trochee")],
 		GreekFoot("Dianapest"): [GreekFoot("Anapest"), GreekFoot("Anapest")]
 	}
 

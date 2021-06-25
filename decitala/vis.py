@@ -71,7 +71,7 @@ def fragment_roll(
 	"""
 	Creates a piano-roll type visualization of fragments in the input data.
 
-	:param list data: Data from one of the :obj:`decitala.search` functions.
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
 	:param str title: Title for the plot. Default is `None`.
 	:param str save_filepath: Optional path to save the plot (DPI=350). Default is `None`.
 	"""
@@ -115,7 +115,7 @@ def annotate_score(
 	"""
 	Function for annotating a score with data.
 
-	:param list data: Data from one of the :obj:`decitala.search` functions.
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
 	:param str filepath: Filepath to the score to be annotated. Should correspond to the filepath
 						used in the creation of the `data`.
 	:param int part_num: Part number in the filepath which is to be annotated.Should correspond to
@@ -147,7 +147,7 @@ def result_bar_plot(
 	"""
 	Returns a bar plot of input data.
 
-	:param list data: Data from one of the :obj:`decitala.search` functions.
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
 	:param str title: Title for the plot. Default is `None`.
 	:param str save_filepath: Optional path to save the plot (DPI=350). Default is `None`.
 	"""
@@ -176,7 +176,7 @@ def plot_2D_search_results(data=None, path=None, title=None, save_filepath=None)
 	scatter plot of their start and end; the ``path`` parameter will plot the connected line
 	between the ``path`` fragments.
 
-	:param list data: Data from one of the :obj:`decitala.search` functions. Default is `None`.
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
 	:param list path: Intended for data from :obj:`decitala.search.path_finder`. Default is `None.
 	:param str title: Title for the plot. Default is `None`.
 	:param str save_filepath: Optional path to save the plot (DPI=350). Default is `None`.

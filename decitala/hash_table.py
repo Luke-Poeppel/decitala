@@ -299,7 +299,7 @@ class GreekFootHashTable(FragmentHashTable):
 	<decitala.hash_table.FragmentHashTable 2449 fragments>
 	>>> ght.load(try_retrograde=False, allow_stretch_augmentation=False)
 	>>> ght
-	<decitala.hash_table.FragmentHashTable 706 fragments>
+	<decitala.hash_table.FragmentHashTable 683 fragments>
 	"""
 	def __init__(self):
 		super().__init__(datasets=["greek_foot"])
