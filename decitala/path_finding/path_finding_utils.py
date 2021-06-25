@@ -154,6 +154,8 @@ def sources_and_sinks(
 	Calculates all sources and sinks in a given dataset.
 
 	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	:param bool enforce_earliest_start: whether to require that all sources begin at the earliest
+										detected onset.
 	"""
 	sources = [x for x in data if not any(y.onset_range[1] <= x.onset_range[0] for y in data)]
 	min_onset = min(x.onset_range[0] for x in sources)
@@ -173,6 +175,8 @@ def best_source_and_sink(data):
 	Calculates the "best" source and sink from a dataset based on two simple heuristics: (1) the
 	fragment with the earliest (or latest, for sink) starting point, (2) the fragment with the
 	greatest number of onsets.
+
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
 	"""
 	sources, sinks = sources_and_sinks(data)
 	curr_best_source = sources[0]
