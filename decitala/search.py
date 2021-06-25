@@ -59,6 +59,7 @@ class Extraction:
 	pitch_content: list
 	is_spanned_by_slur: bool
 	slur_count: int
+	slur_start_end_count: int
 	id_: int
 
 	contiguous_summation: bool = False
@@ -99,6 +100,7 @@ class Extraction:
 							pitch_content=extraction.pitch_content,
 							is_spanned_by_slur=extraction.is_spanned_by_slur,
 							slur_count=extraction.slur_count,
+							slur_start_end_count=extraction.slur_start_end_count,
 							id_=1000 + i  # Random scale to differentiate between standard.
 						)
 						split.append(extraction_obj)
@@ -219,6 +221,33 @@ def frame_slur_count(frame, allow_overlap=False):
 
 	return count
 
+def frame_slur_start_end_count(frame):
+	"""
+	Don't love this, but let's see if it works:
+
+	Returns 0 if neither the first nor last onset ends with a slur.
+	Returns 1 if first or last onset ends with a slur.
+	Returns 2 if the first and last onset ends with a slur(i.e. frame_is_spanned_by_slur=True).
+	"""
+	starts_with_slur = False
+	ends_with_slur = False
+	first_obj = frame[0][0]
+	last_obj = frame[-1][0]
+
+	first_obj_spanners = first_obj.getSpannerSites()
+	for this_spanner in first_obj_spanners:
+		if type(this_spanner).__name__ == "Slur":
+			if this_spanner.isFirst(first_obj):
+				starts_with_slur = True
+
+	last_obj_spanners = last_obj.getSpannerSites()
+	for this_spanner in last_obj_spanners:
+		if type(this_spanner).__name__ == "Slur":
+			if this_spanner.isLast(last_obj):
+				ends_with_slur = True
+
+	return int(starts_with_slur) + int(ends_with_slur)
+
 def frame_lookup(frame, ql_array, curr_fragment_id, table, windows):
 	objects = [x[0] for x in frame]
 	if any(x.isRest for x in objects):
@@ -240,6 +269,7 @@ def frame_lookup(frame, ql_array, curr_fragment_id, table, windows):
 				pitch_content=frame_to_midi(frame),
 				is_spanned_by_slur=frame_is_spanned_by_slur(frame),
 				slur_count=frame_slur_count(frame),
+				slur_start_end_count=frame_slur_start_end_count(frame),
 				id_=curr_fragment_id
 			)
 	except KeyError:
@@ -384,8 +414,7 @@ def path_finder(
 								Only possible if `algorithm="floyd-warshall"`.
 	:param str save_filepath: An optional path to a JSON file for saving search results. This file
 							can then be loaded with the :meth:`decitala.utils.loader`.
-	:param bool verbose: Whether to log messages (only used with `algorithm="floyd-warshall"`).
-						Default is ``False``.
+	:param bool verbose: Whether to log messages. Default is ``False``.
 	"""
 	fragments = rolling_hash_search(
 		filepath=filepath,
