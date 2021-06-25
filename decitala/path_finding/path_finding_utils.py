@@ -27,7 +27,7 @@ class CostFunction:
 	... 		'''Cost function determined by the sum of the two extractions standard deviations.'''
 	... 		return vertex_a.std() + vertex_b.std()
 
-	The following is a cost function that relies on three weights summing to 1.
+	The following is a cost function that relies on two weights.
 
 	>>> class MySecondCostFunction(CostFunction):
 	... 	weight_a = 0.4213
