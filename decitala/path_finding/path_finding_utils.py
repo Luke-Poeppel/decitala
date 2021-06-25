@@ -261,7 +261,8 @@ def default_split_dict():
 		GreekFoot("Diiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb")],
 		GreekFoot("Triiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb"), GreekFoot("Iamb")],
 		GreekFoot("Dicretic"): [GreekFoot("Amphimacer"), GreekFoot("Amphimacer")],
-		GreekFoot("Dianapest"): [GreekFoot("Anapest"), GreekFoot("Anapest")]
+		GreekFoot("Dianapest"): [GreekFoot("Anapest"), GreekFoot("Anapest")],
+		GreekFoot("Dochmius"): [GreekFoot("Iamb"), GreekFoot("Amphimacer")]
 	}
 
 def check_accuracy(training_data, calculated_data, mode, return_list):

@@ -116,7 +116,21 @@ def dijkstra_best_source_and_sink(
 					best_target = target
 					best_predecessor_set = pred
 
-	return best_source, best_target, best_predecessor_set
+	# This allows for fragments at the end to be missed...
+	# Find final non-overlapping target with most onsets.
+	final_target = None
+	final_target_onsets = 0
+	for target in targets:
+		if target.onset_range[0] >= best_target.onset_range[1] and \
+				target.fragment.num_onsets > final_target_onsets:
+			final_target = target
+			final_target_onsets = target.fragment.num_onsets
+
+	# If none found, use best_target.
+	if not(final_target):
+		final_target = best_target
+
+	return best_source, final_target, best_predecessor_set
 
 def generate_path(pred, source, target):
 	"""
