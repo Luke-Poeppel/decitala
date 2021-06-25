@@ -82,11 +82,20 @@ class CostFunction3D(CostFunction):
 	def cost(self, vertex_a, vertex_b):
 		gap = vertex_b.onset_range[0] - vertex_a.onset_range[1]
 		onsets = 1 / (vertex_a.fragment.num_onsets + vertex_b.fragment.num_onsets)
+
 		total_slurs = vertex_a.slur_count + vertex_b.slur_count
 		if total_slurs == 0:
-			slur_val = 1 / 0.5  # force non-zero
+			slur_count = 1 / 0.5  # force non-zero
 		else:
-			slur_val = 1 / total_slurs
+			slur_count = 1 / total_slurs
+
+		slur_start_end_count = vertex_a.slur_start_end_count + vertex_b.slur_start_end_count
+		if slur_start_end_count == 0:
+			slur_se_count = 1 / 0.75  # force non-zero; less weight than overall count.
+		else:
+			slur_se_count = 1 / slur_start_end_count
+
+		slur_val = slur_count + slur_se_count
 
 		values = [gap, onsets, slur_val]
 		cost = 0
