@@ -393,6 +393,7 @@ def path_finder(
 		algorithm="dijkstra",
 		cost_function_class=path_finding_utils.DefaultCostFunction(),
 		slur_constraint=False,
+		enforce_earliest_start=False,
 		save_filepath=None,
 		verbose=False
 	):
@@ -433,6 +434,7 @@ def path_finder(
 		source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(
 			data=fragments,
 			cost_function_class=cost_function_class,
+			enforce_earliest_start=enforce_earliest_start,
 			verbose=verbose
 		)
 		best_path = dijkstra.generate_path(
@@ -442,7 +444,10 @@ def path_finder(
 		)
 		best_path = sorted([x for x in fragments if x.id_ in best_path], key=lambda x: x.onset_range[0]) # noqa
 	elif algorithm.lower() == "floyd-warshall":
-		best_source, best_sink = path_finding_utils.best_source_and_sink(fragments)
+		best_source, best_sink = path_finding_utils.best_source_and_sink(
+			data=fragments,
+			enforce_earliest_start=enforce_earliest_start
+		)
 		distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
 			data=fragments,
 			cost_function_class=cost_function_class,

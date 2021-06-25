@@ -53,6 +53,7 @@ def dijkstra(
 def dijkstra_best_source_and_sink(
 		data,
 		cost_function_class=path_finding_utils.DefaultCostFunction(),
+		enforce_earliest_start=False,
 		verbose=False
 	):
 	"""

@@ -168,7 +168,10 @@ def sources_and_sinks(
 	sinks = [x for x in data if not any(x.onset_range[1] <= y.onset_range[0] for y in data)]
 	return sources, sinks
 
-def best_source_and_sink(data):
+def best_source_and_sink(
+		data,
+		enforce_earliest_start=False
+	):
 	"""
 	TODO: this is bad. I should be using the agnostic approach of Dijkstra here.
 
@@ -178,7 +181,10 @@ def best_source_and_sink(data):
 
 	:param list data: a list of :obj:`decitala.search.Extraction` objects.
 	"""
-	sources, sinks = sources_and_sinks(data)
+	sources, sinks = sources_and_sinks(
+		data=data,
+		enforce_earliest_start=enforce_earliest_start
+	)
 	curr_best_source = sources[0]
 	curr_best_sink = sinks[0]
 
