@@ -146,13 +146,24 @@ def build_graph(
 
 	return G
 
-def sources_and_sinks(data):
+def sources_and_sinks(
+		data,
+		enforce_earliest_start=False
+	):
 	"""
 	Calculates all sources and sinks in a given dataset.
+
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
 	"""
 	sources = [x for x in data if not any(y.onset_range[1] <= x.onset_range[0] for y in data)]
-	sinks = [x for x in data if not any(x.onset_range[1] <= y.onset_range[0] for y in data)]
+	min_onset = min(x.onset_range[0] for x in sources)
+	if enforce_earliest_start:
+		sources = list(filter(
+			lambda x: x.onset_range[0] == min_onset,
+			sources
+		))
 
+	sinks = [x for x in data if not any(x.onset_range[1] <= y.onset_range[0] for y in data)]
 	return sources, sinks
 
 def best_source_and_sink(data):

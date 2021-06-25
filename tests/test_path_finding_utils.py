@@ -18,3 +18,18 @@ def test_sources_and_sinks():
 
 	assert len(sources) == 2
 	assert len(sinks) == 3
+
+def test_sources_and_sinks_enforce_earliest_start():
+	fragments = rolling_hash_search(
+		filepath=st3,
+		part_num=0,
+		table=GreekFootHashTable()
+	)
+	sources, sinks = path_finding_utils.sources_and_sinks(
+		fragments,
+		enforce_earliest_start=True
+	)
+
+	min_onset = min(x.onset_range[0] for x in fragments)
+	assert len(sources) == 2
+	assert [x.onset_range[0] == min_onset for x in fragments]
