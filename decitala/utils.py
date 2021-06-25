@@ -60,15 +60,6 @@ PRIMES = [
 	79, 83, 89, 97
 ]
 
-NEUMES = {
-	(1, 0): "Clivis",
-	(0, 1): "Podatus",
-	(0, 1, 2): "Scandicus",
-	(2, 1, 0): "Climacus",
-	(0, 1, 0): "Torculus",
-	(1, 0, 1): "Porrectus"
-}
-
 VALID_DENOMINATORS = [1, 2, 4, 8, 16, 32, 64, 128]
 
 flatten = lambda l: [item for sublist in l for item in sublist]

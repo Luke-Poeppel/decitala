@@ -28,7 +28,8 @@ from .path_finding import (
 	pofp
 )
 from .hm import (
-	contour
+	contour,
+	molt
 )
 
 ALL_MODULES = [
@@ -42,7 +43,8 @@ ALL_MODULES = [
 	dijkstra,
 	floyd_warshall,
 	path_finding_utils,
-	pofp
+	pofp,
+	molt
 ]
 
 logger = utils.get_logger(name=__file__)
