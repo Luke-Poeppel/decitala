@@ -8,7 +8,6 @@
 ####################################################################################################
 import json
 import natsort
-import numpy as np
 import os
 
 from sqlalchemy import (
@@ -32,7 +31,7 @@ from music21 import converter
 from ..fragment import FragmentDecoder
 from ..search import rolling_hash_search
 from ..utils import get_logger
-from ..hm import molt
+from ..hm import hm_utils
 from ..vis import annotate_score
 from .db_utils import (
 	get_session,
@@ -297,21 +296,33 @@ class Species:
 	def num_transcriptions(self):
 		return len(self.transcriptions)
 
-	def aggregate_pc_distribution(self, as_vector=True):
-		combined_pc_counter = []
+	def aggregate_pc_distribution(
+			self,
+			normalize=False,
+			as_vector=True
+		):
+		"""
+		Returns the aggregate pitch class distribution across all transcriptions in a species.
+		"""
+		pc_dict = {i: 0 for i in range(12)}
 		for transcription in self.transcriptions:
-			fp = transcription.filepath
-			pc_counter_dict = molt.pc_counter(fp, 0, normalize_over_duration=True)
-			pc_counter_vector = molt.pc_dict_to_vector(pc_counter_dict)
-			combined_pc_counter.append(pc_counter_vector)
+			pc_counter_dict = hm_utils.pc_counter(
+				filepath=transcription.filepath,
+				part_num=0,
+				normalize_over_duration=False
+			)
+			for key in pc_counter_dict:
+				pc_dict[key] += pc_counter_dict[key]
 
-		combined_pc_counter = np.sum(np.array(combined_pc_counter), axis=0)
-		combined_pc_counter = combined_pc_counter / sum(combined_pc_counter)
+		vector = hm_utils.pc_dict_to_vector(pc_dict)
+		if normalize:
+			vector = vector / sum(vector)
+
 		if as_vector:
-			return combined_pc_counter
+			return vector
 		else:
 			combined_pc_dict = dict()
-			for i, val in enumerate(combined_pc_counter):
+			for i, val in enumerate(vector):
 				combined_pc_dict[str(i)] = val
 			return combined_pc_dict
 
