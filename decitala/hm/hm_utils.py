@@ -152,8 +152,6 @@ def pc_counter(filepath, part_num, normalize_over_duration=False):
 	"""
 	Returns a dictionary holding the pitch classes in the keys and the count (or count normalized
 	over duration) in the given filepath-part_num combination.
-
-	IDK if this is totally right –– counts all QLs, even over chords.
 	"""
 	pitch_classes = {x: [] for x in range(0, 12)}
 	converted = converter.parse(filepath)
