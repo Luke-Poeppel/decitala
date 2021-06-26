@@ -296,7 +296,7 @@ def rolling_hash_search(
 	"""
 	object_list = get_object_indices(filepath=filepath, part_num=part_num, ignore_grace=True)
 
-	if type(table) == FragmentHashTable:
+	if type(table) == FragmentHashTable:  # sensitive to inheritance.
 		table.load()
 
 	max_dataset_length = len(max(table.data, key=lambda x: len(x)))
