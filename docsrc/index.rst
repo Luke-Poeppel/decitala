@@ -40,6 +40,7 @@ Run the following::
    mods/database
    mods/fragment
    mods/hash_table
+   mods/hm
    mods/path_finding
    mods/search
    mods/trees
