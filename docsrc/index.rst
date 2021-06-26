@@ -43,13 +43,14 @@ Run the following::
    mods/hm
    mods/path_finding
    mods/search
+   mods/sp
    mods/trees
    mods/utils
    mods/vis
 
 .. toctree::
    :maxdepth: 2
-   :caption: Rhythmic Fragments
+   :caption: Rhythmic Corpora
    :glob:
 
    datasets/decitalas
