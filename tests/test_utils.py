@@ -126,14 +126,6 @@ def test_single_anga_class_and_subtala_filtering(decitala_collection):
 	filter_b = utils.filter_sub_fragments(filter_a)
 	assert len(filter_b) == 1
 
-# Examples from the Schultz article.
-def test_prime_contour():
-	contour_1 = [2, 4, 1, 5, 0, 6, 3]
-	contour_2 = [2, 1, 3, 0]
-
-	assert np.array_equal(utils.contour_to_prime_contour(contour_1), np.array([2, 4, 1, 5, 0, 6, 3]))
-	assert np.array_equal(utils.contour_to_prime_contour(contour_2), np.array([2, 1, 3, 0]))
-
 def test_loader():
 	loaded = utils.loader(analysis_filepath)
 	fragments = set([x["fragment"] for x in loaded])
@@ -220,3 +212,12 @@ def test_measure_divider_mode():
 		measure_divider_mode="str"
 	)
 	assert len(objs) == 3
+
+def test_stretch_augment():
+	nc_ex2 = GreekFoot("Iamb")
+	stretched = utils.stretch_augment(
+		ql_array=nc_ex2.ql_array(),
+		factor=0.125,
+		stretch_factor=0.1875
+	)
+	assert list(stretched) == [0.125, 0.375]

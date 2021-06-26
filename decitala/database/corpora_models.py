@@ -7,7 +7,6 @@
 #
 # Location: NYC, 2021
 ####################################################################################################
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (
 	Column,
 	Integer,
@@ -18,10 +17,12 @@ from sqlalchemy.orm import (
 	relationship,
 	backref
 )
+from .db_utils import (
+	FRAGMENT_BASE,
+	TRANSCRIPTION_BASE
+)
 
-Base = declarative_base()
-
-class DecitalaData(Base):
+class DecitalaData(FRAGMENT_BASE):
 	"""
 	SQLAlchemy model representing a decitala fragment from the encoded datasets (given in ``corpora``).
 	"""
@@ -32,7 +33,7 @@ class DecitalaData(Base):
 	name = Column(String)
 	ql_array = Column(String)
 
-class GreekFootData(Base):
+class GreekFootData(FRAGMENT_BASE):
 	"""
 	SQLAlchemy model representing a greek foot fragment from the encoded datasets (given
 	in ``corpora``).
@@ -43,7 +44,7 @@ class GreekFootData(Base):
 	name = Column(String)
 	ql_array = Column(String)
 
-class ProsodicFragmentData(Base):
+class ProsodicFragmentData(FRAGMENT_BASE):
 	"""
 	SQLAlchemy model representing a prosodic fragment from the encoded datasets (given in ``corpora``).
 	"""
@@ -56,7 +57,7 @@ class ProsodicFragmentData(Base):
 
 ####################################################################################################
 # Transcriptions
-class CategoryData(Base):
+class CategoryData(TRANSCRIPTION_BASE):
 	"""
 	Category table of the database, (possibly) holding multiple subcategories, i.e., species.
 	"""
@@ -67,9 +68,9 @@ class CategoryData(Base):
 	group_number = Column(Integer)
 
 	def __repr__(self):
-		return f"<moiseaux.CategoryData {self.name}>"
+		return f"<decitala.CategoryData {self.name}>"
 
-class SubcategoryData(Base):
+class SubcategoryData(TRANSCRIPTION_BASE):
 	"""
 	Subcategory table of the database. Holds data for each species.
 	"""
@@ -86,9 +87,9 @@ class SubcategoryData(Base):
 	locations = Column(String)
 
 	def __repr__(self):
-		return f"<moiseaux.SubcategoryData {self.name}>"
+		return f"<decitala.SubcategoryData {self.name}>"
 
-class TranscriptionData(Base):
+class TranscriptionData(TRANSCRIPTION_BASE):
 	"""
 	Transcription-level table of the database.
 	"""
@@ -102,4 +103,4 @@ class TranscriptionData(Base):
 	filepath = Column(String)
 
 	def __repr__(self):
-		return f"<moiseaux.TranscriptionData {self.name}>"
+		return f"<decitala.TranscriptionData {self.name}>"

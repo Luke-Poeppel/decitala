@@ -4,9 +4,11 @@ import tempfile
 import uuid
 import doctest
 
+from sqlalchemy.ext.declarative import declarative_base
+
 from decitala import database
 from decitala.database.db_utils import get_session
-from decitala.database.database import (
+from decitala.database.db import (
 	create_database,
 	CompositionData,
 	ExtractionData,
@@ -29,7 +31,8 @@ def test_create_database():
 			table = GreekFootHashTable(),
 			part_nums = [0],
 		)
-		session = get_session(db_path=db_path)
+		base = declarative_base()
+		session = get_session(db_path=db_path, base=base)
 
 		comps = session.query(CompositionData).all()
 		assert comps[0].name == "Shuffled_Transcription_2.xml"

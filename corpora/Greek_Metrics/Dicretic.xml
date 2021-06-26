@@ -2,12 +2,12 @@
 <!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 3.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">
 <score-partwise version="3.0">
  <work>
-  <work-title>Dactyl+Antibacchius</work-title>
+  <work-title>Dicretic</work-title>
  </work>
  <identification>
   <rights>Copyright © </rights>
   <encoding>
-   <encoding-date>2019-05-26</encoding-date>
+   <encoding-date>2021-06-20</encoding-date>
    <encoder>Luke Poeppel</encoder>
    <software>Sibelius 8.6.1</software>
    <software>Direct export, not from Dolet</software>
@@ -69,7 +69,7 @@
   <lyric-language xml:lang="en" />
  </defaults>
  <credit page="1">
-  <credit-words default-x="616" default-y="155" font-family="Times New Roman" font-style="normal" font-size="22.0128" font-weight="normal" justify="center" valign="middle">Dactyl+Antibacchius</credit-words>
+  <credit-words default-x="616" default-y="155" font-family="Times New Roman" font-style="normal" font-size="22.0128" font-weight="normal" justify="center" valign="middle">Dicretic</credit-words>
  </credit>
  <part-list>
   <score-part id="P1">
@@ -109,7 +109,7 @@
      <mode>none</mode>
     </key>
     <time color="#000000">
-     <beats>9</beats>
+     <beats>10</beats>
      <beat-type>4</beat-type>
     </time>
     <staves>1</staves>
@@ -119,7 +119,7 @@
     </clef>
     <staff-details number="1" print-object="yes" />
    </attributes>
-   <note color="#000000" default-x="76">
+   <note color="#000000" default-x="87">
     <pitch>
      <step>F</step>
      <octave>4</octave>
@@ -131,7 +131,7 @@
     <stem>up</stem>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="275">
+   <note color="#000000" default-x="268">
     <pitch>
      <step>F</step>
      <octave>4</octave>
@@ -143,19 +143,7 @@
     <stem>up</stem>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="392">
-    <pitch>
-     <step>F</step>
-     <octave>4</octave>
-    </pitch>
-    <duration>256</duration>
-    <instrument id="P1-I1" />
-    <voice>1</voice>
-    <type>quarter</type>
-    <stem>up</stem>
-    <staff>1</staff>
-   </note>
-   <note color="#000000" default-x="509">
+   <note color="#000000" default-x="375">
     <pitch>
      <step>F</step>
      <octave>4</octave>
@@ -167,7 +155,7 @@
     <stem>up</stem>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="708">
+   <note color="#000000" default-x="556">
     <pitch>
      <step>F</step>
      <octave>4</octave>
@@ -179,7 +167,7 @@
     <stem>up</stem>
     <staff>1</staff>
    </note>
-   <note color="#000000" default-x="907">
+   <note color="#000000" default-x="737">
     <pitch>
      <step>F</step>
      <octave>4</octave>
@@ -188,6 +176,18 @@
     <instrument id="P1-I1" />
     <voice>1</voice>
     <type>quarter</type>
+    <stem>up</stem>
+    <staff>1</staff>
+   </note>
+   <note color="#000000" default-x="844">
+    <pitch>
+     <step>F</step>
+     <octave>4</octave>
+    </pitch>
+    <duration>512</duration>
+    <instrument id="P1-I1" />
+    <voice>1</voice>
+    <type>half</type>
     <stem>up</stem>
     <staff>1</staff>
    </note>

@@ -27,6 +27,8 @@ def fake_data():
 		mod_hierarchy_val=1,
 		pitch_content=[None],
 		is_spanned_by_slur=False,
+		slur_count=0,
+		slur_start_end_count=0,
 		id_=1
 	)
 	extraction_2 = Extraction(
@@ -39,6 +41,8 @@ def fake_data():
 		mod_hierarchy_val=1,
 		pitch_content=[None],
 		is_spanned_by_slur=False,
+		slur_count=0,
+		slur_start_end_count=0,
 		id_=2
 	)
 	extraction_3 = Extraction(
@@ -51,6 +55,8 @@ def fake_data():
 		mod_hierarchy_val=1,
 		pitch_content=[None],
 		is_spanned_by_slur=False,
+		slur_count=0,
+		slur_start_end_count=0,
 		id_=3
 	)
 	extraction_4 = Extraction(
@@ -63,6 +69,8 @@ def fake_data():
 		mod_hierarchy_val=1,
 		pitch_content=[None],
 		is_spanned_by_slur=False,
+		slur_count=0,
+		slur_start_end_count=0,
 		id_=4
 	)
 	extraction_5 = Extraction(
@@ -75,6 +83,8 @@ def fake_data():
 		mod_hierarchy_val=1,
 		pitch_content=[None],
 		is_spanned_by_slur=False,
+		slur_count=0,
+		slur_start_end_count=0,
 		id_=5
 	)
 	extraction_6 = Extraction(
@@ -87,6 +97,8 @@ def fake_data():
 		mod_hierarchy_val=1,
 		pitch_content=[None],
 		is_spanned_by_slur=False,
+		slur_count=0,
+		slur_start_end_count=0,
 		id_=6
 	)
 	extraction_7 = Extraction(
@@ -99,6 +111,8 @@ def fake_data():
 		mod_hierarchy_val=1,
 		pitch_content=[None],
 		is_spanned_by_slur=False,
+		slur_count=0,
+		slur_start_end_count=0,
 		id_=7
 	)
 	return [

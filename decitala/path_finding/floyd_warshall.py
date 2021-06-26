@@ -96,8 +96,8 @@ def reconstruct_standard_path(
 		return path
 
 	while start != end:
-		start_index = next((index for (index, d) in enumerate(data) if d["id"] == start["id"]), None)
-		end_index = next((index for (index, d) in enumerate(data) if d["id"] == end["id"]), None)
+		start_index = next((index for (index, d) in enumerate(data) if d.id_ == start.id_), None)
+		end_index = next((index for (index, d) in enumerate(data) if d.id_ == end.id_), None)
 		start = next_matrix[start_index][end_index]
 		path.append(start)
 
@@ -152,6 +152,7 @@ def get_path(
 			overall_end = end
 			fragment_slur_is_ending = False
 
+		# import pdb; pdb.set_trace()
 		i = 0
 		while i < len(slurred_fragments_indices) - 1:
 			if i != 0:

@@ -24,7 +24,10 @@ from .database.corpora_models import (
 	GreekFootData,
 	ProsodicFragmentData,
 )
-from .database.db_utils import get_session
+from .database.db_utils import (
+	get_session,
+	FRAGMENT_BASE
+)
 
 # Fragments
 here = os.path.abspath(os.path.dirname(__file__))
@@ -37,7 +40,7 @@ fragment_db = os.path.dirname(here) + "/databases/fragment_database.db"
 # ID's of decitalas with "subtalas"
 subdecitala_array = np.array([26, 38, 55, 65, 68])
 
-session = get_session(db_path=fragment_db)
+session = get_session(db_path=fragment_db, base=FRAGMENT_BASE)
 
 ####################################################################################################
 class FragmentException(Exception):
@@ -292,6 +295,11 @@ class GeneralFragment:
 		:rtype: float
 		"""
 		return sum(self.ql_array())
+
+	def split(self, *args):
+		full_qls = utils.flatten([list(fragment.ql_array()) for fragment in args])
+		assert full_qls == list(self.ql_array())
+		return [fragment for fragment in args]
 
 	def dseg(self, reduced=False, as_str=False):
 		"""See docstring of :obj:`decitala.utils.dseg`."""

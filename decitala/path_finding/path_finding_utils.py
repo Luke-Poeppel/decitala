@@ -12,6 +12,8 @@ import numpy as np
 
 from tqdm import tqdm
 
+from ..fragment import GreekFoot
+
 class CostFunction:
 	"""
 	Arbitrary cost function to use in the cost functions. The user should set weights as class
@@ -25,7 +27,7 @@ class CostFunction:
 	... 		'''Cost function determined by the sum of the two extractions standard deviations.'''
 	... 		return vertex_a.std() + vertex_b.std()
 
-	The following is a cost function that relies on three weights summing to 1.
+	The following is a cost function that relies on two weights.
 
 	>>> class MySecondCostFunction(CostFunction):
 	... 	weight_a = 0.4213
@@ -71,21 +73,35 @@ class CostFunction3D(CostFunction):
 			self,
 			gap_weight,
 			onset_weight,
-			reuse_weight,
+			articulation_weight,
 		):
 		self.gap_weight = gap_weight
 		self.onset_weight = onset_weight
-		self.reuse_weight = reuse_weight
+		self.articulation_weight = articulation_weight
 
 	def cost(self, vertex_a, vertex_b):
 		gap = vertex_b.onset_range[0] - vertex_a.onset_range[1]
 		onsets = 1 / (vertex_a.fragment.num_onsets + vertex_b.fragment.num_onsets)
 
-		reuse = 0
-		if vertex_a.fragment != vertex_b.fragment:
-			reuse = vertex_a.fragment.num_onsets
+		total_slurs = vertex_a.slur_count + vertex_b.slur_count
+		if total_slurs == 0:
+			slur_count = 1 / 0.5  # force non-zero
+		else:
+			slur_count = 1 / total_slurs
 
-		cost = (self.reuse_weight * reuse) + (self.onset_weight * onsets) + (self.gap_weight * gap)
+		slur_start_end_count = vertex_a.slur_start_end_count + vertex_b.slur_start_end_count
+		if slur_start_end_count == 0:
+			slur_se_count = 1 / 0.75  # force non-zero; less weight than overall count.
+		else:
+			slur_se_count = 1 / slur_start_end_count
+
+		slur_val = slur_count + slur_se_count
+
+		values = [gap, onsets, slur_val]
+		cost = 0
+		for weight, val in zip([self.gap_weight, self.onset_weight, self.articulation_weight], values): # noqa
+			cost += weight * val
+
 		return cost
 
 def build_graph(
@@ -130,24 +146,45 @@ def build_graph(
 
 	return G
 
-def sources_and_sinks(data):
+def sources_and_sinks(
+		data,
+		enforce_earliest_start=False
+	):
 	"""
 	Calculates all sources and sinks in a given dataset.
+
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	:param bool enforce_earliest_start: whether to require that all sources begin at the earliest
+										detected onset.
 	"""
 	sources = [x for x in data if not any(y.onset_range[1] <= x.onset_range[0] for y in data)]
-	sinks = [x for x in data if not any(x.onset_range[1] <= y.onset_range[0] for y in data)]
+	min_onset = min(x.onset_range[0] for x in sources)
+	if enforce_earliest_start:
+		sources = list(filter(
+			lambda x: x.onset_range[0] == min_onset,
+			sources
+		))
 
+	sinks = [x for x in data if not any(x.onset_range[1] <= y.onset_range[0] for y in data)]
 	return sources, sinks
 
-def best_source_and_sink(data):
+def best_source_and_sink(
+		data,
+		enforce_earliest_start=False
+	):
 	"""
 	TODO: this is bad. I should be using the agnostic approach of Dijkstra here.
 
 	Calculates the "best" source and sink from a dataset based on two simple heuristics: (1) the
 	fragment with the earliest (or latest, for sink) starting point, (2) the fragment with the
 	greatest number of onsets.
+
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
 	"""
-	sources, sinks = sources_and_sinks(data)
+	sources, sinks = sources_and_sinks(
+		data=data,
+		enforce_earliest_start=enforce_earliest_start
+	)
 	curr_best_source = sources[0]
 	curr_best_sink = sinks[0]
 
@@ -235,3 +272,48 @@ def make_4D_grid(resolution):
 						combos.append(collection)
 
 	return combos
+
+def split_extractions(data, split_dict, all_res):
+	split_extractions = []
+	for extraction in data:
+		if extraction.fragment in split_dict:
+			components = extraction.split(split_dict=split_dict, all_res=all_res)
+			split_extractions.extend(components)
+		else:
+			split_extractions.append(extraction)
+	return split_extractions
+
+def default_split_dict():
+	"""
+	Splits for common compound, repeated metrics.
+	"""
+	return {
+		GreekFoot("Diiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb")],
+		GreekFoot("Triiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb"), GreekFoot("Iamb")],
+		GreekFoot("Dicretic"): [GreekFoot("Amphimacer"), GreekFoot("Amphimacer")],
+		GreekFoot("Dianapest"): [GreekFoot("Anapest"), GreekFoot("Anapest")],
+		GreekFoot("Dochmius"): [GreekFoot("Iamb"), GreekFoot("Amphimacer")]
+	}
+
+def check_accuracy(training_data, calculated_data, mode, return_list):
+	"""
+	The `training_data` is the analysis as provided by Messiean. The `input_data`
+	is the data calculated by path-finding.
+
+	NOTE: the data is stored in two different formats, hence the use of `mode`. This will
+	(hopefully) be fixed in the future.
+	"""
+	accurate = 0
+	for this_training_fragment in training_data:
+		for this_fragment in calculated_data:
+			if mode == "Compositions":
+				if (this_training_fragment["fragment"] == this_fragment.fragment) and (tuple(this_training_fragment["onset_range"]) == this_fragment.onset_range): # noqa
+					accurate += 1
+			elif mode == "Transcriptions":
+				if (this_training_fragment[0] == this_fragment.fragment) and (tuple(this_training_fragment[1]) == this_fragment.onset_range): # noqa
+					accurate += 1
+
+	if not(return_list):
+		return (accurate / len(training_data)) * 100
+	else:
+		return [accurate, len(training_data)]

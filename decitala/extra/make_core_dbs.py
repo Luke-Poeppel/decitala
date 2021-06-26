@@ -1,3 +1,11 @@
+####################################################################################################
+# File:     make_core_dbs.py
+# Purpose:  Scripts for generating the core databases in the package.
+#
+# Author:   Luke Poeppel
+#
+# Location: Kent, 2021
+####################################################################################################
 import json
 import natsort
 import os
@@ -14,7 +22,11 @@ from decitala.database.corpora_models import (
 	SubcategoryData,
 	CategoryData
 )
-from decitala.database.db_utils import get_session
+from decitala.database.db_utils import (
+	get_session,
+	FRAGMENT_BASE,
+	TRANSCRIPTION_BASE
+)
 from decitala.fragment import FragmentEncoder
 from decitala.utils import loader, get_logger
 
@@ -24,12 +36,16 @@ greek_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Greek_Metrics/"
 prosody_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Prosody/"
 
 oiseaux_de_nouvelle_caledonie = "/Users/lukepoeppel/Messiaen/Oiseaux_De_Nouvelle_Calédonie"
+ODNC_Database = os.path.dirname(os.path.dirname(here)) + "/databases/ODNC.db"
 
 logger = get_logger(__file__, print_to_console=True)
 
-def make_corpora_database(echo):
+def make_corpora_database(echo=False):
 	abspath_databases_directory = os.path.abspath("./databases/")
-	session = get_session(db_path=os.path.join(abspath_databases_directory, "fragment_database.db"))
+	session = get_session(
+		db_path=os.path.join(abspath_databases_directory, "fragment_database.db"),
+		base=FRAGMENT_BASE
+	)
 
 	for this_file in natsort.natsorted(os.listdir(decitala_path)):
 		# Will use the utils function eventually. Annoying bug.
@@ -75,6 +91,8 @@ def make_corpora_database(echo):
 			session.add(prosodic_fragment)
 
 	session.commit()
+
+# make_corpora_database()
 
 ####################################################################################################
 # NC Transcriptions
@@ -122,7 +140,10 @@ def serialize_species_info(filepath):
 	return json.dumps(species_json, ensure_ascii=False)
 
 def make_transcription_database(db_path):
-	session = get_session(db_path)
+	session = get_session(
+		db_path=db_path,
+		base=TRANSCRIPTION_BASE
+	)
 
 	dirs = os.listdir(oiseaux_de_nouvelle_caledonie)
 	for i, directory in enumerate(dirs):
@@ -191,3 +212,5 @@ def make_transcription_database(db_path):
 		category.subcategories = subcategory_objects
 
 	session.commit()
+
+# make_transcription_database(db_path=ODNC_Database)

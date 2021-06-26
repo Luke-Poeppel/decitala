@@ -1,0 +1,39 @@
+## Breakdown of Messiaen's Chapter: NOUVELLE CALÉDONIE (pgs. 269-342)
+- Ex. 1-20 (pgs. 271-277)
+    - *Le Rossignol à ventre jaune: Eopsaltria flaviventris* (1)
+- Ex. 21 (pgs. 278-280) - Saint François
+- Ex. 22-39 (pgs. 281-284)
+    - *L'oiseaux Moine: Philemon diemenensis* (2)
+- Ex. 40 (pgs. 285-286) - Saint François
+- Ex. 41-49 (pgs. 287-291)
+    - *La Fauvette à ventre jaune: Gerygone flavolateralis flavolateralis* (3) Duplication? Trinomial nomenclature
+- *long example*
+- Ex. 50-58 (pgs. 302-305)
+    - *Le Cagou huppé: Rhynochetos jubatus* (4)
+    - *Le Coucou à éventail: Cacomantis pyrrhophanus pyrrhophanus* (5) 
+- Ex. 59 (p. 305) - scale
+- Ex. 60 (p. 306)
+- Ex. 61 (pgs. 307-312) - Saint François
+- Ex. 62 (p. 313)
+    - *Les Pigeons* (6) (p. 313)
+    - (a) *Le Carpophage géant: Ducula goliath*
+- Ex. 63 (pgs. 314-315) - Saint François
+- Ex. 64-114 (pgs. 316-337)
+    - (continues from *Les Pigeons (6)*)
+    - (b) *La Columbe Turvert: Chalcophaps indica chrysochlora*
+    - (c) *Le Ptilope de Grey: Ptilinopus Greyi*
+    - *Les Échenilleurs* (7) (p. 318)
+        - (a) *L'Échenilleur Calédonien: Coracina caledonica caledonica*
+        - (b) *L'Échenilleur Pie de la Nouvelle Calédonie: Lalage leucopygia montrosieri*
+    - *Les Méliphages* (8) (p. 320)
+        - (a) *Le Méliphage à oreillons gris: Lichmera incana incana*
+        - (b) *Le Méliphage barré: Guadalcanaria undulata*
+    - *L'Épervier à ventre blanc: Accipitier haplochrous* (9) (p. 325)
+    - *L'Alcyon sacré des Canaques: Halcyon sanctus canacorum* (10) (p. 325)
+    - *Les Siffleurs* (11) (p. 327)
+        - (a) *Le Siffleur Calédonian: Pachycephala caledonica*
+        - (b) *Le Siffleur à ventre roux: Pachycephala rufiventris xanthetraea*
+    - *Le Stourne Calédonien: Aplonis striatus striatus* (12) (p. 331)
+    - *Le Rhipidure tacheté: Rhipidura spilodera verreauxi* (13) (p. 332)
+    - *Les Zostérops* (14) (p. 335)
+- Ex. 115 (pgs. 338-342) - Saint François

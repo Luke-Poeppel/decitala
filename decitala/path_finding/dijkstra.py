@@ -10,14 +10,16 @@
 import numpy as np
 import heapq
 
+from tqdm import tqdm
+
 from . import path_finding_utils
 
 # Useful info here: https://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python.
 def dijkstra(
 		data,
+		graph,
 		source,
 		cost_function_class=path_finding_utils.DefaultCostFunction(),
-		verbose=False
 	):
 	"""
 	Dijkstra path-finding algorithm from dynamic programming. Uses a min-heap
@@ -27,13 +29,7 @@ def dijkstra(
 	:param source: an :obj:`decitala.search.Extraction` object.
 	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost
 		function that will be used in calculating the weights between vertices.
-	:param bool verbose: whether to print logs.
 	"""
-	graph = path_finding_utils.build_graph(
-		data=data,
-		cost_function_class=cost_function_class,
-		verbose=verbose
-	)
 	source = source.id_
 
 	q = []
@@ -56,7 +52,9 @@ def dijkstra(
 
 def dijkstra_best_source_and_sink(
 		data,
-		cost_function_class=path_finding_utils.DefaultCostFunction()
+		cost_function_class=path_finding_utils.DefaultCostFunction(),
+		enforce_earliest_start=False,
+		verbose=False
 	):
 	"""
 	Function for agnostically choosing the best source and target (and associated predecessor set)
@@ -65,8 +63,17 @@ def dijkstra_best_source_and_sink(
 	:param list data: a list of :obj:`decitala.search.Extraction` objects.
 	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost
 		function that will be used in calculating the weights between vertices.
+	:param bool verbose: whether to print logs.
 	"""
-	sources, targets = path_finding_utils.sources_and_sinks(data)
+	sources, targets = path_finding_utils.sources_and_sinks(
+		data=data,
+		enforce_earliest_start=enforce_earliest_start
+	)
+	graph = path_finding_utils.build_graph(
+		data=data,
+		cost_function_class=cost_function_class,
+		verbose=verbose
+	)
 
 	# This checks if there exists a fragment in sources/sinks that spans the whole onset range.
 	# Alternatively if all extracted fragments are overlapping (see test_povel_essen_dijkstra).
@@ -84,6 +91,7 @@ def dijkstra_best_source_and_sink(
 			if possible_source.onset_range == (min_onset, max_onset):
 				dist, pred = dijkstra(
 					data,
+					graph,
 					possible_source,
 					cost_function_class
 				)
@@ -97,9 +105,10 @@ def dijkstra_best_source_and_sink(
 	best_target = None
 	best_predecessor_set = None
 
-	for source in sources:
+	for source in tqdm(sources, disable=not(verbose)):
 		dist, pred = dijkstra(
 			data,
+			graph,
 			source,
 			cost_function_class
 		)
@@ -111,7 +120,21 @@ def dijkstra_best_source_and_sink(
 					best_target = target
 					best_predecessor_set = pred
 
-	return best_source, best_target, best_predecessor_set
+	# This allows for fragments at the end to be missed...
+	# Find final non-overlapping target with most onsets.
+	final_target = None
+	final_target_onsets = 0
+	for target in targets:
+		if target.onset_range[0] >= best_target.onset_range[1] and \
+				target.fragment.num_onsets > final_target_onsets:
+			final_target = target
+			final_target_onsets = target.fragment.num_onsets
+
+	# If none found, use best_target.
+	if not(final_target):
+		final_target = best_target
+
+	return best_source, final_target, best_predecessor_set
 
 def generate_path(pred, source, target):
 	"""

@@ -3,6 +3,26 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.14.0](https://github.com/Luke-Poeppel/decitala/tree/v0.14.0) ???
+#### Added
+- Moved all `moiseaux` (private repo) tools to `decitala`. The `decitala.db` now holds `Transcription` and `Species` SQLAlchemy query wrappers; also added the corresponding helpers: `db.get_all_transcriptions()` and `db.get_all_species()`. 
+- Added `database.db_utils` module. 
+- Added a `make_core_dbs` file to `decitala.extra` that creates the fragment database and ODNC database. 
+- Added `decitala.hm` directory for holding all harmony and melody (i.e. pitch) related analysis tools. Moved some general utils there, like Morris prime contour calculation; this includes the `hm.molt` module for creating MOLT objects. 
+- Added `decitala.sp` directory for holding signal processing tools. It currently only holds an `sp_utils` module for spectrogram/audio plotting, but this directory will be populated in future versions. 
+- Added Dipartite and Tripartite Hexasyllabic Metrics: Dianapest, Dicretic, Didactyl, and Triiamb. 
+- Scripts for calculating hyperparameters and plotting analysis are in the `decitala.extra` directory. Latest accuracy is 74.41%. 
+- Added `enforce_earliest_start` argument to `path_finding_utils.sources_and_sinks`. 
+- Added `split()` method to both `GeneralFragment` and `Extraction`. Used for splitting Di- and Tri- partite greek prosodic feet. 
+- Added `slur_count` and `slur_start_end_count` arguments to the `Extraction` dataclass.
+
+#### Removed
+- Dactylo-Epitrite. Removed as, along with Dochmius, there are a large number of variations of the fragment (see Traité Vol. 1).
+
+#### Fixed
+- Graph calculation for Dijkstra was being done _within_ the function. Given the agnostic source/target picking, this was very inefficient; now, the graph is generated a single time in `dijkstra_best_source_and_sink`. 
+- Various bugfixes for Dijkstra and Floyd-Warshall for source and target picking. 
+
 ## [v0.13.2](https://github.com/Luke-Poeppel/decitala/tree/v0.13.2) June 19, 2021
 #### Fixed
 - Added the missing progress bar for `path_finding_utils.build_graph` (`verbose=True` did nothing). 

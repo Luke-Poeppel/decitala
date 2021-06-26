@@ -33,7 +33,7 @@ MODIFICATION_HIERARCHY = {
 }
 
 # Defaults
-FACTORS = [0.125, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0]
+FACTORS = [0.125, 0.1875, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0]
 DIFFERENCES = [-0.375, -0.25, -0.125, 0.0, 0.125, 0.25, 0.375, 0.5, 0.75, 0.875, 1.75, 2.625, 3.5, 4.375] # noqa
 TRY_RETROGRADE = True
 ALLOW_MIXED_AUGMENTATION = False
@@ -190,7 +190,7 @@ class FragmentHashTable:
 	<decitala.hash_table.FragmentHashTable 0 fragments>
 	>>> fht.load()
 	>>> fht
-	<decitala.hash_table.FragmentHashTable 2645 fragments>
+	<decitala.hash_table.FragmentHashTable 2899 fragments>
 	>>> fht.datasets
 	['greek_foot']
 	>>> fht.custom_fragments
@@ -296,10 +296,10 @@ class GreekFootHashTable(FragmentHashTable):
 
 	>>> ght = GreekFootHashTable()
 	>>> ght
-	<decitala.hash_table.FragmentHashTable 2603 fragments>
+	<decitala.hash_table.FragmentHashTable 2855 fragments>
 	>>> ght.load(try_retrograde=False, allow_stretch_augmentation=False)
 	>>> ght
-	<decitala.hash_table.FragmentHashTable 706 fragments>
+	<decitala.hash_table.FragmentHashTable 737 fragments>
 	"""
 	def __init__(self):
 		super().__init__(datasets=["greek_foot"])

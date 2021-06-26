@@ -58,6 +58,8 @@ class Extraction:
 
 	pitch_content: list
 	is_spanned_by_slur: bool
+	slur_count: int
+	slur_start_end_count: int
 	id_: int
 
 	contiguous_summation: bool = False
@@ -66,7 +68,51 @@ class Extraction:
 		return f"<search.Extraction {self.id_}>"
 
 	def show(self):
-		pass
+		raise NotImplementedError
+
+	def split(self, split_dict, all_res):
+		"""
+		NOTE: this will fail when using contiguous summation. be warned...
+		"""
+		if not(self.fragment in split_dict):
+			return [self]
+		else:
+			split = []
+			# This is hilariously stupid, but it should be ok as a temporary solution.
+			filtered_all_res = []
+			for extraction in all_res:
+				if (extraction.onset_range[0] >= self.onset_range[0]) and \
+					(extraction.onset_range[1] <= self.onset_range[1]):
+					filtered_all_res.append(extraction)
+
+			res_copy = copy.deepcopy(filtered_all_res)
+			for i, split_elem in enumerate(split_dict[self.fragment]):
+				for j, extraction in enumerate(res_copy):
+					if extraction.fragment == split_elem:
+						extraction_obj = Extraction(
+							fragment=extraction.fragment,
+							frag_type=extraction.frag_type,
+							onset_range=extraction.onset_range,
+							retrograde=extraction.retrograde,
+							factor=extraction.factor,
+							difference=extraction.difference,
+							mod_hierarchy_val=extraction.mod_hierarchy_val,
+							pitch_content=extraction.pitch_content,
+							is_spanned_by_slur=extraction.is_spanned_by_slur,
+							slur_count=extraction.slur_count,
+							slur_start_end_count=extraction.slur_start_end_count,
+							id_=1000 + i  # Random scale to differentiate between standard.
+						)
+						split.append(extraction_obj)
+						res_copy = res_copy[:j]
+
+			return split
+
+@dataclass
+class Frame:
+	"""
+	A frame of the objects in the score.
+	"""
 
 def frame_to_ql_array(frame):
 	"""
@@ -128,8 +174,8 @@ def frame_to_midi(frame, ignore_graces=True):
 
 def frame_is_spanned_by_slur(frame):
 	"""
-	:param list frame: Frame from :obj:`~decitala.utils.get_object_indices`.
-	:return: Whether or not the frame is spanned by a music21.spanner.Slur object.
+	:param list frame: frame from :obj:`~decitala.utils.get_object_indices`.
+	:return: whether or not the frame is spanned by a music21.spanner.Slur object.
 	:rtype: bool
 	"""
 	is_spanned_by_slur = False
@@ -143,6 +189,64 @@ def frame_is_spanned_by_slur(frame):
 					is_spanned_by_slur = True
 
 	return is_spanned_by_slur
+
+def frame_slur_count(frame, allow_overlap=False):
+	"""
+	:param list frame: frame from :obj:`~decitala.utils.get_object_indices`.
+	:param bool allow_overlap: whether to allow overlaps in the appearing slurs. If ``False``,
+								all the appearing slurs must start and end within
+								the frame's boundaries.
+	:return: The number of slurs in a frame.
+	:rtype: int
+	"""
+	count = 0
+	first_offset = frame[0][1][0]
+	last_offset = frame[-1][1][-1]
+	all_slurs = []
+	for this_obj in frame:
+		obj_spanners = this_obj[0].getSpannerSites()
+		for this_spanner in obj_spanners:
+			if type(this_spanner).__name__ == "Slur":
+				all_slurs.append(this_spanner)
+
+	if allow_overlap:
+		count = len(all_slurs) // 2
+	else:
+		for this_slur in all_slurs:
+			starting_offset = this_slur.getFirst().offset
+			ending_offset = this_slur.getLast().offset
+			if starting_offset >= first_offset and ending_offset <= last_offset:
+				count += 1
+		count = count // 2
+
+	return count
+
+def frame_slur_start_end_count(frame):
+	"""
+	Don't love this, but let's see if it works:
+
+	Returns 0 if neither the first nor last onset ends with a slur.
+	Returns 1 if first or last onset ends with a slur.
+	Returns 2 if the first and last onset ends with a slur(i.e. frame_is_spanned_by_slur=True).
+	"""
+	starts_with_slur = False
+	ends_with_slur = False
+	first_obj = frame[0][0]
+	last_obj = frame[-1][0]
+
+	first_obj_spanners = first_obj.getSpannerSites()
+	for this_spanner in first_obj_spanners:
+		if type(this_spanner).__name__ == "Slur":
+			if this_spanner.isFirst(first_obj):
+				starts_with_slur = True
+
+	last_obj_spanners = last_obj.getSpannerSites()
+	for this_spanner in last_obj_spanners:
+		if type(this_spanner).__name__ == "Slur":
+			if this_spanner.isLast(last_obj):
+				ends_with_slur = True
+
+	return int(starts_with_slur) + int(ends_with_slur)
 
 def frame_lookup(frame, ql_array, curr_fragment_id, table, windows):
 	objects = [x[0] for x in frame]
@@ -164,6 +268,8 @@ def frame_lookup(frame, ql_array, curr_fragment_id, table, windows):
 				mod_hierarchy_val=searched["mod_hierarchy_val"],
 				pitch_content=frame_to_midi(frame),
 				is_spanned_by_slur=frame_is_spanned_by_slur(frame),
+				slur_count=frame_slur_count(frame),
+				slur_start_end_count=frame_slur_start_end_count(frame),
 				id_=curr_fragment_id
 			)
 	except KeyError:
@@ -190,7 +296,7 @@ def rolling_hash_search(
 	"""
 	object_list = get_object_indices(filepath=filepath, part_num=part_num, ignore_grace=True)
 
-	if type(table) == FragmentHashTable:
+	if type(table) == FragmentHashTable:  # sensitive to inheritance.
 		table.load()
 
 	max_dataset_length = len(max(table.data, key=lambda x: len(x)))
@@ -287,6 +393,7 @@ def path_finder(
 		algorithm="dijkstra",
 		cost_function_class=path_finding_utils.DefaultCostFunction(),
 		slur_constraint=False,
+		enforce_earliest_start=False,
 		save_filepath=None,
 		verbose=False
 	):
@@ -308,8 +415,7 @@ def path_finder(
 								Only possible if `algorithm="floyd-warshall"`.
 	:param str save_filepath: An optional path to a JSON file for saving search results. This file
 							can then be loaded with the :meth:`decitala.utils.loader`.
-	:param bool verbose: Whether to log messages (only used with `algorithm="floyd-warshall"`).
-						Default is ``False``.
+	:param bool verbose: Whether to log messages. Default is ``False``.
 	"""
 	fragments = rolling_hash_search(
 		filepath=filepath,
@@ -327,7 +433,9 @@ def path_finder(
 			raise SearchException("This is not yet supported. Coming soon.")
 		source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(
 			data=fragments,
-			cost_function_class=cost_function_class
+			cost_function_class=cost_function_class,
+			enforce_earliest_start=enforce_earliest_start,
+			verbose=verbose
 		)
 		best_path = dijkstra.generate_path(
 			best_pred,
@@ -336,7 +444,10 @@ def path_finder(
 		)
 		best_path = sorted([x for x in fragments if x.id_ in best_path], key=lambda x: x.onset_range[0]) # noqa
 	elif algorithm.lower() == "floyd-warshall":
-		best_source, best_sink = path_finding_utils.best_source_and_sink(fragments)
+		best_source, best_sink = path_finding_utils.best_source_and_sink(
+			data=fragments,
+			enforce_earliest_start=enforce_earliest_start
+		)
 		distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
 			data=fragments,
 			cost_function_class=cost_function_class,
