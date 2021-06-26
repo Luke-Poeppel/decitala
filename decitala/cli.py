@@ -29,7 +29,8 @@ from .path_finding import (
 )
 from .hm import (
 	contour,
-	molt
+	molt,
+	hm_utils
 )
 
 ALL_MODULES = [
@@ -44,7 +45,8 @@ ALL_MODULES = [
 	floyd_warshall,
 	path_finding_utils,
 	pofp,
-	molt
+	molt,
+	hm_utils
 ]
 
 logger = utils.get_logger(name=__file__)
