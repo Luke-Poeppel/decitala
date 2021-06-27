@@ -146,15 +146,15 @@ def _center_of_window_is_extremum(window, mode):
 	elif mode == "min":
 		return (middle_val <= window[0]) and (middle_val <= window[2])
 
-def _initial_extremas(contour):
+def _get_initial_extrema(contour):
 	"""
-	First reduction in Morris' algorithm. Returns a list in which each element is a list holding a
+	Gets the initial extrema of a contour. Returns a list in which each element is a list holding a
 	contour element and a set which tells you whether that element defines a local maxima, local
 	minima, or neither. If the contour element is 1, it is a local maxima; if it is -1, it is a
 	local minima; otherwise the set is left empty.
 
 	>>> contour = [0, 4, 3, 2, 5, 5, 1]
-	>>> _initial_extremas(contour)
+	>>> _get_initial_extrema(contour)
 	[[0, {1, -1}], [4, {1}], [3, set()], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
 	"""
 	out = [[contour[0], {-1, 1}]]  # Maxima by definition.
@@ -192,31 +192,29 @@ def _window_has_extremum(window, mode):
 		else:
 			return False
 
-def _level_reduce(contour):
+def _morris_reduce(contour):
 	"""
-	Runs one iteration of the reduction.
+	Runs one iteration of the Morris contour reduction.
 
-	>>> data = [[1, {1, -1}], [3, {1}], [1, set()], [2, set()], [0, {-1}], [1, set()], [4, {1, -1}]]
-	>>> new = _level_reduce(data)
-	>>> new
+	>>> data = [
+	...		[1, {1, -1}],
+	... 	[3, {1}],
+	... 	[1, set()],
+	... 	[2, set()],
+	... 	[0, {-1}],
+	... 	[1, set()],
+	... 	[4, {1, -1}]
+	... ]
+	>>> morris_reduced = _morris_reduce(data)
+	>>> morris_reduced
 	[[1, {1, -1}], [3, set()], [1, set()], [2, set()], [0, {-1}], [1, set()], [4, {1, -1}]]
-	>>> _level_reduce(new) == new
+	>>> _morris_reduce(morris_reduced) == morris_reduced
 	True
-	>>> # remove clusters
-	>>> initial_extremas = [
-	...		[0, {1, -1}],
-	... 	[4, {1}],
-	... 	[3, set()],
-	... 	[2, {-1}],
-	... 	[5, {1}],
-	... 	[5, {1}],
-	... 	[1, {1, -1}]
-	...	]
 	"""
-	fnmax = lambda x: 1 in x[1]
-	fnmin = lambda x: -1 in x[1]
+	max_check = lambda x: 1 in x[1]
+	min_check = lambda x: -1 in x[1]
 
-	for i, this_window in enumerate(roll_window(contour, 3, fnmax)):
+	for i, this_window in enumerate(roll_window(array=contour, window_length=3, fn=max_check)):
 		elem_set = this_window[1][1]
 		if len(elem_set) == 0:
 			continue
@@ -228,7 +226,7 @@ def _level_reduce(contour):
 			else:
 				elem_set.remove(1)
 
-	for i, this_window in enumerate(roll_window(contour, 3, fnmin)):
+	for i, this_window in enumerate(roll_window(contour, 3, min_check)):
 		elem_set = this_window[1][1]
 		if len(elem_set) == 0:
 			continue
@@ -261,6 +259,10 @@ def contour_to_prime_contour(contour, include_depth=False):
 	from a contour until it is reduced to a prime." The loop runs until all elements
 	are flagged as maxima or minima.
 
+	**Assumes the input array is a proper contour, i.e. all elements in range 0-n.**
+	**NOTE: Recalculating the contour at the return is not a mistake! Once reduced, the values
+			don't match a standard, sequential contour anymore.**
+
 	:param np.array contour: contour input
 
 	>>> contour_a = [0, 1]
@@ -269,37 +271,38 @@ def contour_to_prime_contour(contour, include_depth=False):
 	>>> contour_b = [0, 4, 3, 2, 5, 5, 1]
 	>>> contour_to_prime_contour(contour_b, include_depth=False)
 	array([0, 2, 1])
-	>>> contour_c = [1, 3, 1, 2, 0, 1, 4]
-	>>> contour_to_prime_contour(contour_c, include_depth=False)
-	array([1, 0, 2])
-	>>> contour_d = [0, 1, 1]
-	>>> contour_to_prime_contour(contour_d, include_depth=False)
-	array([0, 1, 1])
 	"""
 	depth = 0
+
+	# If the segment is of length <= 2, it is prime by definition.
 	if len(contour) <= 2:
 		if not(include_depth):
 			return pitch_content_to_contour(contour)
 		else:
 			return (pitch_content_to_contour(contour), depth)
 
-	prime_contour = _initial_extremas(contour)
-	if all([len(x[1]) != 0 for x in prime_contour]):
+	# If all the values are extremas, it is already prime.
+	prime_contour = _get_initial_extrema(contour)
+	initial_flags = [x[1] for x in prime_contour]
+	if all(x for x in initial_flags):
 		if not(include_depth):
 			return pitch_content_to_contour(contour)
 		else:
 			return (pitch_content_to_contour(contour), depth)
 
 	still_unflagged_values = True
-	while still_unflagged_values is True:
-		_level_reduce(prime_contour)
+	while still_unflagged_values:
+		_morris_reduce(prime_contour)
 		depth += 1
-		if _level_reduce(prime_contour[:]) == prime_contour:  # Check next iteration...
+		# Check if next iteration is identical.
+		contour_copy = copy.deepcopy(prime_contour)
+		if _morris_reduce(contour_copy) == prime_contour:
 			still_unflagged_values = False
 		else:
 			continue
 
-	prime_contour = [x[0] for x in prime_contour if len(x[1]) != 0]
+	# Remove elements that are unflagged.
+	prime_contour = [x[0] for x in prime_contour if x[1]]
 	depth += 1
 
 	if not(include_depth):
