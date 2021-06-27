@@ -114,6 +114,8 @@ def contour_to_neume(contour):
 	except KeyError:
 		return None
 
+####################################################################################################
+# Implementation of contour reduction algorithms.
 def _has_extremum(window, mode):
 	"""
 	>>> min_check = ([0, {1, -1}], [2, {-1}], [1, {1, -1}])
