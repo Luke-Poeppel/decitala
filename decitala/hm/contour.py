@@ -118,8 +118,43 @@ def contour_to_neume(contour):
 ####################################################################################################
 # Implementation of Morris contour reduction algorithm (1993).
 """
-MORRIS ALGORITHM DESCRIPTION:
+MORRIS ALGORITHM DESCRIPTION.
+
+Definitions from Schultz (2008):
+Definition: Maximum pitch: Given three adjacent pitches in a contour, if the second is higher than
+							or equal to the others it is a maximum. A set of maximum pitches is
+							called a maxima. **The first and last pitches of a contour are maxima
+							by definition**.
+Definition: Minimum pitch: Given three adjacent pitches in a contour, if the second is lower than
+							or equal to the others it is a minimum. A set of minimum pitches is
+							called a minima. **The first and last pitches of a contour are minima
+							by definition**.
 """
+def _initial_extremas(contour):
+	"""
+	First reduction in Morris' algorithm. Returns a list in which each element is a list holding a
+	contour element and a set which tells you whether that element defines a local maxima, local
+	minima, or neither. If the contour element is 1, it is a local maxima; if it is -1, it is a
+	local minima; otherwise the set is left empty.
+
+	>>> contour = [0, 4, 3, 2, 5, 5, 1]
+	>>> _initial_extremas(contour)
+	[[0, {1, -1}], [4, {1}], [3, set()], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
+	"""
+	out = [[contour[0], {-1, 1}]]  # Maxima by definition.
+	for this_frame in roll_window(array=contour, window_length=3):
+		elem_set = set()
+		middle_val = this_frame[1]
+		if middle_val >= this_frame[0] and middle_val >= this_frame[2]:
+			elem_set.add(1)
+		if middle_val <= this_frame[0] and middle_val <= this_frame[2]:
+			elem_set.add(-1)
+
+		out.append([middle_val, elem_set])
+
+	out.append([contour[-1], {-1, 1}])  # Maxima by definition.
+	return out
+
 def _window_has_extremum(window, mode):
 	"""
 	>>> min_check = ([0, {1, -1}], [2, {-1}], [1, {1, -1}])
@@ -140,29 +175,6 @@ def _window_has_extremum(window, mode):
 			return True
 		else:
 			return False
-
-def _initial_extremas(contour):
-	"""
-	First iteration, get extrema.
-
-	>>> contour = [0, 4, 3, 2, 5, 5, 1]
-	>>> _initial_extremas(contour)
-	[[0, {1, -1}], [4, {1}], [3, set()], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
-	"""
-	out = [[contour[0], {-1, 1}]]
-	for this_frame in roll_window(contour, 3):
-		elem_set = set()
-		middle_val = this_frame[1]
-		if middle_val >= this_frame[0] and middle_val >= this_frame[2]:
-			elem_set.add(1)
-		if middle_val <= this_frame[0] and middle_val <= this_frame[2]:
-			elem_set.add(-1)
-
-		out.append([middle_val, elem_set])
-
-	out.append([contour[-1], {-1, 1}])
-
-	return out
 
 def _level_reduce(contour):
 	"""
