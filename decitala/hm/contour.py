@@ -130,6 +130,22 @@ Definition: Minimum pitch: Given three adjacent pitches in a contour, if the sec
 							called a minima. **The first and last pitches of a contour are minima
 							by definition**.
 """
+def _center_of_window_is_extremum(window, mode):
+	"""
+	>>> _center_of_window_is_extremum(window=[2, 2, 3], mode="min")
+	True
+	>>> _center_of_window_is_extremum(window=[0, 2, 1], mode="max")
+	True
+	>>> _center_of_window_is_extremum(window=[1, 2, 3], mode="min")
+	False
+	"""
+	assert len(window) == 3
+	middle_val = window[1]
+	if mode == "max":
+		return (middle_val >= window[0]) and (middle_val >= window[2])
+	elif mode == "min":
+		return (middle_val <= window[0]) and (middle_val <= window[2])
+
 def _initial_extremas(contour):
 	"""
 	First reduction in Morris' algorithm. Returns a list in which each element is a list holding a
@@ -143,11 +159,11 @@ def _initial_extremas(contour):
 	"""
 	out = [[contour[0], {-1, 1}]]  # Maxima by definition.
 	for this_frame in roll_window(array=contour, window_length=3):
-		elem_set = set()
 		middle_val = this_frame[1]
-		if middle_val >= this_frame[0] and middle_val >= this_frame[2]:
+		elem_set = set()
+		if _center_of_window_is_extremum(window=this_frame, mode="max"):
 			elem_set.add(1)
-		if middle_val <= this_frame[0] and middle_val <= this_frame[2]:
+		if _center_of_window_is_extremum(window=this_frame, mode="min"):
 			elem_set.add(-1)
 
 		out.append([middle_val, elem_set])
