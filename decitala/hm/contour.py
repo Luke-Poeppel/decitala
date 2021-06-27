@@ -207,34 +207,39 @@ def _morris_reduce(contour):
 		elif None in this_window:
 			continue
 		else:
+			# After level of reduction, the extrema might say it's a maxima, but it isn't anymore!
+			# So if it's no longer an extrema, remove it.
 			if _center_of_window_is_extremum(window=this_window, mode="max"):
 				pass
 			else:
 				extrema_tracker.remove(1)
 
 	# Iterate over minima.
-	for i, this_window in enumerate(roll_window(contour, 3, min_check)):
+	for i, this_window in enumerate(roll_window(array=contour, window_length=3, fn=min_check)):
 		extrema_tracker = this_window[1][1]
-		if len(extrema_tracker) == 0:
+		if not(extrema_tracker):
 			continue
 		elif None in this_window:
 			continue
 		else:
+			# After level of reduction, the extrema might say it's a minima, but it isn't anymore!
+			# So if it's no longer an extrema, remove it.
 			if _center_of_window_is_extremum(window=this_window, mode="min"):
 				pass
 			else:
 				extrema_tracker.remove(-1)
 
 	ranges = []
-	for _, this_range in groupby(range(len(contour)), lambda i: (contour[i][0], contour[i][1])):
+	grouped = groupby(range(len(contour)), lambda i: (contour[i][0], contour[i][1]))
+	for _, this_range in grouped:
 		ranges.append(list(this_range))
-	del_clusters = []
 
+	del_clusters = []
 	for this_cluster in ranges:
 		if len(this_cluster) > 1:
 			del_clusters.extend(this_cluster[1:])
 
-	if len(del_clusters) != 0:
+	if del_clusters:
 		for index in sorted(del_clusters, reverse=True):
 			del contour[index]
 
