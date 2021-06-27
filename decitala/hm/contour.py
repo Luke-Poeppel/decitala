@@ -108,20 +108,24 @@ def contour_to_neume(contour):
 	:return: The associated neume or ``None``.
 	:rtype: str or None
 	"""
-	assert len(contour) <= 3, ContourException("Contour input must be of length three!")
+	assert len(contour) <= 3, ContourException("Contour input must be of length three.")
 	try:
 		return NEUMES[tuple(contour)]
 	except KeyError:
 		return None
 
+
 ####################################################################################################
-# Implementation of contour reduction algorithms.
-def _has_extremum(window, mode):
+# Implementation of Morris contour reduction algorithm (1993).
+"""
+MORRIS ALGORITHM DESCRIPTION:
+"""
+def _window_has_extremum(window, mode):
 	"""
 	>>> min_check = ([0, {1, -1}], [2, {-1}], [1, {1, -1}])
-	>>> _has_extremum(min_check, "min")
+	>>> _window_has_extremum(min_check, "min")
 	False
-	>>> _has_extremum(min_check, "max")
+	>>> _window_has_extremum(min_check, "max")
 	True
 	"""
 	assert len(window) == 3
@@ -160,15 +164,15 @@ def _initial_extremas(contour):
 
 	return out
 
-def _make_level(contour):
+def _level_reduce(contour):
 	"""
 	Runs one iteration of the reduction.
 
 	>>> data = [[1, {1, -1}], [3, {1}], [1, set()], [2, set()], [0, {-1}], [1, set()], [4, {1, -1}]]
-	>>> new = _make_level(data)
+	>>> new = _level_reduce(data)
 	>>> new
 	[[1, {1, -1}], [3, set()], [1, set()], [2, set()], [0, {-1}], [1, set()], [4, {1, -1}]]
-	>>> _make_level(new) == new
+	>>> _level_reduce(new) == new
 	True
 	>>> # remove clusters
 	>>> initial_extremas = [
@@ -191,7 +195,7 @@ def _make_level(contour):
 		elif None in this_window:
 			continue
 		else:
-			if _has_extremum(this_window, "max"):
+			if _window_has_extremum(this_window, "max"):
 				pass
 			else:
 				elem_set.remove(1)
@@ -203,7 +207,7 @@ def _make_level(contour):
 		elif None in this_window:
 			continue
 		else:
-			if _has_extremum(this_window, "min"):
+			if _window_has_extremum(this_window, "min"):
 				pass
 			else:
 				elem_set.remove(-1)
@@ -260,9 +264,9 @@ def contour_to_prime_contour(contour, include_depth=False):
 
 	still_unflagged_values = True
 	while still_unflagged_values is True:
-		_make_level(prime_contour)
+		_level_reduce(prime_contour)
 		depth += 1
-		if _make_level(prime_contour[:]) == prime_contour:  # Check next iteration...
+		if _level_reduce(prime_contour[:]) == prime_contour:  # Check next iteration...
 			still_unflagged_values = False
 		else:
 			continue
@@ -274,3 +278,6 @@ def contour_to_prime_contour(contour, include_depth=False):
 		return pitch_content_to_contour(prime_contour)
 	else:
 		return (pitch_content_to_contour(prime_contour), depth)
+
+####################################################################################################
+# Implementation of Schultz contour reduction algorithm (2008).
