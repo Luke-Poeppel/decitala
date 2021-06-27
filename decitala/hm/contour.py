@@ -138,8 +138,14 @@ def _center_of_window_is_extremum(window, mode):
 	True
 	>>> _center_of_window_is_extremum(window=[1, 2, 3], mode="min")
 	False
+	>>> _center_of_window_is_extremum(window=[[1, {-1, 1}], [2, {1}], [3, {-1, 1}]], mode="min")
+	False
 	"""
 	assert len(window) == 3
+
+	if all(isinstance(x, list) for x in window):
+		window = [x[0] for x in window]
+
 	middle_val = window[1]
 	if mode == "max":
 		return (middle_val >= window[0]) and (middle_val >= window[2])
@@ -160,37 +166,16 @@ def _get_initial_extrema(contour):
 	out = [[contour[0], {-1, 1}]]  # Maxima by definition.
 	for this_frame in roll_window(array=contour, window_length=3):
 		middle_val = this_frame[1]
-		elem_set = set()
+		extrema_tracker = set()
 		if _center_of_window_is_extremum(window=this_frame, mode="max"):
-			elem_set.add(1)
+			extrema_tracker.add(1)
 		if _center_of_window_is_extremum(window=this_frame, mode="min"):
-			elem_set.add(-1)
+			extrema_tracker.add(-1)
 
-		out.append([middle_val, elem_set])
+		out.append([middle_val, extrema_tracker])
 
 	out.append([contour[-1], {-1, 1}])  # Maxima by definition.
 	return out
-
-def _window_has_extremum(window, mode):
-	"""
-	>>> min_check = ([0, {1, -1}], [2, {-1}], [1, {1, -1}])
-	>>> _window_has_extremum(min_check, "min")
-	False
-	>>> _window_has_extremum(min_check, "max")
-	True
-	"""
-	assert len(window) == 3
-	middle_val = window[1][0]
-	if mode == "max":
-		if middle_val >= window[0][0] and middle_val >= window[2][0]:
-			return True
-		else:
-			return False
-	elif mode == "min":
-		if middle_val <= window[0][0] and middle_val <= window[2][0]:
-			return True
-		else:
-			return False
 
 def _morris_reduce(contour):
 	"""
@@ -214,29 +199,31 @@ def _morris_reduce(contour):
 	max_check = lambda x: 1 in x[1]
 	min_check = lambda x: -1 in x[1]
 
+	# Iterate over maxima.
 	for i, this_window in enumerate(roll_window(array=contour, window_length=3, fn=max_check)):
-		elem_set = this_window[1][1]
-		if len(elem_set) == 0:
+		extrema_tracker = this_window[1][1]
+		if not(extrema_tracker):
 			continue
 		elif None in this_window:
 			continue
 		else:
-			if _window_has_extremum(this_window, "max"):
+			if _center_of_window_is_extremum(window=this_window, mode="max"):
 				pass
 			else:
-				elem_set.remove(1)
+				extrema_tracker.remove(1)
 
+	# Iterate over minima.
 	for i, this_window in enumerate(roll_window(contour, 3, min_check)):
-		elem_set = this_window[1][1]
-		if len(elem_set) == 0:
+		extrema_tracker = this_window[1][1]
+		if len(extrema_tracker) == 0:
 			continue
 		elif None in this_window:
 			continue
 		else:
-			if _window_has_extremum(this_window, "min"):
+			if _center_of_window_is_extremum(window=this_window, mode="min"):
 				pass
 			else:
-				elem_set.remove(-1)
+				extrema_tracker.remove(-1)
 
 	ranges = []
 	for _, this_range in groupby(range(len(contour)), lambda i: (contour[i][0], contour[i][1])):
@@ -298,8 +285,6 @@ def contour_to_prime_contour(contour, include_depth=False):
 		contour_copy = copy.deepcopy(prime_contour)
 		if _morris_reduce(contour_copy) == prime_contour:
 			still_unflagged_values = False
-		else:
-			continue
 
 	# Remove elements that are unflagged.
 	prime_contour = [x[0] for x in prime_contour if x[1]]
