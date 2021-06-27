@@ -321,10 +321,7 @@ class Species:
 		if as_vector:
 			return vector
 		else:
-			combined_pc_dict = dict()
-			for i, val in enumerate(vector):
-				combined_pc_dict[str(i)] = val
-			return combined_pc_dict
+			return {i: val for i, val in enumerate(vector)}
 
 class Transcription:
 	"""
