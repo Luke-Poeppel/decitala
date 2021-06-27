@@ -229,19 +229,22 @@ def _morris_reduce(contour):
 			else:
 				extrema_tracker.remove(-1)
 
-	ranges = []
-	grouped = groupby(range(len(contour)), lambda i: (contour[i][0], contour[i][1]))
-	for _, this_range in grouped:
-		ranges.append(list(this_range))
+	cluster_ranges = []
+	index_range_of_contour = range(len(contour))
+	# Group by both the element and the stored extrema (now correct, after the above check).
+	grouped = groupby(index_range_of_contour, lambda i: (contour[i][0], contour[i][1]))
+	for _, index_range in grouped:
+		cluster_ranges.append(list(index_range))
 
-	del_clusters = []
-	for this_cluster in ranges:
-		if len(this_cluster) > 1:
-			del_clusters.extend(this_cluster[1:])
+	if cluster_ranges:
+		del_clusters = []
+		for this_cluster in cluster_ranges:
+			if len(this_cluster) > 1:
+				del_clusters.extend(this_cluster[1:])
 
-	if del_clusters:
-		for index in sorted(del_clusters, reverse=True):
-			del contour[index]
+		if del_clusters:
+			for index in sorted(del_clusters, reverse=True):
+				del contour[index]
 
 	return contour
 
