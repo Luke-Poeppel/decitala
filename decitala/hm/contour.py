@@ -236,12 +236,11 @@ def _morris_reduce(contour):
 	for _, index_range in grouped:
 		cluster_ranges.append(list(index_range))
 
-	if cluster_ranges:
-		for this_cluster in sorted(cluster_ranges):
-			if len(this_cluster) > 1:
-				del_range = this_cluster[1:]
-				for index in del_range:
-					del contour[index]
+	for this_cluster in sorted(cluster_ranges):
+		if len(this_cluster) > 1:
+			del_range = this_cluster[1:]
+			for index in del_range:
+				del contour[index]
 
 	return contour
 
