@@ -148,7 +148,11 @@ def get_all_coefficients(exclude_major_minor=False, molt_tonic_val=1):
 	else:
 		return MOLT_COEFFS
 
-def pc_counter(filepath, part_num, normalize_over_duration=False):
+def pc_counter(
+		filepath,
+		part_num,
+		normalize_over_duration=False
+	):
 	"""
 	Returns a dictionary holding the pitch classes in the keys and the count (or count normalized
 	over duration) in the given filepath-part_num combination.
@@ -174,6 +178,14 @@ def pc_counter(filepath, part_num, normalize_over_duration=False):
 		return normalized_dict
 	else:
 		return {x: len(y) for x, y in pitch_classes.items()}
+
+def pc_ql_counter(
+	):
+	"""
+	Same as the above, but returns the qls in the dictionary values/list. Will probably be
+	integrated with the above function eventually.
+	"""
+	pass
 
 def pc_dict_to_vector(dict_in):
 	"""
