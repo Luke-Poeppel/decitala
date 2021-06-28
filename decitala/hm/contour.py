@@ -116,10 +116,8 @@ def contour_to_neume(contour):
 
 
 ####################################################################################################
-# Implementation of Morris contour reduction algorithm (1993).
+# Contour reduction tools.
 """
-MORRIS ALGORITHM DESCRIPTION.
-
 Definitions from Schultz (2008):
 Definition: Maximum pitch: Given three adjacent pitches in a contour, if the second is higher than
 							or equal to the others it is a maximum. A set of maximum pitches is
@@ -177,6 +175,8 @@ def _get_initial_extrema(contour):
 	out.append([contour[-1], {-1, 1}])  # Maxima by definition.
 	return out
 
+####################################################################################################
+# Implementation of Morris contour reduction algorithm (1993).
 def _morris_reduce(contour):
 	"""
 	Runs one iteration of the Morris contour reduction.
@@ -238,6 +238,8 @@ def _morris_reduce(contour):
 
 	for this_cluster in sorted(cluster_ranges):
 		if len(this_cluster) > 1:
+			# The del_range keeps the first item in the cluster (deleting only the repeated elem).
+			# (Option 1 in Schultz: flag only one of them)
 			del_range = this_cluster[1:]
 			for index in del_range:
 				del contour[index]
@@ -300,4 +302,71 @@ def contour_to_prime_contour(contour, include_depth=False):
 		return (pitch_content_to_contour(prime_contour), depth)
 
 ####################################################################################################
-# Implementation of Schultz contour reduction algorithm (2008).
+# Implementation of Schultz contour reduction algorithm (2008). Final version (see p. 108).
+def _schultz_reduce(contour):
+	pass
+
+def _no_schultz_repetition(contour):
+	"""
+	Step 10. If all values are flagged and no more than one repetition of values exists, excluding
+	the first and last values, returns True.
+
+	>>> contour_with_extrema = [
+	... 	[1, {-1, 1}],
+	... 	[0, {-1}],
+	... 	[2, {1}],
+	... 	[0, {-1}],
+	... 	[2, {1}],
+	... 	[1, {-1, 1}]
+	... ]
+	>>> _no_schultz_repetition(contour=contour_with_extrema)
+	False
+	"""
+	if all(x[1] for x in contour):
+		contour_elems = [x[0] for x in contour][1:-1]  # Exclude first and last.
+		return len(contour_elems) == len(set(contour_elems))
+
+def contour_to_schultz_prime_contour(contour, include_depth=False):
+	"""
+	Implementation of Schultz's (2008) modification of Morris' contour-reduction algorithm.
+	"""
+	depth = 0
+
+	# If the segment is of length <= 2, it is prime by definition.
+	if len(contour) <= 2:
+		if not(include_depth):
+			return pitch_content_to_contour(contour)
+		else:
+			return (pitch_content_to_contour(contour), depth)
+
+	prime_contour = _get_initial_extrema(contour)
+	initial_flags = [x[1] for x in prime_contour]
+
+	if all(x for x in initial_flags):
+		pass  # Proceed directly to Step 6.
+	else:
+		# Steps 4 & 5 (delete unflagged values and increment).
+		prime_contour = [x for x in prime_contour if x[1]]
+		depth += 1
+
+	still_unflagged_values = True
+	while still_unflagged_values:
+		_schultz_reduce(prime_contour)
+		if depth != 0:
+			depth += 1
+		else:
+			depth += 2
+		# Check Step 10.
+		if all(x[1] for x in prime_contour) and _no_schultz_repetition(prime_contour):
+			still_unflagged_values = False
+		else:
+			still_unflagged_values = False
+
+	# Remove elements that are unflagged.
+	prime_contour = [x[0] for x in prime_contour if x[1]]
+	depth += 1
+
+	if not(include_depth):
+		return pitch_content_to_contour(prime_contour)
+	else:
+		return (pitch_content_to_contour(prime_contour), depth)
