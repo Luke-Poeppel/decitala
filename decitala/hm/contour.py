@@ -391,14 +391,14 @@ def _schultz_reduce(contour, depth):
 	minima_contour_elems = Counter([x[1][0] for x in minima])
 	repeated_min_keys = [key for key, val in minima_contour_elems.items()]
 
-	closest_max_start = None
+	closest_max_start = None  # Correct by Ex. 15A
 	closest_max_start_distance = 100
-	closest_max_end = None
+	closest_max_end = None  # Correct by Ex. 15A
 	closest_max_end_distance = 100
 
-	closest_min_start = None
+	closest_min_start = None  # Correct by Ex. 15A
 	closest_min_start_distance = 100
-	closest_min_end = None
+	closest_min_end = None  # Correct by Ex. 15A
 	closest_min_end_distance = 100
 
 	for repeated_max_key in repeated_max_keys:
@@ -411,9 +411,7 @@ def _schultz_reduce(contour, depth):
 			closest_max_start = relevant_maxima[0]
 		if end_dist < closest_max_end_distance:
 			closest_max_end_distance = end_dist
-			closest_max_end = relevant_maxima[-1][0]
-
-	# import pdb; pdb.set_trace(0)
+			closest_max_end = relevant_maxima[-1]
 
 	for repeated_min_key in repeated_min_keys:
 		# Already sorted, so we just look at [0] and [-1].
@@ -425,15 +423,19 @@ def _schultz_reduce(contour, depth):
 			closest_min_start = relevant_minima[0]
 		if end_dist < closest_min_end_distance:
 			closest_min_end_distance = end_dist
-			closest_min_end = relevant_minima[-1][0]
+			closest_min_end = relevant_minima[-1]
 
-	start_elems = [closest_min_start, closest_max_start] # noqa
-	end_elems = [closest_min_end, closest_max_end] # noqa
+	# This list holds the closts repeating min and max to the start (in that order).
+	# Also tracks whether the chosen element is a minima or maxima.
+	start_elems = [("min", closest_min_start), ("max", closest_max_start)] # noqa
+	# This list holds the closts repeating min and max to the end (in that order).
+	end_elems = [("min", closest_min_end), ("max", closest_max_end)] # noqa
 
-	# import pdb; pdb.set_trace()
+	# These are kept; the other repetitions are unflagged.
+	closest_start_extrema = min(start_elems, key=lambda x: x[0])  # noqa Correct by Ex. 15A =
+	closest_end_extrema = max(end_elems, key=lambda x: x[0])  # noqa Correct by Ex. 15A
 
 	# Unflag all repeated maxes/mins that are not closest to first and last.
-	# for repeated_max_key in repeated_max_keys:
 
 	# Find all the contour elements (excluding the first and last) that are repeated.
 	# Set max_closest to be the set of repeated contour elements closest to the start
@@ -503,7 +505,7 @@ def contour_to_schultz_prime_contour(contour, include_depth=False):
 		if _no_schultz_repetition(prime_contour):
 			still_unflagged_values = False
 		else:
-			still_unflagged_values = False  # For commits.
+			still_unflagged_values = False
 			_schultz_reduce(prime_contour, depth=depth)  # STEPS 11, 12, 13, 14, 15
 
 	# Remove elements that are unflagged.
