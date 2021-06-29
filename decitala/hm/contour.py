@@ -459,13 +459,11 @@ def _schultz_reduce(contour, depth):
 		print("TODO!!!!!!!")
 
 	# Steps 13-15
-	prime_contour = [x for x in contour if x[1]]
+	contour = [x for x in contour if x[1]]
 	if depth:
 		depth += 1
 	else:
 		depth += 2
-
-	return prime_contour, depth
 
 def _no_schultz_repetition(contour):
 	"""
