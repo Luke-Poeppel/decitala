@@ -11,6 +11,7 @@ import copy
 import numpy as np
 import random
 
+from collections import Counter
 from itertools import groupby
 
 from ..utils import roll_window
@@ -337,9 +338,11 @@ def _has_intervening_extrema(window, contour, mode):
 					return False
 	return True
 
-def _schultz_reduce(contour):
+def _schultz_extrema_check(contour):
 	"""
 	Steps 6-9.
+
+	TODO: refactor this so that a function returns the maxima/minima indices. DRY.
 	"""
 	# Reiterate over maxima.
 	_track_extrema(contour=contour, mode="max")
@@ -372,6 +375,82 @@ def _schultz_reduce(contour):
 		if not(_has_intervening_extrema(min_grouping, contour=contour, mode="min")):
 			print("TODO!!!!!")
 
+def _schultz_reduce(contour, depth):
+	"""
+	# Steps 11, 12, 13, 14, 15
+	"""
+	# Step 11
+	# These exclude the first and last (by design).
+	maxima = [(i, x) for (i, x) in enumerate(contour) if 1 in x[1]][1:-1]
+	minima = [(i, x) for (i, x) in enumerate(contour) if -1 in x[1]][1:-1]
+
+	# For minima/maxima that repeat themselves, stores the closest to start and end.
+	maxima_contour_elems = Counter([x[1][0] for x in maxima])
+	repeated_max_keys = [key for key, val in maxima_contour_elems.items()]
+
+	minima_contour_elems = Counter([x[1][0] for x in minima])
+	repeated_min_keys = [key for key, val in minima_contour_elems.items()]
+
+	closest_max_start = None
+	closest_max_start_distance = 100
+	closest_max_end = None
+	closest_max_end_distance = 100
+
+	closest_min_start = None
+	closest_min_start_distance = 100
+	closest_min_end = None
+	closest_min_end_distance = 100
+
+	for repeated_max_key in repeated_max_keys:
+		# Already sorted, so we just look at [0] and [-1].
+		relevant_maxima = [x for x in maxima if x[1][0] == repeated_max_key]
+		start_dist = len(contour) - relevant_maxima[0][0]
+		end_dist = len(contour) - relevant_maxima[-1][0]
+		if start_dist < closest_max_start_distance:
+			closest_max_start_distance = start_dist
+			closest_max_start = relevant_maxima[0]
+		if end_dist < closest_max_end_distance:
+			closest_max_end_distance = end_dist
+			closest_max_end = relevant_maxima[-1][0]
+
+	# import pdb; pdb.set_trace(0)
+
+	for repeated_min_key in repeated_min_keys:
+		# Already sorted, so we just look at [0] and [-1].
+		relevant_minima = [x for x in minima if x[1][0] == repeated_min_key]
+		start_dist = len(contour) - relevant_minima[0][0]
+		end_dist = len(contour) - relevant_minima[-1][0]
+		if start_dist < closest_min_start_distance:
+			closest_min_start_distance = start_dist
+			closest_min_start = relevant_minima[0]
+		if end_dist < closest_min_end_distance:
+			closest_min_end_distance = end_dist
+			closest_min_end = relevant_minima[-1][0]
+
+	start_elems = [closest_min_start, closest_max_start] # noqa
+	end_elems = [closest_min_end, closest_max_end] # noqa
+
+	# import pdb; pdb.set_trace()
+
+	# Unflag all repeated maxes/mins that are not closest to first and last.
+	# for repeated_max_key in repeated_max_keys:
+
+	# Find all the contour elements (excluding the first and last) that are repeated.
+	# Set max_closest to be the set of repeated contour elements closest to the start
+	# and end. Do the same for the minima. Then choose the closest to the end for both.
+	# IMPORTANT: track whether the returned item is a max or min. Then step 12
+
+	# Find closest extrema (either maxima OR minima) to the start and end...
+	# Step 12
+
+	# Steps 13-15
+	prime_contour = [x for x in contour if x[1]]
+	if depth:
+		depth += 1
+	else:
+		depth += 2
+
+	return prime_contour, depth
 
 def _no_schultz_repetition(contour):
 	"""
@@ -419,17 +498,13 @@ def contour_to_schultz_prime_contour(contour, include_depth=False):
 	######
 	still_unflagged_values = True
 	while still_unflagged_values:
-		_schultz_reduce(prime_contour)  # Steps 6-9.
-		if depth != 0:
-			depth += 1
-		else:
-			depth += 2
+		_schultz_extrema_check(prime_contour)  # Steps 6-9.
 		# Check Step 10.
 		if _no_schultz_repetition(prime_contour):
 			still_unflagged_values = False
 		else:
-			still_unflagged_values = False
-			# import pdb; pdb.set_trace()  # STEPS 11, 12, 13, 14, 15
+			still_unflagged_values = False  # For commits.
+			_schultz_reduce(prime_contour, depth=depth)  # STEPS 11, 12, 13, 14, 15
 
 	# Remove elements that are unflagged.
 	prime_contour = [x[0] for x in prime_contour if x[1]]
