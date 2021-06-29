@@ -27,12 +27,25 @@ def test_contours_morris():
 	assert list(calculated[0]) == [1, 0, 2]
 	assert calculated[1] == 3
 
-def test_contour_a_schultz():
-	# See p. 109
-	c = [1, 0, 2, 0, 2, 1]
-	calculated = contour.contour_to_schultz_prime_contour(contour=c, include_depth=True)
+def test_has_intervening_extrema():
+	window = [(1, [0, {-1}]), (3, [0, {-1}])]
+	c = [[1, {1, -1}], [0, {-1}], [2, {1}], [0, {-1}], [2, {1}], [1, {1, -1}]]
+	mode = "min"
 
-	expected = [1, 0, 2, 1]
-	expected_depth = 2
+	expected = True
+	calculated = contour._has_intervening_extrema(
+		window=window,
+		contour=c,
+		mode=mode
+	)
+	assert expected == calculated
 
-print(test_contour_a_schultz())
+# def test_contour_a_schultz():
+# 	# See p. 109
+# 	c = [1, 0, 2, 0, 2, 1]
+# 	calculated = contour.contour_to_schultz_prime_contour(contour=c, include_depth=True)
+
+# 	expected = [1, 0, 2, 1]
+# 	expected_depth = 2
+
+# print(test_contour_a_schultz())

@@ -9,6 +9,7 @@
 ####################################################################################################
 import copy
 import numpy as np
+import random
 
 from itertools import groupby
 
@@ -301,13 +302,38 @@ def contour_to_prime_contour(contour, include_depth=False):
 
 ####################################################################################################
 # Implementation of Schultz contour reduction algorithm (2008). Final version (see p. 108).
-def _has_intervening_extrema(window, mode):
+def _has_intervening_extrema(window, contour, mode):
 	"""
 	Steps 8/9. If there exists a sequence of equal maxima or minima, check if the sequence
 	contains an intervening opposite extrema, i.e. if a sequence of two equal maxima contains
 	a minima between them.
+
+	>>> maxima_group = [
+	... 	(2, [2, {1}]),
+	... 	(4, [2, {1}])
+	... ]
+	>>> contour = [[1, {1, -1}], [0, {-1}], [2, {1}], [0, {-1}], [2, {1}], [1, {1, -1}]]
+	>>> _has_intervening_extrema(maxima_group, contour=contour, mode="max")
+	True
 	"""
-	pass
+	for tiny_window in roll_window(window, window_length=2):
+		contour_index_range = [tiny_window[0][0], tiny_window[1][0]]
+		if contour_index_range[1] == (contour_index_range[0] + 1):
+			return False  # Impossible for there to be an intervening interval.
+		else:
+			# Check if there exists a maxima/minima (remember: could be None! )
+			intervening_index = random.randint(contour_index_range[0] + 1, contour_index_range[1] - 1)
+			if mode == "max":  # Looking for min.
+				if -1 in contour[intervening_index][1]:
+					continue
+				else:
+					return False
+			if mode == "min":  # Looking for max.
+				if 1 in contour[intervening_index][1]:
+					continue
+				else:
+					return False
+	return True
 
 def _schultz_reduce(contour):
 	"""
@@ -320,7 +346,6 @@ def _schultz_reduce(contour):
 
 	# Step 8 and 9: find strings of equal and adjacent extrema; delete all but one of them.
 	# UNLESS: they have an intervening extrema, i.e. between any two.
-	cluster_ranges = []
 	# Group by both the element and the stored extrema (now correct, after the above check).
 	maxima = [(i, x) for (i, x) in enumerate(contour) if 1 in x[1]]
 	minima = [(i, x) for (i, x) in enumerate(contour) if -1 in x[1]]
@@ -331,26 +356,18 @@ def _schultz_reduce(contour):
 		maxima_indices.append(list(index))
 	maxima_indices = list(filter(lambda x: len(x) > 1, maxima_indices))
 
+	for max_grouping in maxima_indices:
+		if not(_has_intervening_extrema(maxima_indices, contour=contour, mode="max")):
+			print("TODO!!!!!")
+
 	minima_grouped = groupby(minima, lambda x: x[1][0])
 	minima_indices = []
 	for _, index in minima_grouped:
 		minima_indices.append(list(index))
 	minima_indices = list(filter(lambda x: len(x) > 1, minima_indices))
 
-	# if _has_intervening_extrema()
-
-	for x in cluster_ranges:
-		print(x)
-
-	# for this_cluster in sorted(cluster_ranges):
-	# 	if len(this_cluster) > 1:
-	# 		# The del_range keeps the first item in the cluster (deleting only the repeated elem).
-	# 		# (Option 1 in Schultz 2008: flag only one of them)
-	# 		del_range = this_cluster[1:]
-	# 		for index in del_range:
-	# 			del contour[index]
-
-	# return contour
+	if not(_has_intervening_extrema(minima_indices, contour=contour, mode="min")):
+		print("TODO!!!!")
 
 def _no_schultz_repetition(contour):
 	"""
