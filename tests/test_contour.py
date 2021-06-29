@@ -46,6 +46,6 @@ def test_contour_a_schultz():
 	calculated = contour.contour_to_schultz_prime_contour(contour=c, include_depth=True)
 
 	expected = [1, 0, 2, 1]
-	expected_depth = 2
+	expected_depth = 2  # hm...
 
-print(test_contour_a_schultz())
+	assert list(calculated[0]) == expected

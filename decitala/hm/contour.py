@@ -465,6 +465,8 @@ def _schultz_reduce(contour, depth):
 	else:
 		depth += 2
 
+	return contour, depth
+
 def _no_schultz_repetition(contour):
 	"""
 	Step 10. If all values are flagged and no more than one repetition of values exists, excluding
@@ -516,8 +518,7 @@ def contour_to_schultz_prime_contour(contour, include_depth=False):
 		if _no_schultz_repetition(prime_contour):
 			still_unflagged_values = False
 		else:
-			still_unflagged_values = False
-			_schultz_reduce(prime_contour, depth=depth)
+			prime_contour, depth = _schultz_reduce(prime_contour, depth=depth)
 
 	# Remove elements that are unflagged.
 	prime_contour = [x[0] for x in prime_contour if x[1]]
