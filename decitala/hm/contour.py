@@ -432,17 +432,26 @@ def _schultz_reduce(contour, depth):
 	end_elems = [("min", closest_min_end), ("max", closest_max_end)] # noqa
 
 	# These are kept; the other repetitions are unflagged.
-	closest_start_extrema = min(start_elems, key=lambda x: x[0])  # noqa Correct by Ex. 15A =
-	closest_end_extrema = max(end_elems, key=lambda x: x[0])  # noqa Correct by Ex. 15A
+	closest_start_extrema = min(start_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A =
+	closest_end_extrema = max(end_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
 
 	# Unflag all repeated maxes/mins that are not closest to first and last.
+	if closest_start_extrema[0] == "min":
+		associated_contour_val = closest_start_extrema[1][1][0]
+		associated_index = closest_start_extrema[1][0]
+		for contour_elem in minima:
+			if contour_elem[1][0] == associated_contour_val:
+				if contour_elem[0] != associated_index:
+					contour[contour_elem[0]][1].remove(-1)
 
-	# Find all the contour elements (excluding the first and last) that are repeated.
-	# Set max_closest to be the set of repeated contour elements closest to the start
-	# and end. Do the same for the minima. Then choose the closest to the end for both.
-	# IMPORTANT: track whether the returned item is a max or min. Then step 12
+	if closest_end_extrema[0] == "max":
+		associated_contour_val = closest_end_extrema[1][1][0]
+		associated_index = closest_end_extrema[1][0]
+		for contour_elem in maxima:
+			if contour_elem[1][0] == associated_contour_val:
+				if contour_elem[0] != associated_index:
+					contour[contour_elem[0]][1].remove(1)
 
-	# Find closest extrema (either maxima OR minima) to the start and end...
 	# Step 12
 
 	# Steps 13-15
