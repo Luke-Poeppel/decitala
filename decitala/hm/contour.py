@@ -324,7 +324,8 @@ def _has_intervening_extrema(window, contour, mode):
 		if contour_index_range[1] == (contour_index_range[0] + 1):
 			return False  # Impossible for there to be an intervening interval.
 		else:
-			# Check if there exists a maxima/minima (remember: could be None! )
+			# NOTE: I think this is wrong... Could randomly choose an element that just isn't an extrema...
+			# Check if there exists a maxima/minima (opposite) between the extrema.
 			intervening_index = random.randint(contour_index_range[0] + 1, contour_index_range[1] - 1)
 			if mode == "max":  # Looking for min.
 				if -1 in contour[intervening_index][1]:
@@ -453,6 +454,9 @@ def _schultz_reduce(contour, depth):
 					contour[contour_elem[0]][1].remove(1)
 
 	# Step 12
+	# If both are maxes or both are mins, reflag one of the opposite removed values.
+	if closest_start_extrema[0] == closest_end_extrema[0]:
+		print("TODO!!!!!!!")
 
 	# Steps 13-15
 	prime_contour = [x for x in contour if x[1]]
@@ -515,7 +519,7 @@ def contour_to_schultz_prime_contour(contour, include_depth=False):
 			still_unflagged_values = False
 		else:
 			still_unflagged_values = False
-			_schultz_reduce(prime_contour, depth=depth)  # STEPS 11, 12, 13, 14, 15
+			_schultz_reduce(prime_contour, depth=depth)
 
 	# Remove elements that are unflagged.
 	prime_contour = [x[0] for x in prime_contour if x[1]]
