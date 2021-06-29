@@ -304,6 +304,8 @@ def contour_to_prime_contour(contour, include_depth=False):
 # Implementation of Schultz contour reduction algorithm (2008). Final version (see p. 108).
 def _has_intervening_extrema(window, contour, mode):
 	"""
+	NOTE: Still a component missing: unflag all but one if repetition found...
+
 	Steps 8/9. If there exists a sequence of equal maxima or minima, check if the sequence
 	contains an intervening opposite extrema, i.e. if a sequence of two equal maxima contains
 	a minima between them.
@@ -357,7 +359,7 @@ def _schultz_reduce(contour):
 	maxima_indices = list(filter(lambda x: len(x) > 1, maxima_indices))
 
 	for max_grouping in maxima_indices:
-		if not(_has_intervening_extrema(maxima_indices, contour=contour, mode="max")):
+		if not(_has_intervening_extrema(max_grouping, contour=contour, mode="max")):
 			print("TODO!!!!!")
 
 	minima_grouped = groupby(minima, lambda x: x[1][0])
@@ -366,8 +368,10 @@ def _schultz_reduce(contour):
 		minima_indices.append(list(index))
 	minima_indices = list(filter(lambda x: len(x) > 1, minima_indices))
 
-	if not(_has_intervening_extrema(minima_indices, contour=contour, mode="min")):
-		print("TODO!!!!")
+	for min_grouping in minima_indices:
+		if not(_has_intervening_extrema(min_grouping, contour=contour, mode="min")):
+			print("TODO!!!!!")
+
 
 def _no_schultz_repetition(contour):
 	"""
@@ -424,8 +428,8 @@ def contour_to_schultz_prime_contour(contour, include_depth=False):
 		if _no_schultz_repetition(prime_contour):
 			still_unflagged_values = False
 		else:
-			still_unflagged_values = False  # to allow tests to run.
-			pass  # STEPS 11, 12, 13, 14, 15
+			still_unflagged_values = False
+			# import pdb; pdb.set_trace()  # STEPS 11, 12, 13, 14, 15
 
 	# Remove elements that are unflagged.
 	prime_contour = [x[0] for x in prime_contour if x[1]]

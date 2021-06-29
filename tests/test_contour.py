@@ -40,12 +40,12 @@ def test_has_intervening_extrema():
 	)
 	assert expected == calculated
 
-# def test_contour_a_schultz():
-# 	# See p. 109
-# 	c = [1, 0, 2, 0, 2, 1]
-# 	calculated = contour.contour_to_schultz_prime_contour(contour=c, include_depth=True)
+def test_contour_a_schultz():
+	# See p. 109
+	c = [1, 0, 2, 0, 2, 1]
+	calculated = contour.contour_to_schultz_prime_contour(contour=c, include_depth=True)
 
-# 	expected = [1, 0, 2, 1]
-# 	expected_depth = 2
+	expected = [1, 0, 2, 1]
+	expected_depth = 2
 
-# print(test_contour_a_schultz())
+print(test_contour_a_schultz())
