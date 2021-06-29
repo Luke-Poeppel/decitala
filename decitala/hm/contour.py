@@ -219,9 +219,9 @@ def _morris_reduce(contour):
 	>>> _morris_reduce(morris_reduced) == morris_reduced
 	True
 	"""
-	# Iterate over maxima.
+	# Reiterate over maxima.
 	_track_extrema(contour=contour, mode="max")
-	# Iterate over minima
+	# Reiterate over minima
 	_track_extrema(contour=contour, mode="min")
 
 	cluster_ranges = []
@@ -302,38 +302,10 @@ def _schultz_reduce(contour):
 	"""
 	Steps 6-9.
 	"""
-	max_check = lambda x: 1 in x[1]
-	min_check = lambda x: -1 in x[1]
-
-	# Iterate over maxima.
-	for i, this_window in enumerate(roll_window(array=contour, window_length=3, fn=max_check)):
-		extrema_tracker = this_window[1][1]  # Extrema of the middle element.
-		if not(extrema_tracker):
-			continue
-		elif None in this_window:
-			continue
-		else:
-			# After level of reduction, the extrema might say it's a maxima, but it isn't anymore!
-			# So if it's no longer an extrema, remove it.
-			if _center_of_window_is_extremum(window=this_window, mode="max"):
-				pass
-			else:
-				extrema_tracker.remove(1)
-
-	# Iterate over minima.
-	for i, this_window in enumerate(roll_window(array=contour, window_length=3, fn=min_check)):
-		extrema_tracker = this_window[1][1]
-		if not(extrema_tracker):
-			continue
-		elif None in this_window:
-			continue
-		else:
-			# After level of reduction, the extrema might say it's a minima, but it isn't anymore!
-			# So if it's no longer an extrema, remove it.
-			if _center_of_window_is_extremum(window=this_window, mode="min"):
-				pass
-			else:
-				extrema_tracker.remove(-1)
+	# Reiterate over maxima.
+	_track_extrema(contour=contour, mode="max")
+	# Reiterate over minima
+	_track_extrema(contour=contour, mode="min")
 
 	cluster_ranges = []
 	index_range_of_contour = range(len(contour))
