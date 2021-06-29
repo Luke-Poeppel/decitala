@@ -342,8 +342,6 @@ def _has_intervening_extrema(window, contour, mode):
 def _schultz_extrema_check(contour):
 	"""
 	Steps 6-9.
-
-	TODO: refactor this so that a function returns the maxima/minima indices. DRY.
 	"""
 	# Reiterate over maxima.
 	_track_extrema(contour=contour, mode="max")
@@ -522,7 +520,6 @@ def contour_to_schultz_prime_contour(contour, include_depth=False):
 
 	# Remove elements that are unflagged.
 	prime_contour = [x[0] for x in prime_contour if x[1]]
-	depth += 1
 
 	if not(include_depth):
 		return pitch_content_to_contour(prime_contour)
