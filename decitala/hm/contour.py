@@ -175,6 +175,29 @@ def _get_initial_extrema(contour):
 	out.append([contour[-1], {-1, 1}])  # Maxima by definition.
 	return out
 
+def _track_extrema(contour, mode):
+	if mode == "max":
+		check = lambda x: 1 in x[1]
+	else:
+		check = lambda x: -1 in x[1]
+
+	for i, this_window in enumerate(roll_window(array=contour, window_length=3, fn=check)):
+		extrema_tracker = this_window[1][1]
+		if not(extrema_tracker):
+			continue
+		elif None in this_window:
+			continue
+		else:
+			# After level of reduction, the extrema might *say* it's an extrema, but it isn't anymore!
+			# So if it's no longer an extrema, remove it.
+			if _center_of_window_is_extremum(window=this_window, mode=mode):
+				pass
+			else:
+				if mode == "max":
+					extrema_tracker.remove(1)
+				else:
+					extrema_tracker.remove(-1)
+
 ####################################################################################################
 # Implementation of Morris contour reduction algorithm (1993).
 def _morris_reduce(contour):
@@ -196,38 +219,10 @@ def _morris_reduce(contour):
 	>>> _morris_reduce(morris_reduced) == morris_reduced
 	True
 	"""
-	max_check = lambda x: 1 in x[1]
-	min_check = lambda x: -1 in x[1]
-
 	# Iterate over maxima.
-	for i, this_window in enumerate(roll_window(array=contour, window_length=3, fn=max_check)):
-		extrema_tracker = this_window[1][1]
-		if not(extrema_tracker):
-			continue
-		elif None in this_window:
-			continue
-		else:
-			# After level of reduction, the extrema might say it's a maxima, but it isn't anymore!
-			# So if it's no longer an extrema, remove it.
-			if _center_of_window_is_extremum(window=this_window, mode="max"):
-				pass
-			else:
-				extrema_tracker.remove(1)
-
-	# Iterate over minima.
-	for i, this_window in enumerate(roll_window(array=contour, window_length=3, fn=min_check)):
-		extrema_tracker = this_window[1][1]
-		if not(extrema_tracker):
-			continue
-		elif None in this_window:
-			continue
-		else:
-			# After level of reduction, the extrema might say it's a minima, but it isn't anymore!
-			# So if it's no longer an extrema, remove it.
-			if _center_of_window_is_extremum(window=this_window, mode="min"):
-				pass
-			else:
-				extrema_tracker.remove(-1)
+	_track_extrema(contour=contour, mode="max")
+	# Iterate over minima
+	_track_extrema(contour=contour, mode="min")
 
 	cluster_ranges = []
 	index_range_of_contour = range(len(contour))
@@ -304,7 +299,58 @@ def contour_to_prime_contour(contour, include_depth=False):
 ####################################################################################################
 # Implementation of Schultz contour reduction algorithm (2008). Final version (see p. 108).
 def _schultz_reduce(contour):
-	pass
+	"""
+	Steps 6-9.
+	"""
+	max_check = lambda x: 1 in x[1]
+	min_check = lambda x: -1 in x[1]
+
+	# Iterate over maxima.
+	for i, this_window in enumerate(roll_window(array=contour, window_length=3, fn=max_check)):
+		extrema_tracker = this_window[1][1]  # Extrema of the middle element.
+		if not(extrema_tracker):
+			continue
+		elif None in this_window:
+			continue
+		else:
+			# After level of reduction, the extrema might say it's a maxima, but it isn't anymore!
+			# So if it's no longer an extrema, remove it.
+			if _center_of_window_is_extremum(window=this_window, mode="max"):
+				pass
+			else:
+				extrema_tracker.remove(1)
+
+	# Iterate over minima.
+	for i, this_window in enumerate(roll_window(array=contour, window_length=3, fn=min_check)):
+		extrema_tracker = this_window[1][1]
+		if not(extrema_tracker):
+			continue
+		elif None in this_window:
+			continue
+		else:
+			# After level of reduction, the extrema might say it's a minima, but it isn't anymore!
+			# So if it's no longer an extrema, remove it.
+			if _center_of_window_is_extremum(window=this_window, mode="min"):
+				pass
+			else:
+				extrema_tracker.remove(-1)
+
+	cluster_ranges = []
+	index_range_of_contour = range(len(contour))
+	# Group by both the element and the stored extrema (now correct, after the above check).
+	grouped = groupby(index_range_of_contour, lambda i: (contour[i][0], contour[i][1]))
+	for _, index_range in grouped:
+		cluster_ranges.append(list(index_range))
+
+	for this_cluster in sorted(cluster_ranges):
+		if len(this_cluster) > 1:
+			# The del_range keeps the first item in the cluster (deleting only the repeated elem).
+			# (Option 1 in Schultz 2008: flag only one of them)
+			del_range = this_cluster[1:]
+			for index in del_range:
+				del contour[index]
+
+	return contour
 
 def _no_schultz_repetition(contour):
 	"""
@@ -351,16 +397,17 @@ def contour_to_schultz_prime_contour(contour, include_depth=False):
 
 	still_unflagged_values = True
 	while still_unflagged_values:
-		_schultz_reduce(prime_contour)
+		_schultz_reduce(prime_contour)  # Steps 6-9.
 		if depth != 0:
 			depth += 1
 		else:
 			depth += 2
 		# Check Step 10.
-		if all(x[1] for x in prime_contour) and _no_schultz_repetition(prime_contour):
+		if _no_schultz_repetition(prime_contour):
 			still_unflagged_values = False
 		else:
 			still_unflagged_values = False
+			pass  # STEPS 11, 12, 13, 14, 15
 
 	# Remove elements that are unflagged.
 	prime_contour = [x[0] for x in prime_contour if x[1]]

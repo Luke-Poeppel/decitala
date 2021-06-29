@@ -35,4 +35,4 @@ def test_contour_a_schultz():
 	expected = [1, 0, 2, 1]
 	expected_depth = 2
 
-# print(test_contour_a_schultz())
+print(test_contour_a_schultz())
