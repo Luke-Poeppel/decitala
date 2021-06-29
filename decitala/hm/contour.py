@@ -176,6 +176,9 @@ def _get_initial_extrema(contour):
 	return out
 
 def _track_extrema(contour, mode):
+	"""
+	NOTE: I think Schultz has an extra condition here... See step 6.
+	"""
 	if mode == "max":
 		check = lambda x: 1 in x[1]
 	else:
@@ -298,6 +301,14 @@ def contour_to_prime_contour(contour, include_depth=False):
 
 ####################################################################################################
 # Implementation of Schultz contour reduction algorithm (2008). Final version (see p. 108).
+def _has_intervening_extrema(window, mode):
+	"""
+	Steps 8/9. If there exists a sequence of equal maxima or minima, check if the sequence
+	contains an intervening opposite extrema, i.e. if a sequence of two equal maxima contains
+	a minima between them.
+	"""
+	pass
+
 def _schultz_reduce(contour):
 	"""
 	Steps 6-9.
@@ -307,22 +318,39 @@ def _schultz_reduce(contour):
 	# Reiterate over minima
 	_track_extrema(contour=contour, mode="min")
 
+	# Step 8 and 9: find strings of equal and adjacent extrema; delete all but one of them.
+	# UNLESS: they have an intervening extrema, i.e. between any two.
 	cluster_ranges = []
-	index_range_of_contour = range(len(contour))
 	# Group by both the element and the stored extrema (now correct, after the above check).
-	grouped = groupby(index_range_of_contour, lambda i: (contour[i][0], contour[i][1]))
-	for _, index_range in grouped:
-		cluster_ranges.append(list(index_range))
+	maxima = [(i, x) for (i, x) in enumerate(contour) if 1 in x[1]]
+	minima = [(i, x) for (i, x) in enumerate(contour) if -1 in x[1]]
 
-	for this_cluster in sorted(cluster_ranges):
-		if len(this_cluster) > 1:
-			# The del_range keeps the first item in the cluster (deleting only the repeated elem).
-			# (Option 1 in Schultz 2008: flag only one of them)
-			del_range = this_cluster[1:]
-			for index in del_range:
-				del contour[index]
+	maxima_grouped = groupby(maxima, lambda x: x[1][0])
+	maxima_indices = []
+	for _, index in maxima_grouped:
+		maxima_indices.append(list(index))
+	maxima_indices = list(filter(lambda x: len(x) > 1, maxima_indices))
 
-	return contour
+	minima_grouped = groupby(minima, lambda x: x[1][0])
+	minima_indices = []
+	for _, index in minima_grouped:
+		minima_indices.append(list(index))
+	minima_indices = list(filter(lambda x: len(x) > 1, minima_indices))
+
+	# if _has_intervening_extrema()
+
+	for x in cluster_ranges:
+		print(x)
+
+	# for this_cluster in sorted(cluster_ranges):
+	# 	if len(this_cluster) > 1:
+	# 		# The del_range keeps the first item in the cluster (deleting only the repeated elem).
+	# 		# (Option 1 in Schultz 2008: flag only one of them)
+	# 		del_range = this_cluster[1:]
+	# 		for index in del_range:
+	# 			del contour[index]
+
+	# return contour
 
 def _no_schultz_repetition(contour):
 	"""
@@ -367,6 +395,7 @@ def contour_to_schultz_prime_contour(contour, include_depth=False):
 		prime_contour = [x for x in prime_contour if x[1]]
 		depth += 1
 
+	######
 	still_unflagged_values = True
 	while still_unflagged_values:
 		_schultz_reduce(prime_contour)  # Steps 6-9.
@@ -378,7 +407,7 @@ def contour_to_schultz_prime_contour(contour, include_depth=False):
 		if _no_schultz_repetition(prime_contour):
 			still_unflagged_values = False
 		else:
-			still_unflagged_values = False
+			still_unflagged_values = False  # to allow tests to run.
 			pass  # STEPS 11, 12, 13, 14, 15
 
 	# Remove elements that are unflagged.
