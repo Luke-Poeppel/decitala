@@ -162,6 +162,18 @@ def _get_initial_extrema(contour):
 	>>> contour = [0, 4, 3, 2, 5, 5, 1]
 	>>> _get_initial_extrema(contour)
 	[[0, {1, -1}], [4, {1}], [3, set()], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
+	>>> contour_2 = [1, 3, 0, 3, 0, 3, 0, 3, 2]
+	>>> for x in _get_initial_extrema(contour_2):
+	... 	print(x)
+	[1, {1, -1}]
+	[3, {1}]
+	[0, {-1}]
+	[3, {1}]
+	[0, {-1}]
+	[3, {1}]
+	[0, {-1}]
+	[3, {1}]
+	[2, {1, -1}]
 	"""
 	out = [[contour[0], {-1, 1}]]  # Maxima by definition.
 	for this_frame in roll_window(array=contour, window_length=3):
@@ -374,15 +386,14 @@ def _schultz_extrema_check(contour):
 		if not(_has_intervening_extrema(min_grouping, contour=contour, mode="min")):
 			raise NotImplementedError("TODO B")
 
-def _schultz_reduce(contour, depth):
+def _schultz_get_closest_extrema(
+		contour,
+		maxima,
+		minima
+	):
 	"""
-	# Steps 11, 12, 13, 14, 15
+	Returns the closest repeating extrema to the start and end of the contour.
 	"""
-	# Step 11
-	# These exclude the first and last (by design).
-	maxima = [(i, x) for (i, x) in enumerate(contour) if 1 in x[1]][1:-1]
-	minima = [(i, x) for (i, x) in enumerate(contour) if -1 in x[1]][1:-1]
-
 	# For minima/maxima that repeat themselves, stores the closest to start and end.
 	maxima_contour_elems = Counter([x[1][0] for x in maxima])
 	repeated_max_keys = [key for key, val in maxima_contour_elems.items()]
@@ -430,9 +441,24 @@ def _schultz_reduce(contour, depth):
 	# This list holds the closts repeating min and max to the end (in that order).
 	end_elems = [("min", closest_min_end), ("max", closest_max_end)] # noqa
 
-	# These are kept; the other repetitions are unflagged.
 	closest_start_extrema = min(start_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A =
 	closest_end_extrema = max(end_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
+
+	return (closest_start_extrema, closest_end_extrema)
+
+def _schultz_remove_flag_repetitions_except_closest(contour):
+	"""
+	Step 11. Remove all flag repetitions except those closest to the start and end of the contour.
+	"""
+	# These exclude the first and last (by design).
+	maxima = [(i, x) for (i, x) in enumerate(contour) if 1 in x[1]][1:-1]
+	minima = [(i, x) for (i, x) in enumerate(contour) if -1 in x[1]][1:-1]
+
+	closest_start_extrema, closest_end_extrema = _schultz_get_closest_extrema(
+		contour,
+		maxima,
+		minima
+	)
 
 	# Unflag all repeated maxes/mins that are not closest to first and last.
 	unflagged_minima = []
@@ -454,6 +480,21 @@ def _schultz_reduce(contour, depth):
 				if contour_elem[0] != associated_index:
 					contour[contour_elem[0]][1].remove(1)
 					unflagged_maxima.append(contour[contour_elem[0]])
+
+	return (contour, closest_start_extrema, closest_end_extrema, unflagged_minima, unflagged_maxima)
+
+def _schultz_reduce(contour, depth):
+	"""
+	# Steps 11, 12, 13, 14, 15
+	"""
+	# Step 11
+	(
+		contour,
+		closest_start_extrema,
+		closest_end_extrema,
+		unflagged_minima,
+		unflagged_maxima
+	) = _schultz_remove_flag_repetitions_except_closest(contour) # noqa
 
 	# Step 12
 	# If both are maxes or both are mins, reflag one of the opposite removed values.
@@ -512,9 +553,9 @@ def contour_to_schultz_prime_contour(contour):
 		return (pitch_content_to_contour(contour), depth)
 
 	prime_contour = _get_initial_extrema(contour)
-	initial_flags = [x[1] for x in prime_contour]
 
-	if all(x for x in initial_flags):
+	# import pdb; pdb.set_trace()
+	if all(x[1] for x in prime_contour):
 		pass  # Proceed directly to Step 6.
 	else:
 		# Steps 4 & 5 (delete unflagged values and increment).
@@ -525,10 +566,10 @@ def contour_to_schultz_prime_contour(contour):
 	still_unflagged_values = True
 	while still_unflagged_values:
 		_schultz_extrema_check(prime_contour)  # Steps 6-9.
-		if _no_schultz_repetition(prime_contour):  # Check Step 10.
+		if _no_schultz_repetition(prime_contour):  # Step 10.
 			still_unflagged_values = False
 		else:
-			prime_contour, depth = _schultz_reduce(prime_contour, depth=depth)
+			prime_contour, depth = _schultz_reduce(prime_contour, depth=depth)  # Steps 11-15.
 
 	# Remove elements that are unflagged.
 	prime_contour = [x[0] for x in prime_contour if x[1]]
