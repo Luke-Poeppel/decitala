@@ -362,7 +362,7 @@ def _schultz_extrema_check(contour):
 
 	for max_grouping in maxima_indices:
 		if not(_has_intervening_extrema(max_grouping, contour=contour, mode="max")):
-			print("TODO!!!!!")
+			raise NotImplementedError("TODO A")
 
 	minima_grouped = groupby(minima, lambda x: x[1][0])
 	minima_indices = []
@@ -372,7 +372,7 @@ def _schultz_extrema_check(contour):
 
 	for min_grouping in minima_indices:
 		if not(_has_intervening_extrema(min_grouping, contour=contour, mode="min")):
-			print("TODO!!!!!")
+			raise NotImplementedError("TODO B")
 
 def _schultz_reduce(contour, depth):
 	"""
@@ -435,6 +435,7 @@ def _schultz_reduce(contour, depth):
 	closest_end_extrema = max(end_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
 
 	# Unflag all repeated maxes/mins that are not closest to first and last.
+	unflagged_minima = []
 	if closest_start_extrema[0] == "min":
 		associated_contour_val = closest_start_extrema[1][1][0]
 		associated_index = closest_start_extrema[1][0]
@@ -442,7 +443,9 @@ def _schultz_reduce(contour, depth):
 			if contour_elem[1][0] == associated_contour_val:
 				if contour_elem[0] != associated_index:
 					contour[contour_elem[0]][1].remove(-1)
+					unflagged_minima.append(contour[contour_elem[0]])
 
+	unflagged_maxima = []
 	if closest_end_extrema[0] == "max":
 		associated_contour_val = closest_end_extrema[1][1][0]
 		associated_index = closest_end_extrema[1][0]
@@ -450,11 +453,24 @@ def _schultz_reduce(contour, depth):
 			if contour_elem[1][0] == associated_contour_val:
 				if contour_elem[0] != associated_index:
 					contour[contour_elem[0]][1].remove(1)
+					unflagged_maxima.append(contour[contour_elem[0]])
 
 	# Step 12
 	# If both are maxes or both are mins, reflag one of the opposite removed values.
 	if closest_start_extrema[0] == closest_end_extrema[0]:
-		print("TODO!!!!!!!")
+		if closest_start_extrema[0] == "max":
+			# re-add single flag to minlist.
+			try:
+				reflag = random.choice(unflagged_minima)
+				reflag[1].add(-1)
+			except IndexError:  # No minima were removed. Not totally sure this is right.
+				pass
+		else:
+			try:
+				reflag = random.choice(unflagged_maxima)
+				reflag[1].add(1)
+			except IndexError:  # No minima were removed. Not totally sure this is right.
+				pass
 
 	# Steps 13-15
 	contour = [x for x in contour if x[1]]
@@ -485,7 +501,7 @@ def _no_schultz_repetition(contour):
 		contour_elems = [x[0] for x in contour][1:-1]  # Exclude first and last.
 		return len(contour_elems) == len(set(contour_elems))
 
-def contour_to_schultz_prime_contour(contour, include_depth=False):
+def contour_to_schultz_prime_contour(contour):
 	"""
 	Implementation of Schultz's (2008) modification of Morris' contour-reduction algorithm.
 	"""
@@ -493,10 +509,7 @@ def contour_to_schultz_prime_contour(contour, include_depth=False):
 
 	# If the segment is of length <= 2, it is prime by definition.
 	if len(contour) <= 2:
-		if not(include_depth):
-			return pitch_content_to_contour(contour)
-		else:
-			return (pitch_content_to_contour(contour), depth)
+		return (pitch_content_to_contour(contour), depth)
 
 	prime_contour = _get_initial_extrema(contour)
 	initial_flags = [x[1] for x in prime_contour]
@@ -512,16 +525,11 @@ def contour_to_schultz_prime_contour(contour, include_depth=False):
 	still_unflagged_values = True
 	while still_unflagged_values:
 		_schultz_extrema_check(prime_contour)  # Steps 6-9.
-		# Check Step 10.
-		if _no_schultz_repetition(prime_contour):
+		if _no_schultz_repetition(prime_contour):  # Check Step 10.
 			still_unflagged_values = False
 		else:
 			prime_contour, depth = _schultz_reduce(prime_contour, depth=depth)
 
 	# Remove elements that are unflagged.
 	prime_contour = [x[0] for x in prime_contour if x[1]]
-
-	if not(include_depth):
-		return pitch_content_to_contour(prime_contour)
-	else:
-		return (pitch_content_to_contour(prime_contour), depth)
+	return (pitch_content_to_contour(prime_contour), depth)
