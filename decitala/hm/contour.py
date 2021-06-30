@@ -315,7 +315,7 @@ def contour_to_prime_contour(contour, include_depth=False):
 
 ####################################################################################################
 # Implementation of Schultz contour reduction algorithm (2008). Final version (see p. 108).
-def _has_intervening_extrema(window, contour, mode):
+def _window_has_intervening_extrema(window, contour, mode):
 	"""
 	NOTE: Still a component missing: unflag all but one if repetition found...
 
@@ -328,7 +328,7 @@ def _has_intervening_extrema(window, contour, mode):
 	... 	(4, [2, {1}])
 	... ]
 	>>> contour = [[1, {1, -1}], [0, {-1}], [2, {1}], [0, {-1}], [2, {1}], [1, {1, -1}]]
-	>>> _has_intervening_extrema(maxima_group, contour=contour, mode="max")
+	>>> _window_has_intervening_extrema(maxima_group, contour=contour, mode="max")
 	True
 	"""
 	for tiny_window in roll_window(window, window_length=2):
@@ -373,7 +373,7 @@ def _schultz_extrema_check(contour):
 	maxima_indices = list(filter(lambda x: len(x) > 1, maxima_indices))
 
 	for max_grouping in maxima_indices:
-		if not(_has_intervening_extrema(max_grouping, contour=contour, mode="max")):
+		if not(_window_has_intervening_extrema(max_grouping, contour=contour, mode="max")):
 			raise NotImplementedError("TODO A")
 
 	minima_grouped = groupby(minima, lambda x: x[1][0])
@@ -383,7 +383,7 @@ def _schultz_extrema_check(contour):
 	minima_indices = list(filter(lambda x: len(x) > 1, minima_indices))
 
 	for min_grouping in minima_indices:
-		if not(_has_intervening_extrema(min_grouping, contour=contour, mode="min")):
+		if not(_window_has_intervening_extrema(min_grouping, contour=contour, mode="min")):
 			raise NotImplementedError("TODO B")
 
 def _schultz_get_closest_extrema(
@@ -562,7 +562,6 @@ def contour_to_schultz_prime_contour(contour):
 		prime_contour = [x for x in prime_contour if x[1]]
 		depth += 1
 
-	######
 	still_unflagged_values = True
 	while still_unflagged_values:
 		_schultz_extrema_check(prime_contour)  # Steps 6-9.
@@ -572,5 +571,5 @@ def contour_to_schultz_prime_contour(contour):
 			prime_contour, depth = _schultz_reduce(prime_contour, depth=depth)  # Steps 11-15.
 
 	# Remove elements that are unflagged.
-	prime_contour = [x[0] for x in prime_contour if x[1]]
+	prime_contour = [x[0] for x in prime_contour]
 	return (pitch_content_to_contour(prime_contour), depth)
