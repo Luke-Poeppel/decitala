@@ -374,7 +374,8 @@ def _schultz_extrema_check(contour):
 
 	for max_grouping in maxima_indices:
 		if not(_window_has_intervening_extrema(max_grouping, contour=contour, mode="max")):
-			raise NotImplementedError("TODO A")
+			for elem in max_grouping[1:]:  # Remove flag from all but one.
+				elem[1][1].remove(1)
 
 	minima_grouped = groupby(minima, lambda x: x[1][0])
 	minima_indices = []
@@ -384,7 +385,8 @@ def _schultz_extrema_check(contour):
 
 	for min_grouping in minima_indices:
 		if not(_window_has_intervening_extrema(min_grouping, contour=contour, mode="min")):
-			raise NotImplementedError("TODO B")
+			for elem in min_grouping[1:]:  # Remove flag from all but one.
+				elem[1][1].remove(-1)
 
 def _schultz_get_closest_extrema(
 		contour,

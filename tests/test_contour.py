@@ -33,7 +33,7 @@ def test_has_intervening_extrema():
 	mode = "min"
 
 	expected = True
-	calculated = contour._has_intervening_extrema(
+	calculated = contour._window_has_intervening_extrema(
 		window=window,
 		contour=c,
 		mode=mode
@@ -57,6 +57,7 @@ def test_contour_ex15a_schultz():
 # 	calculated = contour.contour_to_schultz_prime_contour(contour=c)
 
 # 	expected = [1, 3, 0, 3, 2]
-# 	# assert list(calculated[0]) == expected
+# 	expected_depth = 2
+# # 	# assert list(calculated[0]) == expected
 
 # print(test_contour_ex15b_schultz())
