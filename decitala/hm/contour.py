@@ -480,6 +480,30 @@ def _schultz_get_closest_extrema(
 def _schultz_remove_flag_repetitions_except_closest(contour):
 	"""
 	Step 11. Remove all flag repetitions except those closest to the start and end of the contour.
+
+	From Ex15B:
+	>>> contour = [
+	...		[1, {1, -1}],
+	... 	[3, {1}],
+	... 	[0, {-1}],
+	... 	[3, {1}],
+	... 	[0, {-1}],
+	... 	[3, {1}],
+	... 	[0, {-1}],
+	... 	[3, {1}],
+	... 	[2, {1, -1}]
+	... ]
+	>>> for x in _schultz_remove_flag_repetitions_except_closest(contour)[0]:
+	... 	print(x)
+	[1, {1, -1}]
+	[3, {1}]
+	[0, set()]
+	[3, set()]
+	[0, set()]
+	[3, set()]
+	[0, set()]
+	[3, {1}]
+	[2, {1, -1}]
 	"""
 	# These exclude the first and last (by design).
 	maxima = [(i, x) for (i, x) in enumerate(contour) if 1 in x[1]][1:-1]
@@ -495,14 +519,15 @@ def _schultz_remove_flag_repetitions_except_closest(contour):
 	unflagged_maxima = []
 	unflagged_minima = []
 	for i, contour_elem in enumerate(contour):
-		if contour_elem[0] in (repeated_max_keys or repeated_min_keys):
+		# Really weird bug, won't accept contour_elem[0] in (repeated_max_keys or repeated_min_keys)...
+		if (contour_elem[0] in repeated_max_keys) or (contour_elem[0] in repeated_min_keys):
 			# Make sure we're not unflagging the closest flagged extrema.
 			# Unflag everything except the closest stuff.
 			if i not in {closest_start_extrema[1][0], closest_end_extrema[1][0]}:
 				if contour_elem[0] in repeated_max_keys:
 					contour_elem[1].remove(1)
 					unflagged_maxima.append(contour[contour_elem[0]])
-				else:
+				elif contour_elem[0] in repeated_min_keys:
 					contour_elem[1].remove(-1)
 					unflagged_minima.append(contour[contour_elem[0]])
 			else:
