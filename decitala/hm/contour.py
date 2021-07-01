@@ -395,6 +395,30 @@ def _schultz_get_closest_extrema(
 	):
 	"""
 	Returns the closest repeating extrema to the start and end of the contour.
+
+	From Ex15B:
+	>>> contour = [
+	...		[1, {1, -1}],
+	... 	[3, {1}],
+	... 	[0, {-1}],
+	... 	[3, {1}],
+	... 	[0, {-1}],
+	... 	[3, {1}],
+	... 	[0, {-1}],
+	... 	[3, {1}],
+	... 	[2, {1, -1}]
+	... ]
+	>>> maxima = [(1, [3, {1}]), (3, [3, {1}]), (5, [3, {1}]), (7, [3, {1}])]
+	>>> minima = [(2, [0, {-1}]), (4, [0, {-1}]), (6, [0, {-1}])]
+	>>> (closest_start, closest_end) = _schultz_get_closest_extrema(
+	... 	contour,
+	... 	maxima,
+	... 	minima
+	... )
+	>>> closest_start
+	('max', (1, [3, {1}]))
+	>>> closest_end
+	('max', (7, [3, {1}]))
 	"""
 	# For minima/maxima that repeat themselves, stores the closest to start and end.
 	maxima_contour_elems = Counter([x[1][0] for x in maxima])
@@ -445,6 +469,8 @@ def _schultz_get_closest_extrema(
 
 	closest_start_extrema = min(start_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A =
 	closest_end_extrema = max(end_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
+
+	# import pdb; pdb.set_trace()
 
 	return (closest_start_extrema, closest_end_extrema)
 
@@ -556,7 +582,6 @@ def contour_to_schultz_prime_contour(contour):
 
 	prime_contour = _get_initial_extrema(contour)
 
-	# import pdb; pdb.set_trace()
 	if all(x[1] for x in prime_contour):
 		pass  # Proceed directly to Step 6.
 	else:

@@ -55,6 +55,7 @@ def test_contour_ex15a_schultz():
 # 	# See p. 110
 # 	c = [1, 3, 0, 3, 0, 3, 0, 3, 2]
 # 	calculated = contour.contour_to_schultz_prime_contour(contour=c)
+# 	print(calculated)
 
 # 	expected = [1, 3, 0, 3, 2]
 # 	expected_depth = 2
