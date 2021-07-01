@@ -467,7 +467,7 @@ def _schultz_get_closest_extrema(
 	# This list holds the closts repeating min and max to the end (in that order).
 	end_elems = [("min", closest_min_end), ("max", closest_max_end)] # noqa
 
-	closest_start_extrema = min(start_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A =
+	closest_start_extrema = min(start_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
 	closest_end_extrema = max(end_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
 
 	return (
@@ -526,10 +526,10 @@ def _schultz_remove_flag_repetitions_except_closest(contour):
 			if i not in {closest_start_extrema[1][0], closest_end_extrema[1][0]}:
 				if contour_elem[0] in repeated_max_keys:
 					contour_elem[1].remove(1)
-					unflagged_maxima.append(contour[contour_elem[0]])
+					unflagged_maxima.append((i, contour_elem))
 				elif contour_elem[0] in repeated_min_keys:
 					contour_elem[1].remove(-1)
-					unflagged_minima.append(contour[contour_elem[0]])
+					unflagged_minima.append((i, contour_elem))
 			else:
 				continue
 
@@ -555,13 +555,13 @@ def _schultz_reduce(contour, depth):
 			# re-add single flag to minlist.
 			try:
 				reflag = random.choice(unflagged_minima)
-				reflag[1].add(-1)
+				contour[reflag[0]][1].add(-1)
 			except IndexError:  # No minima were removed. Not totally sure this is right.
 				pass
 		else:
 			try:
 				reflag = random.choice(unflagged_maxima)
-				reflag[1].add(1)
+				contour[reflag[0]][1].add(1)
 			except IndexError:  # No minima were removed. Not totally sure this is right.
 				pass
 
@@ -613,6 +613,7 @@ def contour_to_schultz_prime_contour(contour):
 		prime_contour = [x for x in prime_contour if x[1]]
 		depth += 1
 
+	# import pdb; pdb.set_trace()
 	still_unflagged_values = True
 	while still_unflagged_values:
 		_schultz_extrema_check(prime_contour)  # Steps 6-9.
@@ -621,6 +622,6 @@ def contour_to_schultz_prime_contour(contour):
 		else:
 			prime_contour, depth = _schultz_reduce(prime_contour, depth=depth)  # Steps 11-15.
 
-	# Remove elements that are unflagged.
+	# Get the contour elements.
 	prime_contour = [x[0] for x in prime_contour]
 	return (pitch_content_to_contour(prime_contour), depth)
