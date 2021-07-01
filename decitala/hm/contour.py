@@ -592,7 +592,7 @@ def _no_schultz_repetition(contour):
 	"""
 	if all(x[1] for x in contour):
 		contour_elems = [x[0] for x in contour][1:-1]  # Exclude first and last.
-		return len(contour_elems) == len(set(contour_elems))
+		return len(contour_elems) <= len(set(contour_elems)) + 1  # Only allow for one repetition.
 
 def contour_to_schultz_prime_contour(contour):
 	"""
@@ -613,7 +613,6 @@ def contour_to_schultz_prime_contour(contour):
 		prime_contour = [x for x in prime_contour if x[1]]
 		depth += 1
 
-	# import pdb; pdb.set_trace()
 	still_unflagged_values = True
 	while still_unflagged_values:
 		_schultz_extrema_check(prime_contour)  # Steps 6-9.
