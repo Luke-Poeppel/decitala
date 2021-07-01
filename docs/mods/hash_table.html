@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>hash_table &mdash; decitala 0.13.2 documentation</title>
+  <title>hash_table &mdash; decitala 0.14.0 documentation</title>
   
 
   
@@ -38,7 +38,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="path_finding" href="path_finding.html" />
+    <link rel="next" title="hm" href="hm.html" />
     <link rel="prev" title="fragment" href="fragment.html" /> 
 </head>
 
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.13.2
+                0.14.0
               </div>
             
           
@@ -93,13 +93,15 @@
 <li class="toctree-l1"><a class="reference internal" href="database.html">database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hm.html">hm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sp.html">sp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vis.html">vis</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<p class="caption"><span class="caption-text">Rhythmic Corpora</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/greek_metrics.html">Greek Metrics</a></li>
@@ -216,7 +218,8 @@ on a particular set of fragments, use this latter parameter. The factors, differ
 and other modification parameters are instance attributes with defaults set in the module.
 To change them, just re-run the <code class="docutils literal notranslate"><span class="pre">load</span></code> method with the desired inputs; this will clear the
 data and set reload it with the new desired modification techniques.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span> <span class="o">=</span> <span class="n">FragmentHashTable</span><span class="p">(</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.fragment</span> <span class="kn">import</span> <span class="n">Decitala</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span> <span class="o">=</span> <span class="n">FragmentHashTable</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">datasets</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;greek_foot&quot;</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">custom_fragments</span><span class="o">=</span><span class="p">[</span><span class="n">Decitala</span><span class="p">(</span><span class="s2">&quot;Ragavardhana&quot;</span><span class="p">)]</span>
 <span class="gp">... </span><span class="p">)</span>
@@ -225,7 +228,7 @@ data and set reload it with the new desired modification techniques.</p>
 <span class="go">&lt;decitala.hash_table.FragmentHashTable 0 fragments&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span>
-<span class="go">&lt;decitala.hash_table.FragmentHashTable 2645 fragments&gt;</span>
+<span class="go">&lt;decitala.hash_table.FragmentHashTable 2899 fragments&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span><span class="o">.</span><span class="n">datasets</span>
 <span class="go">[&#39;greek_foot&#39;]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fht</span><span class="o">.</span><span class="n">custom_fragments</span>
@@ -239,7 +242,7 @@ data and set reload it with the new desired modification techniques.</p>
 </div>
 <dl class="py method">
 <dt id="decitala.hash_table.FragmentHashTable.load">
-<code class="sig-name descname"><span class="pre">load</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.125,</span> <span class="pre">0.25,</span> <span class="pre">0.5,</span> <span class="pre">0.75,</span> <span class="pre">1.0,</span> <span class="pre">1.25,</span> <span class="pre">1.5,</span> <span class="pre">2.0,</span> <span class="pre">3.0,</span> <span class="pre">4.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differences</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-</span> <span class="pre">0.375,</span> <span class="pre">-</span> <span class="pre">0.25,</span> <span class="pre">-</span> <span class="pre">0.125,</span> <span class="pre">0.0,</span> <span class="pre">0.125,</span> <span class="pre">0.25,</span> <span class="pre">0.375,</span> <span class="pre">0.5,</span> <span class="pre">0.75,</span> <span class="pre">0.875,</span> <span class="pre">1.75,</span> <span class="pre">2.625,</span> <span class="pre">3.5,</span> <span class="pre">4.375]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_retrograde</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_stretch_augmentation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_mixed_augmentation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modification_hierarchy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'difference':</span> <span class="pre">3,</span> <span class="pre">'mixed':</span> <span class="pre">9,</span> <span class="pre">'ratio':</span> <span class="pre">1,</span> <span class="pre">'retrograde-difference':</span> <span class="pre">4,</span> <span class="pre">'retrograde-mixed':</span> <span class="pre">10,</span> <span class="pre">'retrograde-ratio':</span> <span class="pre">2,</span> <span class="pre">'retrograde-stretch':</span> <span class="pre">8,</span> <span class="pre">'retrograde-subdivision-ratio':</span> <span class="pre">6,</span> <span class="pre">'stretch':</span> <span class="pre">7,</span> <span class="pre">'subdivision-ratio':</span> <span class="pre">5}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hash_table.html#FragmentHashTable.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hash_table.FragmentHashTable.load" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">load</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">factors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0.125,</span> <span class="pre">0.1875,</span> <span class="pre">0.25,</span> <span class="pre">0.5,</span> <span class="pre">0.75,</span> <span class="pre">1.0,</span> <span class="pre">1.25,</span> <span class="pre">1.5,</span> <span class="pre">2.0,</span> <span class="pre">3.0,</span> <span class="pre">4.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">differences</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-</span> <span class="pre">0.375,</span> <span class="pre">-</span> <span class="pre">0.25,</span> <span class="pre">-</span> <span class="pre">0.125,</span> <span class="pre">0.0,</span> <span class="pre">0.125,</span> <span class="pre">0.25,</span> <span class="pre">0.375,</span> <span class="pre">0.5,</span> <span class="pre">0.75,</span> <span class="pre">0.875,</span> <span class="pre">1.75,</span> <span class="pre">2.625,</span> <span class="pre">3.5,</span> <span class="pre">4.375]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_retrograde</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_stretch_augmentation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_mixed_augmentation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modification_hierarchy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'difference':</span> <span class="pre">3,</span> <span class="pre">'mixed':</span> <span class="pre">9,</span> <span class="pre">'ratio':</span> <span class="pre">1,</span> <span class="pre">'retrograde-difference':</span> <span class="pre">4,</span> <span class="pre">'retrograde-mixed':</span> <span class="pre">10,</span> <span class="pre">'retrograde-ratio':</span> <span class="pre">2,</span> <span class="pre">'retrograde-stretch':</span> <span class="pre">8,</span> <span class="pre">'retrograde-subdivision-ratio':</span> <span class="pre">6,</span> <span class="pre">'stretch':</span> <span class="pre">7,</span> <span class="pre">'subdivision-ratio':</span> <span class="pre">5}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hash_table.html#FragmentHashTable.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hash_table.FragmentHashTable.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for loading the modifications. Allows the user to override the default attributes.</p>
 </dd></dl>
 
@@ -263,10 +266,10 @@ with default modification techniques changed, simply run <code class="docutils l
 parameters.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span> <span class="o">=</span> <span class="n">GreekFootHashTable</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span>
-<span class="go">&lt;decitala.hash_table.FragmentHashTable 2603 fragments&gt;</span>
+<span class="go">&lt;decitala.hash_table.FragmentHashTable 2855 fragments&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">try_retrograde</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_stretch_augmentation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span>
-<span class="go">&lt;decitala.hash_table.FragmentHashTable 706 fragments&gt;</span>
+<span class="go">&lt;decitala.hash_table.FragmentHashTable 737 fragments&gt;</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -295,7 +298,7 @@ parameter set to all available datasets in the <code class="docutils literal not
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="path_finding.html" class="btn btn-neutral float-right" title="path_finding" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="hm.html" class="btn btn-neutral float-right" title="hm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="fragment.html" class="btn btn-neutral float-left" title="fragment" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 

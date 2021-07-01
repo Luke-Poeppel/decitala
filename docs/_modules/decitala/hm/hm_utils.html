@@ -1,0 +1,502 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>decitala.hm.hm_utils &mdash; decitala 0.14.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.14.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/hm.html">hm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/path_finding.html">path_finding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/sp.html">sp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/vis.html">vis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Rhythmic Corpora</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic_usage.html">Basic Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">decitala</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>decitala.hm.hm_utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for decitala.hm.hm_utils</h1><div class="highlight"><pre>
+<span></span><span class="c1">####################################################################################################</span>
+<span class="c1"># File:     hm_utils.py</span>
+<span class="c1"># Purpose:  Module for storing and dealing with the Modes of Limited Transposition [MOLT] (1944).</span>
+<span class="c1">#</span>
+<span class="c1"># Author:   Luke Poeppel</span>
+<span class="c1">#</span>
+<span class="c1"># Location: NYC, 2021</span>
+<span class="c1">####################################################################################################</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span><span class="p">,</span> <span class="n">linalg</span>
+
+<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">converter</span>
+<span class="kn">from</span> <span class="nn">music21.pitch</span> <span class="kn">import</span> <span class="n">Pitch</span>
+<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">scale</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">molt</span>
+
+<span class="c1">####################################################################################################</span>
+<span class="c1"># Data</span>
+<span class="n">KS_MAJOR_WEIGHTS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6.35</span><span class="p">,</span> <span class="mf">2.23</span><span class="p">,</span> <span class="mf">3.48</span><span class="p">,</span> <span class="mf">2.33</span><span class="p">,</span> <span class="mf">4.38</span><span class="p">,</span> <span class="mf">4.09</span><span class="p">,</span> <span class="mf">2.52</span><span class="p">,</span> <span class="mf">5.19</span><span class="p">,</span> <span class="mf">2.39</span><span class="p">,</span> <span class="mf">3.66</span><span class="p">,</span> <span class="mf">2.29</span><span class="p">,</span> <span class="mf">2.88</span><span class="p">])</span> <span class="c1"># noqa</span>
+<span class="n">KS_MINOR_WEIGHTS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">6.33</span><span class="p">,</span> <span class="mf">2.68</span><span class="p">,</span> <span class="mf">3.52</span><span class="p">,</span> <span class="mf">5.38</span><span class="p">,</span> <span class="mf">2.60</span><span class="p">,</span> <span class="mf">3.53</span><span class="p">,</span> <span class="mf">2.54</span><span class="p">,</span> <span class="mf">4.75</span><span class="p">,</span> <span class="mf">3.98</span><span class="p">,</span> <span class="mf">2.69</span><span class="p">,</span> <span class="mf">3.34</span><span class="p">,</span> <span class="mf">3.17</span><span class="p">])</span> <span class="c1"># noqa</span>
+
+<span class="c1"># Good listing in Sherlaw Johnson p. 16</span>
+<span class="n">MOLT_DATA</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="s2">&quot;MODE-1_TRANSPOSITION-1&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;C4&quot;</span><span class="p">,</span> <span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A#4&quot;</span><span class="p">],),</span>
+	<span class="s2">&quot;MODE-1_TRANSPOSITION-2&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;C#4&quot;</span><span class="p">,</span> <span class="s2">&quot;D#4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">],),</span>
+	<span class="c1">#</span>
+	<span class="s2">&quot;MODE-2_TRANSPOSITION-1&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;C4&quot;</span><span class="p">,</span> <span class="s2">&quot;C#4&quot;</span><span class="p">,</span> <span class="s2">&quot;D#4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;B-4&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Blue Violet&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-2_TRANSPOSITION-2&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;C#4&quot;</span><span class="p">,</span> <span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;G#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A#4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Gold&quot;</span><span class="p">,</span> <span class="s2">&quot;Brown&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-2_TRANSPOSITION-3&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;E-4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Green&quot;</span><span class="p">]),</span>
+	<span class="c1">#</span>
+	<span class="s2">&quot;MODE-3_TRANSPOSITION-1&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;C4&quot;</span><span class="p">,</span> <span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;E-4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;A-4&quot;</span><span class="p">,</span> <span class="s2">&quot;B-4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Orange&quot;</span><span class="p">,</span> <span class="s2">&quot;Gold&quot;</span><span class="p">,</span> <span class="s2">&quot;Milky white&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-3_TRANSPOSITION-2&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;D-4&quot;</span><span class="p">,</span> <span class="s2">&quot;E-4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;A-4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Grey&quot;</span><span class="p">,</span> <span class="s2">&quot;Mauve&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-3_TRANSPOSITION-3&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;B-4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">,</span> <span class="s2">&quot;C#5&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Blue&quot;</span><span class="p">,</span> <span class="s2">&quot;Green&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-3_TRANSPOSITION-4&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;E-4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;B-4&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C#&quot;</span><span class="p">,</span> <span class="s2">&quot;D&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Orange&quot;</span><span class="p">,</span> <span class="s2">&quot;Red&quot;</span><span class="p">,</span> <span class="s2">&quot;A little blue&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="c1">#</span>
+	<span class="s2">&quot;MODE-4_TRANSPOSITION-1&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;C4&quot;</span><span class="p">,</span> <span class="s2">&quot;D-4&quot;</span><span class="p">,</span> <span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;A-4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Blue&quot;</span><span class="p">,</span> <span class="s2">&quot;Grey&quot;</span><span class="p">,</span> <span class="s2">&quot;Gold&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-4_TRANSPOSITION-2&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;C#4&quot;</span><span class="p">,</span> <span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;E-4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;A-4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Grey&quot;</span><span class="p">,</span> <span class="s2">&quot;Pink and copper yellow reflections&quot;</span><span class="p">,</span> <span class="s2">&quot;Black and blue&quot;</span><span class="p">,</span> <span class="s2">&quot;Green&quot;</span><span class="p">,</span> <span class="s2">&quot;Purple&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-4_TRANSPOSITION-3&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;E-4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;A-4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;B-4&quot;</span><span class="p">,</span> <span class="s2">&quot;C#5&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Yellow&quot;</span><span class="p">,</span> <span class="s2">&quot;Violet&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-4_TRANSPOSITION-4&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;E-4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;A-4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;B-4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">,</span> <span class="s2">&quot;D5&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Dark violet&quot;</span><span class="p">,</span> <span class="s2">&quot;White with purple patterns&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-4_TRANSPOSITION-5&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;A#4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">,</span> <span class="s2">&quot;D#5&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Intense violet with grey mauve zones&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-4_TRANSPOSITION-6&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;G-4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;B-4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">,</span> <span class="s2">&quot;D-5&quot;</span><span class="p">,</span> <span class="s2">&quot;E5&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Carmine&quot;</span><span class="p">,</span> <span class="s2">&quot;Violet purple&quot;</span><span class="p">,</span> <span class="s2">&quot;Orange&quot;</span><span class="p">,</span> <span class="s2">&quot;Grey mauve&quot;</span><span class="p">,</span> <span class="s2">&quot;Grey pink&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="c1">#</span>
+	<span class="s2">&quot;MODE-5_TRANSPOSITION-1&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;C4&quot;</span><span class="p">,</span> <span class="s2">&quot;C#4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">],),</span>
+	<span class="s2">&quot;MODE-5_TRANSPOSITION-2&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;C#4&quot;</span><span class="p">,</span> <span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;G#4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">],),</span>
+	<span class="s2">&quot;MODE-5_TRANSPOSITION-3&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;D#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;G#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;C#5&quot;</span><span class="p">],),</span>
+	<span class="s2">&quot;MODE-5_TRANSPOSITION-4&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;D#4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;G#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;A#4&quot;</span><span class="p">,</span> <span class="s2">&quot;D5&quot;</span><span class="p">],),</span>
+	<span class="s2">&quot;MODE-5_TRANSPOSITION-5&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;A#4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">,</span> <span class="s2">&quot;D#5&quot;</span><span class="p">],),</span>
+	<span class="s2">&quot;MODE-5_TRANSPOSITION-6&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A#4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">,</span> <span class="s2">&quot;E5&quot;</span><span class="p">],),</span>
+	<span class="c1">#</span>
+	<span class="s2">&quot;MODE-6_TRANSPOSITION-1&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;C4&quot;</span><span class="p">,</span> <span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A#4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Gold on grey background&quot;</span><span class="p">,</span> <span class="s2">&quot;orange lozenges&quot;</span><span class="p">,</span> <span class="s2">&quot;dark green&quot;</span><span class="p">,</span> <span class="s2">&quot;golden&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-6_TRANSPOSITION-2&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;D-4&quot;</span><span class="p">,</span> <span class="s2">&quot;E-4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;G-4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Leather chocolate&quot;</span><span class="p">,</span> <span class="s2">&quot;Reddish orange&quot;</span><span class="p">,</span> <span class="s2">&quot;violet&quot;</span><span class="p">,</span> <span class="s2">&quot;Pale grey&quot;</span><span class="p">,</span> <span class="s2">&quot;mauve&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-6_TRANSPOSITION-3&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;A-4&quot;</span><span class="p">,</span> <span class="s2">&quot;B-4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">,</span> <span class="s2">&quot;C#5&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Transparent sulphuric yellow&quot;</span><span class="p">,</span> <span class="s2">&quot;Mauve&quot;</span><span class="p">,</span> <span class="s2">&quot;Prussian blue&quot;</span><span class="p">,</span> <span class="s2">&quot;Brown&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-6_TRANSPOSITION-4&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;E-4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;A-4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">,</span> <span class="s2">&quot;C#5&quot;</span><span class="p">,</span> <span class="s2">&quot;D5&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Yellow&quot;</span><span class="p">,</span> <span class="s2">&quot;Violet&quot;</span><span class="p">,</span> <span class="s2">&quot;Black&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-6_TRANSPOSITION-5&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;B-4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">,</span> <span class="s2">&quot;D5&quot;</span><span class="p">,</span> <span class="s2">&quot;D#5&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;Gold&quot;</span><span class="p">,</span> <span class="s2">&quot;Pale blue&quot;</span><span class="p">,</span> <span class="s2">&quot;Violet&quot;</span><span class="p">,</span> <span class="s2">&quot;Brown&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="s2">&quot;MODE-6_TRANSPOSITION-6&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;B-4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">,</span> <span class="s2">&quot;C#5&quot;</span><span class="p">,</span> <span class="s2">&quot;D#5&quot;</span><span class="p">,</span> <span class="s2">&quot;E5&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;White&quot;</span><span class="p">,</span> <span class="s2">&quot;Black&quot;</span><span class="p">,</span> <span class="s2">&quot;Pale blue&quot;</span><span class="p">]),</span> <span class="c1"># noqa</span>
+	<span class="c1">#</span>
+	<span class="s2">&quot;MODE-7_TRANSPOSITION-1&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;C4&quot;</span><span class="p">,</span> <span class="s2">&quot;C#4&quot;</span><span class="p">,</span> <span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;D#4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;G#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">],),</span>
+	<span class="s2">&quot;MODE-7_TRANSPOSITION-2&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;C#4&quot;</span><span class="p">,</span> <span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;D#4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;G#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;A#4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">],),</span>
+	<span class="s2">&quot;MODE-7_TRANSPOSITION-3&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;D4&quot;</span><span class="p">,</span> <span class="s2">&quot;D#4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;G#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;A#4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">,</span> <span class="s2">&quot;C#5&quot;</span><span class="p">],),</span>
+	<span class="s2">&quot;MODE-7_TRANSPOSITION-4&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;D#4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;A#4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">,</span> <span class="s2">&quot;D5&quot;</span><span class="p">],),</span>
+	<span class="s2">&quot;MODE-7_TRANSPOSITION-5&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;E4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;A4&quot;</span><span class="p">,</span> <span class="s2">&quot;A#4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">,</span> <span class="s2">&quot;C#5&quot;</span><span class="p">,</span> <span class="s2">&quot;D#5&quot;</span><span class="p">],),</span>
+	<span class="s2">&quot;MODE-7_TRANSPOSITION-6&quot;</span><span class="p">:</span> <span class="p">([</span><span class="s2">&quot;F4&quot;</span><span class="p">,</span> <span class="s2">&quot;F#4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4&quot;</span><span class="p">,</span> <span class="s2">&quot;G#4&quot;</span><span class="p">,</span> <span class="s2">&quot;A#4&quot;</span><span class="p">,</span> <span class="s2">&quot;B4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">,</span> <span class="s2">&quot;C#5&quot;</span><span class="p">,</span> <span class="s2">&quot;D5&quot;</span><span class="p">,</span> <span class="s2">&quot;E5&quot;</span><span class="p">],)</span>
+<span class="p">}</span>
+
+<span class="n">COLOR_DICT</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="s2">&quot;Gris&quot;</span><span class="p">:</span> <span class="s2">&quot;Grey&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Grisâtre&quot;</span><span class="p">:</span> <span class="s2">&quot;Greyish&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Blanche&quot;</span><span class="p">:</span> <span class="s2">&quot;White&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Blanchâtre&quot;</span><span class="p">:</span> <span class="s2">&quot;Whitish&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Blanc&quot;</span><span class="p">:</span> <span class="s2">&quot;White&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Noir&quot;</span><span class="p">:</span> <span class="s2">&quot;Black&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Noirâtre&quot;</span><span class="p">:</span> <span class="s2">&quot;Blackish&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Brun&quot;</span><span class="p">:</span> <span class="s2">&quot;Brown&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Brunâtre&quot;</span><span class="p">:</span> <span class="s2">&quot;Brownish&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Roux&quot;</span><span class="p">:</span> <span class="s2">&quot;Ginger&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Rouge&quot;</span><span class="p">:</span> <span class="s2">&quot;Red&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Bleuté&quot;</span><span class="p">:</span> <span class="s2">&quot;Bluish&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Bleuâtre&quot;</span><span class="p">:</span> <span class="s2">&quot;Bluish&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Jaune&quot;</span><span class="p">:</span> <span class="s2">&quot;Yellow&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Orange&quot;</span><span class="p">:</span> <span class="s2">&quot;Orange&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Vert&quot;</span><span class="p">:</span> <span class="s2">&quot;Green&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Verdâtre&quot;</span><span class="p">:</span> <span class="s2">&quot;Greenish&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Olive&quot;</span><span class="p">:</span> <span class="s2">&quot;Olive&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Olivâtre&quot;</span><span class="p">:</span> <span class="s2">&quot;Olive&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Chataîgne&quot;</span><span class="p">:</span> <span class="s2">&quot;Chestnut&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Bouton d&#39;Or&quot;</span><span class="p">:</span> <span class="s2">&quot;Buttercup&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Foncé&quot;</span><span class="p">:</span> <span class="s2">&quot;Dark&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Bronzé&quot;</span><span class="p">:</span> <span class="s2">&quot;Bronzed&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Violacé&quot;</span><span class="p">:</span> <span class="s2">&quot;Purplish&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Rose&quot;</span><span class="p">:</span> <span class="s2">&quot;Pink&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Émeraude&quot;</span><span class="p">:</span> <span class="s2">&quot;Emerald&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Ardoisé&quot;</span><span class="p">:</span> <span class="s2">&quot;Slate&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Carmin&quot;</span><span class="p">:</span> <span class="s2">&quot;Carmine&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Clair&quot;</span><span class="p">:</span> <span class="s2">&quot;Light&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;Pâle&quot;</span><span class="p">:</span> <span class="s2">&quot;Pale&quot;</span>
+<span class="p">}</span>
+
+<span class="c1">####################################################################################################</span>
+
+<span class="k">def</span> <span class="nf">get_all_coefficients</span><span class="p">(</span><span class="n">exclude_major_minor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">molt_tonic_val</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+	<span class="n">MOLT_COEFFS</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s2">&quot;M1T1&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M1T2&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="c1">#</span>
+		<span class="s2">&quot;M2T1&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M2T2&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M2T3&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="c1">#</span>
+		<span class="s2">&quot;M3T1&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M3T2&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M3T3&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="c1">#</span>
+		<span class="s2">&quot;M4T1&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M4T2&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M4T3&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M4T4&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M4T5&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M4T6&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="c1">#</span>
+		<span class="s2">&quot;M5T1&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M5T2&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M5T3&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M5T4&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M5T5&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M5T6&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="c1">#</span>
+		<span class="s2">&quot;M6T1&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M6T2&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M6T3&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M6T4&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M6T5&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M6T6&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="c1">#</span>
+		<span class="s2">&quot;M7T1&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M7T2&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M7T3&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M7T4&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M7T5&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+		<span class="s2">&quot;M7T6&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">exclude_major_minor</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">MOLT_COEFFS</span> <span class="o">|</span> <span class="p">{</span>
+			<span class="s2">&quot;Major&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">6.35</span><span class="p">,</span> <span class="mf">2.23</span><span class="p">,</span> <span class="mf">3.48</span><span class="p">,</span> <span class="mf">2.33</span><span class="p">,</span> <span class="mf">4.38</span><span class="p">,</span> <span class="mf">4.09</span><span class="p">,</span> <span class="mf">2.52</span><span class="p">,</span> <span class="mf">5.19</span><span class="p">,</span> <span class="mf">2.39</span><span class="p">,</span> <span class="mf">3.66</span><span class="p">,</span> <span class="mf">2.29</span><span class="p">,</span> <span class="mf">2.88</span><span class="p">],</span>
+			<span class="s2">&quot;Minor&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">6.33</span><span class="p">,</span> <span class="mf">2.68</span><span class="p">,</span> <span class="mf">3.52</span><span class="p">,</span> <span class="mf">5.38</span><span class="p">,</span> <span class="mf">2.60</span><span class="p">,</span> <span class="mf">3.53</span><span class="p">,</span> <span class="mf">2.54</span><span class="p">,</span> <span class="mf">4.75</span><span class="p">,</span> <span class="mf">3.98</span><span class="p">,</span> <span class="mf">2.69</span><span class="p">,</span> <span class="mf">3.34</span><span class="p">,</span> <span class="mf">3.17</span><span class="p">],</span>
+		<span class="p">}</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">MOLT_COEFFS</span>
+
+<div class="viewcode-block" id="pc_counter"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.pc_counter">[docs]</a><span class="k">def</span> <span class="nf">pc_counter</span><span class="p">(</span>
+		<span class="n">filepath</span><span class="p">,</span>
+		<span class="n">part_num</span><span class="p">,</span>
+		<span class="n">normalize_over_duration</span><span class="o">=</span><span class="kc">False</span>
+	<span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Returns a dictionary holding the pitch classes in the keys and the count (or count normalized</span>
+<span class="sd">	over duration) in the given filepath-part_num combination.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">pitch_classes</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">)}</span>
+	<span class="n">converted</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+	<span class="n">net</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">for</span> <span class="n">tone</span> <span class="ow">in</span> <span class="n">converted</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="n">part_num</span><span class="p">]</span><span class="o">.</span><span class="n">stripTies</span><span class="p">()</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notes</span><span class="p">:</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">tone</span><span class="o">.</span><span class="n">isChord</span><span class="p">:</span>
+				<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tone</span><span class="o">.</span><span class="n">pitches</span><span class="p">):</span>
+					<span class="n">pitch_classes</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">pitchClass</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tone</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)</span>
+					<span class="n">net</span> <span class="o">+=</span> <span class="n">tone</span><span class="o">.</span><span class="n">quarterLength</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">pitch_classes</span><span class="p">[</span><span class="n">tone</span><span class="o">.</span><span class="n">pitch</span><span class="o">.</span><span class="n">pitchClass</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tone</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)</span>
+				<span class="n">net</span> <span class="o">+=</span> <span class="n">tone</span><span class="o">.</span><span class="n">quarterLength</span>
+		<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+			<span class="k">continue</span>
+
+	<span class="k">if</span> <span class="n">normalize_over_duration</span><span class="p">:</span>
+		<span class="n">normalized_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">net</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">pitch_classes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+		<span class="k">assert</span> <span class="nb">round</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">normalized_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="o">==</span> <span class="mi">1</span>
+		<span class="k">return</span> <span class="n">normalized_dict</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">pitch_classes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+<div class="viewcode-block" id="pc_ql_counter"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.pc_ql_counter">[docs]</a><span class="k">def</span> <span class="nf">pc_ql_counter</span><span class="p">(</span>
+	<span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Same as the above, but returns the qls in the dictionary values/list. Will probably be</span>
+<span class="sd">	integrated with the above function eventually.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">pass</span></div>
+
+<div class="viewcode-block" id="pc_dict_to_vector"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.pc_dict_to_vector">[docs]</a><span class="k">def</span> <span class="nf">pc_dict_to_vector</span><span class="p">(</span><span class="n">dict_in</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for converting a pitch class dictionary (i.e. a dictionary with keys in range 0-11 and</span>
+<span class="sd">	values some integer) to a vector of the associated values; sorted by the key, naturally.</span>
+
+<span class="sd">	&gt;&gt;&gt; from decitala.hm import molt</span>
+<span class="sd">	&gt;&gt;&gt; m3t3 = molt.MOLT(mode=3, transposition=3)</span>
+<span class="sd">	&gt;&gt;&gt; dict_in = m3t3.pc_dict()</span>
+<span class="sd">	&gt;&gt;&gt; dict_in</span>
+<span class="sd">	{0: 1, 1: 1, 2: 1, 3: 0, 4: 1, 5: 1, 6: 1, 7: 0, 8: 1, 9: 1, 10: 1, 11: 0}</span>
+<span class="sd">	&gt;&gt;&gt; pc_dict_to_vector(dict_in)</span>
+<span class="sd">	array([1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0])</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dict_in</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dict_in</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span></div>
+
+<div class="viewcode-block" id="diatonic_scale_binary"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.diatonic_scale_binary">[docs]</a><span class="k">def</span> <span class="nf">diatonic_scale_binary</span><span class="p">(</span><span class="n">tonic</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">as_vector</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for creating a binary dict (or ordered vector if ``as_vector=True``) of a major or</span>
+<span class="sd">	minor scale (set ``mode``) of a given ``diatonic``.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">pitch_classes</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">11</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+	<span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Major&quot;</span><span class="p">:</span>
+		<span class="n">res_scale</span> <span class="o">=</span> <span class="n">scale</span><span class="o">.</span><span class="n">MajorScale</span><span class="p">(</span><span class="n">tonic</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Minor&quot;</span><span class="p">:</span>
+		<span class="n">res_scale</span> <span class="o">=</span> <span class="n">scale</span><span class="o">.</span><span class="n">MinorScale</span><span class="p">(</span><span class="n">tonic</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a valid mode.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">))</span>
+
+	<span class="n">res_scale_pitches</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">pitchClass</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">res_scale</span><span class="o">.</span><span class="n">pitches</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	<span class="k">for</span> <span class="n">pc</span> <span class="ow">in</span> <span class="n">res_scale_pitches</span><span class="p">:</span>
+		<span class="n">pitch_classes</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">as_vector</span><span class="p">):</span>
+		<span class="k">return</span> <span class="n">pitch_classes</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">pc_dict_to_vector</span><span class="p">(</span><span class="n">pitch_classes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="note_counter"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.note_counter">[docs]</a><span class="k">def</span> <span class="nf">note_counter</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">part_num</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Simple tool for counting the number of notes (with ties stripped) in a given filepath/part</span>
+<span class="sd">	combination.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">converted</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+	<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">for</span> <span class="n">tone</span> <span class="ow">in</span> <span class="n">converted</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="n">part_num</span><span class="p">]</span><span class="o">.</span><span class="n">stripTies</span><span class="p">()</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notes</span><span class="p">:</span>
+		<span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+	<span class="k">return</span> <span class="n">count</span></div>
+
+<span class="k">def</span> <span class="nf">KS</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">return_p_value</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="n">input_zscores</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">)</span>
+
+	<span class="n">coefficients</span> <span class="o">=</span> <span class="n">coefficients</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span>
+	<span class="n">score</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">spearmanr</span><span class="p">(</span><span class="n">input_zscores</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">return_p_value</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">score</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">score</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<div class="viewcode-block" id="KS_diatonic"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.KS_diatonic">[docs]</a><span class="k">def</span> <span class="nf">KS_diatonic</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">return_tonic</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Needs to circulate over all major/minor keys.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">input_zscores</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">)</span>
+
+	<span class="n">coefficients</span> <span class="o">=</span> <span class="n">coefficients</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span>
+	<span class="n">coefficients</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">circulant</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span>
+
+	<span class="n">scores</span> <span class="o">=</span> <span class="p">[</span>
+		<span class="n">stats</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">input_zscores</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">coefficient_collection</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">for</span> <span class="n">coefficient_collection</span> <span class="ow">in</span> <span class="n">coefficients</span>
+	<span class="p">]</span>
+	<span class="n">max_correlation</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+	<span class="n">max_correlation_index</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">max_correlation</span><span class="p">)</span>
+	<span class="n">max_correlation_pitch</span> <span class="o">=</span> <span class="n">Pitch</span><span class="p">(</span><span class="n">max_correlation_index</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
+
+	<span class="k">if</span> <span class="n">return_tonic</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">max_correlation_pitch</span><span class="p">,</span> <span class="n">max_correlation</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="n">max_correlation</span></div>
+
+<span class="k">def</span> <span class="nf">test_all_coefficients</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">exclude_major_minor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">molt_tonic_val</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+	<span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">coefficients</span> <span class="ow">in</span> <span class="n">get_all_coefficients</span><span class="p">(</span>
+			<span class="n">exclude_major_minor</span><span class="o">=</span><span class="n">exclude_major_minor</span><span class="p">,</span>
+			<span class="n">molt_tonic_val</span><span class="o">=</span><span class="n">molt_tonic_val</span>
+		<span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+		<span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;Major&quot;</span><span class="p">,</span> <span class="s2">&quot;Minor&quot;</span><span class="p">}:</span>
+			<span class="n">res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">KS_diatonic</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">KS</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">return_p_value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">res</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020-2021, Luke Poeppel.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

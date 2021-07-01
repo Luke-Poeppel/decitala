@@ -1,0 +1,377 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>decitala.hm.molt &mdash; decitala 0.14.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> decitala
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.14.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Modules</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/database.html">database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/fragment.html">fragment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/hm.html">hm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/path_finding.html">path_finding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/sp.html">sp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/trees.html">trees</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/utils.html">utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/vis.html">vis</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Rhythmic Corpora</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/decitalas.html">Desītālas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/greek_metrics.html">Greek Metrics</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Basic Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../basic_usage.html">Basic Usage</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">decitala</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>decitala.hm.molt</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for decitala.hm.molt</h1><div class="highlight"><pre>
+<span></span><span class="c1">####################################################################################################</span>
+<span class="c1"># File:     molt.py</span>
+<span class="c1"># Purpose:  Module for storing and dealing with the Modes of Limited Transposition [MOLT] (1944).</span>
+<span class="c1">#</span>
+<span class="c1"># Author:   Luke Poeppel</span>
+<span class="c1">#</span>
+<span class="c1"># Location: NYC, 2021</span>
+<span class="c1">####################################################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Tools for dealing with Messiaen&#39;s Modes of Limited Transpositions (MOLT).</span>
+
+<span class="sd">&quot;I am ... affected by a kind of synopsia, found more in my mind than in</span>
+<span class="sd">my body, which allows me, when I hear music, and equally when I read</span>
+<span class="sd">it, to see inwardly, in the mind&#39;s eye, colors which move with the music,</span>
+<span class="sd">and I sense these colors in an extremely vivid manner. . . .&quot; (Samuel, 1976)</span>
+
+<span class="sd">Color translations come from</span>
+<span class="sd">`Håkon Austbø &lt;https://www.musicandpractice.org/volume-2/visualizing-visions-the-significance-of-messiaens-colours/&gt;`_ # noqa</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">scale</span>
+<span class="kn">from</span> <span class="nn">music21.pitch</span> <span class="kn">import</span> <span class="n">Pitch</span>
+<span class="kn">from</span> <span class="nn">music21.note</span> <span class="kn">import</span> <span class="n">Note</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">hm_utils</span>
+
+<div class="viewcode-block" id="MOLT"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.molt.MOLT">[docs]</a><span class="k">class</span> <span class="nc">MOLT</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Class representing a Mode of Limited Transposition (Messiaen, 1944), therefore called a MOLT.</span>
+
+<span class="sd">	&gt;&gt;&gt; m1t2 = MOLT(mode=1, transposition=2)</span>
+<span class="sd">	&gt;&gt;&gt; m1t2</span>
+<span class="sd">	&lt;moiseaux.MOLT mode=1, transposition=2&gt;</span>
+<span class="sd">	&gt;&gt;&gt; m1t2.mode</span>
+<span class="sd">	1</span>
+<span class="sd">	&gt;&gt;&gt; m1t2.transposition</span>
+<span class="sd">	2</span>
+<span class="sd">	&gt;&gt;&gt; m1t2.scale</span>
+<span class="sd">	&lt;music21.scale.ConcreteScale C# Concrete&gt;</span>
+<span class="sd">	&gt;&gt;&gt; for p in m1t2.pitches:</span>
+<span class="sd">	... 	print(p)</span>
+<span class="sd">	C#4</span>
+<span class="sd">	D#4</span>
+<span class="sd">	F4</span>
+<span class="sd">	G4</span>
+<span class="sd">	A4</span>
+<span class="sd">	B4</span>
+<span class="sd">	&gt;&gt;&gt; m1t2.color</span>
+<span class="sd">	&gt;&gt;&gt; m1t2.pc_dict()</span>
+<span class="sd">	{0: 0, 1: 1, 2: 0, 3: 1, 4: 0, 5: 1, 6: 0, 7: 1, 8: 0, 9: 1, 10: 0, 11: 1}</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">transposition</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">transposition</span> <span class="o">=</span> <span class="n">transposition</span>
+
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;moiseaux.MOLT mode=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2">, transposition=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">transposition</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+
+<div class="viewcode-block" id="MOLT.from_str"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.molt.MOLT.from_str">[docs]</a>	<span class="nd">@classmethod</span>
+	<span class="k">def</span> <span class="nf">from_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">str_in</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Return a MOLT object from string input of the form ``&quot;MXTB&quot;``</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">str_in</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">transposition</span><span class="o">=</span><span class="n">str_in</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span></div>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Returns a music21.scale object consisting of the pitches in the MOLT.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">pitches</span> <span class="o">=</span> <span class="n">hm_utils</span><span class="o">.</span><span class="n">MOLT_DATA</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;MODE-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2">_TRANSPOSITION-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">transposition</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">return</span> <span class="n">scale</span><span class="o">.</span><span class="n">ConcreteScale</span><span class="p">(</span><span class="n">pitches</span><span class="o">=</span><span class="n">pitches</span><span class="p">)</span>
+
+	<span class="c1"># Override scale.pitches attribute to remove octave duplication.</span>
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">pitches</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Returns the pitches of the MOLT. Comes from the music21.scale.pitches, but overrides</span>
+<span class="sd">		to remove the octave duplication.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">pitches</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">color</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Returns the associated color of the mode, if it exists.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">}:</span>
+			<span class="k">return</span> <span class="kc">None</span>
+		<span class="k">return</span> <span class="n">hm_utils</span><span class="o">.</span><span class="n">MOLT_DATA</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;MODE-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2">_TRANSPOSITION-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">transposition</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">is_color_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Returns whether the mode is a color mode, i.e. MOLT 2, 3, 4, or 6.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+
+	<span class="k">def</span> <span class="nf">pitch_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pitches</span><span class="p">]</span>
+
+<div class="viewcode-block" id="MOLT.pc_dict"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.molt.MOLT.pc_dict">[docs]</a>	<span class="k">def</span> <span class="nf">pc_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tonic_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Returns a dictionary for which the keys are the standard pitch classes (0-11)</span>
+<span class="sd">		and the values are 0/1, determined by whether that pitch belongs to the mode.</span>
+
+<span class="sd">		:param float tonic_value: an optional value to store in the tonic of the scale,</span>
+<span class="sd">									i.e., the first tone. Otherwise, all pitches of the</span>
+<span class="sd">									scale will be set to 1 (and the others set to 0).</span>
+<span class="sd">		:rtype: dict</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">pc_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">)}</span>
+		<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pitches</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">tonic</span> <span class="ow">and</span> <span class="n">tonic_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">pc_dict</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">pitchClass</span><span class="p">]</span> <span class="o">=</span> <span class="n">tonic_value</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">pc_dict</span><span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">pitchClass</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="k">return</span> <span class="n">pc_dict</span></div>
+
+<div class="viewcode-block" id="MOLT.pc_vector"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.molt.MOLT.pc_vector">[docs]</a>	<span class="k">def</span> <span class="nf">pc_vector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tonic_value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Returns the :obj:`molt.MOLT.pc_dict` as a vector, ordered by the pitch class.</span>
+
+<span class="sd">				:param float tonic_value: an optional value to store in the tonic of the scale,</span>
+<span class="sd">									i.e., the first tone. Otherwise, all pitches of the</span>
+<span class="sd">									scale will be set to 1 (and the others set to 0).</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">hm_utils</span><span class="o">.</span><span class="n">pc_dict_to_vector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pc_dict</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">tonic_value</span><span class="p">))</span></div></div>
+
+<div class="viewcode-block" id="MOLT_query"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.molt.MOLT_query">[docs]</a><span class="k">def</span> <span class="nf">MOLT_query</span><span class="p">(</span><span class="n">collection</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Returns a list of the possible MOLT (objects) that contain the collection. Accepts</span>
+<span class="sd">	either a list of midi tones, a list of strings, a list of pitch objecs,</span>
+<span class="sd">	or a list of note objects.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1"># Prepare input</span>
+	<span class="n">query_collection</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+	<span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+			<span class="n">query_collection</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Pitch</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">pitchClass</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Pitch</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Note</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+			<span class="n">query_collection</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">pitchClass</span><span class="p">)</span>
+
+	<span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">hm_utils</span><span class="o">.</span><span class="n">MOLT_DATA</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+		<span class="n">pcs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">this_pitch</span> <span class="ow">in</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+			<span class="n">pcs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Pitch</span><span class="p">(</span><span class="n">this_pitch</span><span class="p">)</span><span class="o">.</span><span class="n">pitchClass</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">query_collection</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">pcs</span><span class="p">):</span>
+			<span class="n">split</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+			<span class="n">mode</span> <span class="o">=</span> <span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">transposition</span> <span class="o">=</span> <span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+			<span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="n">transposition</span><span class="p">))</span>
+
+	<span class="k">return</span> <span class="n">res</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020-2021, Luke Poeppel.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

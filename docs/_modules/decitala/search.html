@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.search &mdash; decitala 0.13.2 documentation</title>
+  <title>decitala.search &mdash; decitala 0.14.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.13.2
+                0.14.0
               </div>
             
           
@@ -91,13 +91,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../mods/database.html">database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/fragment.html">fragment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/hm.html">hm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/sp.html">sp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/utils.html">utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/vis.html">vis</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<p class="caption"><span class="caption-text">Rhythmic Corpora</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../datasets/greek_metrics.html">Greek Metrics</a></li>
@@ -231,6 +233,8 @@
 
 	<span class="n">pitch_content</span><span class="p">:</span> <span class="nb">list</span>
 	<span class="n">is_spanned_by_slur</span><span class="p">:</span> <span class="nb">bool</span>
+	<span class="n">slur_count</span><span class="p">:</span> <span class="nb">int</span>
+	<span class="n">slur_start_end_count</span><span class="p">:</span> <span class="nb">int</span>
 	<span class="n">id_</span><span class="p">:</span> <span class="nb">int</span>
 
 	<span class="n">contiguous_summation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -239,7 +243,51 @@
 		<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;search.Extraction </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id_</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
 
 	<span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="k">pass</span></div>
+		<span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="Extraction.split"><a class="viewcode-back" href="../../mods/search.html#decitala.search.Extraction.split">[docs]</a>	<span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">split_dict</span><span class="p">,</span> <span class="n">all_res</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		NOTE: this will fail when using contiguous summation. be warned...</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fragment</span> <span class="ow">in</span> <span class="n">split_dict</span><span class="p">):</span>
+			<span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">split</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="c1"># This is hilariously stupid, but it should be ok as a temporary solution.</span>
+			<span class="n">filtered_all_res</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="k">for</span> <span class="n">extraction</span> <span class="ow">in</span> <span class="n">all_res</span><span class="p">:</span>
+				<span class="k">if</span> <span class="p">(</span><span class="n">extraction</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> \
+					<span class="p">(</span><span class="n">extraction</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+					<span class="n">filtered_all_res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extraction</span><span class="p">)</span>
+
+			<span class="n">res_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">filtered_all_res</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">split_elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">split_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fragment</span><span class="p">]):</span>
+				<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">extraction</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">res_copy</span><span class="p">):</span>
+					<span class="k">if</span> <span class="n">extraction</span><span class="o">.</span><span class="n">fragment</span> <span class="o">==</span> <span class="n">split_elem</span><span class="p">:</span>
+						<span class="n">extraction_obj</span> <span class="o">=</span> <span class="n">Extraction</span><span class="p">(</span>
+							<span class="n">fragment</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">fragment</span><span class="p">,</span>
+							<span class="n">frag_type</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">frag_type</span><span class="p">,</span>
+							<span class="n">onset_range</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">onset_range</span><span class="p">,</span>
+							<span class="n">retrograde</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">retrograde</span><span class="p">,</span>
+							<span class="n">factor</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">factor</span><span class="p">,</span>
+							<span class="n">difference</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">difference</span><span class="p">,</span>
+							<span class="n">mod_hierarchy_val</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">mod_hierarchy_val</span><span class="p">,</span>
+							<span class="n">pitch_content</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">pitch_content</span><span class="p">,</span>
+							<span class="n">is_spanned_by_slur</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">is_spanned_by_slur</span><span class="p">,</span>
+							<span class="n">slur_count</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">slur_count</span><span class="p">,</span>
+							<span class="n">slur_start_end_count</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">slur_start_end_count</span><span class="p">,</span>
+							<span class="n">id_</span><span class="o">=</span><span class="mi">1000</span> <span class="o">+</span> <span class="n">i</span>  <span class="c1"># Random scale to differentiate between standard.</span>
+						<span class="p">)</span>
+						<span class="n">split</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extraction_obj</span><span class="p">)</span>
+						<span class="n">res_copy</span> <span class="o">=</span> <span class="n">res_copy</span><span class="p">[:</span><span class="n">j</span><span class="p">]</span>
+
+			<span class="k">return</span> <span class="n">split</span></div></div>
+
+<div class="viewcode-block" id="Frame"><a class="viewcode-back" href="../../mods/search.html#decitala.search.Frame">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Frame</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A frame of the objects in the score.</span>
+<span class="sd">	&quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="frame_to_ql_array"><a class="viewcode-back" href="../../mods/search.html#decitala.search.frame_to_ql_array">[docs]</a><span class="k">def</span> <span class="nf">frame_to_ql_array</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -301,8 +349,8 @@
 
 <div class="viewcode-block" id="frame_is_spanned_by_slur"><a class="viewcode-back" href="../../mods/search.html#decitala.search.frame_is_spanned_by_slur">[docs]</a><span class="k">def</span> <span class="nf">frame_is_spanned_by_slur</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	:param list frame: Frame from :obj:`~decitala.utils.get_object_indices`.</span>
-<span class="sd">	:return: Whether or not the frame is spanned by a music21.spanner.Slur object.</span>
+<span class="sd">	:param list frame: frame from :obj:`~decitala.utils.get_object_indices`.</span>
+<span class="sd">	:return: whether or not the frame is spanned by a music21.spanner.Slur object.</span>
 <span class="sd">	:rtype: bool</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="kc">False</span>
@@ -316,6 +364,64 @@
 					<span class="n">is_spanned_by_slur</span> <span class="o">=</span> <span class="kc">True</span>
 
 	<span class="k">return</span> <span class="n">is_spanned_by_slur</span></div>
+
+<div class="viewcode-block" id="frame_slur_count"><a class="viewcode-back" href="../../mods/search.html#decitala.search.frame_slur_count">[docs]</a><span class="k">def</span> <span class="nf">frame_slur_count</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">allow_overlap</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:param list frame: frame from :obj:`~decitala.utils.get_object_indices`.</span>
+<span class="sd">	:param bool allow_overlap: whether to allow overlaps in the appearing slurs. If ``False``,</span>
+<span class="sd">								all the appearing slurs must start and end within</span>
+<span class="sd">								the frame&#39;s boundaries.</span>
+<span class="sd">	:return: The number of slurs in a frame.</span>
+<span class="sd">	:rtype: int</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">first_offset</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">last_offset</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+	<span class="n">all_slurs</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">this_obj</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">:</span>
+		<span class="n">obj_spanners</span> <span class="o">=</span> <span class="n">this_obj</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">getSpannerSites</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">this_spanner</span> <span class="ow">in</span> <span class="n">obj_spanners</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">this_spanner</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;Slur&quot;</span><span class="p">:</span>
+				<span class="n">all_slurs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_spanner</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">allow_overlap</span><span class="p">:</span>
+		<span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_slurs</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">this_slur</span> <span class="ow">in</span> <span class="n">all_slurs</span><span class="p">:</span>
+			<span class="n">starting_offset</span> <span class="o">=</span> <span class="n">this_slur</span><span class="o">.</span><span class="n">getFirst</span><span class="p">()</span><span class="o">.</span><span class="n">offset</span>
+			<span class="n">ending_offset</span> <span class="o">=</span> <span class="n">this_slur</span><span class="o">.</span><span class="n">getLast</span><span class="p">()</span><span class="o">.</span><span class="n">offset</span>
+			<span class="k">if</span> <span class="n">starting_offset</span> <span class="o">&gt;=</span> <span class="n">first_offset</span> <span class="ow">and</span> <span class="n">ending_offset</span> <span class="o">&lt;=</span> <span class="n">last_offset</span><span class="p">:</span>
+				<span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">//</span> <span class="mi">2</span>
+
+	<span class="k">return</span> <span class="n">count</span></div>
+
+<div class="viewcode-block" id="frame_slur_start_end_count"><a class="viewcode-back" href="../../mods/search.html#decitala.search.frame_slur_start_end_count">[docs]</a><span class="k">def</span> <span class="nf">frame_slur_start_end_count</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Don&#39;t love this, but let&#39;s see if it works:</span>
+
+<span class="sd">	Returns 0 if neither the first nor last onset ends with a slur.</span>
+<span class="sd">	Returns 1 if first or last onset ends with a slur.</span>
+<span class="sd">	Returns 2 if the first and last onset ends with a slur(i.e. frame_is_spanned_by_slur=True).</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">starts_with_slur</span> <span class="o">=</span> <span class="kc">False</span>
+	<span class="n">ends_with_slur</span> <span class="o">=</span> <span class="kc">False</span>
+	<span class="n">first_obj</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">last_obj</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+	<span class="n">first_obj_spanners</span> <span class="o">=</span> <span class="n">first_obj</span><span class="o">.</span><span class="n">getSpannerSites</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">this_spanner</span> <span class="ow">in</span> <span class="n">first_obj_spanners</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">this_spanner</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;Slur&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">this_spanner</span><span class="o">.</span><span class="n">isFirst</span><span class="p">(</span><span class="n">first_obj</span><span class="p">):</span>
+				<span class="n">starts_with_slur</span> <span class="o">=</span> <span class="kc">True</span>
+
+	<span class="n">last_obj_spanners</span> <span class="o">=</span> <span class="n">last_obj</span><span class="o">.</span><span class="n">getSpannerSites</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">this_spanner</span> <span class="ow">in</span> <span class="n">last_obj_spanners</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">this_spanner</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;Slur&quot;</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">this_spanner</span><span class="o">.</span><span class="n">isLast</span><span class="p">(</span><span class="n">last_obj</span><span class="p">):</span>
+				<span class="n">ends_with_slur</span> <span class="o">=</span> <span class="kc">True</span>
+
+	<span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">starts_with_slur</span><span class="p">)</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">ends_with_slur</span><span class="p">)</span></div>
 
 <span class="k">def</span> <span class="nf">frame_lookup</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">ql_array</span><span class="p">,</span> <span class="n">curr_fragment_id</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">windows</span><span class="p">):</span>
 	<span class="n">objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">]</span>
@@ -337,6 +443,8 @@
 				<span class="n">mod_hierarchy_val</span><span class="o">=</span><span class="n">searched</span><span class="p">[</span><span class="s2">&quot;mod_hierarchy_val&quot;</span><span class="p">],</span>
 				<span class="n">pitch_content</span><span class="o">=</span><span class="n">frame_to_midi</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span>
 				<span class="n">is_spanned_by_slur</span><span class="o">=</span><span class="n">frame_is_spanned_by_slur</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span>
+				<span class="n">slur_count</span><span class="o">=</span><span class="n">frame_slur_count</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span>
+				<span class="n">slur_start_end_count</span><span class="o">=</span><span class="n">frame_slur_start_end_count</span><span class="p">(</span><span class="n">frame</span><span class="p">),</span>
 				<span class="n">id_</span><span class="o">=</span><span class="n">curr_fragment_id</span>
 			<span class="p">)</span>
 	<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
@@ -363,7 +471,7 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">object_list</span> <span class="o">=</span> <span class="n">get_object_indices</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span> <span class="n">part_num</span><span class="o">=</span><span class="n">part_num</span><span class="p">,</span> <span class="n">ignore_grace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-	<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">table</span><span class="p">)</span> <span class="o">==</span> <span class="n">FragmentHashTable</span><span class="p">:</span>
+	<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">table</span><span class="p">)</span> <span class="o">==</span> <span class="n">FragmentHashTable</span><span class="p">:</span>  <span class="c1"># sensitive to inheritance.</span>
 		<span class="n">table</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 
 	<span class="n">max_dataset_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
@@ -375,7 +483,7 @@
 	<span class="n">fragment_id</span> <span class="o">=</span> <span class="mi">0</span>
 	<span class="n">fragments_found</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">this_win</span> <span class="ow">in</span> <span class="n">windows</span><span class="p">:</span>
-		<span class="n">frames</span> <span class="o">=</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">object_list</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="n">this_win</span><span class="p">)</span>
+		<span class="n">frames</span> <span class="o">=</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">object_list</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">this_win</span><span class="p">)</span>
 		<span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
 			<span class="n">frame_ql_array</span> <span class="o">=</span> <span class="n">frame_to_ql_array</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
 			<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frame_ql_array</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
@@ -460,6 +568,7 @@
 		<span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;dijkstra&quot;</span><span class="p">,</span>
 		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">path_finding_utils</span><span class="o">.</span><span class="n">DefaultCostFunction</span><span class="p">(),</span>
 		<span class="n">slur_constraint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+		<span class="n">enforce_earliest_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 		<span class="n">save_filepath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 		<span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
 	<span class="p">):</span>
@@ -481,8 +590,7 @@
 <span class="sd">								Only possible if `algorithm=&quot;floyd-warshall&quot;`.</span>
 <span class="sd">	:param str save_filepath: An optional path to a JSON file for saving search results. This file</span>
 <span class="sd">							can then be loaded with the :meth:`decitala.utils.loader`.</span>
-<span class="sd">	:param bool verbose: Whether to log messages (only used with `algorithm=&quot;floyd-warshall&quot;`).</span>
-<span class="sd">						Default is ``False``.</span>
+<span class="sd">	:param bool verbose: Whether to log messages. Default is ``False``.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">fragments</span> <span class="o">=</span> <span class="n">rolling_hash_search</span><span class="p">(</span>
 		<span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span>
@@ -500,7 +608,9 @@
 			<span class="k">raise</span> <span class="n">SearchException</span><span class="p">(</span><span class="s2">&quot;This is not yet supported. Coming soon.&quot;</span><span class="p">)</span>
 		<span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">best_pred</span> <span class="o">=</span> <span class="n">dijkstra</span><span class="o">.</span><span class="n">dijkstra_best_source_and_sink</span><span class="p">(</span>
 			<span class="n">data</span><span class="o">=</span><span class="n">fragments</span><span class="p">,</span>
-			<span class="n">cost_function_class</span><span class="o">=</span><span class="n">cost_function_class</span>
+			<span class="n">cost_function_class</span><span class="o">=</span><span class="n">cost_function_class</span><span class="p">,</span>
+			<span class="n">enforce_earliest_start</span><span class="o">=</span><span class="n">enforce_earliest_start</span><span class="p">,</span>
+			<span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
 		<span class="p">)</span>
 		<span class="n">best_path</span> <span class="o">=</span> <span class="n">dijkstra</span><span class="o">.</span><span class="n">generate_path</span><span class="p">(</span>
 			<span class="n">best_pred</span><span class="p">,</span>
@@ -509,7 +619,10 @@
 		<span class="p">)</span>
 		<span class="n">best_path</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragments</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">id_</span> <span class="ow">in</span> <span class="n">best_path</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># noqa</span>
 	<span class="k">elif</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;floyd-warshall&quot;</span><span class="p">:</span>
-		<span class="n">best_source</span><span class="p">,</span> <span class="n">best_sink</span> <span class="o">=</span> <span class="n">path_finding_utils</span><span class="o">.</span><span class="n">best_source_and_sink</span><span class="p">(</span><span class="n">fragments</span><span class="p">)</span>
+		<span class="n">best_source</span><span class="p">,</span> <span class="n">best_sink</span> <span class="o">=</span> <span class="n">path_finding_utils</span><span class="o">.</span><span class="n">best_source_and_sink</span><span class="p">(</span>
+			<span class="n">data</span><span class="o">=</span><span class="n">fragments</span><span class="p">,</span>
+			<span class="n">enforce_earliest_start</span><span class="o">=</span><span class="n">enforce_earliest_start</span>
+		<span class="p">)</span>
 		<span class="n">distance_matrix</span><span class="p">,</span> <span class="n">next_matrix</span> <span class="o">=</span> <span class="n">floyd_warshall</span><span class="o">.</span><span class="n">floyd_warshall</span><span class="p">(</span>
 			<span class="n">data</span><span class="o">=</span><span class="n">fragments</span><span class="p">,</span>
 			<span class="n">cost_function_class</span><span class="o">=</span><span class="n">cost_function_class</span><span class="p">,</span>
@@ -570,7 +683,7 @@
 
 	<span class="n">fragments_found</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">this_window</span> <span class="ow">in</span> <span class="n">windows</span><span class="p">:</span>
-		<span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">ql_array</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="n">this_window</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">ql_array</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">this_window</span><span class="p">):</span>
 			<span class="k">try</span><span class="p">:</span>
 				<span class="n">searched</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)]</span>
 				<span class="k">if</span> <span class="n">searched</span><span class="p">:</span>
@@ -813,7 +926,7 @@
 	<span class="k">for</span> <span class="n">this_win</span> <span class="ow">in</span> <span class="n">windows</span><span class="p">:</span>
 		<span class="c1"># logger.info(&quot;Searching window of size {}.&quot;.format(this_win))</span>
 
-		<span class="n">frames</span> <span class="o">=</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">object_list</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="n">this_win</span><span class="p">)</span>
+		<span class="n">frames</span> <span class="o">=</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">object_list</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">this_win</span><span class="p">)</span>
 		<span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
 			<span class="n">objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_frame</span><span class="p">]</span>
 			<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">isRest</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">):</span>  <span class="c1"># Skip any window that has a rest in it.</span>

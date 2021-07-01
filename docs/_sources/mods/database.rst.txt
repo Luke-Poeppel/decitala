@@ -1,9 +1,9 @@
 database
-============
+========
 
-database
---------
-.. automodule:: decitala.database.database
+db
+--
+.. automodule:: decitala.database.db
    :members:
    :member-order: bysource
    :show-inheritance:

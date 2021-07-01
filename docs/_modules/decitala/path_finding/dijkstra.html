@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.path_finding.dijkstra &mdash; decitala 0.13.2 documentation</title>
+  <title>decitala.path_finding.dijkstra &mdash; decitala 0.14.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.13.2
+                0.14.0
               </div>
             
           
@@ -91,13 +91,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/database.html">database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/fragment.html">fragment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/hm.html">hm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/sp.html">sp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/utils.html">utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/vis.html">vis</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<p class="caption"><span class="caption-text">Rhythmic Corpora</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../datasets/greek_metrics.html">Greek Metrics</a></li>
@@ -183,14 +185,16 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">heapq</span>
 
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">path_finding_utils</span>
 
 <span class="c1"># Useful info here: https://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python.</span>
 <div class="viewcode-block" id="dijkstra"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.dijkstra.dijkstra">[docs]</a><span class="k">def</span> <span class="nf">dijkstra</span><span class="p">(</span>
 		<span class="n">data</span><span class="p">,</span>
+		<span class="n">graph</span><span class="p">,</span>
 		<span class="n">source</span><span class="p">,</span>
 		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">path_finding_utils</span><span class="o">.</span><span class="n">DefaultCostFunction</span><span class="p">(),</span>
-		<span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
 	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Dijkstra path-finding algorithm from dynamic programming. Uses a min-heap</span>
@@ -200,13 +204,7 @@
 <span class="sd">	:param source: an :obj:`decitala.search.Extraction` object.</span>
 <span class="sd">	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost</span>
 <span class="sd">		function that will be used in calculating the weights between vertices.</span>
-<span class="sd">	:param bool verbose: whether to print logs.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">graph</span> <span class="o">=</span> <span class="n">path_finding_utils</span><span class="o">.</span><span class="n">build_graph</span><span class="p">(</span>
-		<span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">cost_function_class</span><span class="p">,</span>
-		<span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
-	<span class="p">)</span>
 	<span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">id_</span>
 
 	<span class="n">q</span> <span class="o">=</span> <span class="p">[]</span>
@@ -229,7 +227,9 @@
 
 <div class="viewcode-block" id="dijkstra_best_source_and_sink"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.dijkstra.dijkstra_best_source_and_sink">[docs]</a><span class="k">def</span> <span class="nf">dijkstra_best_source_and_sink</span><span class="p">(</span>
 		<span class="n">data</span><span class="p">,</span>
-		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">path_finding_utils</span><span class="o">.</span><span class="n">DefaultCostFunction</span><span class="p">()</span>
+		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">path_finding_utils</span><span class="o">.</span><span class="n">DefaultCostFunction</span><span class="p">(),</span>
+		<span class="n">enforce_earliest_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+		<span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
 	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Function for agnostically choosing the best source and target (and associated predecessor set)</span>
@@ -238,8 +238,17 @@
 <span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
 <span class="sd">	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost</span>
 <span class="sd">		function that will be used in calculating the weights between vertices.</span>
+<span class="sd">	:param bool verbose: whether to print logs.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">sources</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">path_finding_utils</span><span class="o">.</span><span class="n">sources_and_sinks</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="n">sources</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">path_finding_utils</span><span class="o">.</span><span class="n">sources_and_sinks</span><span class="p">(</span>
+		<span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+		<span class="n">enforce_earliest_start</span><span class="o">=</span><span class="n">enforce_earliest_start</span>
+	<span class="p">)</span>
+	<span class="n">graph</span> <span class="o">=</span> <span class="n">path_finding_utils</span><span class="o">.</span><span class="n">build_graph</span><span class="p">(</span>
+		<span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">cost_function_class</span><span class="p">,</span>
+		<span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+	<span class="p">)</span>
 
 	<span class="c1"># This checks if there exists a fragment in sources/sinks that spans the whole onset range.</span>
 	<span class="c1"># Alternatively if all extracted fragments are overlapping (see test_povel_essen_dijkstra).</span>
@@ -257,6 +266,7 @@
 			<span class="k">if</span> <span class="n">possible_source</span><span class="o">.</span><span class="n">onset_range</span> <span class="o">==</span> <span class="p">(</span><span class="n">min_onset</span><span class="p">,</span> <span class="n">max_onset</span><span class="p">):</span>
 				<span class="n">dist</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">dijkstra</span><span class="p">(</span>
 					<span class="n">data</span><span class="p">,</span>
+					<span class="n">graph</span><span class="p">,</span>
 					<span class="n">possible_source</span><span class="p">,</span>
 					<span class="n">cost_function_class</span>
 				<span class="p">)</span>
@@ -270,9 +280,10 @@
 	<span class="n">best_target</span> <span class="o">=</span> <span class="kc">None</span>
 	<span class="n">best_predecessor_set</span> <span class="o">=</span> <span class="kc">None</span>
 
-	<span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+	<span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span><span class="p">(</span><span class="n">verbose</span><span class="p">)):</span>
 		<span class="n">dist</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">dijkstra</span><span class="p">(</span>
 			<span class="n">data</span><span class="p">,</span>
+			<span class="n">graph</span><span class="p">,</span>
 			<span class="n">source</span><span class="p">,</span>
 			<span class="n">cost_function_class</span>
 		<span class="p">)</span>
@@ -284,7 +295,21 @@
 					<span class="n">best_target</span> <span class="o">=</span> <span class="n">target</span>
 					<span class="n">best_predecessor_set</span> <span class="o">=</span> <span class="n">pred</span>
 
-	<span class="k">return</span> <span class="n">best_source</span><span class="p">,</span> <span class="n">best_target</span><span class="p">,</span> <span class="n">best_predecessor_set</span></div>
+	<span class="c1"># This allows for fragments at the end to be missed...</span>
+	<span class="c1"># Find final non-overlapping target with most onsets.</span>
+	<span class="n">final_target</span> <span class="o">=</span> <span class="kc">None</span>
+	<span class="n">final_target_onsets</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">best_target</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> \
+				<span class="n">target</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span> <span class="o">&gt;</span> <span class="n">final_target_onsets</span><span class="p">:</span>
+			<span class="n">final_target</span> <span class="o">=</span> <span class="n">target</span>
+			<span class="n">final_target_onsets</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span>
+
+	<span class="c1"># If none found, use best_target.</span>
+	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">final_target</span><span class="p">):</span>
+		<span class="n">final_target</span> <span class="o">=</span> <span class="n">best_target</span>
+
+	<span class="k">return</span> <span class="n">best_source</span><span class="p">,</span> <span class="n">final_target</span><span class="p">,</span> <span class="n">best_predecessor_set</span></div>
 
 <div class="viewcode-block" id="generate_path"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.dijkstra.generate_path">[docs]</a><span class="k">def</span> <span class="nf">generate_path</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>

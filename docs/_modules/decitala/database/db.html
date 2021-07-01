@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.database.database &mdash; decitala 0.13.2 documentation</title>
+  <title>decitala.database.db &mdash; decitala 0.14.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.13.2
+                0.14.0
               </div>
             
           
@@ -91,13 +91,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/database.html">database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/fragment.html">fragment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/hm.html">hm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/sp.html">sp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/utils.html">utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/vis.html">vis</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<p class="caption"><span class="caption-text">Rhythmic Corpora</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../datasets/greek_metrics.html">Greek Metrics</a></li>
@@ -155,7 +157,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>decitala.database.database</li>
+      <li>decitala.database.db</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -170,17 +172,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for decitala.database.database</h1><div class="highlight"><pre>
+  <h1>Source code for decitala.database.db</h1><div class="highlight"><pre>
 <span></span><span class="c1">####################################################################################################</span>
 <span class="c1"># File:     database.py</span>
 <span class="c1"># Purpose:  Data structure for creating and representing databases using sqlite.</span>
 <span class="c1">#</span>
 <span class="c1"># Author:   Luke Poeppel</span>
 <span class="c1">#</span>
-<span class="c1"># Location: Kent, CT 2020 / Frankfurt, DE 2020 / NYC, 2021</span>
+<span class="c1"># Location: Kent, CT 2020, 2021 / Frankfurt, DE 2020 / NYC, 2021</span>
 <span class="c1">####################################################################################################</span>
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">natsort</span>
+<span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">from</span> <span class="nn">sqlalchemy</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">Column</span><span class="p">,</span>
@@ -198,25 +201,31 @@
 	<span class="n">backref</span><span class="p">,</span>
 <span class="p">)</span>
 
+<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">converter</span>
+
+<span class="kn">from</span> <span class="nn">..fragment</span> <span class="kn">import</span> <span class="n">FragmentDecoder</span>
 <span class="kn">from</span> <span class="nn">..search</span> <span class="kn">import</span> <span class="n">rolling_hash_search</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">get_logger</span>
+<span class="kn">from</span> <span class="nn">..hm</span> <span class="kn">import</span> <span class="n">hm_utils</span>
+<span class="kn">from</span> <span class="nn">..vis</span> <span class="kn">import</span> <span class="n">annotate_score</span>
+<span class="kn">from</span> <span class="nn">.db_utils</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">get_session</span><span class="p">,</span>
+	<span class="n">TRANSCRIPTION_BASE</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.corpora_models</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">SubcategoryData</span><span class="p">,</span>
+	<span class="n">TranscriptionData</span>
+<span class="p">)</span>
+
+<span class="n">here</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
+<span class="n">ODNC_Database</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;/databases/ODNC.db&quot;</span>
 
 <span class="n">Base</span> <span class="o">=</span> <span class="n">declarative_base</span><span class="p">()</span>
 
-<span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-	<span class="n">engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sqlite:////</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="n">echo</span><span class="p">)</span>
-	<span class="n">Base</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">create_all</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
-	<span class="k">return</span> <span class="n">engine</span>
-
-<span class="k">def</span> <span class="nf">get_session</span><span class="p">(</span><span class="n">engine</span><span class="p">):</span>
-	<span class="n">Session</span> <span class="o">=</span> <span class="n">sessionmaker</span><span class="p">(</span><span class="n">bind</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
-	<span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="p">()</span>
-	<span class="k">return</span> <span class="n">session</span>
-
-<div class="viewcode-block" id="DatabaseException"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.database.DatabaseException">[docs]</a><span class="k">class</span> <span class="nc">DatabaseException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="DatabaseException"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.db.DatabaseException">[docs]</a><span class="k">class</span> <span class="nc">DatabaseException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 	<span class="k">pass</span></div>
 
-<div class="viewcode-block" id="CompositionData"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.database.CompositionData">[docs]</a><span class="k">class</span> <span class="nc">CompositionData</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<div class="viewcode-block" id="CompositionData"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.db.CompositionData">[docs]</a><span class="k">class</span> <span class="nc">CompositionData</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	SQLAlchemy model representing the basic composition data for a composition.</span>
 
@@ -243,7 +252,7 @@
 		<span class="bp">self</span><span class="o">.</span><span class="n">local_filepath</span> <span class="o">=</span> <span class="n">local_filepath</span></div>
 
 <span class="c1"># TODO: rename to `ExtractionData`</span>
-<div class="viewcode-block" id="ExtractionData"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.database.ExtractionData">[docs]</a><span class="k">class</span> <span class="nc">ExtractionData</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
+<div class="viewcode-block" id="ExtractionData"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.db.ExtractionData">[docs]</a><span class="k">class</span> <span class="nc">ExtractionData</span><span class="p">(</span><span class="n">Base</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	SQLAlchemy model representing a fragment extracted from a composition.</span>
 
@@ -349,7 +358,7 @@
 
 		<span class="n">data</span><span class="o">.</span><span class="n">composition_data</span> <span class="o">=</span> <span class="n">fragment_objects</span>
 
-<div class="viewcode-block" id="create_database"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.database.create_database">[docs]</a><span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span>
+<div class="viewcode-block" id="create_database"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.db.create_database">[docs]</a><span class="k">def</span> <span class="nf">create_database</span><span class="p">(</span>
 		<span class="n">db_path</span><span class="p">,</span>
 		<span class="n">filepath</span><span class="p">,</span>
 		<span class="n">table</span><span class="p">,</span>
@@ -392,7 +401,7 @@
 	<span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 	<span class="k">return</span></div>
 
-<div class="viewcode-block" id="batch_create_database"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.database.batch_create_database">[docs]</a><span class="k">def</span> <span class="nf">batch_create_database</span><span class="p">(</span>
+<div class="viewcode-block" id="batch_create_database"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.db.batch_create_database">[docs]</a><span class="k">def</span> <span class="nf">batch_create_database</span><span class="p">(</span>
 		<span class="n">db_path</span><span class="p">,</span>
 		<span class="n">data_in</span><span class="p">,</span>
 		<span class="n">table</span><span class="p">,</span>
@@ -433,6 +442,108 @@
 
 	<span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 	<span class="k">return</span></div>
+
+<span class="c1">####################################################################################################</span>
+<div class="viewcode-block" id="Species"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.db.Species">[docs]</a><span class="k">class</span> <span class="nc">Species</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class allows a user to access the SubcategoryData results without relying on SQLAlchemy.</span>
+<span class="sd">	It only requires a name (and also supports class methods).</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">ODNC_Database</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">TRANSCRIPTION_BASE</span><span class="p">)</span>
+		<span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">SubcategoryData</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">SubcategoryData</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No matches found for &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">name</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">latin</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">latin</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">local_name</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">local_name</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">reported_size</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">reported_size</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">locations</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">locations</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">transcriptions</span> <span class="o">=</span> <span class="p">[</span><span class="n">Transcription</span><span class="p">(</span><span class="n">transcription</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">transcription</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">transcriptions</span><span class="p">]</span>
+
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;database.Species </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+
+	<span class="nd">@property</span>
+	<span class="k">def</span> <span class="nf">num_transcriptions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transcriptions</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Species.aggregate_pc_distribution"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.db.Species.aggregate_pc_distribution">[docs]</a>	<span class="k">def</span> <span class="nf">aggregate_pc_distribution</span><span class="p">(</span>
+			<span class="bp">self</span><span class="p">,</span>
+			<span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+			<span class="n">as_vector</span><span class="o">=</span><span class="kc">True</span>
+		<span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Returns the aggregate pitch class distribution across all transcriptions in a species.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">pc_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">)}</span>
+		<span class="k">for</span> <span class="n">transcription</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">transcriptions</span><span class="p">:</span>
+			<span class="n">pc_counter_dict</span> <span class="o">=</span> <span class="n">hm_utils</span><span class="o">.</span><span class="n">pc_counter</span><span class="p">(</span>
+				<span class="n">filepath</span><span class="o">=</span><span class="n">transcription</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span>
+				<span class="n">part_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+				<span class="n">normalize_over_duration</span><span class="o">=</span><span class="kc">False</span>
+			<span class="p">)</span>
+			<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">pc_counter_dict</span><span class="p">:</span>
+				<span class="n">pc_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+=</span> <span class="n">pc_counter_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+		<span class="n">vector</span> <span class="o">=</span> <span class="n">hm_utils</span><span class="o">.</span><span class="n">pc_dict_to_vector</span><span class="p">(</span><span class="n">pc_dict</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
+			<span class="n">vector</span> <span class="o">=</span> <span class="n">vector</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
+
+		<span class="k">if</span> <span class="n">as_vector</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">vector</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">val</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vector</span><span class="p">)}</span></div></div>
+
+<div class="viewcode-block" id="Transcription"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.db.Transcription">[docs]</a><span class="k">class</span> <span class="nc">Transcription</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class allows a user to access the TranscriptionData results without relying on SQLAlchemy.</span>
+<span class="sd">	It only requires a name (and also supports class methods).</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">ODNC_Database</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">TRANSCRIPTION_BASE</span><span class="p">)</span>
+		<span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">TranscriptionData</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">TranscriptionData</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">DatabaseException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No matches found for &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">name</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">filepath</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">filepath</span>
+		<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">analysis</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">analysis</span> <span class="o">=</span> <span class="kc">None</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">analysis</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">analysis</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">FragmentDecoder</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;database.Transcription </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show_analysis</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">show_analysis</span><span class="p">):</span>
+			<span class="n">converted</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">)</span>
+			<span class="n">converted</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="p">:</span>
+				<span class="n">annotate_score</span><span class="p">(</span>
+					<span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="p">,</span>
+					<span class="n">filepath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span>
+					<span class="n">part_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+					<span class="n">transcription_mode</span><span class="o">=</span><span class="kc">True</span>
+				<span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">converted</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">)</span>
+				<span class="n">converted</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<span class="k">def</span> <span class="nf">get_all_species</span><span class="p">():</span>
+	<span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">ODNC_Database</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">TRANSCRIPTION_BASE</span><span class="p">)</span>
+	<span class="n">res</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">SubcategoryData</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+	<span class="k">return</span> <span class="p">[</span><span class="n">Species</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">res</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">get_all_transcriptions</span><span class="p">():</span>
+	<span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">ODNC_Database</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">TRANSCRIPTION_BASE</span><span class="p">)</span>
+	<span class="n">res</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">TranscriptionData</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">natsort</span><span class="o">.</span><span class="n">natsorted</span><span class="p">([</span><span class="n">Transcription</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">res</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </pre></div>
 
            </div>

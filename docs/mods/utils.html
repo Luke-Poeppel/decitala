@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>utils &mdash; decitala 0.13.2 documentation</title>
+  <title>utils &mdash; decitala 0.14.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.13.2
+                0.14.0
               </div>
             
           
@@ -93,13 +93,15 @@
 <li class="toctree-l1"><a class="reference internal" href="database.html">database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hm.html">hm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sp.html">sp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trees.html">trees</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vis.html">vis</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<p class="caption"><span class="caption-text">Rhythmic Corpora</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/greek_metrics.html">Greek Metrics</a></li>
@@ -388,7 +390,7 @@ in Non-Tonal Music</a>
 <li><p><strong>input</strong> (<em>iterable</em>) – Either a list/array (representing
 <a class="reference internal" href="fragment.html#decitala.fragment.GeneralFragment.ql_array" title="decitala.fragment.GeneralFragment.ql_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ql_array</span></code></a>) or data from
 <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p></li>
-<li><p><strong>data_mode</strong> (<em>bool</em>) – whether or not the input data is a quarter length array or data from
+<li><p><strong>data_mode</strong> (<em>bool</em>) – whether the input data is data from
 <a class="reference internal" href="#decitala.utils.get_object_indices" title="decitala.utils.get_object_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_object_indices</span></code></a>.</p></li>
 </ul>
 </dd>
@@ -485,25 +487,26 @@ subdivision of tala components tends to be even.</p>
 
 <dl class="py function">
 <dt id="decitala.utils.roll_window">
-<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">roll_window</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#roll_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.roll_window" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes in a list and returns a numpy vstack holding rolling windows of length <code class="docutils literal notranslate"><span class="pre">window_length</span></code>.</p>
+<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">roll_window</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#roll_window"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.roll_window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes in a list and returns a numpy vstack holding rolling windows of length <code class="docutils literal notranslate"><span class="pre">window_size</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>array</strong> – A list, tuple, numpy array, etc.</p></li>
-<li><p><strong>window_length</strong> (<em>int</em>) – Size of the window</p></li>
-<li><p><strong>fn</strong> (<em>lambda</em>) – A function evaluating a bool –– used for prime contour calculations.</p></li>
+<li><p><strong>array</strong> – a list, tuple, numpy array, etc.</p></li>
+<li><p><strong>window_size</strong> (<em>int</em>) – size of the window</p></li>
+<li><p><strong>fn</strong> (<em>lambda</em>) – a function evaluating a bool; will only iterate over elements satifying the
+function.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A rolling windows of array, each of length <cite>window_length</cite>.</p>
+<dd class="field-even"><p>A rolling windows of array, each of length <cite>window_size</cite>.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>numpy.vstack</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">composers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;Mozart&#39;</span><span class="p">,</span> <span class="s1">&#39;Monteverdi&#39;</span><span class="p">,</span> <span class="s1">&#39;Messiaen&#39;</span><span class="p">,</span> <span class="s1">&#39;Mahler&#39;</span><span class="p">,</span> <span class="s1">&#39;MacDowell&#39;</span><span class="p">,</span> <span class="s1">&#39;Massenet&#39;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">composers</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">composers</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
 <span class="go">(&#39;Mozart&#39;, &#39;Monteverdi&#39;, &#39;Messiaen&#39;)</span>
 <span class="go">(&#39;Monteverdi&#39;, &#39;Messiaen&#39;, &#39;Mahler&#39;)</span>
@@ -743,71 +746,6 @@ where the pitch and rhythmic material are contiguously equal and sums these regi
 <code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">measure_by_measure_time_signatures</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#measure_by_measure_time_signatures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.measure_by_measure_time_signatures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns list of meter.TimeSignature objects from music21 for each measure of an input
 stream.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="decitala.utils.pitch_content_to_contour">
-<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">pitch_content_to_contour</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pitch_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#pitch_content_to_contour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.pitch_content_to_contour" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function calculates the pitch contour information from data out of rolling_search.
-This function assumes the data is monophonic.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>pitch_content</strong> (<em>list</em>) – pitch content from the output of rolling_search.”</p>
-</dd>
-</dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pc</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">80</span><span class="p">,),</span> <span class="p">(</span><span class="mi">91</span><span class="p">,),</span> <span class="p">(</span><span class="mi">78</span><span class="p">,),</span> <span class="p">(</span><span class="mi">85</span><span class="p">,)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">pc</span><span class="p">)</span>
-<span class="go">array([1, 3, 0, 2])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pc2</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">80</span><span class="p">,),</span> <span class="p">(</span><span class="mi">84</span><span class="p">,),</span> <span class="p">(</span><span class="mi">84</span><span class="p">,)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">pc2</span><span class="p">)</span>
-<span class="go">array([0, 1, 1])</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt id="decitala.utils.contour_to_neume">
-<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">contour_to_neume</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contour</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#contour_to_neume"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.contour_to_neume" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for checking the associated neume for a given contour. Only two and three onset
-contour are supported.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>contour</strong> – A pitch contour (iterable).</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The associated neume or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>str or None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="decitala.utils.contour_to_prime_contour">
-<code class="sig-prename descclassname"><span class="pre">decitala.utils.</span></code><code class="sig-name descname"><span class="pre">contour_to_prime_contour</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contour</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_depth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/utils.html#contour_to_prime_contour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.utils.contour_to_prime_contour" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implementation of Morris’ 1993 Contour-Reduction algorithm. “The algorithm prunes pitches
-from a contour until it is reduced to a prime.” The loop runs until all elements
-are flagged as maxima or minima.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>contour</strong> (<em>np.array</em>) – contour input</p>
-</dd>
-</dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">contour_a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour_a</span><span class="p">)</span>
-<span class="go">array([0, 1])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour_b</span><span class="p">,</span> <span class="n">include_depth</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">array([0, 2, 1])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_c</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour_c</span><span class="p">,</span> <span class="n">include_depth</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">array([1, 0, 2])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_d</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour_d</span><span class="p">,</span> <span class="n">include_depth</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="go">array([0, 1, 1])</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="py function">

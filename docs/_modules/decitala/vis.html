@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.vis &mdash; decitala 0.13.2 documentation</title>
+  <title>decitala.vis &mdash; decitala 0.14.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.13.2
+                0.14.0
               </div>
             
           
@@ -91,13 +91,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../mods/database.html">database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/fragment.html">fragment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/hm.html">hm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/sp.html">sp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/utils.html">utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/vis.html">vis</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<p class="caption"><span class="caption-text">Rhythmic Corpora</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../datasets/greek_metrics.html">Greek Metrics</a></li>
@@ -187,6 +189,7 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">converter</span>
+<span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">pitch</span>
 
 <span class="n">here</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
 <span class="n">treant_templates</span> <span class="o">=</span> <span class="n">here</span> <span class="o">+</span> <span class="s2">&quot;/treant_templates&quot;</span>
@@ -198,7 +201,7 @@
 <span class="n">mpl</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;bmh&quot;</span><span class="p">)</span>
 
 <span class="c1">####################################################################################################</span>
-<div class="viewcode-block" id="create_diagram"><a class="viewcode-back" href="../../mods/vis.html#decitala.vis.create_diagram">[docs]</a><span class="k">def</span> <span class="nf">create_diagram</span><span class="p">(</span>
+<div class="viewcode-block" id="create_tree_diagram"><a class="viewcode-back" href="../../mods/vis.html#decitala.vis.create_tree_diagram">[docs]</a><span class="k">def</span> <span class="nf">create_tree_diagram</span><span class="p">(</span>
 		<span class="n">FragmentTree</span><span class="p">,</span>
 		<span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 		<span class="n">webshot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -243,7 +246,7 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Creates a piano-roll type visualization of fragments in the input data.</span>
 
-<span class="sd">	:param list data: Data from one of the :obj:`decitala.search` functions.</span>
+<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
 <span class="sd">	:param str title: Title for the plot. Default is `None`.</span>
 <span class="sd">	:param str save_filepath: Optional path to save the plot (DPI=350). Default is `None`.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -282,11 +285,12 @@
 		<span class="n">data</span><span class="p">,</span>
 		<span class="n">filepath</span><span class="p">,</span>
 		<span class="n">part_num</span><span class="p">,</span>
+		<span class="n">transcription_mode</span><span class="o">=</span><span class="kc">False</span>
 	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Function for annotating a score with data.</span>
 
-<span class="sd">	:param list data: Data from one of the :obj:`decitala.search` functions.</span>
+<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
 <span class="sd">	:param str filepath: Filepath to the score to be annotated. Should correspond to the filepath</span>
 <span class="sd">						used in the creation of the `data`.</span>
 <span class="sd">	:param int part_num: Part number in the filepath which is to be annotated.Should correspond to</span>
@@ -295,11 +299,18 @@
 	<span class="n">converted</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
 	<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
 		<span class="k">for</span> <span class="n">this_obj</span> <span class="ow">in</span> <span class="n">converted</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notes</span><span class="p">:</span>
-			<span class="k">if</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-				<span class="n">this_obj</span><span class="o">.</span><span class="n">lyric</span> <span class="o">=</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">name</span>
-				<span class="n">this_obj</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>
-			<span class="k">elif</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">:</span>
-				<span class="n">this_obj</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
+			<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">transcription_mode</span><span class="p">):</span>
+				<span class="k">if</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+					<span class="n">this_obj</span><span class="o">.</span><span class="n">lyric</span> <span class="o">=</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">name</span>
+					<span class="n">this_obj</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>
+				<span class="k">elif</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">:</span>
+					<span class="n">this_obj</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">if</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="n">this_fragment</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+					<span class="n">this_obj</span><span class="o">.</span><span class="n">lyric</span> <span class="o">=</span> <span class="n">this_fragment</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+					<span class="n">this_obj</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>
+				<span class="k">elif</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">offset</span> <span class="o">==</span> <span class="n">this_fragment</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">this_obj</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">:</span>
+					<span class="n">this_obj</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
 
 	<span class="k">return</span> <span class="n">converted</span></div>
 
@@ -311,7 +322,7 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Returns a bar plot of input data.</span>
 
-<span class="sd">	:param list data: Data from one of the :obj:`decitala.search` functions.</span>
+<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
 <span class="sd">	:param str title: Title for the plot. Default is `None`.</span>
 <span class="sd">	:param str save_filepath: Optional path to save the plot (DPI=350). Default is `None`.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
@@ -340,7 +351,7 @@
 <span class="sd">	scatter plot of their start and end; the ``path`` parameter will plot the connected line</span>
 <span class="sd">	between the ``path`` fragments.</span>
 
-<span class="sd">	:param list data: Data from one of the :obj:`decitala.search` functions. Default is `None`.</span>
+<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
 <span class="sd">	:param list path: Intended for data from :obj:`decitala.search.path_finder`. Default is `None.</span>
 <span class="sd">	:param str title: Title for the plot. Default is `None`.</span>
 <span class="sd">	:param str save_filepath: Optional path to save the plot (DPI=350). Default is `None`.</span>
@@ -370,6 +381,34 @@
 		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_filepath</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">350</span><span class="p">)</span>
 
 	<span class="k">return</span> <span class="n">plt</span></div>
+
+<span class="k">def</span> <span class="nf">plot_pitch_class_distribution_by_species</span><span class="p">(</span><span class="n">species</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="n">combined_pc_dict</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">aggregate_pc_distribution</span><span class="p">(</span><span class="n">as_vector</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">combined_pc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+	<span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">combined_pc_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+	<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span>
+		<span class="s2">&quot;Net Pitch Class Distribution for </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">species</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+		<span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">,</span>
+		<span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span>
+	<span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Pitch Class&quot;</span><span class="p">,</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Proportion (%)&quot;</span><span class="p">,</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+	<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">)),</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">)</span>
+
+	<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+		<span class="n">pc</span> <span class="o">=</span> <span class="n">pitch</span><span class="o">.</span><span class="n">Pitch</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">pc</span><span class="o">.</span><span class="n">accidental</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;flat&quot;</span><span class="p">:</span>
+			<span class="n">pc</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">getEnharmonic</span><span class="p">()</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">pc</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="n">keys</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">save_path</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">350</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="n">plt</span>
 </pre></div>
 
            </div>

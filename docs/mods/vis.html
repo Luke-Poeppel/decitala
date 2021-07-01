@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>vis &mdash; decitala 0.13.2 documentation</title>
+  <title>vis &mdash; decitala 0.14.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.13.2
+                0.14.0
               </div>
             
           
@@ -93,13 +93,15 @@
 <li class="toctree-l1"><a class="reference internal" href="database.html">database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fragment.html">fragment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hm.html">hm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sp.html">sp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">utils</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">vis</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<p class="caption"><span class="caption-text">Rhythmic Corpora</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/greek_metrics.html">Greek Metrics</a></li>
@@ -177,8 +179,8 @@
   <div class="section" id="module-decitala.vis">
 <span id="vis"></span><h1>vis<a class="headerlink" href="#module-decitala.vis" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="decitala.vis.create_diagram">
-<code class="sig-prename descclassname"><span class="pre">decitala.vis.</span></code><code class="sig-name descname"><span class="pre">create_diagram</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FragmentTree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">webshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/vis.html#create_diagram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.vis.create_diagram" title="Permalink to this definition">¶</a></dt>
+<dt id="decitala.vis.create_tree_diagram">
+<code class="sig-prename descclassname"><span class="pre">decitala.vis.</span></code><code class="sig-name descname"><span class="pre">create_tree_diagram</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">FragmentTree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">webshot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/vis.html#create_tree_diagram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.vis.create_tree_diagram" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function creates a visualization of a given <a class="reference internal" href="trees.html#decitala.trees.FragmentTree" title="decitala.trees.FragmentTree"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FragmentTree</span></code></a>
 using the Treant.js library. If a path is provided, all the files will be stored there. Otherwise,
 they will be stored in a tempfile for the display.</p>
@@ -204,7 +206,7 @@ of the provided <a class="reference internal" href="trees.html#decitala.trees.Fr
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>list</em>) – Data from one of the <a class="reference internal" href="search.html#module-decitala.search" title="decitala.search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search</span></code></a> functions.</p></li>
+<li><p><strong>data</strong> (<em>list</em>) – a list of <a class="reference internal" href="search.html#decitala.search.Extraction" title="decitala.search.Extraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.Extraction</span></code></a> objects.</p></li>
 <li><p><strong>title</strong> (<em>str</em>) – Title for the plot. Default is <cite>None</cite>.</p></li>
 <li><p><strong>save_filepath</strong> (<em>str</em>) – Optional path to save the plot (DPI=350). Default is <cite>None</cite>.</p></li>
 </ul>
@@ -214,12 +216,12 @@ of the provided <a class="reference internal" href="trees.html#decitala.trees.Fr
 
 <dl class="py function">
 <dt id="decitala.vis.annotate_score">
-<code class="sig-prename descclassname"><span class="pre">decitala.vis.</span></code><code class="sig-name descname"><span class="pre">annotate_score</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/vis.html#annotate_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.vis.annotate_score" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.vis.</span></code><code class="sig-name descname"><span class="pre">annotate_score</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transcription_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/vis.html#annotate_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.vis.annotate_score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for annotating a score with data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>list</em>) – Data from one of the <a class="reference internal" href="search.html#module-decitala.search" title="decitala.search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search</span></code></a> functions.</p></li>
+<li><p><strong>data</strong> (<em>list</em>) – a list of <a class="reference internal" href="search.html#decitala.search.Extraction" title="decitala.search.Extraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.Extraction</span></code></a> objects.</p></li>
 <li><p><strong>filepath</strong> (<em>str</em>) – Filepath to the score to be annotated. Should correspond to the filepath
 used in the creation of the <cite>data</cite>.</p></li>
 <li><p><strong>part_num</strong> (<em>int</em>) – Part number in the filepath which is to be annotated.Should correspond to
@@ -236,7 +238,7 @@ the filepath used in the creation of the <cite>data</cite>.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>list</em>) – Data from one of the <a class="reference internal" href="search.html#module-decitala.search" title="decitala.search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search</span></code></a> functions.</p></li>
+<li><p><strong>data</strong> (<em>list</em>) – a list of <a class="reference internal" href="search.html#decitala.search.Extraction" title="decitala.search.Extraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.Extraction</span></code></a> objects.</p></li>
 <li><p><strong>title</strong> (<em>str</em>) – Title for the plot. Default is <cite>None</cite>.</p></li>
 <li><p><strong>save_filepath</strong> (<em>str</em>) – Optional path to save the plot (DPI=350). Default is <cite>None</cite>.</p></li>
 </ul>
@@ -254,7 +256,7 @@ between the <code class="docutils literal notranslate"><span class="pre">path</s
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>list</em>) – Data from one of the <a class="reference internal" href="search.html#module-decitala.search" title="decitala.search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search</span></code></a> functions. Default is <cite>None</cite>.</p></li>
+<li><p><strong>data</strong> (<em>list</em>) – a list of <a class="reference internal" href="search.html#decitala.search.Extraction" title="decitala.search.Extraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.Extraction</span></code></a> objects.</p></li>
 <li><p><strong>path</strong> (<em>list</em>) – Intended for data from <a class="reference internal" href="search.html#decitala.search.path_finder" title="decitala.search.path_finder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.path_finder</span></code></a>. Default is <a href="#id1"><span class="problematic" id="id2">`</span></a>None.</p></li>
 <li><p><strong>title</strong> (<em>str</em>) – Title for the plot. Default is <cite>None</cite>.</p></li>
 <li><p><strong>save_filepath</strong> (<em>str</em>) – Optional path to save the plot (DPI=350). Default is <cite>None</cite>.</p></li>

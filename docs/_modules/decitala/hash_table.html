@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.hash_table &mdash; decitala 0.13.2 documentation</title>
+  <title>decitala.hash_table &mdash; decitala 0.14.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.13.2
+                0.14.0
               </div>
             
           
@@ -91,13 +91,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../mods/database.html">database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/fragment.html">fragment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/hm.html">hm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/sp.html">sp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/utils.html">utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/vis.html">vis</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<p class="caption"><span class="caption-text">Rhythmic Corpora</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../datasets/greek_metrics.html">Greek Metrics</a></li>
@@ -179,31 +181,16 @@
 <span class="c1">#</span>
 <span class="c1"># Location: NYC, 2021.</span>
 <span class="c1">####################################################################################################</span>
-<span class="kn">import</span> <span class="nn">os</span>
-
 <span class="kn">from</span> <span class="nn">.fragment</span> <span class="kn">import</span> <span class="p">(</span>
-	<span class="n">Decitala</span><span class="p">,</span>
-	<span class="n">GreekFoot</span><span class="p">,</span>
-	<span class="n">ProsodicFragment</span>
+	<span class="n">get_all_decitalas</span><span class="p">,</span>
+	<span class="n">get_all_greek_feet</span><span class="p">,</span>
+	<span class="n">get_all_prosodic_fragments</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">augment</span><span class="p">,</span>
 	<span class="n">stretch_augment</span><span class="p">,</span>
 	<span class="n">get_logger</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.database.corpora_models</span> <span class="kn">import</span> <span class="p">(</span>
-	<span class="n">get_engine</span><span class="p">,</span>
-	<span class="n">get_session</span><span class="p">,</span>
-	<span class="n">GreekFootData</span><span class="p">,</span>
-	<span class="n">DecitalaData</span><span class="p">,</span>
-	<span class="n">ProsodicFragmentData</span>
-<span class="p">)</span>
-
-<span class="n">here</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
-<span class="n">fragment_db</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/databases/fragment_database.db&quot;</span>
-
-<span class="n">engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="n">fragment_db</span><span class="p">)</span>
-<span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__file__</span><span class="p">,</span> <span class="n">print_to_console</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -221,7 +208,7 @@
 <span class="p">}</span>
 
 <span class="c1"># Defaults</span>
-<span class="n">FACTORS</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]</span>
+<span class="n">FACTORS</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.1875</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]</span>
 <span class="n">DIFFERENCES</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.375</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.375</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.875</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">,</span> <span class="mf">2.625</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mf">4.375</span><span class="p">]</span> <span class="c1"># noqa</span>
 <span class="n">TRY_RETROGRADE</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">ALLOW_MIXED_AUGMENTATION</span> <span class="o">=</span> <span class="kc">False</span>
@@ -368,6 +355,7 @@
 <span class="sd">	To change them, just re-run the ``load`` method with the desired inputs; this will clear the</span>
 <span class="sd">	data and set reload it with the new desired modification techniques.</span>
 
+<span class="sd">	&gt;&gt;&gt; from decitala.fragment import Decitala</span>
 <span class="sd">	&gt;&gt;&gt; fht = FragmentHashTable(</span>
 <span class="sd">	... 	datasets=[&quot;greek_foot&quot;],</span>
 <span class="sd">	... 	custom_fragments=[Decitala(&quot;Ragavardhana&quot;)]</span>
@@ -377,7 +365,7 @@
 <span class="sd">	&lt;decitala.hash_table.FragmentHashTable 0 fragments&gt;</span>
 <span class="sd">	&gt;&gt;&gt; fht.load()</span>
 <span class="sd">	&gt;&gt;&gt; fht</span>
-<span class="sd">	&lt;decitala.hash_table.FragmentHashTable 2645 fragments&gt;</span>
+<span class="sd">	&lt;decitala.hash_table.FragmentHashTable 2899 fragments&gt;</span>
 <span class="sd">	&gt;&gt;&gt; fht.datasets</span>
 <span class="sd">	[&#39;greek_foot&#39;]</span>
 <span class="sd">	&gt;&gt;&gt; fht.custom_fragments</span>
@@ -445,14 +433,11 @@
 		<span class="c1"># Process datasets</span>
 		<span class="k">for</span> <span class="n">this_dataset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span><span class="p">:</span>
 			<span class="k">if</span> <span class="n">this_dataset</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">:</span>
-				<span class="n">data</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">GreekFootData</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-				<span class="n">fragments</span> <span class="o">=</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+				<span class="n">fragments</span> <span class="o">=</span> <span class="n">get_all_greek_feet</span><span class="p">()</span>
 			<span class="k">elif</span> <span class="n">this_dataset</span> <span class="o">==</span> <span class="s2">&quot;decitala&quot;</span><span class="p">:</span>
-				<span class="n">data</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DecitalaData</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-				<span class="n">fragments</span> <span class="o">=</span> <span class="p">[</span><span class="n">Decitala</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+				<span class="n">fragments</span> <span class="o">=</span> <span class="n">get_all_decitalas</span><span class="p">()</span>
 			<span class="k">elif</span> <span class="n">this_dataset</span> <span class="o">==</span> <span class="s2">&quot;prosodic_fragment&quot;</span><span class="p">:</span>
-				<span class="n">data</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ProsodicFragmentData</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-				<span class="n">fragments</span> <span class="o">=</span> <span class="p">[</span><span class="n">ProsodicFragment</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+				<span class="n">fragments</span> <span class="o">=</span> <span class="n">get_all_prosodic_fragments</span><span class="p">()</span>
 
 			<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="n">fragments</span><span class="p">:</span>
 				<span class="n">generate_all_modifications</span><span class="p">(</span>
@@ -486,10 +471,10 @@
 
 <span class="sd">	&gt;&gt;&gt; ght = GreekFootHashTable()</span>
 <span class="sd">	&gt;&gt;&gt; ght</span>
-<span class="sd">	&lt;decitala.hash_table.FragmentHashTable 2603 fragments&gt;</span>
+<span class="sd">	&lt;decitala.hash_table.FragmentHashTable 2855 fragments&gt;</span>
 <span class="sd">	&gt;&gt;&gt; ght.load(try_retrograde=False, allow_stretch_augmentation=False)</span>
 <span class="sd">	&gt;&gt;&gt; ght</span>
-<span class="sd">	&lt;decitala.hash_table.FragmentHashTable 706 fragments&gt;</span>
+<span class="sd">	&lt;decitala.hash_table.FragmentHashTable 737 fragments&gt;</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">datasets</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;greek_foot&quot;</span><span class="p">])</span>

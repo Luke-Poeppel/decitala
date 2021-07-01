@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.trees &mdash; decitala 0.13.2 documentation</title>
+  <title>decitala.trees &mdash; decitala 0.14.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.13.2
+                0.14.0
               </div>
             
           
@@ -91,13 +91,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../mods/database.html">database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/fragment.html">fragment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/hm.html">hm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/sp.html">sp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/utils.html">utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/vis.html">vis</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<p class="caption"><span class="caption-text">Rhythmic Corpora</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../datasets/greek_metrics.html">Greek Metrics</a></li>
@@ -188,30 +190,15 @@
 <span class="kn">from</span> <span class="nn">wand.image</span> <span class="kn">import</span> <span class="n">Image</span>
 
 <span class="kn">from</span> <span class="nn">.fragment</span> <span class="kn">import</span> <span class="p">(</span>
-	<span class="n">Decitala</span><span class="p">,</span>
-	<span class="n">GreekFoot</span><span class="p">,</span>
-	<span class="n">GeneralFragment</span>
+	<span class="n">GeneralFragment</span><span class="p">,</span>
+	<span class="n">get_all_decitalas</span><span class="p">,</span>
+	<span class="n">get_all_greek_feet</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">roll_window</span><span class="p">,</span>
 	<span class="n">get_object_indices</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.database.corpora_models</span> <span class="kn">import</span> <span class="p">(</span>
-	<span class="n">get_engine</span><span class="p">,</span>
-	<span class="n">get_session</span><span class="p">,</span>
-	<span class="n">DecitalaData</span><span class="p">,</span>
-	<span class="n">GreekFootData</span>
-<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">vis</span>
-
-<span class="n">here</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>
-<span class="n">decitala_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/corpora/Decitalas&quot;</span>
-<span class="n">greek_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/corpora/Greek_Metrics/&quot;</span>
-
-<span class="n">fragment_db</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/databases/fragment_database.db&quot;</span>
-
-<span class="n">engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="n">fragment_db</span><span class="p">)</span>
-<span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TreeException"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.TreeException">[docs]</a><span class="k">class</span> <span class="nc">TreeException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 	<span class="k">pass</span></div>
@@ -242,10 +229,11 @@
 
 <span class="sd">	&gt;&gt;&gt; ratio_tree = FragmentTree.from_frag_type(frag_type=&#39;greek_foot&#39;, rep_type=&#39;ratio&#39;)</span>
 <span class="sd">	&gt;&gt;&gt; ratio_tree</span>
-<span class="sd">	&lt;trees.FragmentTree greek_foot_ratio: nodes=36&gt;</span>
+<span class="sd">	&lt;trees.FragmentTree greek_foot_ratio: nodes=35&gt;</span>
 <span class="sd">	&gt;&gt;&gt; ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0]).name</span>
 <span class="sd">	&lt;fragment.GreekFoot Peon_II&gt;</span>
 <span class="sd">	&gt;&gt;&gt; # We can also give it a name.</span>
+<span class="sd">	&gt;&gt;&gt; from decitala.fragment import Decitala, GreekFoot, GeneralFragment</span>
 <span class="sd">	&gt;&gt;&gt; g1 = GeneralFragment([1.0, 1.0, 1.0, 1.0, 1.0], name=&quot;myfragment&quot;)</span>
 <span class="sd">	&gt;&gt;&gt; g2 = Decitala(&quot;Ragavardhana&quot;)</span>
 <span class="sd">	&gt;&gt;&gt; g3 = GreekFoot(&quot;Ionic_Major&quot;)</span>
@@ -327,11 +315,9 @@
 <span class="s2">																				rep_types are `ratio` and `difference`&quot;</span><span class="p">)</span>
 
 		<span class="k">if</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;decitala&quot;</span><span class="p">:</span>
-			<span class="n">fragment_data</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DecitalaData</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-			<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">Decitala</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragment_data</span><span class="p">]</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">get_all_decitalas</span><span class="p">()</span>
 		<span class="k">elif</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">:</span>
-			<span class="n">fragment_data</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">GreekFootData</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-			<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragment_data</span><span class="p">]</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">get_all_greek_feet</span><span class="p">()</span>
 
 		<span class="k">return</span> <span class="n">FragmentTree</span><span class="p">(</span>
 			<span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
@@ -361,7 +347,7 @@
 		<span class="n">object_list</span> <span class="o">=</span> <span class="n">get_object_indices</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span> <span class="n">part_num</span><span class="o">=</span><span class="n">part</span><span class="p">)</span>
 		<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="k">for</span> <span class="n">this_window</span> <span class="ow">in</span> <span class="n">windows</span><span class="p">:</span>
-			<span class="n">frames</span> <span class="o">=</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">object_list</span><span class="p">,</span> <span class="n">window_length</span><span class="o">=</span><span class="n">this_window</span><span class="p">)</span>
+			<span class="n">frames</span> <span class="o">=</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">object_list</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">this_window</span><span class="p">)</span>
 			<span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
 				<span class="n">objects</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_frame</span><span class="p">]</span>
 				<span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">this_frame</span><span class="p">]</span>

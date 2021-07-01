@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.fragment &mdash; decitala 0.13.2 documentation</title>
+  <title>decitala.fragment &mdash; decitala 0.14.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.13.2
+                0.14.0
               </div>
             
           
@@ -91,13 +91,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../mods/database.html">database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/fragment.html">fragment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/hm.html">hm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mods/sp.html">sp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/utils.html">utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../mods/vis.html">vis</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<p class="caption"><span class="caption-text">Rhythmic Corpora</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../datasets/greek_metrics.html">Greek Metrics</a></li>
@@ -196,8 +198,10 @@
 	<span class="n">DecitalaData</span><span class="p">,</span>
 	<span class="n">GreekFootData</span><span class="p">,</span>
 	<span class="n">ProsodicFragmentData</span><span class="p">,</span>
-	<span class="n">get_engine</span><span class="p">,</span>
-	<span class="n">get_session</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.database.db_utils</span> <span class="kn">import</span> <span class="p">(</span>
+	<span class="n">get_session</span><span class="p">,</span>
+	<span class="n">FRAGMENT_BASE</span>
 <span class="p">)</span>
 
 <span class="c1"># Fragments</span>
@@ -206,13 +210,12 @@
 <span class="n">greek_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/corpora/Greek_Metrics&quot;</span>
 <span class="n">prosody_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/corpora/Prosody&quot;</span>
 
-<span class="n">fragment_db</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/databases/FRAGMENT_DATABASE.db&quot;</span>
+<span class="n">fragment_db</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;/databases/fragment_database.db&quot;</span>
 
 <span class="c1"># ID&#39;s of decitalas with &quot;subtalas&quot;</span>
 <span class="n">subdecitala_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">26</span><span class="p">,</span> <span class="mi">38</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">68</span><span class="p">])</span>
 
-<span class="n">engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="n">fragment_db</span><span class="p">)</span>
-<span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">db_path</span><span class="o">=</span><span class="n">fragment_db</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="n">FRAGMENT_BASE</span><span class="p">)</span>
 
 <span class="c1">####################################################################################################</span>
 <div class="viewcode-block" id="FragmentException"><a class="viewcode-back" href="../../mods/fragment.html#decitala.fragment.FragmentException">[docs]</a><span class="k">class</span> <span class="nc">FragmentException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -467,6 +470,11 @@
 <span class="sd">		:rtype: float</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
+
+	<span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+		<span class="n">full_qls</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flatten</span><span class="p">([</span><span class="nb">list</span><span class="p">(</span><span class="n">fragment</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span> <span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])</span>
+		<span class="k">assert</span> <span class="n">full_qls</span> <span class="o">==</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ql_array</span><span class="p">())</span>
+		<span class="k">return</span> <span class="p">[</span><span class="n">fragment</span> <span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
 
 <div class="viewcode-block" id="GeneralFragment.dseg"><a class="viewcode-back" href="../../mods/fragment.html#decitala.fragment.GeneralFragment.dseg">[docs]</a>	<span class="k">def</span> <span class="nf">dseg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduced</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">as_str</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;See docstring of :obj:`decitala.utils.dseg`.&quot;&quot;&quot;</span>
@@ -839,20 +847,14 @@
 <span class="c1">####################################################################################################</span>
 <span class="c1"># Some simple queries for quick access.</span>
 <span class="k">def</span> <span class="nf">get_all_greek_feet</span><span class="p">():</span>
-	<span class="n">engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="n">fragment_db</span><span class="p">)</span>
-	<span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
 	<span class="n">all_greek_feet</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">GreekFootData</span><span class="p">)</span>
 	<span class="k">return</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_greek_feet</span><span class="p">]</span>
 
 <span class="k">def</span> <span class="nf">get_all_decitalas</span><span class="p">():</span>
-	<span class="n">engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="n">fragment_db</span><span class="p">)</span>
-	<span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
 	<span class="n">all_decitalas</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DecitalaData</span><span class="p">)</span>
 	<span class="k">return</span> <span class="p">[</span><span class="n">Decitala</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_decitalas</span><span class="p">]</span>
 
 <span class="k">def</span> <span class="nf">get_all_prosodic_fragments</span><span class="p">():</span>
-	<span class="n">engine</span> <span class="o">=</span> <span class="n">get_engine</span><span class="p">(</span><span class="n">fragment_db</span><span class="p">)</span>
-	<span class="n">session</span> <span class="o">=</span> <span class="n">get_session</span><span class="p">(</span><span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span>
 	<span class="n">all_prosodic_fragments</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ProsodicFragmentData</span><span class="p">)</span>
 	<span class="k">return</span> <span class="p">[</span><span class="n">ProsodicFragment</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_prosodic_fragments</span><span class="p">]</span>
 </pre></div>

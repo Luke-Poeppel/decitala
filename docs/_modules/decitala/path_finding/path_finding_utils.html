@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.path_finding.path_finding_utils &mdash; decitala 0.13.2 documentation</title>
+  <title>decitala.path_finding.path_finding_utils &mdash; decitala 0.14.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.13.2
+                0.14.0
               </div>
             
           
@@ -91,13 +91,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/database.html">database</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/fragment.html">fragment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/hash_table.html">hash_table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/hm.html">hm</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/path_finding.html">path_finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/search.html">search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../mods/sp.html">sp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/trees.html">trees</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/utils.html">utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../mods/vis.html">vis</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Rhythmic Fragments</span></p>
+<p class="caption"><span class="caption-text">Rhythmic Corpora</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../datasets/decitalas.html">Desītālas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../datasets/greek_metrics.html">Greek Metrics</a></li>
@@ -185,6 +187,8 @@
 
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
+<span class="kn">from</span> <span class="nn">..fragment</span> <span class="kn">import</span> <span class="n">GreekFoot</span>
+
 <div class="viewcode-block" id="CostFunction"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.CostFunction">[docs]</a><span class="k">class</span> <span class="nc">CostFunction</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Arbitrary cost function to use in the cost functions. The user should set weights as class</span>
@@ -198,7 +202,7 @@
 <span class="sd">	... 		&#39;&#39;&#39;Cost function determined by the sum of the two extractions standard deviations.&#39;&#39;&#39;</span>
 <span class="sd">	... 		return vertex_a.std() + vertex_b.std()</span>
 
-<span class="sd">	The following is a cost function that relies on three weights summing to 1.</span>
+<span class="sd">	The following is a cost function that relies on two weights.</span>
 
 <span class="sd">	&gt;&gt;&gt; class MySecondCostFunction(CostFunction):</span>
 <span class="sd">	... 	weight_a = 0.4213</span>
@@ -244,21 +248,35 @@
 			<span class="bp">self</span><span class="p">,</span>
 			<span class="n">gap_weight</span><span class="p">,</span>
 			<span class="n">onset_weight</span><span class="p">,</span>
-			<span class="n">reuse_weight</span><span class="p">,</span>
+			<span class="n">articulation_weight</span><span class="p">,</span>
 		<span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">gap_weight</span> <span class="o">=</span> <span class="n">gap_weight</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">onset_weight</span> <span class="o">=</span> <span class="n">onset_weight</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">reuse_weight</span> <span class="o">=</span> <span class="n">reuse_weight</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">articulation_weight</span> <span class="o">=</span> <span class="n">articulation_weight</span>
 
 <div class="viewcode-block" id="CostFunction3D.cost"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.CostFunction3D.cost">[docs]</a>	<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex_a</span><span class="p">,</span> <span class="n">vertex_b</span><span class="p">):</span>
 		<span class="n">gap</span> <span class="o">=</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">vertex_a</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 		<span class="n">onsets</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">vertex_a</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span> <span class="o">+</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span><span class="p">)</span>
 
-		<span class="n">reuse</span> <span class="o">=</span> <span class="mi">0</span>
-		<span class="k">if</span> <span class="n">vertex_a</span><span class="o">.</span><span class="n">fragment</span> <span class="o">!=</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">fragment</span><span class="p">:</span>
-			<span class="n">reuse</span> <span class="o">=</span> <span class="n">vertex_a</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span>
+		<span class="n">total_slurs</span> <span class="o">=</span> <span class="n">vertex_a</span><span class="o">.</span><span class="n">slur_count</span> <span class="o">+</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">slur_count</span>
+		<span class="k">if</span> <span class="n">total_slurs</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="n">slur_count</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">0.5</span>  <span class="c1"># force non-zero</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">slur_count</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">total_slurs</span>
 
-		<span class="n">cost</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reuse_weight</span> <span class="o">*</span> <span class="n">reuse</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onset_weight</span> <span class="o">*</span> <span class="n">onsets</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gap_weight</span> <span class="o">*</span> <span class="n">gap</span><span class="p">)</span>
+		<span class="n">slur_start_end_count</span> <span class="o">=</span> <span class="n">vertex_a</span><span class="o">.</span><span class="n">slur_start_end_count</span> <span class="o">+</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">slur_start_end_count</span>
+		<span class="k">if</span> <span class="n">slur_start_end_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="n">slur_se_count</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">0.75</span>  <span class="c1"># force non-zero; less weight than overall count.</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">slur_se_count</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">slur_start_end_count</span>
+
+		<span class="n">slur_val</span> <span class="o">=</span> <span class="n">slur_count</span> <span class="o">+</span> <span class="n">slur_se_count</span>
+
+		<span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">gap</span><span class="p">,</span> <span class="n">onsets</span><span class="p">,</span> <span class="n">slur_val</span><span class="p">]</span>
+		<span class="n">cost</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">for</span> <span class="n">weight</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">gap_weight</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">onset_weight</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">articulation_weight</span><span class="p">],</span> <span class="n">values</span><span class="p">):</span> <span class="c1"># noqa</span>
+			<span class="n">cost</span> <span class="o">+=</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">val</span>
+
 		<span class="k">return</span> <span class="n">cost</span></div></div>
 
 <div class="viewcode-block" id="build_graph"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.build_graph">[docs]</a><span class="k">def</span> <span class="nf">build_graph</span><span class="p">(</span>
@@ -303,24 +321,45 @@
 
 	<span class="k">return</span> <span class="n">G</span></div>
 
-<div class="viewcode-block" id="sources_and_sinks"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.sources_and_sinks">[docs]</a><span class="k">def</span> <span class="nf">sources_and_sinks</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="sources_and_sinks"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.sources_and_sinks">[docs]</a><span class="k">def</span> <span class="nf">sources_and_sinks</span><span class="p">(</span>
+		<span class="n">data</span><span class="p">,</span>
+		<span class="n">enforce_earliest_start</span><span class="o">=</span><span class="kc">False</span>
+	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Calculates all sources and sinks in a given dataset.</span>
+
+<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
+<span class="sd">	:param bool enforce_earliest_start: whether to require that all sources begin at the earliest</span>
+<span class="sd">										detected onset.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)]</span>
-	<span class="n">sinks</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)]</span>
+	<span class="n">min_onset</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">enforce_earliest_start</span><span class="p">:</span>
+		<span class="n">sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span>
+			<span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">min_onset</span><span class="p">,</span>
+			<span class="n">sources</span>
+		<span class="p">))</span>
 
+	<span class="n">sinks</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">y</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)]</span>
 	<span class="k">return</span> <span class="n">sources</span><span class="p">,</span> <span class="n">sinks</span></div>
 
-<div class="viewcode-block" id="best_source_and_sink"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.best_source_and_sink">[docs]</a><span class="k">def</span> <span class="nf">best_source_and_sink</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class="viewcode-block" id="best_source_and_sink"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.best_source_and_sink">[docs]</a><span class="k">def</span> <span class="nf">best_source_and_sink</span><span class="p">(</span>
+		<span class="n">data</span><span class="p">,</span>
+		<span class="n">enforce_earliest_start</span><span class="o">=</span><span class="kc">False</span>
+	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	TODO: this is bad. I should be using the agnostic approach of Dijkstra here.</span>
 
 <span class="sd">	Calculates the &quot;best&quot; source and sink from a dataset based on two simple heuristics: (1) the</span>
 <span class="sd">	fragment with the earliest (or latest, for sink) starting point, (2) the fragment with the</span>
 <span class="sd">	greatest number of onsets.</span>
+
+<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">sources</span><span class="p">,</span> <span class="n">sinks</span> <span class="o">=</span> <span class="n">sources_and_sinks</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="n">sources</span><span class="p">,</span> <span class="n">sinks</span> <span class="o">=</span> <span class="n">sources_and_sinks</span><span class="p">(</span>
+		<span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+		<span class="n">enforce_earliest_start</span><span class="o">=</span><span class="n">enforce_earliest_start</span>
+	<span class="p">)</span>
 	<span class="n">curr_best_source</span> <span class="o">=</span> <span class="n">sources</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 	<span class="n">curr_best_sink</span> <span class="o">=</span> <span class="n">sinks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -408,6 +447,51 @@
 						<span class="n">combos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span>
 
 	<span class="k">return</span> <span class="n">combos</span></div>
+
+<span class="k">def</span> <span class="nf">split_extractions</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">split_dict</span><span class="p">,</span> <span class="n">all_res</span><span class="p">):</span>
+	<span class="n">split_extractions</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">extraction</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">extraction</span><span class="o">.</span><span class="n">fragment</span> <span class="ow">in</span> <span class="n">split_dict</span><span class="p">:</span>
+			<span class="n">components</span> <span class="o">=</span> <span class="n">extraction</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split_dict</span><span class="o">=</span><span class="n">split_dict</span><span class="p">,</span> <span class="n">all_res</span><span class="o">=</span><span class="n">all_res</span><span class="p">)</span>
+			<span class="n">split_extractions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">components</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">split_extractions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extraction</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">split_extractions</span>
+
+<div class="viewcode-block" id="default_split_dict"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.default_split_dict">[docs]</a><span class="k">def</span> <span class="nf">default_split_dict</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Splits for common compound, repeated metrics.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="p">{</span>
+		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Diiamb&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">)],</span>
+		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Triiamb&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">)],</span>
+		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Dicretic&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Amphimacer&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Amphimacer&quot;</span><span class="p">)],</span>
+		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Dianapest&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Anapest&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Anapest&quot;</span><span class="p">)],</span>
+		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Dochmius&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Amphimacer&quot;</span><span class="p">)]</span>
+	<span class="p">}</span></div>
+
+<div class="viewcode-block" id="check_accuracy"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.check_accuracy">[docs]</a><span class="k">def</span> <span class="nf">check_accuracy</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">calculated_data</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">return_list</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	The `training_data` is the analysis as provided by Messiean. The `input_data`</span>
+<span class="sd">	is the data calculated by path-finding.</span>
+
+<span class="sd">	NOTE: the data is stored in two different formats, hence the use of `mode`. This will</span>
+<span class="sd">	(hopefully) be fixed in the future.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">accurate</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">for</span> <span class="n">this_training_fragment</span> <span class="ow">in</span> <span class="n">training_data</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="n">calculated_data</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;Compositions&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="p">(</span><span class="n">this_training_fragment</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">fragment</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">this_training_fragment</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">):</span> <span class="c1"># noqa</span>
+					<span class="n">accurate</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;Transcriptions&quot;</span><span class="p">:</span>
+				<span class="k">if</span> <span class="p">(</span><span class="n">this_training_fragment</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">fragment</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">this_training_fragment</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">):</span> <span class="c1"># noqa</span>
+					<span class="n">accurate</span> <span class="o">+=</span> <span class="mi">1</span>
+
+	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">return_list</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">(</span><span class="n">accurate</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">training_data</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="p">[</span><span class="n">accurate</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">training_data</span><span class="p">)]</span></div>
 </pre></div>
 
            </div>
