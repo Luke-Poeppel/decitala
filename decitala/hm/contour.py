@@ -415,9 +415,9 @@ def _schultz_get_closest_extrema(
 	... 	maxima,
 	... 	minima
 	... )
-	>>> closest_start
+	>>> c_start
 	('max', (1, [3, {1}]))
-	>>> closest_end
+	>>> c_end
 	('max', (7, [3, {1}]))
 	"""
 	# For minima/maxima that repeat themselves, stores the closest to start and end.
@@ -487,24 +487,26 @@ def _schultz_remove_flag_repetitions_except_closest(contour):
 	(
 		closest_start_extrema,
 		closest_end_extrema,
-		repeated_max_key,
-		repeated_min_key
+		repeated_max_keys,
+		repeated_min_keys
 	) = _schultz_get_closest_extrema(contour, maxima, minima)
 
 	# Unflag all repeated maxes/mins that are not closest to first and last.
 	unflagged_maxima = []
 	unflagged_minima = []
 	for i, contour_elem in enumerate(contour):
-		if contour_elem[0] in (repeated_max_key or repeated_min_key):
+		if contour_elem[0] in (repeated_max_keys or repeated_min_keys):
 			# Make sure we're not unflagging the closest flagged extrema.
 			# Unflag everything except the closest stuff.
-			if i != (closest_start_extrema[1][0] or closest_end_extrema):
-				if contour_elem[0] in repeated_max_key:
+			if i not in {closest_start_extrema[1][0], closest_end_extrema[1][0]}:
+				if contour_elem[0] in repeated_max_keys:
 					contour_elem[1].remove(1)
 					unflagged_maxima.append(contour[contour_elem[0]])
 				else:
 					contour_elem[1].remove(-1)
 					unflagged_minima.append(contour[contour_elem[0]])
+			else:
+				continue
 
 	return (contour, closest_start_extrema, closest_end_extrema, unflagged_minima, unflagged_maxima)
 
