@@ -27,6 +27,21 @@ def test_contours_morris():
 	assert list(calculated[0]) == [1, 0, 2]
 	assert calculated[1] == 3
 
+def test_get_initial_extrema():
+	c = [0, 3, 2, 1, 1, 1, 1, 1, 1] # From Alouette 17
+	expected = [
+		[0, {-1, 1}],
+		[3, {1}],
+		[2, set()],
+		[1, {-1}],
+		[1, {-1, 1}],
+		[1, {-1, 1}],
+		[1, {-1, 1}],
+		[1, {-1, 1}],
+		[1, {-1, 1}]
+	]
+	assert contour._get_initial_extrema(c) == expected
+
 def test_has_intervening_extrema():
 	window = [(1, [0, {-1}]), (3, [0, {-1}])]
 	c = [[1, {1, -1}], [0, {-1}], [2, {1}], [0, {-1}], [2, {1}], [1, {1, -1}]]
@@ -66,3 +81,15 @@ def test_contour_ex15b_schultz():
 
 	assert list(calculated[0]) == expected
 	assert calculated[1] == expected_depth
+
+# def test_alouette_17_shultz():
+# 	pitches = [73, 89, 86, 75, 75, 75, 75, 75, 75]
+# 	alouette_17 = [0, 3, 2, 1, 1, 1, 1, 1, 1]
+
+# 	assert list(contour.pitch_content_to_contour(pitches)) == alouette_17
+
+# 	expected = [0, 2, 1]
+# 	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_17)
+# 	# print(schultz_contour)
+
+# print(test_alouette_17_shultz())

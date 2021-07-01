@@ -190,9 +190,6 @@ def _get_initial_extrema(contour):
 	return out
 
 def _track_extrema(contour, mode):
-	"""
-	NOTE: I think Schultz has an extra condition here... See step 6.
-	"""
 	if mode == "max":
 		check = lambda x: 1 in x[1]
 	else:
@@ -337,7 +334,7 @@ def _window_has_intervening_extrema(window, contour, mode):
 			return False  # Impossible for there to be an intervening interval.
 		else:
 			# NOTE: I think this is wrong... Could randomly choose an element that just isn't an extrema...
-			# Check if there exists a maxima/minima (opposite) between the extrema.
+			# Check if there exists a maxima/minima (opposite) between the extrema. Should be if any(...)
 			intervening_index = random.randint(contour_index_range[0] + 1, contour_index_range[1] - 1)
 			if mode == "max":  # Looking for min.
 				if -1 in contour[intervening_index][1]:
@@ -354,15 +351,15 @@ def _window_has_intervening_extrema(window, contour, mode):
 def _schultz_extrema_check(contour):
 	"""
 	Steps 6-9.
+
+	NOTE: I think Schultz has an extra condition here... See step 6.
 	"""
 	# Reiterate over maxima.
 	_track_extrema(contour=contour, mode="max")
 	# Reiterate over minima
 	_track_extrema(contour=contour, mode="min")
 
-	# Step 8 and 9: find strings of equal and adjacent extrema; delete all but one of them.
-	# UNLESS: they have an intervening extrema, i.e. between any two.
-	# Group by both the element and the stored extrema (now correct, after the above check).
+	# Get clusters of maxima and minima.
 	maxima = [(i, x) for (i, x) in enumerate(contour) if 1 in x[1]]
 	minima = [(i, x) for (i, x) in enumerate(contour) if -1 in x[1]]
 
@@ -372,21 +369,72 @@ def _schultz_extrema_check(contour):
 		maxima_indices.append(list(index))
 	maxima_indices = list(filter(lambda x: len(x) > 1, maxima_indices))
 
-	for max_grouping in maxima_indices:
-		if not(_window_has_intervening_extrema(max_grouping, contour=contour, mode="max")):
-			for elem in max_grouping[1:]:  # Remove flag from all but one.
-				elem[1][1].remove(1)
-
 	minima_grouped = groupby(minima, lambda x: x[1][0])
 	minima_indices = []
 	for _, index in minima_grouped:
 		minima_indices.append(list(index))
 	minima_indices = list(filter(lambda x: len(x) > 1, minima_indices))
 
+	# Step 6/7 "unless": check if any of the clusters start or end with the actual contour elems.
+	# in those cases, remove flags from all except those starts or ends.
+	for max_grouping in maxima_indices:
+		# Check if both first; if so, continues to next iteration.
+		if max_grouping[0][0] == 0 and max_grouping[-1][0] == len(contour):
+			for elem in max_grouping:
+				grouped_elem = contour[elem[0]]
+				if elem[0] != 0 and elem[0] != len(contour) - 1:
+					grouped_elem[1].remove(1)
+			continue
+		elif max_grouping[0][0] == 0:
+			for elem in max_grouping:
+				grouped_elem = contour[elem[0]]
+				if elem[0] != 0:
+					grouped_elem[1].remove(1)
+		elif max_grouping[-1][0] == len(contour) - 1:  # 0-indexed.
+			for elem in max_grouping:
+				grouped_elem = contour[elem[0]]
+				if elem[0] != len(contour) - 1:
+					grouped_elem[1].remove(1)
+
+	for min_grouping in minima_indices:
+		# Check if both first; if so, continues to next iteration.
+		if min_grouping[0][0] == 0 and min_grouping[-1][0] == len(contour):
+			for elem in min_grouping:
+				grouped_elem = contour[elem[0]]
+				if elem[0] != 0 and elem[0] != len(contour) - 1:
+					grouped_elem[1].remove(-1)
+			continue
+		elif min_grouping[0][0] == 0:
+			for elem in min_grouping:
+				grouped_elem = contour[elem[0]]
+				if elem[0] != 0:
+					grouped_elem[1].remove(-1)
+		elif min_grouping[-1][0] == len(contour) - 1:  # 0-indexed.
+			for elem in min_grouping:
+				grouped_elem = contour[elem[0]]
+				if elem[0] != len(contour) - 1:
+					grouped_elem[1].remove(-1)
+
+	# Filter again...
+	maxima_indices = list(filter(lambda x: len(x) > 1, maxima_indices))
+	minima_indices = list(filter(lambda x: len(x) > 1, minima_indices))
+
+	# Step 8 and 9: find strings of equal and adjacent extrema; delete all but one of them.
+	# UNLESS: they have an intervening extrema, i.e. between any two.
+	# Group by both the element and the stored extrema (now correct, after the above check).
+	for max_grouping in maxima_indices:
+		if not(_window_has_intervening_extrema(max_grouping, contour=contour, mode="max")):
+			for elem in max_grouping[1:]:  # Remove flag from all but one.
+				elem[1][1].remove(1)
+
 	for min_grouping in minima_indices:
 		if not(_window_has_intervening_extrema(min_grouping, contour=contour, mode="min")):
 			for elem in min_grouping[1:]:  # Remove flag from all but one.
 				elem[1][1].remove(-1)
+
+	# I don't love this, but it does ensure the start and end are flagged as maxima and minima...
+	contour[0][1].update({-1, 1})
+	contour[-1][1].update({-1, 1})
 
 def _schultz_get_closest_extrema(
 		contour,
@@ -461,11 +509,18 @@ def _schultz_get_closest_extrema(
 			closest_min_end_distance = end_dist
 			closest_min_end = relevant_minima[-1]
 
+	# The starts and ends shouldn't be touched!
+	assert contour[0][1] == {1, -1}, ContourException("Something is wrong (start flags).")
+	assert contour[-1][1] == {1, -1}, ContourException("Something is wrong (end flags).")
+
 	# This list holds the closts repeating min and max to the start (in that order).
 	# Also tracks whether the chosen element is a minima or maxima.
 	start_elems = [("min", closest_min_start), ("max", closest_max_start)] # noqa
 	# This list holds the closts repeating min and max to the end (in that order).
 	end_elems = [("min", closest_min_end), ("max", closest_max_end)] # noqa
+
+	if any(x is None for x in [closest_min_start, closest_max_start, closest_min_end, closest_max_end]): # noqa
+		raise ContourException("Something is wrong.")
 
 	closest_start_extrema = min(start_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
 	closest_end_extrema = max(end_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
@@ -525,11 +580,17 @@ def _schultz_remove_flag_repetitions_except_closest(contour):
 			# Unflag everything except the closest stuff.
 			if i not in {closest_start_extrema[1][0], closest_end_extrema[1][0]}:
 				if contour_elem[0] in repeated_max_keys:
-					contour_elem[1].remove(1)
-					unflagged_maxima.append((i, contour_elem))
+					try:  # It may be empty already.
+						contour_elem[1].remove(1)
+						unflagged_maxima.append((i, contour_elem))
+					except KeyError:
+						continue
 				elif contour_elem[0] in repeated_min_keys:
-					contour_elem[1].remove(-1)
-					unflagged_minima.append((i, contour_elem))
+					try:
+						contour_elem[1].remove(-1)
+						unflagged_minima.append((i, contour_elem))
+					except KeyError:
+						continue
 			else:
 				continue
 
