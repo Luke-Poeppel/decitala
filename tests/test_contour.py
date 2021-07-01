@@ -101,6 +101,15 @@ def test_alouette_3_schultz():
 	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_3)
 	assert list(schultz_contour[0]) == expected
 
+def test_alouette_8_schultz():
+	pitches = [81, 70, 70, 66, 79]
+	alouette_8 = [3, 1, 1, 0, 2, 2, 2, 2]
+
+	expected = [2, 0, 1]
+
+	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_8)
+	assert list(schultz_contour[0]) == expected
+
 def test_alouette_9_schultz():
 	pitches = [68, 79, 68, 79, 68, 79, 68, 79, 68, 79, 68, 79]
 	alouette_9 = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
