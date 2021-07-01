@@ -608,8 +608,7 @@ def _schultz_reduce(contour, depth):
 	# Steps 11, 12, 13, 14, 15
 	"""
 	# Step 11
-	if not(_no_schultz_repetition(contour, allow_unflagged=True)):
-		# i.e. there *is* repetition (sorry for the double negative)
+	if _no_schultz_repetition(contour, allow_unflagged=True) is False:
 		(
 			contour,
 			closest_start_extrema,
@@ -668,7 +667,8 @@ def _no_schultz_repetition(contour, allow_unflagged=False):
 		else:
 			return False
 	else:
-		contour_elems = [x[0] for x in contour][1:-1]
+		# Only interested in the flagged values, of course ;-)
+		contour_elems = [x[0] for x in contour if x[1]][1:-1]
 		return len(contour_elems) <= len(set(contour_elems)) + 1
 
 def contour_to_schultz_prime_contour(contour):

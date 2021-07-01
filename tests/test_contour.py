@@ -82,14 +82,12 @@ def test_contour_ex15b_schultz():
 	assert list(calculated[0]) == expected
 	assert calculated[1] == expected_depth
 
-# def test_alouette_17_shultz():
-# 	pitches = [73, 89, 86, 75, 75, 75, 75, 75, 75]
-# 	alouette_17 = [0, 3, 2, 1, 1, 1, 1, 1, 1]
+def test_alouette_17_shultz():
+	pitches = [73, 89, 86, 75, 75, 75, 75, 75, 75]
+	alouette_17 = [0, 3, 2, 1, 1, 1, 1, 1, 1]
 
-# 	assert list(contour.pitch_content_to_contour(pitches)) == alouette_17
+	assert list(contour.pitch_content_to_contour(pitches)) == alouette_17
 
-# 	expected = [0, 2, 1]
-# 	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_17)
-# 	# print(schultz_contour)
-
-# print(test_alouette_17_shultz())
+	expected = [0, 2, 1]
+	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_17)
+	assert list(schultz_contour[0]) == expected
