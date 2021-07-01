@@ -308,7 +308,7 @@ def rolling_hash_search(
 	fragment_id = 0
 	fragments_found = []
 	for this_win in windows:
-		frames = roll_window(array=object_list, window_length=this_win)
+		frames = roll_window(array=object_list, window_size=this_win)
 		for this_frame in frames:
 			frame_ql_array = frame_to_ql_array(this_frame)
 			if len(frame_ql_array) < 2:
@@ -508,7 +508,7 @@ def rolling_search_on_array(
 
 	fragments_found = []
 	for this_window in windows:
-		for this_frame in roll_window(array=ql_array, window_length=this_window):
+		for this_frame in roll_window(array=ql_array, window_size=this_window):
 			try:
 				searched = table.data[tuple(this_frame)]
 				if searched:
@@ -751,7 +751,7 @@ def rolling_tree_search(
 	for this_win in windows:
 		# logger.info("Searching window of size {}.".format(this_win))
 
-		frames = roll_window(array=object_list, window_length=this_win)
+		frames = roll_window(array=object_list, window_size=this_win)
 		for this_frame in frames:
 			objects = [x[0] for x in this_frame]
 			if any(x.isRest for x in objects):  # Skip any window that has a rest in it.

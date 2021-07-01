@@ -584,18 +584,19 @@ def transform_to_time_scale(ql_array):
 ####################################################################################################
 # WINDOWING / PARTITIONING
 ####################################################################################################
-def roll_window(array, window_length, fn=None):
+def roll_window(array, window_size, fn=None):
 	"""
-	Takes in a list and returns a numpy vstack holding rolling windows of length ``window_length``.
+	Takes in a list and returns a numpy vstack holding rolling windows of length ``window_size``.
 
-	:param array: A list, tuple, numpy array, etc.
-	:param int window_length: Size of the window
-	:param lambda fn: A function evaluating a bool –– used for prime contour calculations.
-	:return: A rolling windows of array, each of length `window_length`.
+	:param array: a list, tuple, numpy array, etc.
+	:param int window_size: size of the window
+	:param lambda fn: a function evaluating a bool; will only iterate over elements satifying the
+						function.
+	:return: A rolling windows of array, each of length `window_size`.
 	:rtype: numpy.vstack
 
 	>>> composers = np.array(['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet'])
-	>>> for window in roll_window(array=composers, window_length=3):
+	>>> for window in roll_window(array=composers, window_size=3):
 	...     print(window)
 	('Mozart', 'Monteverdi', 'Messiaen')
 	('Monteverdi', 'Messiaen', 'Mahler')
@@ -612,11 +613,9 @@ def roll_window(array, window_length, fn=None):
 	([4, {1}], [5, {1}], [5, {1}])
 	([5, {1}], [5, {1}], [1, {1, -1}])
 	"""
-	assert type(window_length) == int
-
 	if fn is not None:
 		array = [x for x in array if fn(x) is True]
-	windows = list(windowed(seq=array, n=window_length, step=1))
+	windows = list(windowed(seq=array, n=window_size, step=1))
 	return windows
 
 def power_list(data):

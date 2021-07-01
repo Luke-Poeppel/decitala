@@ -172,7 +172,7 @@ class FragmentTree(Tree):
 		object_list = get_object_indices(filepath=filepath, part_num=part)
 		data = []
 		for this_window in windows:
-			frames = roll_window(array=object_list, window_length=this_window)
+			frames = roll_window(array=object_list, window_size=this_window)
 			for this_frame in frames:
 				objects = [x[0] for x in this_frame]
 				indices = [x[1] for x in this_frame]

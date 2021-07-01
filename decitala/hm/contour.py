@@ -176,7 +176,7 @@ def _get_initial_extrema(contour):
 	[2, {1, -1}]
 	"""
 	out = [[contour[0], {-1, 1}]]  # Maxima by definition.
-	for this_frame in roll_window(array=contour, window_length=3):
+	for this_frame in roll_window(array=contour, window_size=3):
 		middle_val = this_frame[1]
 		extrema_tracker = set()
 		if _center_of_window_is_extremum(window=this_frame, mode="max"):
@@ -195,7 +195,7 @@ def _track_extrema(contour, mode):
 	else:
 		check = lambda x: -1 in x[1]
 
-	for i, this_window in enumerate(roll_window(array=contour, window_length=3, fn=check)):
+	for i, this_window in enumerate(roll_window(array=contour, window_size=3, fn=check)):
 		extrema_tracker = this_window[1][1]
 		if not(extrema_tracker):
 			continue
@@ -328,7 +328,7 @@ def _window_has_intervening_extrema(window, contour, mode):
 	>>> _window_has_intervening_extrema(maxima_group, contour=contour, mode="max")
 	True
 	"""
-	for tiny_window in roll_window(window, window_length=2):
+	for tiny_window in roll_window(window, window_size=2):
 		contour_index_range = [tiny_window[0][0], tiny_window[1][0]]
 		if contour_index_range[1] == (contour_index_range[0] + 1):
 			return False  # Impossible for there to be an intervening interval.

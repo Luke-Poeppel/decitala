@@ -17,6 +17,9 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added `split()` method to both `GeneralFragment` and `Extraction`. Used for splitting Di- and Tri- partite greek prosodic feet. 
 - Added `slur_count` and `slur_start_end_count` arguments to the `Extraction` dataclass.
 
+#### Changed
+- Changed `roll_window` parameter to `window_size` (instead of `window_length`).
+
 #### Removed
 - Dactylo-Epitrite. Removed as, along with Dochmius, there are a large number of variations of the fragment (see Traité Vol. 1).
 
