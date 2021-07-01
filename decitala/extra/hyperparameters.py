@@ -140,7 +140,7 @@ def plot_3D_points(filepath, save_path=None):
 	ax = plt.axes(projection="3d")
 
 	ax.set_title(
-		"Accuracy From Dijkstra Algorithm for Annotated Transcriptions \n (3D Model)",
+		"Accuracy From Dijkstra Algorithm for Annotated Transcriptions \n (3D Cost Function)",
 		fontname="Times",
 		fontsize=14
 	)
@@ -192,4 +192,4 @@ def plot_3D_points(filepath, save_path=None):
 
 	plt.show()
 
-# plot_3D_points(latest)#, "/Users/lukepoeppel/decitala/decitala/extra/3D_results_74.71.png")
+# plot_3D_points(latest, "/Users/lukepoeppel/decitala/decitala/extra/3D_results_74.71.png")
