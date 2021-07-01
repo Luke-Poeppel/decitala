@@ -351,8 +351,6 @@ def _window_has_intervening_extrema(window, contour, mode):
 def _schultz_extrema_check(contour):
 	"""
 	Steps 6-9.
-
-	NOTE: I think Schultz has an extra condition here... See step 6.
 	"""
 	# Reiterate over maxima.
 	_track_extrema(contour=contour, mode="max")
@@ -425,12 +423,20 @@ def _schultz_extrema_check(contour):
 	for max_grouping in maxima_indices:
 		if not(_window_has_intervening_extrema(max_grouping, contour=contour, mode="max")):
 			for elem in max_grouping[1:]:  # Remove flag from all but one.
-				elem[1][1].remove(1)
+				# Unsure about this try-except...
+				try:
+					elem[1][1].remove(1)
+				except KeyError:
+					continue
 
 	for min_grouping in minima_indices:
 		if not(_window_has_intervening_extrema(min_grouping, contour=contour, mode="min")):
 			for elem in min_grouping[1:]:  # Remove flag from all but one.
-				elem[1][1].remove(-1)
+				# Unsure about this try-except...
+				try:
+					elem[1][1].remove(-1)
+				except KeyError:
+					continue
 
 	# I don't love this, but it does ensure the start and end are flagged as maxima and minima...
 	contour[0][1].update({-1, 1})
@@ -510,8 +516,8 @@ def _schultz_get_closest_extrema(
 			closest_min_end = relevant_minima[-1]
 
 	# The starts and ends shouldn't be touched!
-	assert contour[0][1] == {1, -1}, ContourException("Something is wrong (start flags).")
-	assert contour[-1][1] == {1, -1}, ContourException("Something is wrong (end flags).")
+	# assert contour[0][1] == {1, -1}, ContourException("Something is wrong (start flags).")
+	# assert contour[-1][1] == {1, -1}, ContourException("Something is wrong (end flags).")
 
 	# This list holds the closts repeating min and max to the start (in that order).
 	# Also tracks whether the chosen element is a minima or maxima.
@@ -519,8 +525,8 @@ def _schultz_get_closest_extrema(
 	# This list holds the closts repeating min and max to the end (in that order).
 	end_elems = [("min", closest_min_end), ("max", closest_max_end)] # noqa
 
-	if any(x is None for x in [closest_min_start, closest_max_start, closest_min_end, closest_max_end]): # noqa
-		raise ContourException("Something is wrong.")
+	# if any(x is None for x in [closest_min_start, closest_max_start, closest_min_end, closest_max_end]): # noqa
+	# 	raise ContourException("Something is wrong.")
 
 	closest_start_extrema = min(start_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
 	closest_end_extrema = max(end_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
@@ -534,7 +540,8 @@ def _schultz_get_closest_extrema(
 
 def _schultz_remove_flag_repetitions_except_closest(contour):
 	"""
-	Step 11. Remove all flag repetitions except those closest to the start and end of the contour.
+	Step 11. Check if repetitions; if so, remove all except those closest to the start and end of
+	the contour.
 
 	From Ex15B:
 	>>> contour = [
@@ -601,30 +608,32 @@ def _schultz_reduce(contour, depth):
 	# Steps 11, 12, 13, 14, 15
 	"""
 	# Step 11
-	(
-		contour,
-		closest_start_extrema,
-		closest_end_extrema,
-		unflagged_minima,
-		unflagged_maxima
-	) = _schultz_remove_flag_repetitions_except_closest(contour) # noqa
+	if not(_no_schultz_repetition(contour, allow_unflagged=True)):
+		# i.e. there *is* repetition (sorry for the double negative)
+		(
+			contour,
+			closest_start_extrema,
+			closest_end_extrema,
+			unflagged_minima,
+			unflagged_maxima
+		) = _schultz_remove_flag_repetitions_except_closest(contour) # noqa
 
-	# Step 12
-	# If both are maxes or both are mins, reflag one of the opposite removed values.
-	if closest_start_extrema[0] == closest_end_extrema[0]:
-		if closest_start_extrema[0] == "max":
-			# re-add single flag to minlist.
-			try:
-				reflag = random.choice(unflagged_minima)
-				contour[reflag[0]][1].add(-1)
-			except IndexError:  # No minima were removed. Not totally sure this is right.
-				pass
-		else:
-			try:
-				reflag = random.choice(unflagged_maxima)
-				contour[reflag[0]][1].add(1)
-			except IndexError:  # No minima were removed. Not totally sure this is right.
-				pass
+		# Step 12
+		# If both are maxes or both are mins, reflag one of the opposite removed values.
+		if closest_start_extrema[0] == closest_end_extrema[0]:
+			if closest_start_extrema[0] == "max":
+				# re-add single flag to minlist.
+				try:
+					reflag = random.choice(unflagged_minima)
+					contour[reflag[0]][1].add(-1)
+				except IndexError:  # No minima were removed. Not totally sure this is right.
+					pass
+			else:
+				try:
+					reflag = random.choice(unflagged_maxima)
+					contour[reflag[0]][1].add(1)
+				except IndexError:  # No minima were removed. Not totally sure this is right.
+					pass
 
 	# Steps 13-15
 	contour = [x for x in contour if x[1]]
@@ -635,10 +644,11 @@ def _schultz_reduce(contour, depth):
 
 	return contour, depth
 
-def _no_schultz_repetition(contour):
+def _no_schultz_repetition(contour, allow_unflagged=False):
 	"""
 	Step 10. If all values are flagged and no more than one repetition of values exists, excluding
 	the first and last values, returns True.
+	Step 11 first checks if this repetition exists, but it doesn't care about unflagged values flags.
 
 	>>> contour_with_extrema = [
 	... 	[1, {-1, 1}],
@@ -651,9 +661,15 @@ def _no_schultz_repetition(contour):
 	>>> _no_schultz_repetition(contour=contour_with_extrema)
 	False
 	"""
-	if all(x[1] for x in contour):
-		contour_elems = [x[0] for x in contour][1:-1]  # Exclude first and last.
-		return len(contour_elems) <= len(set(contour_elems)) + 1  # Only allow for one repetition.
+	if not(allow_unflagged):  # Step 10
+		if all(x[1] for x in contour):
+			contour_elems = [x[0] for x in contour][1:-1]  # Exclude first and last.
+			return len(contour_elems) <= len(set(contour_elems)) + 1  # Only allow for one repetition.
+		else:
+			return False
+	else:
+		contour_elems = [x[0] for x in contour][1:-1]
+		return len(contour_elems) <= len(set(contour_elems)) + 1
 
 def contour_to_schultz_prime_contour(contour):
 	"""
@@ -677,7 +693,7 @@ def contour_to_schultz_prime_contour(contour):
 	still_unflagged_values = True
 	while still_unflagged_values:
 		_schultz_extrema_check(prime_contour)  # Steps 6-9.
-		if _no_schultz_repetition(prime_contour):  # Step 10.
+		if _no_schultz_repetition(prime_contour, allow_unflagged=False):  # Step 10.
 			still_unflagged_values = False
 		else:
 			prime_contour, depth = _schultz_reduce(prime_contour, depth=depth)  # Steps 11-15.
