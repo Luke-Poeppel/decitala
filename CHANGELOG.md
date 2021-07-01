@@ -9,7 +9,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added `database.db_utils` module. 
 - Added a `make_core_dbs` file to `decitala.extra` that creates the fragment database and ODNC database. 
 - Added `decitala.hm` directory for holding all harmony and melody (i.e. pitch) related analysis tools. This directory holds an `hm.molt` module (tools for dealing with the modes of limited transposition), an `hm.contour` module for contour calculations (moved some general utils there, like Morris prime contour calculation), and an `hm.hm_utils` for utility functions; this final module also stores the associated color and key-finding coefficient data.
-- WIP: Improved implementation of Morris contour reduction algorithm (1993) and added implementation of Schultz's modified version (see Schultz 2008, p. 108, ex. 14). 
+- Improved implementation of the Morris contour reduction algorithm (1993). Also added an implementation of Schultz's modified contour reduction algorithm (see Schultz 2008, p. 108). 
 - Added `decitala.sp` directory for holding signal processing tools. It currently only holds an `sp_utils` module for spectrogram/audio plotting, but this directory will be populated in future versions. 
 - Added Dipartite and Tripartite Hexasyllabic Metrics: Dianapest, Dicretic, Didactyl, and Triiamb. 
 - Scripts for calculating hyperparameters and plotting analysis are in the `decitala.extra` directory. Latest accuracy is 74.41%. 

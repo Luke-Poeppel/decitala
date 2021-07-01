@@ -388,7 +388,7 @@ def find_clusters(input_, data_mode=False):
 	:param iterable input_: Either a list/array (representing
 							:obj:`~decitala.fragment.GeneralFragment.ql_array`) or data from
 							:obj:`~decitala.utils.get_object_indices`.
-	:param bool data_mode: whether or not the input data is a quarter length array or data from
+	:param bool data_mode: whether the input data is data from
 							:obj:`~decitala.utils.get_object_indices`.
 	:return: a list of cluster indices; if not in data mode, regions with equal quarter length values;
 			if ``data_mode=True``, then regions where the quarter lengths and pitch content are equal.
