@@ -71,9 +71,9 @@ class DefaultCostFunction(CostFunction):
 class CostFunction3D(CostFunction):
 	def __init__(
 			self,
-			gap_weight,
-			onset_weight,
-			articulation_weight,
+			gap_weight=0.8,
+			onset_weight=0.1,
+			articulation_weight=0.1,
 		):
 		self.gap_weight = gap_weight
 		self.onset_weight = onset_weight
