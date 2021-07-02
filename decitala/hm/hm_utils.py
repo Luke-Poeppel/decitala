@@ -98,8 +98,16 @@ COLOR_DICT = {
 }
 
 ####################################################################################################
-
 def get_all_coefficients(exclude_major_minor=False, molt_tonic_val=1):
+	"""
+	Returns a giant dictionary holding the binary weights for all Modes of Limited Transposition,
+	along with the original KS weights (unless ``exclude_major_minor=False``).
+
+	:param bool exclude_major_minor: whether to exclude major/minor weights from the dictionary.
+										Default is ``False``.
+	:param int molt_tonic_val: optional value to set the first element of the MOLT to. Default is
+								all scale values set to 1.
+	"""
 	MOLT_COEFFS = {
 		"M1T1": molt.MOLT(mode=1, transposition=1).pc_vector(tonic_value=molt_tonic_val),
 		"M1T2": molt.MOLT(mode=1, transposition=2).pc_vector(tonic_value=molt_tonic_val),
@@ -155,7 +163,17 @@ def pc_counter(
 	):
 	"""
 	Returns a dictionary holding the pitch classes in the keys and the count (or count normalized
-	over duration) in the given filepath-part_num combination.
+	over total duration) in the given filepath-part_num combination.
+
+	:param str filepath: path to music21-readable file to be parsed.
+	:param int part_num: part number in the work to be analyzed.
+	:param bool normalize_over_duration: whether to normalize the counts by the net duration
+											of the part.
+	:return: a dictionary holding the 12 pitch classes in the keys and the counts/proportion in
+				the values.
+	:rtype: dict
+
+	TODO: allow option for instead returning the net QLs.
 	"""
 	pitch_classes = {x: [] for x in range(0, 12)}
 	converted = converter.parse(filepath)
@@ -179,18 +197,14 @@ def pc_counter(
 	else:
 		return {x: len(y) for x, y in pitch_classes.items()}
 
-def pc_ql_counter(
-	):
-	"""
-	Same as the above, but returns the qls in the dictionary values/list. Will probably be
-	integrated with the above function eventually.
-	"""
-	pass
-
 def pc_dict_to_vector(dict_in):
 	"""
 	Function for converting a pitch class dictionary (i.e. a dictionary with keys in range 0-11 and
 	values some integer) to a vector of the associated values; sorted by the key, naturally.
+
+	:param dict dict_in: a pitch class dictionary.
+	:return: numpy array holding the values of the dictionary, ordered by pitch class.
+	:rtype: numpy.array
 
 	>>> from decitala.hm import molt
 	>>> m3t3 = molt.MOLT(mode=3, transposition=3)
@@ -205,7 +219,11 @@ def pc_dict_to_vector(dict_in):
 def diatonic_scale_binary(tonic, mode, as_vector=False):
 	"""
 	Function for creating a binary dict (or ordered vector if ``as_vector=True``) of a major or
-	minor scale (set ``mode``) of a given ``diatonic``.
+	minor scale.
+
+	:param tonic: the tonic of the major or minor scale (str or int)
+	:param str mode: ``"Major"`` or ``"Minor"``.
+	:param bool as_vector: whether to return the dictionary as a vector ordered by pitch class.
 	"""
 	pitch_classes = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0}
 	if mode.lower() == "Major":
@@ -228,6 +246,11 @@ def note_counter(filepath, part_num):
 	"""
 	Simple tool for counting the number of notes (with ties stripped) in a given filepath/part
 	combination.
+
+	:param str filepath: path to music21-readable file to be parsed.
+	:param int part_num: part number in the work to be analyzed.
+	:return: the total count of note objects (with ties stripped).
+	:rtype: int
 	"""
 	converted = converter.parse(filepath)
 	count = 0
@@ -236,6 +259,14 @@ def note_counter(filepath, part_num):
 	return count
 
 def KS(pc_vector, coefficients, return_p_value=False):
+	"""
+	Krumhansl-Schumckler algorithm.
+
+	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.
+	:param coefficients: coefficents used in the correlation calculation.
+
+	TODO: remove the stupid return_p_value argument.
+	"""
 	input_zscores = stats.zscore(pc_vector)
 
 	coefficients = coefficients / np.linalg.norm(coefficients)
@@ -247,7 +278,12 @@ def KS(pc_vector, coefficients, return_p_value=False):
 
 def KS_diatonic(pc_vector, coefficients, return_tonic=False):
 	"""
-	Needs to circulate over all major/minor keys.
+	Krumhansl-Schumckler algorithm for diatonic collections. Circulates over all major and minor
+	scales.
+
+	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.
+	:param coefficients: coefficents used in the correlation calculation.
+	:param bool return_tonic: whether to also return the most highly correlated tonic.
 	"""
 	input_zscores = stats.zscore(pc_vector)
 
@@ -267,15 +303,27 @@ def KS_diatonic(pc_vector, coefficients, return_tonic=False):
 	else:
 		return max_correlation
 
-def test_all_coefficients(vector, exclude_major_minor=False, molt_tonic_val=1):
+def test_all_coefficients(pc_vector, exclude_major_minor=False, molt_tonic_val=1):
+	"""
+	Function for calculating the correlation between a given ``pc_vector`` and all possible
+	coefficients (binary modes for MOLT and KS coefficients).
+
+	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.
+	:param bool exclude_major_minor: whether to exclude major/minor weights from the calculation.
+										Default is ``False``.
+	:param int molt_tonic_val: optional value to set the first element of the MOLT to. Default is
+								all scales values set to 1.
+	:return: dictionary holding modes in the keys and the calculated KS correlation in the values.
+	:rtype: dict
+	"""
 	res = dict()
 	for key, coefficients in get_all_coefficients(
 			exclude_major_minor=exclude_major_minor,
 			molt_tonic_val=molt_tonic_val
 		).items():
 		if key in {"Major", "Minor"}:
-			res[key] = KS_diatonic(vector, coefficients)
+			res[key] = KS_diatonic(pc_vector, coefficients)
 		else:
-			res[key] = KS(vector, coefficients, return_p_value=True)
+			res[key] = KS(pc_vector, coefficients, return_p_value=True)
 
 	return res
