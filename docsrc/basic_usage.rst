@@ -128,3 +128,54 @@ a fragment :math:`F` and a transformed fragment :math:`T(F)` are examples of the
 exists a highly specified (but simple) transformation between them. These possible 
 transformations include multiplicative augmentation, additive augmentation, mixed augmentation, 
 flips into retrograde, subdivision, and "contiguous summation."
+
+
+Harmony-Melody (hm) Tools
+=========================
+
+The ``decitala`` package also includes a number of tools for standard harmonic and melodic analysis of 
+Messiaen's music. The ``decitala.hm.molt`` allows users to generate Modes of Limited Transposition [MOLT] (1944)
+as follows:
+
+   >>> from decitala.hm import molt
+   >>> m2t2 = molt.MOLT(2, 2)
+   >>> m2t2
+   <moiseaux.MOLT mode=2, transposition=2>
+   >>> m2t2.color
+   ['Gold', 'Brown']
+   >>> m2t2.pc_vector()
+   array([0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1])
+
+We can also query the Modes of Limited Transposition for a given collection using the ``MOLT_query`` function.
+  
+   >>> collection = [60, 62, 64, 66, 68]
+   >>> for scale in molt.MOLT_query(collection):
+   ...   print(scale)
+   <moiseaux.MOLT mode=1, transposition=1>
+   <moiseaux.MOLT mode=3, transposition=1>
+   <moiseaux.MOLT mode=3, transposition=3>
+   <moiseaux.MOLT mode=6, transposition=1>
+   <moiseaux.MOLT mode=6, transposition=3>
+   <moiseaux.MOLT mode=6, transposition=5>
+   <moiseaux.MOLT mode=7, transposition=2>
+   <moiseaux.MOLT mode=7, transposition=4>
+   <moiseaux.MOLT mode=7, transposition=6>
+
+The ``decitala.hm.contour`` module contains tools for generating the pitch contour of a set of 
+pitches, as well as tools for processing. Notably, we can prune a given contour for its prime form
+(see Morris 1993) as follows:
+
+   >>> from decitala.hm import contour
+   >>> c = [1, 0, 0, 1, 2]
+   >>> contour.contour_to_prime_contour(c)
+   (array([1, 0, 2]), 2)
+
+I've also implemented Robert Schultz's contour reduction algorithm (see Schultz 2008):
+   
+   >>> from decitala.hm import contour
+   >>> c = [1, 0, 0, 1, 2, 1, 2, 1, 2]
+   >>> contour.contour_to_schultz_prime_contour(c)
+   (array([1, 0, 2]), 3)
+
+
+
