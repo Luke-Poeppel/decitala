@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Decitala Documentation
-====================================
+======================
 
 The ``decitala`` package aims to make rhythmic search and analysis of encoded musical corpora easier. This toolkit can 
 be used to both detect rhythmic fragments in a work and suggest possible alignments. ``decitala`` is being developed 
@@ -18,7 +18,7 @@ Source Code: https://github.com/Luke-Poeppel/decitala.
 Written by: Luke Poeppel (lukepoeppel.com)
 
 Installation
-====================================
+============
 Run the following::
 
    $ cd # Navigate to home directory
@@ -27,6 +27,10 @@ Run the following::
    $ pip3 install -e .
    $ pre-commit install # Only needed if you'd like to contribute code.
    $ decitala --version # Check for proper installation.
+
+Tutorial
+========
+See `here <https://luke-poeppel.github.io/decitala/basic_usage.html>`_
 
 .. toctree::
    :maxdepth: 2

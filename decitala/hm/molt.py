@@ -7,8 +7,6 @@
 # Location: NYC, 2021
 ####################################################################################################
 """
-Tools for dealing with Messiaen's Modes of Limited Transpositions (MOLT).
-
 "I am ... affected by a kind of synopsia, found more in my mind than in
 my body, which allows me, when I hear music, and equally when I read
 it, to see inwardly, in the mind's eye, colors which move with the music,

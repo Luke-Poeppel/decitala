@@ -3,6 +3,14 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.14.1](https://github.com/Luke-Poeppel/decitala/tree/v0.14.1) July 2, 2021
+#### Fixed
+- Fixed a number of typos and added missing examples in `decitala.hm`.
+- The `contour_to_prime_contour` function still had the `include_depth` argument. I removed it.
+- Re-added commented-out assertions and exceptions, now that all the tests are passing.
+- Updated Basic Usage to match the most recent updates.
+- Missing default weights to `CostFunction3D`.
+
 ## [v0.14.0](https://github.com/Luke-Poeppel/decitala/tree/v0.14.0) July 1, 2021
 #### Added
 - Moved all `moiseaux` (private repo) tools to `decitala`. The `decitala.db` now holds `Transcription` and `Species` SQLAlchemy query wrappers; also added the corresponding helpers: `db.get_all_transcriptions()` and `db.get_all_species()`. 

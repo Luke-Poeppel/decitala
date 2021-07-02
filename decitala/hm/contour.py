@@ -30,24 +30,47 @@ class ContourException(Exception):
 
 def strip_monotonic_pitch_content(pitch_content):
 	"""
-	Given monotonic pitch content output from the decitala search modules (which stores singleton
-	pitch content as tuples), strips to individual elements.
+	The pitch content extracted in the :obj:`decitala.search` module consists of lists of tuples.
+	This functions strips monotonic pitch content to a single list. If non-monotonic pitch content
+	is provided, the function chooses the lowest pitch.
+
+	:param list pitch_content: pitch content of the format returned in
+							:obj:`decitala.search.rolling_hash_search`.
+	:return: a list of MIDI tones.
+	:rtype: list
+
+	>>> pitch_content = [(60,), (61,), (65,)]
+	>>> strip_monotonic_pitch_content(pitch_content)
+	[60, 61, 65]
 	"""
 	return [x[0] for x in pitch_content]
 
 def normalize_pitch_content(data, midi_start=60):
 	"""
-	Normalize pitch content to starting value `midi_start`.
+	Normalizes a list of MIDI tones to a a starting value.
+
+	:param list data: a list of MIDI tones.
+	:param int midi_start: the MIDI starting point to which the data are normalized.
+	:return: a numpy array of the pitch content, normalized to the starting value.
+	:rtype: numpy.array
+
+	>>> normalize_pitch_content(data=[58, 60, 62], midi_start=60)
+	array([60, 62, 64])
 	"""
 	diff = data[0] - midi_start
 	return np.array([x - diff for x in data])
 
 def uds_contour(data):
 	"""
-	Stands for "up-down-stay" as a measure of pitch contour. Normalized to start at 0.
+	Returns the for "up-down-stay" contour (UDS) of a given list of MIDI tones. Normalized
+	to start at 0.
 
-	>>> frag = np.array([47, 42, 45, 51, 51, 61, 58])
-	>>> uds_contour(frag)
+	:param list data: a list of MIDI tones.
+	:return: a numpy array of the UDS contour of the given data.
+	:rtype: numpy.array
+
+	>>> midis = [47, 42, 45, 51, 51, 61, 58]
+	>>> uds_contour(midis)
 	array([ 0, -1,  1,  1,  0,  1, -1])
 	"""
 	out = [0]
@@ -69,17 +92,23 @@ def uds_contour(data):
 
 def pitch_content_to_contour(pitch_content, as_str=False):
 	"""
-	This function calculates the pitch contour information from data out of rolling_search.
-	This function assumes the data is monophonic.
+	This function returns the contour of given pitch content. It accepts either a list of MIDI
+	tones, or the data returned in the :obj:`decitala.search` module. Like
+	:obj:`decitala.hm.contour.strip_monotonic_pitch_content`, if non-monotonic pitch content is
+	provided, it chooses the lowest pitch.
 
 	:param list pitch_content: pitch content from the output of rolling_search."
+	:param bool as_str: whether to return the pitch content as a string (standard format),
+						like ``"<0 1 1>"``.
+	:return: the contour of the given ``pitch_content``.
+	:rtype: numpy.array or str
 
-	>>> pc = [(80,), (91,), (78,), (85,)]
-	>>> pitch_content_to_contour(pc)
+	>>> pitch_content_1 = [(80,), (91,), (78,), (85,)]
+	>>> pitch_content_to_contour(pitch_content_1)
 	array([1, 3, 0, 2])
-	>>> pc2 = [(80,), (84,), (84,)]
-	>>> pitch_content_to_contour(pc2)
-	array([0, 1, 1])
+	>>> pitch_content_2 = [80, 84, 84]
+	>>> pitch_content_to_contour(pitch_content_2, as_str=True)
+	'<0 1 1>'
 	"""
 	if type(pitch_content[0]) == tuple:
 		to_mono = [x[0] for x in pitch_content]
@@ -103,12 +132,16 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 
 def contour_to_neume(contour):
 	"""
-	Function for checking the associated neume for a given contour. Only two and three onset
-	contour are supported.
+	Oversimplified function for checking the associated neume of a given pitch contour. Only two and
+	three onset contours are supported.
 
 	:param contour: A pitch contour (iterable).
 	:return: The associated neume or ``None``.
 	:rtype: str or None
+
+	>>> contour = [1, 0, 1]
+	>>> contour_to_neume(contour)
+	'Porrectus'
 	"""
 	assert len(contour) <= 3, ContourException("Contour input must be of length three.")
 	try:
@@ -255,42 +288,33 @@ def _morris_reduce(contour):
 
 	return contour
 
-def contour_to_prime_contour(contour, include_depth=False):
+def contour_to_prime_contour(contour):
 	"""
-	Implementation of Morris' 1993 Contour-Reduction algorithm. "The algorithm prunes pitches
-	from a contour until it is reduced to a prime." The loop runs until all elements
-	are flagged as maxima or minima.
+	Implementation of Robert Morris' Contour-Reduction algorithm (Morris, 1993). "The algorithm prunes
+	pitches from a contour until it is reduced to a prime." (Schultz)
 
-	**Assumes the input array is a proper contour, i.e. all elements in range 0-n.**
-	**NOTE: Recalculating the contour at the return is not a mistake! Once reduced, the values
-			don't match a standard, sequential contour anymore.**
-
-	:param np.array contour: contour input
+	:param contour: A pitch contour (iterable).
+	:return: the prime contour of the given pitch contour, along with the depth of the reduction.
+	:rtype: tuple
 
 	>>> contour_a = [0, 1]
 	>>> contour_to_prime_contour(contour_a)
-	array([0, 1])
+	(array([0, 1]), 0)
 	>>> contour_b = [0, 4, 3, 2, 5, 5, 1]
-	>>> contour_to_prime_contour(contour_b, include_depth=False)
+	>>> contour_to_prime_contour(contour_b)[0]
 	array([0, 2, 1])
 	"""
 	depth = 0
 
 	# If the segment is of length <= 2, it is prime by definition.
 	if len(contour) <= 2:
-		if not(include_depth):
-			return pitch_content_to_contour(contour)
-		else:
-			return (pitch_content_to_contour(contour), depth)
+		return (pitch_content_to_contour(contour), depth)
 
 	# If all the values are extremas, it is already prime.
 	prime_contour = _get_initial_extrema(contour)
 	initial_flags = [x[1] for x in prime_contour]
 	if all(x for x in initial_flags):
-		if not(include_depth):
-			return pitch_content_to_contour(contour)
-		else:
-			return (pitch_content_to_contour(contour), depth)
+		return (pitch_content_to_contour(contour), depth)
 
 	still_unflagged_values = True
 	while still_unflagged_values:
@@ -305,10 +329,7 @@ def contour_to_prime_contour(contour, include_depth=False):
 	prime_contour = [x[0] for x in prime_contour if x[1]]
 	depth += 1
 
-	if not(include_depth):
-		return pitch_content_to_contour(prime_contour)
-	else:
-		return (pitch_content_to_contour(prime_contour), depth)
+	return (pitch_content_to_contour(prime_contour), depth)
 
 ####################################################################################################
 # Implementation of Schultz contour reduction algorithm (2008). Final version (see p. 108).
@@ -516,8 +537,8 @@ def _schultz_get_closest_extrema(
 			closest_min_end = relevant_minima[-1]
 
 	# The starts and ends shouldn't be touched!
-	# assert contour[0][1] == {1, -1}, ContourException("Something is wrong (start flags).")
-	# assert contour[-1][1] == {1, -1}, ContourException("Something is wrong (end flags).")
+	assert contour[0][1] == {1, -1}, ContourException("Something is wrong (start flags).")
+	assert contour[-1][1] == {1, -1}, ContourException("Something is wrong (end flags).")
 
 	# This list holds the closts repeating min and max to the start (in that order).
 	# Also tracks whether the chosen element is a minima or maxima.
@@ -525,8 +546,8 @@ def _schultz_get_closest_extrema(
 	# This list holds the closts repeating min and max to the end (in that order).
 	end_elems = [("min", closest_min_end), ("max", closest_max_end)] # noqa
 
-	# if any(x is None for x in [closest_min_start, closest_max_start, closest_min_end, closest_max_end]): # noqa
-	# 	raise ContourException("Something is wrong.")
+	if any(x is None for x in [closest_min_start, closest_max_start, closest_min_end, closest_max_end]): # noqa
+		raise ContourException("Something is wrong.")
 
 	closest_start_extrema = min(start_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
 	closest_end_extrema = max(end_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
@@ -673,7 +694,17 @@ def _no_schultz_repetition(contour, allow_unflagged=False):
 
 def contour_to_schultz_prime_contour(contour):
 	"""
-	Implementation of Schultz's (2008) modification of Morris' contour-reduction algorithm.
+	Implementation of Schultz's (2008) modification of Morris' contour-reduction algorithm. Catered
+	to further prune "unnecessary" repetitions of contour elements.
+
+	:param contour: A pitch contour (iterable).
+	:return: the Schultz prime contour of the given pitch contour, along with the depth of the
+			reduction.
+	:rtype: tuple
+
+	>>> alouette_5 = [2, 5, 3, 1, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+	>>> contour_to_schultz_prime_contour(alouette_5)
+	(array([1, 2, 0]), 3)
 	"""
 	depth = 0
 
