@@ -25,6 +25,19 @@ NEUMES = {
 	(1, 0, 1): "Porrectus"
 }
 
+# Morris's Prime Contour Classes (1993, 220-221)
+# Monophonic examples
+PRIME_CONTOUR_CLASSES = {
+	(0): "A",
+	(0, 0): "B",
+	(0, 1): "D",
+	(0, 1, 0): "G",
+	(0, 2, 1): "L",
+	(1, 0, 2, 1): "P",
+	(1, 0, 3, 2): "X",
+	(1, 3, 0, 2): "Y"
+}
+
 class ContourException(Exception):
 	pass
 
@@ -148,6 +161,19 @@ def contour_to_neume(contour):
 		return NEUMES[tuple(contour)]
 	except KeyError:
 		return None
+
+def contour_to_contour_class(contour):
+	"""
+	Returns the associated pitch contour class (a letter) from Morris (1993, 220-221)
+	of a contour.
+
+	:param contour: A pitch contour (iterable).
+	:rtype: str
+
+	>>> contour_to_contour_class((1, 0, 3, 2))
+	'X'
+	"""
+	return PRIME_CONTOUR_CLASSES[contour]
 
 
 ####################################################################################################
