@@ -154,7 +154,7 @@ class FragmentTree(Tree):
 	def from_composition(
 			cls,
 			filepath,
-			part=0,
+			part_num=0,
 			rep_type="ratio",
 			windows=list(range(2, 10))
 		):
@@ -167,9 +167,9 @@ class FragmentTree(Tree):
 		:rtype: :obj:`~decitala.trees.FragmentTree`
 		"""
 		assert os.path.isfile(filepath)
-		assert type(part) == int
+		assert type(part_num) == int
 
-		object_list = get_object_indices(filepath=filepath, part_num=part)
+		object_list = get_object_indices(filepath=filepath, part_num=part_num)
 		data = []
 		for this_window in windows:
 			frames = roll_window(array=object_list, window_size=this_window)
