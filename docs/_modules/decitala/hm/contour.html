@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.hm.contour &mdash; decitala 0.14.0 documentation</title>
+  <title>decitala.hm.contour &mdash; decitala 0.14.1 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.14.0
+                0.14.1
               </div>
             
           
@@ -205,24 +205,47 @@
 
 <div class="viewcode-block" id="strip_monotonic_pitch_content"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.contour.strip_monotonic_pitch_content">[docs]</a><span class="k">def</span> <span class="nf">strip_monotonic_pitch_content</span><span class="p">(</span><span class="n">pitch_content</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Given monotonic pitch content output from the decitala search modules (which stores singleton</span>
-<span class="sd">	pitch content as tuples), strips to individual elements.</span>
+<span class="sd">	The pitch content extracted in the :obj:`decitala.search` module consists of lists of tuples.</span>
+<span class="sd">	This functions strips monotonic pitch content to a single list. If non-monotonic pitch content</span>
+<span class="sd">	is provided, the function chooses the lowest pitch.</span>
+
+<span class="sd">	:param list pitch_content: pitch content of the format returned in</span>
+<span class="sd">							:obj:`decitala.search.rolling_hash_search`.</span>
+<span class="sd">	:return: a list of MIDI tones.</span>
+<span class="sd">	:rtype: list</span>
+
+<span class="sd">	&gt;&gt;&gt; pitch_content = [(60,), (61,), (65,)]</span>
+<span class="sd">	&gt;&gt;&gt; strip_monotonic_pitch_content(pitch_content)</span>
+<span class="sd">	[60, 61, 65]</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pitch_content</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="normalize_pitch_content"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.contour.normalize_pitch_content">[docs]</a><span class="k">def</span> <span class="nf">normalize_pitch_content</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">midi_start</span><span class="o">=</span><span class="mi">60</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Normalize pitch content to starting value `midi_start`.</span>
+<span class="sd">	Normalizes a list of MIDI tones to a a starting value.</span>
+
+<span class="sd">	:param list data: a list of MIDI tones.</span>
+<span class="sd">	:param int midi_start: the MIDI starting point to which the data are normalized.</span>
+<span class="sd">	:return: a numpy array of the pitch content, normalized to the starting value.</span>
+<span class="sd">	:rtype: numpy.array</span>
+
+<span class="sd">	&gt;&gt;&gt; normalize_pitch_content(data=[58, 60, 62], midi_start=60)</span>
+<span class="sd">	array([60, 62, 64])</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">diff</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">midi_start</span>
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span> <span class="o">-</span> <span class="n">diff</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="uds_contour"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.contour.uds_contour">[docs]</a><span class="k">def</span> <span class="nf">uds_contour</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Stands for &quot;up-down-stay&quot; as a measure of pitch contour. Normalized to start at 0.</span>
+<span class="sd">	Returns the for &quot;up-down-stay&quot; contour (UDS) of a given list of MIDI tones. Normalized</span>
+<span class="sd">	to start at 0.</span>
 
-<span class="sd">	&gt;&gt;&gt; frag = np.array([47, 42, 45, 51, 51, 61, 58])</span>
-<span class="sd">	&gt;&gt;&gt; uds_contour(frag)</span>
+<span class="sd">	:param list data: a list of MIDI tones.</span>
+<span class="sd">	:return: a numpy array of the UDS contour of the given data.</span>
+<span class="sd">	:rtype: numpy.array</span>
+
+<span class="sd">	&gt;&gt;&gt; midis = [47, 42, 45, 51, 51, 61, 58]</span>
+<span class="sd">	&gt;&gt;&gt; uds_contour(midis)</span>
 <span class="sd">	array([ 0, -1,  1,  1,  0,  1, -1])</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">out</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -244,17 +267,23 @@
 
 <div class="viewcode-block" id="pitch_content_to_contour"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.contour.pitch_content_to_contour">[docs]</a><span class="k">def</span> <span class="nf">pitch_content_to_contour</span><span class="p">(</span><span class="n">pitch_content</span><span class="p">,</span> <span class="n">as_str</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	This function calculates the pitch contour information from data out of rolling_search.</span>
-<span class="sd">	This function assumes the data is monophonic.</span>
+<span class="sd">	This function returns the contour of given pitch content. It accepts either a list of MIDI</span>
+<span class="sd">	tones, or the data returned in the :obj:`decitala.search` module. Like</span>
+<span class="sd">	:obj:`decitala.hm.contour.strip_monotonic_pitch_content`, if non-monotonic pitch content is</span>
+<span class="sd">	provided, it chooses the lowest pitch.</span>
 
 <span class="sd">	:param list pitch_content: pitch content from the output of rolling_search.&quot;</span>
+<span class="sd">	:param bool as_str: whether to return the pitch content as a string (standard format),</span>
+<span class="sd">						like ``&quot;&lt;0 1 1&gt;&quot;``.</span>
+<span class="sd">	:return: the contour of the given ``pitch_content``.</span>
+<span class="sd">	:rtype: numpy.array or str</span>
 
-<span class="sd">	&gt;&gt;&gt; pc = [(80,), (91,), (78,), (85,)]</span>
-<span class="sd">	&gt;&gt;&gt; pitch_content_to_contour(pc)</span>
+<span class="sd">	&gt;&gt;&gt; pitch_content_1 = [(80,), (91,), (78,), (85,)]</span>
+<span class="sd">	&gt;&gt;&gt; pitch_content_to_contour(pitch_content_1)</span>
 <span class="sd">	array([1, 3, 0, 2])</span>
-<span class="sd">	&gt;&gt;&gt; pc2 = [(80,), (84,), (84,)]</span>
-<span class="sd">	&gt;&gt;&gt; pitch_content_to_contour(pc2)</span>
-<span class="sd">	array([0, 1, 1])</span>
+<span class="sd">	&gt;&gt;&gt; pitch_content_2 = [80, 84, 84]</span>
+<span class="sd">	&gt;&gt;&gt; pitch_content_to_contour(pitch_content_2, as_str=True)</span>
+<span class="sd">	&#39;&lt;0 1 1&gt;&#39;</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">pitch_content</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">:</span>
 		<span class="n">to_mono</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pitch_content</span><span class="p">]</span>
@@ -278,12 +307,16 @@
 
 <div class="viewcode-block" id="contour_to_neume"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.contour.contour_to_neume">[docs]</a><span class="k">def</span> <span class="nf">contour_to_neume</span><span class="p">(</span><span class="n">contour</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Function for checking the associated neume for a given contour. Only two and three onset</span>
-<span class="sd">	contour are supported.</span>
+<span class="sd">	Oversimplified function for checking the associated neume of a given pitch contour. Only two and</span>
+<span class="sd">	three onset contours are supported.</span>
 
 <span class="sd">	:param contour: A pitch contour (iterable).</span>
 <span class="sd">	:return: The associated neume or ``None``.</span>
 <span class="sd">	:rtype: str or None</span>
+
+<span class="sd">	&gt;&gt;&gt; contour = [1, 0, 1]</span>
+<span class="sd">	&gt;&gt;&gt; contour_to_neume(contour)</span>
+<span class="sd">	&#39;Porrectus&#39;</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">ContourException</span><span class="p">(</span><span class="s2">&quot;Contour input must be of length three.&quot;</span><span class="p">)</span>
 	<span class="k">try</span><span class="p">:</span>
@@ -430,42 +463,33 @@
 
 	<span class="k">return</span> <span class="n">contour</span>
 
-<div class="viewcode-block" id="contour_to_prime_contour"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.contour.contour_to_prime_contour">[docs]</a><span class="k">def</span> <span class="nf">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="n">include_depth</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="contour_to_prime_contour"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.contour.contour_to_prime_contour">[docs]</a><span class="k">def</span> <span class="nf">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Implementation of Morris&#39; 1993 Contour-Reduction algorithm. &quot;The algorithm prunes pitches</span>
-<span class="sd">	from a contour until it is reduced to a prime.&quot; The loop runs until all elements</span>
-<span class="sd">	are flagged as maxima or minima.</span>
+<span class="sd">	Implementation of Robert Morris&#39; Contour-Reduction algorithm (Morris, 1993). &quot;The algorithm prunes</span>
+<span class="sd">	pitches from a contour until it is reduced to a prime.&quot; (Schultz)</span>
 
-<span class="sd">	**Assumes the input array is a proper contour, i.e. all elements in range 0-n.**</span>
-<span class="sd">	**NOTE: Recalculating the contour at the return is not a mistake! Once reduced, the values</span>
-<span class="sd">			don&#39;t match a standard, sequential contour anymore.**</span>
-
-<span class="sd">	:param np.array contour: contour input</span>
+<span class="sd">	:param contour: A pitch contour (iterable).</span>
+<span class="sd">	:return: the prime contour of the given pitch contour, along with the depth of the reduction.</span>
+<span class="sd">	:rtype: tuple</span>
 
 <span class="sd">	&gt;&gt;&gt; contour_a = [0, 1]</span>
 <span class="sd">	&gt;&gt;&gt; contour_to_prime_contour(contour_a)</span>
-<span class="sd">	array([0, 1])</span>
+<span class="sd">	(array([0, 1]), 0)</span>
 <span class="sd">	&gt;&gt;&gt; contour_b = [0, 4, 3, 2, 5, 5, 1]</span>
-<span class="sd">	&gt;&gt;&gt; contour_to_prime_contour(contour_b, include_depth=False)</span>
+<span class="sd">	&gt;&gt;&gt; contour_to_prime_contour(contour_b)[0]</span>
 <span class="sd">	array([0, 2, 1])</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">depth</span> <span class="o">=</span> <span class="mi">0</span>
 
 	<span class="c1"># If the segment is of length &lt;= 2, it is prime by definition.</span>
 	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
-		<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">include_depth</span><span class="p">):</span>
-			<span class="k">return</span> <span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="k">return</span> <span class="p">(</span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">),</span> <span class="n">depth</span><span class="p">)</span>
+		<span class="k">return</span> <span class="p">(</span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">),</span> <span class="n">depth</span><span class="p">)</span>
 
 	<span class="c1"># If all the values are extremas, it is already prime.</span>
 	<span class="n">prime_contour</span> <span class="o">=</span> <span class="n">_get_initial_extrema</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span>
 	<span class="n">initial_flags</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">prime_contour</span><span class="p">]</span>
 	<span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">initial_flags</span><span class="p">):</span>
-		<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">include_depth</span><span class="p">):</span>
-			<span class="k">return</span> <span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">)</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="k">return</span> <span class="p">(</span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">),</span> <span class="n">depth</span><span class="p">)</span>
+		<span class="k">return</span> <span class="p">(</span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">),</span> <span class="n">depth</span><span class="p">)</span>
 
 	<span class="n">still_unflagged_values</span> <span class="o">=</span> <span class="kc">True</span>
 	<span class="k">while</span> <span class="n">still_unflagged_values</span><span class="p">:</span>
@@ -480,10 +504,7 @@
 	<span class="n">prime_contour</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">prime_contour</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
 	<span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>
 
-	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">include_depth</span><span class="p">):</span>
-		<span class="k">return</span> <span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">prime_contour</span><span class="p">)</span>
-	<span class="k">else</span><span class="p">:</span>
-		<span class="k">return</span> <span class="p">(</span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">prime_contour</span><span class="p">),</span> <span class="n">depth</span><span class="p">)</span></div>
+	<span class="k">return</span> <span class="p">(</span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">prime_contour</span><span class="p">),</span> <span class="n">depth</span><span class="p">)</span></div>
 
 <span class="c1">####################################################################################################</span>
 <span class="c1"># Implementation of Schultz contour reduction algorithm (2008). Final version (see p. 108).</span>
@@ -691,8 +712,8 @@
 			<span class="n">closest_min_end</span> <span class="o">=</span> <span class="n">relevant_minima</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
 	<span class="c1"># The starts and ends shouldn&#39;t be touched!</span>
-	<span class="c1"># assert contour[0][1] == {1, -1}, ContourException(&quot;Something is wrong (start flags).&quot;)</span>
-	<span class="c1"># assert contour[-1][1] == {1, -1}, ContourException(&quot;Something is wrong (end flags).&quot;)</span>
+	<span class="k">assert</span> <span class="n">contour</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">},</span> <span class="n">ContourException</span><span class="p">(</span><span class="s2">&quot;Something is wrong (start flags).&quot;</span><span class="p">)</span>
+	<span class="k">assert</span> <span class="n">contour</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">},</span> <span class="n">ContourException</span><span class="p">(</span><span class="s2">&quot;Something is wrong (end flags).&quot;</span><span class="p">)</span>
 
 	<span class="c1"># This list holds the closts repeating min and max to the start (in that order).</span>
 	<span class="c1"># Also tracks whether the chosen element is a minima or maxima.</span>
@@ -700,8 +721,8 @@
 	<span class="c1"># This list holds the closts repeating min and max to the end (in that order).</span>
 	<span class="n">end_elems</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;min&quot;</span><span class="p">,</span> <span class="n">closest_min_end</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="n">closest_max_end</span><span class="p">)]</span> <span class="c1"># noqa</span>
 
-	<span class="c1"># if any(x is None for x in [closest_min_start, closest_max_start, closest_min_end, closest_max_end]): # noqa</span>
-	<span class="c1"># 	raise ContourException(&quot;Something is wrong.&quot;)</span>
+	<span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">closest_min_start</span><span class="p">,</span> <span class="n">closest_max_start</span><span class="p">,</span> <span class="n">closest_min_end</span><span class="p">,</span> <span class="n">closest_max_end</span><span class="p">]):</span> <span class="c1"># noqa</span>
+		<span class="k">raise</span> <span class="n">ContourException</span><span class="p">(</span><span class="s2">&quot;Something is wrong.&quot;</span><span class="p">)</span>
 
 	<span class="n">closest_start_extrema</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">start_elems</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># noqa Correct by Ex. 15A</span>
 	<span class="n">closest_end_extrema</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">end_elems</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># noqa Correct by Ex. 15A</span>
@@ -848,7 +869,17 @@
 
 <div class="viewcode-block" id="contour_to_schultz_prime_contour"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.contour.contour_to_schultz_prime_contour">[docs]</a><span class="k">def</span> <span class="nf">contour_to_schultz_prime_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Implementation of Schultz&#39;s (2008) modification of Morris&#39; contour-reduction algorithm.</span>
+<span class="sd">	Implementation of Schultz&#39;s (2008) modification of Morris&#39; contour-reduction algorithm. Catered</span>
+<span class="sd">	to further prune &quot;unnecessary&quot; repetitions of contour elements.</span>
+
+<span class="sd">	:param contour: A pitch contour (iterable).</span>
+<span class="sd">	:return: the Schultz prime contour of the given pitch contour, along with the depth of the</span>
+<span class="sd">			reduction.</span>
+<span class="sd">	:rtype: tuple</span>
+
+<span class="sd">	&gt;&gt;&gt; alouette_5 = [2, 5, 3, 1, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]</span>
+<span class="sd">	&gt;&gt;&gt; contour_to_schultz_prime_contour(alouette_5)</span>
+<span class="sd">	(array([1, 2, 0]), 3)</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">depth</span> <span class="o">=</span> <span class="mi">0</span>
 

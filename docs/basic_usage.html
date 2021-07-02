@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Basic Usage &mdash; decitala 0.14.0 documentation</title>
+  <title>Basic Usage &mdash; decitala 0.14.1 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.14.0
+                0.14.1
               </div>
             
           
@@ -108,7 +108,11 @@
 </ul>
 <p class="caption"><span class="caption-text">Basic Usage</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Basic Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#rhythm-tools">Rhythm Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#harmony-melody-hm-tools">Harmony-Melody (hm) Tools</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -178,9 +182,11 @@
             
   <div class="section" id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="rhythm-tools">
+<h2>Rhythm Tools<a class="headerlink" href="#rhythm-tools" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">decitala</span></code> package includes a number of rhythmic fragments in the <code class="docutils literal notranslate"><span class="pre">corpora</span></code> directory. We can
 access the data for these fragments using the <code class="docutils literal notranslate"><span class="pre">decitala.fragment</span></code> module. Classes like <code class="docutils literal notranslate"><span class="pre">fragment.Decitala</span></code>,
-<code class="docutils literal notranslate"><span class="pre">fragment.GreekFoot</span></code>, and  <code class="docutils literal notranslate"><span class="pre">fragment.ProsodicFragment</span></code> are supported. More fragment types will become
+<code class="docutils literal notranslate"><span class="pre">fragment.GreekFoot</span></code>, and  <code class="docutils literal notranslate"><span class="pre">fragment.ProsodicFragment</span></code> are currently supported. More fragment types will become
 available in the future. (Note: rhythmic corpora would be gladly accepted as contributions.)
 These objects are normally instantiated with a name (as provided in the corpora directory). We can
 also create custom fragments with the <code class="docutils literal notranslate"><span class="pre">fragment.GeneralFragment</span></code> class.</p>
@@ -216,10 +222,18 @@ techniques.</p>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">hash_table</span></code> module also subclasses <code class="docutils literal notranslate"><span class="pre">hash_table.FragmentHashTable</span></code> with the included datasets.
-These objects are pre-loaded and can be created by calling, for instance, <code class="docutils literal notranslate"><span class="pre">GreekFootHashTable()</span></code>
-or <code class="docutils literal notranslate"><span class="pre">DecitalaHashTable()</span></code> (see the module for more options and information). If we’re interested in
-querying a score for all detected fragments stored in a <code class="docutils literal notranslate"><span class="pre">FragmentHashTable</span></code> or its subclasses,
-we may use the <code class="docutils literal notranslate"><span class="pre">search.rolling_hash_search</span></code> function as follows:</p>
+These objects are pre-loaded and can be created by calling, for instance, <code class="docutils literal notranslate"><span class="pre">GreekFootHashTable()</span></code> (or similarly
+<code class="docutils literal notranslate"><span class="pre">DecitalaHashTable</span></code> or <code class="docutils literal notranslate"><span class="pre">ProsodicFragmentHashTable</span></code>):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.hash_table</span> <span class="kn">import</span> <span class="n">GreekFootHashTable</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span> <span class="o">=</span> <span class="n">GreekFootHashTable</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ght</span>
+<span class="go">&lt;decitala.hash_table.FragmentHashTable 2855 fragments&gt;</span>
+</pre></div>
+</div>
+<p>If we’re interested in querying a score for all detected fragments stored in one of these
+<code class="docutils literal notranslate"><span class="pre">FragmentHashTable</span></code> or its subclasses, we can use the <code class="docutils literal notranslate"><span class="pre">search.rolling_hash_search</span></code>. This function
+applies a rolling window to a composition and, at each stage, queries the hash table for the given
+fragment.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.hash_table</span> <span class="kn">import</span> <span class="n">GreekFootHashTable</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.search</span> <span class="kn">import</span> <span class="n">rolling_hash_search</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">composition</span> <span class="o">=</span> <span class="s2">&quot;/Users/lukepoeppel/decitala/tests/static/Shuffled_Transcription_1.xml&quot;</span>
@@ -229,8 +243,13 @@ we may use the <code class="docutils literal notranslate"><span class="pre">sear
 <span class="gp">... </span>     <span class="n">table</span><span class="o">=</span><span class="n">GreekFootHashTable</span><span class="p">(),</span>
 <span class="gp">... </span>     <span class="n">windows</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">],</span> <span class="c1"># restrict search windows to our desired parameters.</span>
 <span class="gp">... </span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">all_search_results</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
-<span class="gp">... </span>     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">rolling_hash_search</span></code> function returns a list holding <code class="docutils literal notranslate"><span class="pre">Extraction</span></code> dataclasses. Each
+<code class="docutils literal notranslate"><span class="pre">Extraction</span></code> object stores the fragment, onset range, pitch content, articulation information,
+modification technique, etc… of these extracted fragments.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">all_search_results</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
+<span class="gp">... </span>     <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">fragment</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">onset_range</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="go">&lt;fragment.GreekFoot Anapest&gt; (0.125, 0.625)</span>
 <span class="go">&lt;fragment.GreekFoot Iamb&gt; (0.25, 0.625)</span>
@@ -239,9 +258,11 @@ we may use the <code class="docutils literal notranslate"><span class="pre">sear
 <span class="go">&lt;fragment.GreekFoot Trochee&gt; (1.0, 1.375)</span>
 </pre></div>
 </div>
-<p>Normally, this package is used to find ‘paths’ of rhythms through a given composition. If we’re interested
-in finding the “best” path of Greek metrics through a given part (as calculated by dynamic programming
-algorithms), we could use the following:</p>
+<p>This package can also be used to find ‘paths’ of rhythms through a given composition. If we’re interested
+in finding a path of Greek metrics through a given part we use the dynamic programming path-finding
+algorithms (implemented in <code class="docutils literal notranslate"><span class="pre">decitala.path_finding</span></code>). The default algorithm used is an implementation of
+Dijkstra with a cost function determined by the gap between detected fragments and the number of onsets.
+Using only default parameters, this is as simple as:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.search</span> <span class="kn">import</span> <span class="n">path_finder</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.hash_table</span> <span class="kn">import</span> <span class="n">GreekFootHashTable</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">composition</span> <span class="o">=</span> <span class="s2">&quot;/Users/lukepoeppel/decitala/tests/static/Shuffled_Transcription_1.xml&quot;</span>
@@ -249,11 +270,9 @@ algorithms), we could use the following:</p>
 <span class="gp">... </span>  <span class="n">filename</span><span class="o">=</span><span class="n">composition</span><span class="p">,</span>
 <span class="gp">... </span>  <span class="n">part_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
 <span class="gp">... </span>  <span class="n">table</span><span class="o">=</span><span class="n">GreekFootHashTable</span><span class="p">(),</span>
-<span class="gp">... </span>  <span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;floyd-warshall&quot;</span><span class="p">,</span>
-<span class="gp">... </span>  <span class="n">slur_constraint</span><span class="o">=</span><span class="kc">True</span> <span class="c1"># forces the algorithm to include slurred fragments if found.</span>
 <span class="gp">... </span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
-<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="n">fragment</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">],</span> <span class="n">fragment</span><span class="p">[</span><span class="s2">&quot;onset_range&quot;</span><span class="p">])</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="n">fragment</span><span class="o">.</span><span class="n">fragment</span><span class="p">,</span> <span class="n">fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="go">&lt;fragment.GreekFoot Peon_IV&gt; (0.0, 0.625)</span>
 <span class="go">&lt;fragment.GreekFoot Iamb&gt; (0.875, 1.25)</span>
@@ -261,11 +280,26 @@ algorithms), we could use the following:</p>
 <span class="go">&lt;fragment.GreekFoot Peon_IV&gt; (2.375, 3.0)</span>
 </pre></div>
 </div>
-<p>Each element of <code class="docutils literal notranslate"><span class="pre">path</span></code> stores a number of pieces of information in a dictionary. It includes the fragment,
-its onset range, the associated pitch content of the region, whether it is slurred, the modification type of
-the fragment, etc… If a faster algorithm than Floyd-Warshall is desired, replace it with <code class="docutils literal notranslate"><span class="pre">&quot;Dijkstra&quot;</span></code>
-(though this currently disables the possibility of <code class="docutils literal notranslate"><span class="pre">slur_constraint</span></code>). By version 0.13.0, the <code class="docutils literal notranslate"><span class="pre">path</span></code> elements
-will be replaced by python dataclasses.</p>
+<p>We can change a number of the default parameters used here. Most notably, the user can interpolate their
+own cost function into the path-finding algorithm as follows:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.path_finding</span> <span class="kn">import</span> <span class="n">path_finding_utils</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.search</span> <span class="kn">import</span> <span class="n">path_finder</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.hash_table</span> <span class="kn">import</span> <span class="n">GreekFootHashTable</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_cost_function</span> <span class="o">=</span> <span class="n">path_finding_utils</span><span class="o">.</span><span class="n">CostFunction</span><span class="p">(</span>
+<span class="gp">... </span>  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">std_weight</span><span class="p">):</span>
+<span class="gp">... </span>     <span class="bp">self</span><span class="o">.</span><span class="n">std_weight</span> <span class="o">=</span> <span class="n">std_weight</span>
+<span class="gp">... </span>  <span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex_a</span><span class="p">,</span> <span class="n">vertex_b</span><span class="p">):</span>
+<span class="gp">... </span>     <span class="k">return</span> <span class="n">vertex_a</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">+</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">composition</span> <span class="o">=</span> <span class="s2">&quot;/Users/lukepoeppel/decitala/tests/static/Shuffled_Transcription_1.xml&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="n">path_finder</span><span class="p">(</span>
+<span class="gp">... </span>  <span class="n">filename</span><span class="o">=</span><span class="n">composition</span><span class="p">,</span>
+<span class="gp">... </span>  <span class="n">part_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span>  <span class="n">table</span><span class="o">=</span><span class="n">GreekFootHashTable</span><span class="p">(),</span>
+<span class="gp">... </span>  <span class="n">cost_function_class</span><span class="o">=</span><span class="n">my_cost_function</span><span class="p">()</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
 <p><strong>Rhythmic Manipulation</strong></p>
 <p>Messiaen often altered rhythmic fragments from the various datasets he used before including
 them in his compositions. He still establishes an equivalence relation where
@@ -273,6 +307,54 @@ a fragment <span class="math notranslate nohighlight">\(F\)</span> and a transfo
 exists a highly specified (but simple) transformation between them. These possible
 transformations include multiplicative augmentation, additive augmentation, mixed augmentation,
 flips into retrograde, subdivision, and “contiguous summation.”</p>
+</div>
+<div class="section" id="harmony-melody-hm-tools">
+<h2>Harmony-Melody (hm) Tools<a class="headerlink" href="#harmony-melody-hm-tools" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">decitala</span></code> package also includes a number of tools for standard harmonic and melodic analysis of
+Messiaen’s music. The <code class="docutils literal notranslate"><span class="pre">decitala.hm.molt</span></code> allows users to generate Modes of Limited Transposition [MOLT] (1944)
+as follows:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.hm</span> <span class="kn">import</span> <span class="n">molt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m2t2</span> <span class="o">=</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m2t2</span>
+<span class="go">&lt;moiseaux.MOLT mode=2, transposition=2&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m2t2</span><span class="o">.</span><span class="n">color</span>
+<span class="go">[&#39;Gold&#39;, &#39;Brown&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m2t2</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">()</span>
+<span class="go">array([0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1])</span>
+</pre></div>
+</div>
+<p>We can also query the Modes of Limited Transposition for a given collection using the <code class="docutils literal notranslate"><span class="pre">MOLT_query</span></code> function.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">collection</span> <span class="o">=</span> <span class="p">[</span><span class="mi">60</span><span class="p">,</span> <span class="mi">62</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="mi">68</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT_query</span><span class="p">(</span><span class="n">collection</span><span class="p">):</span>
+<span class="gp">... </span>  <span class="nb">print</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+<span class="go">&lt;moiseaux.MOLT mode=1, transposition=1&gt;</span>
+<span class="go">&lt;moiseaux.MOLT mode=3, transposition=1&gt;</span>
+<span class="go">&lt;moiseaux.MOLT mode=3, transposition=3&gt;</span>
+<span class="go">&lt;moiseaux.MOLT mode=6, transposition=1&gt;</span>
+<span class="go">&lt;moiseaux.MOLT mode=6, transposition=3&gt;</span>
+<span class="go">&lt;moiseaux.MOLT mode=6, transposition=5&gt;</span>
+<span class="go">&lt;moiseaux.MOLT mode=7, transposition=2&gt;</span>
+<span class="go">&lt;moiseaux.MOLT mode=7, transposition=4&gt;</span>
+<span class="go">&lt;moiseaux.MOLT mode=7, transposition=6&gt;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">decitala.hm.contour</span></code> module contains tools for generating the pitch contour of a set of
+pitches, as well as tools for processing. Notably, we can prune a given contour for its prime form
+(see Morris 1993) as follows:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.hm</span> <span class="kn">import</span> <span class="n">contour</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contour</span><span class="o">.</span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">(array([1, 0, 2]), 2)</span>
+</pre></div>
+</div>
+<p>I’ve also implemented Robert Schultz’s contour reduction algorithm (see Schultz 2008):</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">decitala.hm</span> <span class="kn">import</span> <span class="n">contour</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contour</span><span class="o">.</span><span class="n">contour_to_schultz_prime_contour</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">(array([1, 0, 2]), 3)</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 

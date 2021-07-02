@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.hm.hm_utils &mdash; decitala 0.14.0 documentation</title>
+  <title>decitala.hm.hm_utils &mdash; decitala 0.14.1 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.14.0
+                0.14.1
               </div>
             
           
@@ -273,8 +273,16 @@
 <span class="p">}</span>
 
 <span class="c1">####################################################################################################</span>
+<div class="viewcode-block" id="get_all_coefficients"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.get_all_coefficients">[docs]</a><span class="k">def</span> <span class="nf">get_all_coefficients</span><span class="p">(</span><span class="n">exclude_major_minor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">molt_tonic_val</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Returns a giant dictionary holding the binary weights for all Modes of Limited Transposition,</span>
+<span class="sd">	along with the original KS weights (unless ``exclude_major_minor=False``).</span>
 
-<span class="k">def</span> <span class="nf">get_all_coefficients</span><span class="p">(</span><span class="n">exclude_major_minor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">molt_tonic_val</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="sd">	:param bool exclude_major_minor: whether to exclude major/minor weights from the dictionary.</span>
+<span class="sd">										Default is ``False``.</span>
+<span class="sd">	:param int molt_tonic_val: optional value to set the first element of the MOLT to. Default is</span>
+<span class="sd">								all scale values set to 1.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">MOLT_COEFFS</span> <span class="o">=</span> <span class="p">{</span>
 		<span class="s2">&quot;M1T1&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
 		<span class="s2">&quot;M1T2&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
@@ -321,7 +329,7 @@
 			<span class="s2">&quot;Minor&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">6.33</span><span class="p">,</span> <span class="mf">2.68</span><span class="p">,</span> <span class="mf">3.52</span><span class="p">,</span> <span class="mf">5.38</span><span class="p">,</span> <span class="mf">2.60</span><span class="p">,</span> <span class="mf">3.53</span><span class="p">,</span> <span class="mf">2.54</span><span class="p">,</span> <span class="mf">4.75</span><span class="p">,</span> <span class="mf">3.98</span><span class="p">,</span> <span class="mf">2.69</span><span class="p">,</span> <span class="mf">3.34</span><span class="p">,</span> <span class="mf">3.17</span><span class="p">],</span>
 		<span class="p">}</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="k">return</span> <span class="n">MOLT_COEFFS</span>
+		<span class="k">return</span> <span class="n">MOLT_COEFFS</span></div>
 
 <div class="viewcode-block" id="pc_counter"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.pc_counter">[docs]</a><span class="k">def</span> <span class="nf">pc_counter</span><span class="p">(</span>
 		<span class="n">filepath</span><span class="p">,</span>
@@ -330,7 +338,17 @@
 	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Returns a dictionary holding the pitch classes in the keys and the count (or count normalized</span>
-<span class="sd">	over duration) in the given filepath-part_num combination.</span>
+<span class="sd">	over total duration) in the given filepath-part_num combination.</span>
+
+<span class="sd">	:param str filepath: path to music21-readable file to be parsed.</span>
+<span class="sd">	:param int part_num: part number in the work to be analyzed.</span>
+<span class="sd">	:param bool normalize_over_duration: whether to normalize the counts by the net duration</span>
+<span class="sd">											of the part.</span>
+<span class="sd">	:return: a dictionary holding the 12 pitch classes in the keys and the counts/proportion in</span>
+<span class="sd">				the values.</span>
+<span class="sd">	:rtype: dict</span>
+
+<span class="sd">	TODO: allow option for instead returning the net QLs.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">pitch_classes</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">)}</span>
 	<span class="n">converted</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
@@ -354,18 +372,14 @@
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">return</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">pitch_classes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
 
-<div class="viewcode-block" id="pc_ql_counter"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.pc_ql_counter">[docs]</a><span class="k">def</span> <span class="nf">pc_ql_counter</span><span class="p">(</span>
-	<span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Same as the above, but returns the qls in the dictionary values/list. Will probably be</span>
-<span class="sd">	integrated with the above function eventually.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">pass</span></div>
-
 <div class="viewcode-block" id="pc_dict_to_vector"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.pc_dict_to_vector">[docs]</a><span class="k">def</span> <span class="nf">pc_dict_to_vector</span><span class="p">(</span><span class="n">dict_in</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Function for converting a pitch class dictionary (i.e. a dictionary with keys in range 0-11 and</span>
 <span class="sd">	values some integer) to a vector of the associated values; sorted by the key, naturally.</span>
+
+<span class="sd">	:param dict dict_in: a pitch class dictionary.</span>
+<span class="sd">	:return: numpy array holding the values of the dictionary, ordered by pitch class.</span>
+<span class="sd">	:rtype: numpy.array</span>
 
 <span class="sd">	&gt;&gt;&gt; from decitala.hm import molt</span>
 <span class="sd">	&gt;&gt;&gt; m3t3 = molt.MOLT(mode=3, transposition=3)</span>
@@ -380,7 +394,11 @@
 <div class="viewcode-block" id="diatonic_scale_binary"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.diatonic_scale_binary">[docs]</a><span class="k">def</span> <span class="nf">diatonic_scale_binary</span><span class="p">(</span><span class="n">tonic</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">as_vector</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Function for creating a binary dict (or ordered vector if ``as_vector=True``) of a major or</span>
-<span class="sd">	minor scale (set ``mode``) of a given ``diatonic``.</span>
+<span class="sd">	minor scale.</span>
+
+<span class="sd">	:param tonic: the tonic of the major or minor scale (str or int)</span>
+<span class="sd">	:param str mode: ``&quot;Major&quot;`` or ``&quot;Minor&quot;``.</span>
+<span class="sd">	:param bool as_vector: whether to return the dictionary as a vector ordered by pitch class.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">pitch_classes</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">11</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
 	<span class="k">if</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Major&quot;</span><span class="p">:</span>
@@ -403,6 +421,11 @@
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Simple tool for counting the number of notes (with ties stripped) in a given filepath/part</span>
 <span class="sd">	combination.</span>
+
+<span class="sd">	:param str filepath: path to music21-readable file to be parsed.</span>
+<span class="sd">	:param int part_num: part number in the work to be analyzed.</span>
+<span class="sd">	:return: the total count of note objects (with ties stripped).</span>
+<span class="sd">	:rtype: int</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">converted</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
 	<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
@@ -410,7 +433,15 @@
 		<span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
 	<span class="k">return</span> <span class="n">count</span></div>
 
-<span class="k">def</span> <span class="nf">KS</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">return_p_value</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="KS"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.KS">[docs]</a><span class="k">def</span> <span class="nf">KS</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">return_p_value</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Krumhansl-Schumckler algorithm.</span>
+
+<span class="sd">	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.</span>
+<span class="sd">	:param coefficients: coefficents used in the correlation calculation.</span>
+
+<span class="sd">	TODO: remove the stupid return_p_value argument.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">input_zscores</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">)</span>
 
 	<span class="n">coefficients</span> <span class="o">=</span> <span class="n">coefficients</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span>
@@ -418,11 +449,16 @@
 	<span class="k">if</span> <span class="n">return_p_value</span><span class="p">:</span>
 		<span class="k">return</span> <span class="n">score</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="k">return</span> <span class="n">score</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">return</span> <span class="n">score</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="KS_diatonic"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.KS_diatonic">[docs]</a><span class="k">def</span> <span class="nf">KS_diatonic</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">return_tonic</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Needs to circulate over all major/minor keys.</span>
+<span class="sd">	Krumhansl-Schumckler algorithm for diatonic collections. Circulates over all major and minor</span>
+<span class="sd">	scales.</span>
+
+<span class="sd">	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.</span>
+<span class="sd">	:param coefficients: coefficents used in the correlation calculation.</span>
+<span class="sd">	:param bool return_tonic: whether to also return the most highly correlated tonic.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">input_zscores</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">)</span>
 
@@ -442,18 +478,30 @@
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">return</span> <span class="n">max_correlation</span></div>
 
-<span class="k">def</span> <span class="nf">test_all_coefficients</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">exclude_major_minor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">molt_tonic_val</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="test_all_coefficients"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.test_all_coefficients">[docs]</a><span class="k">def</span> <span class="nf">test_all_coefficients</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">exclude_major_minor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">molt_tonic_val</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for calculating the correlation between a given ``pc_vector`` and all possible</span>
+<span class="sd">	coefficients (binary modes for MOLT and KS coefficients).</span>
+
+<span class="sd">	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.</span>
+<span class="sd">	:param bool exclude_major_minor: whether to exclude major/minor weights from the calculation.</span>
+<span class="sd">										Default is ``False``.</span>
+<span class="sd">	:param int molt_tonic_val: optional value to set the first element of the MOLT to. Default is</span>
+<span class="sd">								all scales values set to 1.</span>
+<span class="sd">	:return: dictionary holding modes in the keys and the calculated KS correlation in the values.</span>
+<span class="sd">	:rtype: dict</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">res</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 	<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">coefficients</span> <span class="ow">in</span> <span class="n">get_all_coefficients</span><span class="p">(</span>
 			<span class="n">exclude_major_minor</span><span class="o">=</span><span class="n">exclude_major_minor</span><span class="p">,</span>
 			<span class="n">molt_tonic_val</span><span class="o">=</span><span class="n">molt_tonic_val</span>
 		<span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 		<span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;Major&quot;</span><span class="p">,</span> <span class="s2">&quot;Minor&quot;</span><span class="p">}:</span>
-			<span class="n">res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">KS_diatonic</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">)</span>
+			<span class="n">res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">KS_diatonic</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="n">res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">KS</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">return_p_value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+			<span class="n">res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">KS</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">return_p_value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-	<span class="k">return</span> <span class="n">res</span>
+	<span class="k">return</span> <span class="n">res</span></div>
 </pre></div>
 
            </div>
