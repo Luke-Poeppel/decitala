@@ -32,50 +32,21 @@ class FragmentTreeException(TreeException):
 	pass
 
 ####################################################################################################
-# KD-Tree (TODO)
-class KDTree:
-	class Node:
-		def __init__(self):
-			pass
-
-	def __init__(self):
-		pass
-
 class FragmentTree(Tree):
 	"""
 	NaryTree that holds multiplicative or additive representations of a rhythmic dataset.
+	This is just the parent class and shouldn't be called; instead, use the
+	:obj:`decitala.trees.RatioTree` or :obj:`decitala.trees.DifferenceTree` classes.
 
-	:param str data: either a frag_type/rep_type combo, a path to folder of music21-readable files,
-					or a list of fragments.
-	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` (default)
-						and ``difference``.
+	:param data: either a path to folder of music21-readable files or a list of
+				:obj:`decitala.fragment.GeneralFragment` objects (or its subclasses).
 	:param str name: optional name of the Fragment Tree.
-	:raises `~decitala.trees.FragmentTreeException`: if an invalid path or rep_type is given.
-
-	>>> ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
-	>>> ratio_tree
-	<trees.FragmentTree greek_foot_ratio: nodes=35>
-	>>> ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0]).name
-	<fragment.GreekFoot Peon_II>
-	>>> # We can also give it a name.
-	>>> from decitala.fragment import Decitala, GreekFoot, GeneralFragment
-	>>> g1 = GeneralFragment([1.0, 1.0, 1.0, 1.0, 1.0], name="myfragment")
-	>>> g2 = Decitala("Ragavardhana")
-	>>> g3 = GreekFoot("Ionic_Major")
-	>>> data = [g1, g2, g3]
-	>>> mytree = FragmentTree(data = data, rep_type="difference", name="MyCoolTree")
-	>>> mytree
-	<trees.FragmentTree MyCoolTree: nodes=10>
-	>>> for frag in sorted(mytree.all_named_paths(), key=lambda x: x.name):
-	...     print(frag)
-	<fragment.Decitala 93_Ragavardhana>
-	<fragment.GreekFoot Ionic_Major>
-	<fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]>
+	:raises `~decitala.trees.FragmentTreeException`: if an invalid path or list is provided
+														to the ``data``.
 	"""
-	def __init__(self, data, rep_type, name=None, **kwargs):
-		assert rep_type.lower() in ["ratio", "difference"], FragmentTreeException("The only possible rep_types are `ratio` and `difference`") # noqa
+	rep_type = None
 
-		self.rep_type = rep_type.lower()
+	def __init__(self, data, name=None, **kwargs):
 		self.name = name
 
 		if isinstance(data, str):
@@ -83,44 +54,19 @@ class FragmentTree(Tree):
 			new_data = []
 			for this_file in os.listdir(self.data):
 				new_data.append(GeneralFragment(data=this_file))
-
-			self.data = data
-
-		if isinstance(data, list):
+			self.data = new_data
+		elif isinstance(data, list):
 			assert all(type(x).__name__ in ["GeneralFragment", "Decitala", "GreekFoot"] for x in data), FragmentTreeException("The elements of data must be GeneralFragment, \
 																																Decitala, or GreekFoot objects.") # noqa
 			self.data = data
 
-		super().__init__()
-
 		self.depth = max([len(x.ql_array()) for x in self.data])
 		self.sorted_data = sorted(self.data, key=lambda x: len(x.ql_array()))
-
-		if self.rep_type == "ratio":
-			root_node = Node(value=1.0, name="ROOT")
-			for this_fragment in self.sorted_data:
-				path = list(this_fragment.successive_ratio_array())
-				root_node.add_path_of_children(path=path, final_node_name=this_fragment)
-			self.root = root_node
-
-		if self.rep_type == "difference":
-			root_node = Node(value=0.0, name="ROOT")
-			for this_fragment in self.sorted_data:
-				path = list(this_fragment.successive_difference_array())
-				root_node.add_path_of_children(path=path, final_node_name=this_fragment)
-			self.root = root_node
-
-	def __repr__(self):
-		if self.name:
-			return '<trees.FragmentTree {0}: nodes={1}>'.format(self.name, self.size())
-		else:
-			return '<trees.FragmentTree: nodes={}>'.format(self.size())
 
 	@classmethod
 	def from_frag_type(
 			cls,
 			frag_type,
-			rep_type
 		):
 		"""
 		Create a fragment tree from the data in fragment_database.db in the databases directory.
@@ -134,11 +80,6 @@ class FragmentTree(Tree):
 							:obj:`~decitala.fragment.GeneralFragment`
 							(default) objects.
 		"""
-		assert frag_type.lower() in ["decitala", "greek_foot"], FragmentTreeException("The only \
-																					possible frag_types are `decitala` and `greek_foot`.")
-		assert rep_type.lower() in ["ratio", "difference"], FragmentTreeException("The only possible \
-																				rep_types are `ratio` and `difference`")
-
 		if frag_type == "decitala":
 			data = get_all_decitalas()
 		elif frag_type == "greek_foot":
@@ -146,8 +87,7 @@ class FragmentTree(Tree):
 
 		return FragmentTree(
 			data=data,
-			rep_type=rep_type,
-			name="{0}_{1}".format(frag_type, rep_type),
+			name=f"{frag_type}"
 		)
 
 	@classmethod
@@ -155,7 +95,6 @@ class FragmentTree(Tree):
 			cls,
 			filepath,
 			part_num=0,
-			rep_type="ratio",
 			windows=list(range(2, 10))
 		):
 		"""
@@ -185,13 +124,12 @@ class FragmentTree(Tree):
 					name = str(indices[0][0]) + "-" + str(indices[-1][-1])
 					data.append(GeneralFragment(as_quarter_lengths, name=name))
 
-		return FragmentTree(data=data, rep_type=rep_type)
+		return FragmentTree(data=data)
 
 	@classmethod
 	def from_multiple_paths(
 			self,
 			paths,
-			rep_type,
 			name=None
 		):
 		"""
@@ -210,7 +148,7 @@ class FragmentTree(Tree):
 			for this_file in os.listdir(this_path):
 				data.append(GeneralFragment(data=this_file))
 
-		return FragmentTree(data=data, rep_type=rep_type, name=name)
+		return FragmentTree(data=data, name=name)
 
 	def show(self, save_path=None, verbose=False):
 		"""
@@ -225,3 +163,69 @@ class FragmentTree(Tree):
 			img.save(filename=save_path)
 		else:
 			return img
+
+class RatioTree(FragmentTree):
+	"""
+	A FragmentTree with a ``"ratio"`` representation. In this case, every fragment is
+	represented by the ratio between all contiguous elements (normalized to start at 1).
+	See :obj:`decitala.trees.FragmentTree` for the relevant methods.
+
+	>>> ratio_tree = RatioTree.from_frag_type(frag_type="greek_foot")
+	>>> ratio_tree
+	<trees.FragmentTree greek_foot_ratio: nodes=35>
+	>>> ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0]).name
+	<fragment.GreekFoot Peon_II>
+	"""
+	rep_type = "ratio"
+
+	def __init__(self, data, name=None, **kwargs):
+		root_node = Node(value=1.0, name="ROOT")
+		for this_fragment in self.sorted_data:
+			path = list(this_fragment.successive_ratio_array())
+			root_node.add_path_of_children(path=path, final_node_name=this_fragment)
+
+		self.root = root_node
+		super().__init__(data=data, name=name)
+
+	def __repr__(self):
+		if self.name:
+			return '<trees.RatioTree {0}: nodes={1}>'.format(self.name, self.size())
+		else:
+			return '<trees.RatioTree: nodes={}>'.format(self.size())
+
+class DifferenceTree(FragmentTree):
+	"""
+	A FragmentTree with a ``"difference"`` representation. In this case, every fragment is
+	represented by its first-order differences, i.e. the differences between all contiguous
+	elements (normalized to start at 0).
+	See :obj:`decitala.trees.FragmentTree` for the relevant methods.
+
+	>>> from decitala.fragment import Decitala, GreekFoot, GeneralFragment
+	>>> g1 = GeneralFragment([1.0, 1.0, 1.0, 1.0, 1.0], name="myfragment")
+	>>> g2 = Decitala("Ragavardhana")
+	>>> g3 = GreekFoot("Ionic_Major")
+	>>> data = [g1, g2, g3]
+	>>> diff_tree = DifferenceTree(data=data, name="MyCoolDifferenceTree")
+	>>> diff_tree
+	<trees.DifferenceTree MyCoolDifferenceTree: nodes=10>
+	>>> for frag in sorted(diff_tree.all_named_paths(), key=lambda x: x.name):
+	...     print(frag)
+	<fragment.Decitala 93_Ragavardhana>
+	<fragment.GreekFoot Ionic_Major>
+	<fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]>
+	"""
+	rep_type = "difference"
+
+	def __init__(self, data, name=None, **kwargs):
+		super().__init__(data=data, name=name)
+		root_node = Node(value=0.0, name="ROOT")
+		for this_fragment in self.sorted_data:
+			path = list(this_fragment.successive_difference_array())
+			root_node.add_path_of_children(path=path, final_node_name=this_fragment)
+		self.root = root_node
+
+	def __repr__(self):
+		if self.name:
+			return '<trees.DifferenceTree {0}: nodes={1}>'.format(self.name, self.size())
+		else:
+			return '<trees.DifferenceTree: nodes={}>'.format(self.size())
