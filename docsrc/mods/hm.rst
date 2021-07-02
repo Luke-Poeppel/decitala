@@ -1,5 +1,6 @@
 hm
 ==
+Tools for harmony and melody analysis (`HM`).
 
 contour
 -------

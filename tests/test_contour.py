@@ -12,18 +12,18 @@ def test_immediately_flagged_prime_contours_morris():
 	contour_1 = [2, 4, 1, 5, 0, 6, 3]
 	contour_2 = [2, 1, 3, 0]
 
-	prime_contour_1 = contour.contour_to_prime_contour(contour_1, include_depth=True)
+	prime_contour_1 = contour.contour_to_prime_contour(contour_1)
 	expected_prime_contour_1 = [2, 4, 1, 5, 0, 6, 3]
 	assert list(prime_contour_1[0]) == expected_prime_contour_1
 	assert prime_contour_1[1] == 0
 	
-	prime_contour_2 = list(contour.contour_to_prime_contour(contour_2))
-	expected_prime_contour_2 = [2, 1, 3, 0]
-	assert prime_contour_2 == expected_prime_contour_2
+	prime_contour_2 = contour.contour_to_prime_contour(contour_2)
+	assert list(prime_contour_2[0]) == [2, 1, 3, 0]
+	assert prime_contour_2[1] == 0
 
 def test_contours_morris():
 	c = [1, 3, 1, 2, 0, 1, 4]
-	calculated = contour.contour_to_prime_contour(contour=c, include_depth=True)
+	calculated = contour.contour_to_prime_contour(contour=c)
 	assert list(calculated[0]) == [1, 0, 2]
 	assert calculated[1] == 3
 
