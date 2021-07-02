@@ -537,8 +537,8 @@ def _schultz_get_closest_extrema(
 			closest_min_end = relevant_minima[-1]
 
 	# The starts and ends shouldn't be touched!
-	# assert contour[0][1] == {1, -1}, ContourException("Something is wrong (start flags).")
-	# assert contour[-1][1] == {1, -1}, ContourException("Something is wrong (end flags).")
+	assert contour[0][1] == {1, -1}, ContourException("Something is wrong (start flags).")
+	assert contour[-1][1] == {1, -1}, ContourException("Something is wrong (end flags).")
 
 	# This list holds the closts repeating min and max to the start (in that order).
 	# Also tracks whether the chosen element is a minima or maxima.
@@ -546,8 +546,8 @@ def _schultz_get_closest_extrema(
 	# This list holds the closts repeating min and max to the end (in that order).
 	end_elems = [("min", closest_min_end), ("max", closest_max_end)] # noqa
 
-	# if any(x is None for x in [closest_min_start, closest_max_start, closest_min_end, closest_max_end]): # noqa
-	# 	raise ContourException("Something is wrong.")
+	if any(x is None for x in [closest_min_start, closest_max_start, closest_min_end, closest_max_end]): # noqa
+		raise ContourException("Something is wrong.")
 
 	closest_start_extrema = min(start_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
 	closest_end_extrema = max(end_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
