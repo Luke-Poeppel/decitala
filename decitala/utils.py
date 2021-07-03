@@ -15,6 +15,7 @@ import sys
 from itertools import groupby
 from more_itertools import consecutive_groups, windowed, powerset
 from scipy.linalg import norm
+from collections import Counter
 
 from music21 import converter
 from music21 import note
@@ -1026,3 +1027,25 @@ def write_analysis(data, filepath):
 	"""
 	with open(filepath, "w") as output:
 		json.dump(obj=data, fp=output, cls=fragment.FragmentEncoder, ensure_ascii=False, indent=4)
+
+####################################################################################################
+# MISC. TOOLS
+####################################################################################################
+class NormalizedCounter(Counter):
+	"""
+	Class that inherits from collections.Counter. Takes in an array-like object, but the values
+	of the 'counter' become proportions, unless count is set to True (in which case it acts like a
+	regular counter).
+
+	>>> l = [1, 1, 2, 2, 3, 3, 4, 4]
+	>>> NormalizedCounter(l, count=True)
+	NormalizedCounter({1: 2, 2: 2, 3: 2, 4: 2})
+	>>> NormalizedCounter(l, count=False)
+	NormalizedCounter({1: 0.25, 2: 0.25, 3: 0.25, 4: 0.25})
+	"""
+	def __init__(self, iterable, count=False):
+		Counter.__init__(self, iterable)
+		if not(count):
+			all_counts = sum(self.values())
+			for this_key in self.keys():
+				self[this_key] = self[this_key] / all_counts
