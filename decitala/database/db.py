@@ -140,6 +140,15 @@ class ExtractionData(Base):
 		self.pitch_content = pitch_content
 		self.is_slurred = is_slurred
 
+	@classmethod
+	def from_extraction(cls, extraction):
+		"""
+		Creates an :obj:`decitala.database.db.ExtractionData` object from a
+		:obj:`decitala.search.Extraction` object. This is more durable to accidentally breaking
+		things when adding data to extractions.
+		"""
+		pass
+
 def _add_results_to_session(
 		filepath,
 		part_nums,
