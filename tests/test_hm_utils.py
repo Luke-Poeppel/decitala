@@ -9,7 +9,7 @@ filepath = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
 def test_doctests():
 	assert doctest.testmod(hm_utils, raise_on_error=True)
 
-def test_pc_counter_no_normalization():
+def test_pc_counter_counts():
 	predicted = { # checked 06-26-21
 		0: 0, # correct
 		1: 2, # correct
@@ -27,11 +27,11 @@ def test_pc_counter_no_normalization():
 	calculated = hm_utils.pc_counter(
 		filepath=filepath,
 		part_num=0,
-		normalize_over_duration=False
+		return_counts=True
 	)
 	assert predicted == calculated
 
-def pc_counter_normalized():
+def test_pc_counter_normalized():
 	highest_time = 2.75 # sum of all the qls below.
 	predicted = { # checked 06-26-21
 		0: 0,
@@ -50,8 +50,9 @@ def pc_counter_normalized():
 	calculated = hm_utils.pc_counter(
 		filepath=filepath,
 		part_num=0,
-		normalize_over_duration=True
+		return_counts=False
 	)
+	calculated = hm_utils.normalize_pc_counter(calculated)
 	assert predicted == calculated
 
 def test_pc_dict_to_vector():
@@ -84,10 +85,11 @@ def test_pc_dict_to_vector():
 		normalized_results[10],
 		normalized_results[11],
 	]
-	calculated_dict = hm_utils.pc_counter(
+	calculated = hm_utils.pc_counter(
 		filepath=filepath,
 		part_num=0,
-		normalize_over_duration=True
+		return_counts=False
 	)
-	calculated_vector = hm_utils.pc_dict_to_vector(calculated_dict)
+	calculated = hm_utils.normalize_pc_counter(calculated)
+	calculated_vector = hm_utils.pc_dict_to_vector(calculated)
 	assert list(calculated_vector) == predicted
