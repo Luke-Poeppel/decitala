@@ -54,9 +54,6 @@ class CompositionData(Base):
 	"""
 	SQLAlchemy model representing the basic composition data for a composition.
 
-	Parameters
-	----------
-
 	:param str name: Name of the composition.
 	:param int part_num: Part number for the extraction.
 	:param str local_filepath: Local filepath for the searched composition.
@@ -79,66 +76,63 @@ class CompositionData(Base):
 # TODO: rename to `ExtractionData`
 class ExtractionData(Base):
 	"""
-	SQLAlchemy model representing a fragment extracted from a composition.
-
-	Parameters
-	----------
-
-	:param float onset_start: Starting onset of the extracted fragment.
-	:param float onset_stop: Ending onset of the extracted fragment
-							(onset of final object + quarter length)
-	:param str fragment_type: Fragment type; options currently include
-							`decitala`, `greek_foot`, and `general_fragment`.
-	:param str name: Name of the fragment.
-	:param str mod_type: Modification type of the fragment.
-	:param float ratio: Ratio of the fragment's values to the values in the database.
-	:param float difference: Difference between the fragment's values to the values
-							in the database.
-	:param str pitch_content: Pitch content of the extracted fragment.
-	:param bool is_slurred: Whether the extracted fragment is spanned by a slur object.
+	SQLAlchemy model representing a fragment extracted from a composition. Intended to be used with
+	the class method :obj:`ExtractionData.from_extraction`. See :obj:`decitala.search.Extraction`
+	for the relevant information on each column in the database.
 	"""
 	__tablename__ = "ExtractionData"
 
 	id = Column(Integer, primary_key=True)
 
+	fragment = Column(String)
 	onset_start = Column(Float)
 	onset_stop = Column(Float)
 
-	# TODO: just make this fragment with the JSON output from FragmentEncoder.
-	fragment_type = Column(String)
-	name = Column(String)
-
-	mod_hierarchy_val = Column(Float)
-	ratio = Column(Float)
+	retrograde = Column(Boolean)
+	factor = Column(Float)
 	difference = Column(Float)
+	mod_hierarchy_val = Column(Integer)
 
 	pitch_content = Column(String)
-	is_slurred = Column(Boolean)
+	is_spanned_by_slur = Column(Boolean)
+	slur_count = Column(Integer)
+	slur_start_end_count = Column(Integer)
+
+	id_ = Column(Integer)
+	contiguous_summation = Column(Boolean)
 
 	composition_data_id = Column(Integer, ForeignKey("CompositionData.id"))
 	composition_data = relationship("CompositionData", backref=backref("composition_data"))
 
 	def __init__(
 			self,
+			fragment,
 			onset_start,
 			onset_stop,
-			fragment_type,
-			name,
-			mod_hierarchy_val,
-			ratio,
+			retrograde,
+			factor,
 			difference,
+			mod_hierarchy_val,
 			pitch_content,
-			is_slurred,
+			is_spanned_by_slur,
+			slur_count,
+			slur_start_end_count,
+			id_,
+			contiguous_summation
 		):
+		self.fragment = fragment
 		self.onset_start = onset_start
 		self.onset_stop = onset_stop
-		self.fragment_type = fragment_type
-		self.name = name
-		self.mod_hierarchy_val = mod_hierarchy_val
-		self.ratio = ratio
+		self.retrograde = retrograde
+		self.factor = factor
 		self.difference = difference
+		self.mod_hierarchy_val = mod_hierarchy_val
 		self.pitch_content = pitch_content
-		self.is_slurred = is_slurred
+		self.is_spanned_by_slur = is_spanned_by_slur
+		self.slur_count = slur_count
+		self.slur_start_end_count = slur_start_end_count
+		self.id_ = id_
+		self.contiguous_summation = contiguous_summation
 
 	@classmethod
 	def from_extraction(cls, extraction):
@@ -147,7 +141,21 @@ class ExtractionData(Base):
 		:obj:`decitala.search.Extraction` object. This is more durable to accidentally breaking
 		things when adding data to extractions.
 		"""
-		pass
+		return ExtractionData(
+			fragment=extraction.fragment,
+			onset_start=extraction.onset_range[0],
+			onset_stop=extraction.onset_range[1],
+			retrograde=extraction.retrograde,
+			factor=extraction.factor,
+			difference=extraction.difference,
+			mod_hierarchy_val=extraction.mod_hierarchy_val,
+			pitch_content=extraction.pitch_content,
+			is_spanned_by_slur=extraction.is_spanned_by_slur,
+			slur_count=extraction.slur_count,
+			slur_start_end_count=extraction.slur_start_end_count,
+			id_=extraction.id_,
+			contiguous_summation=extraction.contiguous_summation
+		)
 
 def _add_results_to_session(
 		filepath,
@@ -165,32 +173,21 @@ def _add_results_to_session(
 		)
 		session.add(data)
 
-		res = rolling_hash_search(
+		all_results = rolling_hash_search(
 			filepath=filepath,
 			part_num=this_part,
 			table=table,
 			windows=windows
 		)
-		if not(res):
+		if not(all_results):
 			return "No fragments extracted –– stopping."
 
-		fragment_objects = []
-		for this_fragment in res:
-			f = ExtractionData(
-				onset_start=this_fragment.onset_range[0],
-				onset_stop=this_fragment.onset_range[1],
-				fragment_type=this_fragment.frag_type,
-				name=this_fragment.fragment.name,
-				mod_hierarchy_val=this_fragment.mod_hierarchy_val,
-				ratio=this_fragment.factor,
-				difference=this_fragment.difference,
-				pitch_content=json.dumps(this_fragment.pitch_content),
-				is_slurred=this_fragment.is_spanned_by_slur
-			)
-			fragment_objects.append(f)
+		extraction_objects = []
+		for extraction in all_results:
+			f = ExtractionData.from_extraction(extraction)
+			extraction_objects.append(f)
 			session.add(f)
-
-		data.composition_data = fragment_objects
+		data.composition_data = extraction_objects
 
 def create_database(
 		db_path,
