@@ -28,7 +28,7 @@ from sqlalchemy.orm import (
 
 from music21 import converter
 
-from ..fragment import FragmentDecoder
+from ..fragment import FragmentDecoder, FragmentEncoder
 from ..search import rolling_hash_search
 from ..utils import get_logger
 from ..hm import hm_utils
@@ -142,14 +142,14 @@ class ExtractionData(Base):
 		things when adding data to extractions.
 		"""
 		return ExtractionData(
-			fragment=extraction.fragment,
+			fragment=json.dumps(extraction.fragment, cls=FragmentEncoder),
 			onset_start=extraction.onset_range[0],
 			onset_stop=extraction.onset_range[1],
 			retrograde=extraction.retrograde,
 			factor=extraction.factor,
 			difference=extraction.difference,
 			mod_hierarchy_val=extraction.mod_hierarchy_val,
-			pitch_content=extraction.pitch_content,
+			pitch_content=json.dumps(extraction.pitch_content),
 			is_spanned_by_slur=extraction.is_spanned_by_slur,
 			slur_count=extraction.slur_count,
 			slur_start_end_count=extraction.slur_start_end_count,
