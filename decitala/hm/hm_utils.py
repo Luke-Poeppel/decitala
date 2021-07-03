@@ -159,43 +159,64 @@ def get_all_coefficients(exclude_major_minor=False, molt_tonic_val=1):
 def pc_counter(
 		filepath,
 		part_num,
-		normalize_over_duration=False
+		return_counts=False
 	):
 	"""
-	Returns a dictionary holding the pitch classes in the keys and the count (or count normalized
-	over total duration) in the given filepath-part_num combination.
+	Returns a dictionary holding the pitch classes in the keys and the sum of the quarter lengths
+	of this pitch class in a given filepath-part combination.
 
 	:param str filepath: path to music21-readable file to be parsed.
 	:param int part_num: part number in the work to be analyzed.
-	:param bool normalize_over_duration: whether to normalize the counts by the net duration
-											of the part.
+	:param bool return_counts: whether to return the counts of the detected pitches, instead of the
+								net quarter lengths.
 	:return: a dictionary holding the 12 pitch classes in the keys and the counts/proportion in
 				the values.
 	:rtype: dict
-
-	TODO: allow option for instead returning the net QLs.
 	"""
 	pitch_classes = {x: [] for x in range(0, 12)}
 	converted = converter.parse(filepath)
-	net = 0
 	for tone in converted.parts[part_num].stripTies().flat.iter.notes:
 		try:
 			if tone.isChord:
 				for i, x in enumerate(tone.pitches):
 					pitch_classes[x.pitchClass].append(tone.quarterLength)
-					net += tone.quarterLength
 			else:
 				pitch_classes[tone.pitch.pitchClass].append(tone.quarterLength)
-				net += tone.quarterLength
 		except AttributeError:
 			continue
 
-	if normalize_over_duration:
-		normalized_dict = {x: sum(y) / net for x, y in pitch_classes.items()}
-		assert round(sum(normalized_dict.values())) == 1
-		return normalized_dict
+	if not(return_counts):
+		return {x: sum(y) for x, y in pitch_classes.items()}
 	else:
 		return {x: len(y) for x, y in pitch_classes.items()}
+
+def normalize_pc_counter(dict_in):
+	"""
+	Normalize a dictionary by the sum of the total values. Meant to be used with the
+	net ql values from :obj:`decitala.hm.hm_utils`.
+
+	>>> d = {0: 0, 1: 0.375, 2: 0, 3: 0.25, 4: 0.375,
+	... 	5: 0.375, 6: 0.375, 7: 0, 8: 0.75, 9: 0.25, 10: 0, 11: 0
+	... }
+	>>> for pc, norm_val in normalize_pc_counter(d).items():
+	... 	print(pc, norm_val)
+	0 0.0
+	1 0.13636363636363635
+	2 0.0
+	3 0.09090909090909091
+	4 0.13636363636363635
+	5 0.13636363636363635
+	6 0.13636363636363635
+	7 0.0
+	8 0.2727272727272727
+	9 0.09090909090909091
+	10 0.0
+	11 0.0
+	"""
+	net = sum(dict_in.values())
+	normalized_dict = {x: (y / net) for x, y in dict_in.items()}
+	assert round(sum(normalized_dict.values())) == 1
+	return normalized_dict
 
 def pc_dict_to_vector(dict_in):
 	"""
