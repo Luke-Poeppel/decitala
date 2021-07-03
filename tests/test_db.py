@@ -3,11 +3,13 @@ import pytest
 import tempfile
 import uuid
 import doctest
+import json
 
 from sqlalchemy.ext.declarative import declarative_base
 
 from decitala import database
 from decitala.database.db_utils import get_session
+from decitala.fragment import FragmentDecoder
 from decitala.database.db import (
 	create_database,
 	CompositionData,
@@ -38,5 +40,6 @@ def test_create_database():
 		assert comps[0].name == "Shuffled_Transcription_2.xml"
 		assert comps[0].part_num == 0
 
-		frags = session.query(ExtractionData).all()
-		assert [x.fragment_type == "greek_foot" for x in frags]
+		extractions = session.query(ExtractionData).all()
+		fragments = [json.loads(x.fragment, cls=FragmentDecoder) for x in extractions]
+		assert [x.frag_type == "greek_foot" for x in fragments]

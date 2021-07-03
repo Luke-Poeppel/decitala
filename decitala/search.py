@@ -108,11 +108,6 @@ class Extraction:
 
 			return split
 
-@dataclass
-class Frame:
-	"""
-	A frame of the objects in the score.
-	"""
 
 def frame_to_ql_array(frame):
 	"""
