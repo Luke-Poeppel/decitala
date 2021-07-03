@@ -304,30 +304,32 @@ class Species:
 
 	def aggregate_pc_distribution(
 			self,
-			normalize=False,
+			normalized=False,
 			as_vector=True
 		):
 		"""
 		Returns the aggregate pitch class distribution across all transcriptions in a species.
 		"""
-		pc_dict = {i: 0 for i in range(12)}
+		net_counter_pre = {x: [] for x in range(12)}
 		for transcription in self.transcriptions:
-			pc_counter_dict = hm_utils.pc_counter(
+			transcription_counter = hm_utils.pc_counter(
 				filepath=transcription.filepath,
-				part_num=0,
-				normalize_over_duration=False
+				part_num=0
 			)
-			for key in pc_counter_dict:
-				pc_dict[key] += pc_counter_dict[key]
+			for key in transcription_counter:
+				net_counter_pre[key].append(transcription_counter[key])
 
-		vector = hm_utils.pc_dict_to_vector(pc_dict)
-		if normalize:
-			vector = vector / sum(vector)
+		net_counter = {x: sum(y) for x, y in net_counter_pre.items()}
 
-		if as_vector:
-			return vector
+		if normalized:
+			net = sum(net_counter.values())
+			net_counter = {x: (y / net) for x, y in net_counter.items()}
+			assert sum(net_counter.values()) == 1.0
+
+		if not(as_vector):
+			return net_counter
 		else:
-			return {i: val for i, val in enumerate(vector)}
+			return hm_utils.pc_dict_to_vector(net_counter)
 
 class Transcription:
 	"""
