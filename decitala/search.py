@@ -392,6 +392,7 @@ def path_finder(
 		allow_contiguous_summation=False,
 		algorithm="dijkstra",
 		cost_function_class=path_finding_utils.DefaultCostFunction(),
+		split_dict=None,
 		slur_constraint=False,
 		enforce_earliest_start=False,
 		save_filepath=None,
@@ -417,7 +418,7 @@ def path_finder(
 							can then be loaded with the :meth:`decitala.utils.loader`.
 	:param bool verbose: Whether to log messages. Default is ``False``.
 	"""
-	fragments = rolling_hash_search(
+	extractions = rolling_hash_search(
 		filepath=filepath,
 		part_num=part_num,
 		table=table,
@@ -425,14 +426,14 @@ def path_finder(
 		allow_subdivision=allow_subdivision,
 		allow_contiguous_summation=allow_contiguous_summation
 	)
-	if not fragments:
+	if not extractions:
 		return None
 
 	if algorithm.lower() == "dijkstra":
 		if slur_constraint:
 			raise SearchException("This is not yet supported. Coming soon.")
 		source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(
-			data=fragments,
+			data=extractions,
 			cost_function_class=cost_function_class,
 			enforce_earliest_start=enforce_earliest_start,
 			verbose=verbose
@@ -442,14 +443,14 @@ def path_finder(
 			source,
 			target
 		)
-		best_path = sorted([x for x in fragments if x.id_ in best_path], key=lambda x: x.onset_range[0]) # noqa
+		best_path = sorted([x for x in extractions if x.id_ in best_path], key=lambda x: x.onset_range[0]) # noqa
 	elif algorithm.lower() == "floyd-warshall":
 		best_source, best_sink = path_finding_utils.best_source_and_sink(
-			data=fragments,
+			data=extractions,
 			enforce_earliest_start=enforce_earliest_start
 		)
 		distance_matrix, next_matrix = floyd_warshall.floyd_warshall(
-			data=fragments,
+			data=extractions,
 			cost_function_class=cost_function_class,
 			verbose=verbose
 		)
@@ -457,11 +458,18 @@ def path_finder(
 			start=best_source,
 			end=best_sink,
 			next_matrix=next_matrix,
-			data=fragments,
+			data=extractions,
 			slur_constraint=slur_constraint
 		)
 	else:
 		raise SearchException("The only available options are 'dijkstra' and 'floyd-warshall'.")
+
+	if split_dict:
+		best_path = path_finding_utils.split_extractions(
+			data=best_path,
+			split_dict=split_dict,
+			all_res=extractions
+		)
 
 	if save_filepath:
 		with open(save_filepath, "w") as output:
