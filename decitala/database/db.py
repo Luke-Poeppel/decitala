@@ -302,7 +302,7 @@ class Species:
 	def num_transcriptions(self):
 		return len(self.transcriptions)
 
-	def aggregate_pc_distribution(
+	def aggregated_pc_distribution(
 			self,
 			normalized=False,
 			as_vector=True
@@ -324,7 +324,6 @@ class Species:
 		if normalized:
 			net = sum(net_counter.values())
 			net_counter = {x: (y / net) for x, y in net_counter.items()}
-			assert sum(net_counter.values()) == 1.0
 
 		if not(as_vector):
 			return net_counter
