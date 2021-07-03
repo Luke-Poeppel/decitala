@@ -9,7 +9,7 @@ First stable release.
 - Added a class method to `db.ExtractionData` to maintain consistency between it and `search.Extraction`.
 - Added `split_dict` parameter to `search.path_finder`. That way one doesn't need to re-write this post-processing code. 
 - Added a `contour_to_contour_class` in `hm.contour` for experimenting with Schultz's work.
-- Added `NormalizedCounter` to `decitala.utils`.
+- Added `NormalizedCounter` and `dict_to_ordered_dict` to `decitala.utils`.
 
 #### Changed
 - Return type for `hm_utils.pc_counter` is now either a tone counter or the sum of the quarter length values associated with each pitch class; any normalization now must use `hm_utils.normalize_pc_counter`.

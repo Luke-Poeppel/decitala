@@ -15,7 +15,7 @@ import sys
 from itertools import groupby
 from more_itertools import consecutive_groups, windowed, powerset
 from scipy.linalg import norm
-from collections import Counter
+from collections import Counter, OrderedDict
 
 from music21 import converter
 from music21 import note
@@ -1049,3 +1049,16 @@ class NormalizedCounter(Counter):
 			all_counts = sum(self.values())
 			for this_key in self.keys():
 				self[this_key] = self[this_key] / all_counts
+
+def dict_to_ordered_dict(dict_in, key, reverse=True):
+	"""
+	Takes in a dict and returns an OrderedDict object sorted by a given key (in the form of a
+	lambda expression).
+
+	:param dict dict_in: a dictionary to be turned into an ordered dictionary.
+	:param key: lambda expression.
+	:param bool reverse: whether to sort the dict in reverse.
+	:return: the dictionary input, ordered by the given key.
+	:rtype: collections.OrderedDict
+	"""
+	return OrderedDict(sorted(dict_in.items(), key=key, reverse=reverse))
