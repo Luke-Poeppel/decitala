@@ -48,7 +48,6 @@ class SearchException(Exception):
 @dataclass
 class Extraction:
 	fragment: GeneralFragment
-	frag_type: str
 	onset_range: tuple
 
 	retrograde: bool
@@ -91,7 +90,6 @@ class Extraction:
 					if extraction.fragment == split_elem:
 						extraction_obj = Extraction(
 							fragment=extraction.fragment,
-							frag_type=extraction.frag_type,
 							onset_range=extraction.onset_range,
 							retrograde=extraction.retrograde,
 							factor=extraction.factor,
@@ -255,7 +253,6 @@ def frame_lookup(frame, ql_array, curr_fragment_id, table, windows):
 			offset_2 = frame[-1][0]
 			return Extraction(
 				fragment=searched["fragment"],
-				frag_type=searched["fragment"].frag_type,
 				onset_range=(offset_1.offset, offset_2.offset + offset_2.quarterLength),
 				retrograde=searched["retrograde"],
 				factor=searched["factor"],

@@ -19,7 +19,6 @@ from decitala.search import Extraction
 def fake_data():
 	extraction_1 = Extraction(
 		fragment=GeneralFragment(name="info1", data=[1, 2]),
-		frag_type="general_fragment",
 		onset_range=(0.0, 2.0),
 		retrograde=False,
 		factor=1.0,
@@ -33,7 +32,6 @@ def fake_data():
 	)
 	extraction_2 = Extraction(
 		fragment=GeneralFragment(name="info2", data=[1, 2]),
-		frag_type="general_fragment",
 		onset_range=(0.0, 4.0),
 		retrograde=False,
 		factor=2.0,
@@ -47,7 +45,6 @@ def fake_data():
 	)
 	extraction_3 = Extraction(
 		fragment=GeneralFragment(name="info3", data=[1, 2]),
-		frag_type="general_fragment",
 		onset_range=(2.0, 4.0),
 		retrograde=False,
 		factor=1.0,
@@ -61,7 +58,6 @@ def fake_data():
 	)
 	extraction_4 = Extraction(
 		fragment=GeneralFragment(name="info4", data=[1, 2]),
-		frag_type="general_fragment",
 		onset_range=(2.0, 5.75),
 		retrograde=True,
 		factor=1.0,
@@ -75,7 +71,6 @@ def fake_data():
 	)
 	extraction_5 = Extraction(
 		fragment=GeneralFragment(name="info5", data=[1, 2]),
-		frag_type="general_fragment",
 		onset_range=(2.5, 4.5),
 		retrograde=False,
 		factor=3.0,
@@ -89,7 +84,6 @@ def fake_data():
 	)
 	extraction_6 = Extraction(
 		fragment=GeneralFragment(name="info6", data=[1, 2]),
-		frag_type="general_fragment",
 		onset_range=(4.0, 5.5),
 		retrograde=False,
 		factor=1.0,
@@ -103,7 +97,6 @@ def fake_data():
 	)
 	extraction_7 = Extraction(
 		fragment=GeneralFragment(name="info7", data=[1, 2]),
-		frag_type="general_fragment",
 		onset_range=(6.0, 7.25),
 		retrograde=True,
 		factor=1.0,

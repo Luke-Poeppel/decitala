@@ -82,7 +82,6 @@ def test_frame_is_spanned_by_slur_b(fp2):
 def extraction():
 	return search.Extraction(
 		fragment=Decitala("Gajajhampa"),
-		frag_type="decitala",
 		onset_range=(0.25, 0.75),
 		retrograde=False,
 		factor=1.0,

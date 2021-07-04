@@ -14,6 +14,9 @@ First stable release.
 #### Changed
 - Return type for `hm_utils.pc_counter` is now either a tone counter or the sum of the quarter length values associated with each pitch class; any normalization now must use `hm_utils.normalize_pc_counter`.
 
+#### Removed
+- Removed unnecessary `frag_type` parameter to `Extraction`. Now a class attribute of `GeneralFragment` (and subclasses).
+
 ## [v0.14.1](https://github.com/Luke-Poeppel/decitala/tree/v0.14.1) July 2, 2021
 #### Fixed
 - Fixed a number of typos and added missing examples in `decitala.hm`.
