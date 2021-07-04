@@ -283,8 +283,10 @@ def default_split_dict():
 		GreekFoot("Dicretic"): [GreekFoot("Amphimacer"), GreekFoot("Amphimacer")],
 		GreekFoot("Dianapest"): [GreekFoot("Anapest"), GreekFoot("Anapest")],
 		GreekFoot("Didactyl"): [GreekFoot("Dactyl"), GreekFoot("Dactyl")],
+		GreekFoot("Diproceleusmatic"): [GreekFoot("Proceleusmatic"), GreekFoot("Proceleusmatic")],
 		GreekFoot("Dochmius"): [GreekFoot("Iamb"), GreekFoot("Amphimacer")],
 		GreekFoot("Triiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb"), GreekFoot("Iamb")],
+		GreekFoot("Triproceleusmatic"): [GreekFoot("Proceleusmatic"), GreekFoot("Proceleusmatic"), GreekFoot("Proceleusmatic")], # noqa
 	}
 
 def split_extractions(data, all_res, split_dict=default_split_dict()):
