@@ -115,7 +115,7 @@ def build_graph(
 	search algorithms. Requires ``id`` keys in each dictionary input.
 
 	:param list data: a list of :obj:`decitala.search.Extraction` objects.
-	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost
+	:param `path_finding_utils.CostFunction` cost_function_class: a cost
 		function that will be used in calculating the weights between vertices.
 	:return: A "graph" holding vertices and the associated cost between all other non-negative edges.
 	:rtype: dict
@@ -273,7 +273,31 @@ def make_4D_grid(resolution):
 
 	return combos
 
-def split_extractions(data, split_dict, all_res):
+def default_split_dict():
+	"""
+	Default splits for common compound greek metrics. Splits are either obvious (e.g. triiamb)
+	or provided by Messiaen.
+	"""
+	return {
+		GreekFoot("Diiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb")],
+		GreekFoot("Dicretic"): [GreekFoot("Amphimacer"), GreekFoot("Amphimacer")],
+		GreekFoot("Dianapest"): [GreekFoot("Anapest"), GreekFoot("Anapest")],
+		GreekFoot("Didactyl"): [GreekFoot("Dactyl"), GreekFoot("Dactlyl")],
+		GreekFoot("Dochmius"): [GreekFoot("Iamb"), GreekFoot("Amphimacer")],
+		GreekFoot("Triiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb"), GreekFoot("Iamb")],
+	}
+
+def split_extractions(data, all_res, split_dict=default_split_dict()):
+	"""
+	Function for splitting a list of extraction objects by a given ``split_dict``.
+
+	:param list data: a list of :obj:`decitala.search.Extraction` objects (corresponding to,
+						probably, a path of fragments).
+	:param list data: a list of :obj:`decitala.search.Extraction` objects (corresponding to
+						the complete extractions from a filepath-part.
+	:param dict split_dict: the dictionary used to split the extracted fragments into their
+							components. Default is :obj:`path_finding_utils.split_dict`
+	"""
 	split_extractions = []
 	for extraction in data:
 		if extraction.fragment in split_dict:
@@ -282,18 +306,6 @@ def split_extractions(data, split_dict, all_res):
 		else:
 			split_extractions.append(extraction)
 	return split_extractions
-
-def default_split_dict():
-	"""
-	Splits for common compound, repeated metrics.
-	"""
-	return {
-		GreekFoot("Diiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb")],
-		GreekFoot("Triiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb"), GreekFoot("Iamb")],
-		GreekFoot("Dicretic"): [GreekFoot("Amphimacer"), GreekFoot("Amphimacer")],
-		GreekFoot("Dianapest"): [GreekFoot("Anapest"), GreekFoot("Anapest")],
-		GreekFoot("Dochmius"): [GreekFoot("Iamb"), GreekFoot("Amphimacer")]
-	}
 
 def check_accuracy(training_data, calculated_data, mode, return_list):
 	"""
