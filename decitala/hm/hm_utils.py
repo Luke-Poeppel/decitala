@@ -279,23 +279,18 @@ def note_counter(filepath, part_num):
 		count += 1
 	return count
 
-def KS(pc_vector, coefficients, return_p_value=False):
+def KS(pc_vector, coefficients):
 	"""
 	Krumhansl-Schumckler algorithm.
 
 	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.
 	:param coefficients: coefficents used in the correlation calculation.
-
-	TODO: remove the stupid return_p_value argument.
 	"""
 	input_zscores = stats.zscore(pc_vector)
 
 	coefficients = coefficients / np.linalg.norm(coefficients)
 	score = stats.spearmanr(input_zscores, coefficients)
-	if return_p_value:
-		return score
-	else:
-		return score[0]
+	return score
 
 def KS_diatonic(pc_vector, coefficients, return_tonic=False):
 	"""
