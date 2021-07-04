@@ -31,22 +31,12 @@ class TreeException(Exception):
 class FragmentTreeException(TreeException):
 	pass
 
-####################################################################################################
-# KD-Tree (TODO)
-class KDTree:
-	class Node:
-		def __init__(self):
-			pass
-
-	def __init__(self):
-		pass
-
 class FragmentTree(Tree):
 	"""
 	NaryTree that holds multiplicative or additive representations of a rhythmic dataset.
 
-	:param str data: either a frag_type/rep_type combo, a path to folder of music21-readable files,
-					or a list of fragments.
+	:param data: either a path to folder of music21-readable files or a list of
+					:obj:`decitala.fragment.GeneralFragment` objects (or its subclasses).
 	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` (default)
 						and ``difference``.
 	:param str name: optional name of the Fragment Tree.
@@ -154,7 +144,7 @@ class FragmentTree(Tree):
 	def from_composition(
 			cls,
 			filepath,
-			part=0,
+			part_num=0,
 			rep_type="ratio",
 			windows=list(range(2, 10))
 		):
@@ -162,14 +152,14 @@ class FragmentTree(Tree):
 		Class method for generating a FragmentTree from a composition.
 
 		:param str filepath: path to file.
-		:param int part: part number.
+		:param int part_num: part number.
 		:return: a FragmentTree made from a rolling window of a part in a composition.
 		:rtype: :obj:`~decitala.trees.FragmentTree`
 		"""
 		assert os.path.isfile(filepath)
-		assert type(part) == int
+		assert type(part_num) == int
 
-		object_list = get_object_indices(filepath=filepath, part_num=part)
+		object_list = get_object_indices(filepath=filepath, part_num=part_num)
 		data = []
 		for this_window in windows:
 			frames = roll_window(array=object_list, window_size=this_window)
