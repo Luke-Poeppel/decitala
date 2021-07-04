@@ -1,3 +1,11 @@
+####################################################################################################
+# File:     hyperparameters.py
+# Purpose:  Functions for calculating intial hyperparameters for the CF3D.
+#
+# Author:   Luke Poeppel
+#
+# Location: Kent, 2021 / NYC, 2021.
+####################################################################################################
 import json
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,46 +16,38 @@ from decitala import (
 	search,
 	hash_table,
 	utils,
-	vis
 )
 from decitala.database.db import (
-	Transcription,
 	get_all_transcriptions
 )
 from decitala.path_finding import (
 	path_finding_utils,
 )
 
+logger = utils.get_logger(name=__file__, print_to_console=True)
+ALLOW_SUBDIVISION = False
+ENFORCE_EARLIEST_START = True
+
 def test_single_transcription(transcription, point, verbose=False, show_fragments=False):
-	allow_subdivision = False
+	"""Calculates accuracy of a point for a single transcription."""
 	cost = path_finding_utils.CostFunction3D(
 		gap_weight=point[0],
 		onset_weight=point[1],
 		articulation_weight=point[2]
 	)
-	all_results = search.rolling_hash_search(
-		filepath=transcription.filepath,
-		part_num=0,
-		table=hash_table.GreekFootHashTable(),
-		allow_subdivision=allow_subdivision
-	)
 	path = search.path_finder(
 		filepath=transcription.filepath,
 		part_num=0,
 		table=hash_table.GreekFootHashTable(),
-		allow_subdivision=allow_subdivision,
+		allow_subdivision=ALLOW_SUBDIVISION,
 		cost_function_class=cost,
-		enforce_earliest_start=True,
-		verbose=verbose
-	)
-	path = path_finding_utils.split_extractions(
-		data=path,
 		split_dict=path_finding_utils.default_split_dict(),
-		all_res=all_results
+		enforce_earliest_start=ENFORCE_EARLIEST_START,
+		verbose=verbose
 	)
 	if show_fragments:
 		for x in path:
-			print(x.fragment, x.onset_range, x.is_spanned_by_slur, x.pitch_content, x.mod_hierarchy_val) # noqa
+			logger.info(x.fragment, x.onset_range, x.is_spanned_by_slur, x.pitch_content, x.mod_hierarchy_val) # noqa
 		print()
 
 	return path_finding_utils.check_accuracy(
@@ -57,26 +57,20 @@ def test_single_transcription(transcription, point, verbose=False, show_fragment
 		return_list=True
 	)
 
-def debug():
-	ex = Transcription("Ex28")
-	# all_results = search.rolling_hash_search(
-	# 	filepath=ex.filepath,
-	# 	part_num=0,
-	# 	table=hash_table.GreekFootHashTable(),
-	# 	allow_subdivision=False
-	# )
-	ex.show(show_analysis=True)
-	path = test_single_transcription(ex, [0.8, 0.1, 0.1], show_fragments=True, verbose=False)
-	vis.annotate_score(path, ex.filepath, 0).show()
-
 def test_all_on_single_point(point):
+	"""Calculates accuracy for single input point."""
 	total = 0
 	correct = 0
 	for transcription in get_all_transcriptions():
 		if transcription.analysis:
-			print(transcription)
-			res = test_single_transcription(transcription, point, show_fragments=False, verbose=False)
-			print(res)
+			logger.info(transcription)
+			res = test_single_transcription(
+				transcription=transcription,
+				point=point,
+				show_fragments=False,
+				verbose=False
+			)
+			logger.info(res)
 			correct += res[0]
 			total += res[1]
 
@@ -84,18 +78,7 @@ def test_all_on_single_point(point):
 
 # print(test_all_on_single_point([0.8, 0.1, 0.1]))
 
-# s1 = "/Users/lukepoeppel/decitala/tests/static/Shuffled_Transcription_1.xml"
-# path = search.path_finder(
-# 	s1,
-# 	0,
-# 	hash_table.GreekFootHashTable(),
-# 	allow_subdivision=False,
-# 	cost_function_class=path_finding_utils.CostFunction3D(0.8, 0.1, 0.1)
-# )
-# for x in path:
-# 	print(x.fragment)
-
-def test_all(resolution=0.1):
+def test_all_points(resolution=0.1):
 	date = datetime.today().strftime("%m-%d-%Y")
 	ALL_RES = dict()
 	for transcription in get_all_transcriptions():
@@ -113,7 +96,6 @@ def test_all(resolution=0.1):
 	with open(filepath, "w") as fp:
 		json.dump(obj=ALL_RES, fp=fp, ensure_ascii=False, indent=4)
 	return
-
 
 ####################################################################################################
 # Plotting results
