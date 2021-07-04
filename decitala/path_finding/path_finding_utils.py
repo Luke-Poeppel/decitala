@@ -289,6 +289,7 @@ def default_split_dict():
 
 def split_extractions(data, all_res, split_dict=default_split_dict()):
 	"""
+	TODO: rename ``all_res`` to ``all_extractions``.
 	Function for splitting a list of extraction objects by a given ``split_dict``.
 
 	:param list data: a list of :obj:`decitala.search.Extraction` objects (corresponding to,

@@ -76,36 +76,41 @@ class Extraction:
 		if not(self.fragment in split_dict):
 			return [self]
 		else:
-			split = []
-			# This is hilariously stupid, but it should be ok as a temporary solution.
+			# This is dumb, but it should be ok as a temporary solution.
 			filtered_all_res = []
 			for extraction in all_res:
 				if (extraction.onset_range[0] >= self.onset_range[0]) and \
 					(extraction.onset_range[1] <= self.onset_range[1]):
 					filtered_all_res.append(extraction)
 
-			res_copy = copy.deepcopy(filtered_all_res)
-			for i, split_elem in enumerate(split_dict[self.fragment]):
-				for j, extraction in enumerate(res_copy):
+			split = []
+			last_highest_onset = 0.0
+			# Find the relevant fragment in all the results
+			i = 0
+			while i < len(split_dict[self.fragment]):
+				split_elem = split_dict[self.fragment][i]
+				for extraction in filtered_all_res:
 					if extraction.fragment == split_elem:
-						extraction_obj = Extraction(
-							fragment=extraction.fragment,
-							onset_range=extraction.onset_range,
-							retrograde=extraction.retrograde,
-							factor=extraction.factor,
-							difference=extraction.difference,
-							mod_hierarchy_val=extraction.mod_hierarchy_val,
-							pitch_content=extraction.pitch_content,
-							is_spanned_by_slur=extraction.is_spanned_by_slur,
-							slur_count=extraction.slur_count,
-							slur_start_end_count=extraction.slur_start_end_count,
-							id_=1000 + i  # Random scale to differentiate between standard.
-						)
-						split.append(extraction_obj)
-						res_copy = res_copy[:j]
+						if extraction.onset_range[1] >= last_highest_onset:
+							extraction_obj = Extraction(
+								fragment=extraction.fragment,
+								onset_range=extraction.onset_range,
+								retrograde=extraction.retrograde,
+								factor=extraction.factor,
+								difference=extraction.difference,
+								mod_hierarchy_val=extraction.mod_hierarchy_val,
+								pitch_content=extraction.pitch_content,
+								is_spanned_by_slur=extraction.is_spanned_by_slur,
+								slur_count=extraction.slur_count,
+								slur_start_end_count=extraction.slur_start_end_count,
+								id_=1000 + i  # Random scale to differentiate between standard.
+							)
+							split.append(extraction_obj)
+							last_highest_onset = extraction_obj.onset_range[-1]
+							break  # Don't keep looking.
+				i += 1
 
 			return split
-
 
 def frame_to_ql_array(frame):
 	"""
