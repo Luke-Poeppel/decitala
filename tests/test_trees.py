@@ -6,7 +6,7 @@ import doctest
 from decitala import trees
 from decitala.trees import FragmentTree
 from decitala.search import get_by_ql_array
-from decitala.fragment import GeneralFragment
+from decitala.fragment import GeneralFragment, GreekFoot
 
 from music21 import converter
 from music21 import note
@@ -21,22 +21,22 @@ def test_doctests():
 
 @pytest.fixture
 def tala_ratio_tree():
-	ratio_tree = FragmentTree.from_frag_type(frag_type='decitala', rep_type='ratio')
+	ratio_tree = FragmentTree.from_frag_type(frag_type="decitala", rep_type="ratio")
 	return ratio_tree
 
 @pytest.fixture
 def tala_difference_tree():
-	difference_tree = FragmentTree.from_frag_type(frag_type='decitala', rep_type='difference')
+	difference_tree = FragmentTree.from_frag_type(frag_type="decitala", rep_type="difference")
 	return difference_tree
 
 @pytest.fixture
 def greek_ratio_tree():
-	ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
+	ratio_tree = FragmentTree.from_frag_type(frag_type="greek_foot", rep_type="ratio")
 	return ratio_tree
 
 @pytest.fixture
 def greek_difference_tree():
-	difference_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='difference')
+	difference_tree = FragmentTree.from_frag_type(frag_type="greek_foot", rep_type="difference")
 	return difference_tree
 
 @pytest.fixture
@@ -130,8 +130,9 @@ def test_varied_ragavardhana(tala_ratio_tree):
 	searched = get_by_ql_array(varied_ragavardhana, ratio_tree=tala_ratio_tree, allowed_modifications=["r", "sr", "rsr"])
 	assert searched[0].name, searched[1] == ("93_Ragavardhana", ("rsr", 2.0))
 	
-def test_contiguous_summation(tala_ratio_tree, tala_difference_tree):
-	pass
-
-def test_tree_from_composition():
-	tree_from_composition = FragmentTree.from_composition(transcription_example, 0)
+def test_dseg_fragment_tree():
+	greek_dseg_tree = FragmentTree.from_frag_type(frag_type="greek_foot", rep_type="dseg")
+	iamb_dseg = [0.0, 1.0]
+	path = [0.0] + iamb_dseg
+	check = greek_dseg_tree.search_for_path(path)
+	assert check.name == GreekFoot("Iamb")
