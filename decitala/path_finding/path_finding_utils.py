@@ -282,7 +282,7 @@ def default_split_dict():
 		GreekFoot("Diiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb")],
 		GreekFoot("Dicretic"): [GreekFoot("Amphimacer"), GreekFoot("Amphimacer")],
 		GreekFoot("Dianapest"): [GreekFoot("Anapest"), GreekFoot("Anapest")],
-		GreekFoot("Didactyl"): [GreekFoot("Dactyl"), GreekFoot("Dactlyl")],
+		GreekFoot("Didactyl"): [GreekFoot("Dactyl"), GreekFoot("Dactyl")],
 		GreekFoot("Dochmius"): [GreekFoot("Iamb"), GreekFoot("Amphimacer")],
 		GreekFoot("Triiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb"), GreekFoot("Iamb")],
 	}
