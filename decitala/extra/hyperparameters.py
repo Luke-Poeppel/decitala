@@ -56,7 +56,7 @@ compositions = {
 	},
 }
 
-logger = utils.get_logger(name=__file__, print_to_console=True)
+logger = utils.get_logger(name=__file__, print_to_console=False)
 ALLOW_TRANSCRIPTION_SUBDIVISION = False
 ALLOW_COMPOSITION_SUBDIVISION = True
 ENFORCE_EARLIEST_START = True

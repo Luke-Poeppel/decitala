@@ -1,0 +1,26 @@
+TOTAL ACCURATE: 333
+TOTAL: 397
+TOTAL ACCURATE: 329
+TOTAL: 397
+TOTAL ACCURATE: 334
+TOTAL: 397
+TOTAL ACCURATE: 334
+TOTAL: 397
+TOTAL ACCURATE: 330
+TOTAL: 397
+TOTAL ACCURATE: 333
+TOTAL: 397
+TOTAL ACCURATE: 332
+TOTAL: 397
+ final_simplex: (array([[0.8   , 0.105 , 0.1   ],
+       [0.8   , 0.1   , 0.105 ],
+       [0.8   , 0.1   , 0.1   ],
+       [0.78  , 0.1025, 0.1025]]), array([0.01188623, 0.01188623, 0.01192192, 0.01192192]))
+           fun: 0.011886227544910179
+       message: 'Maximum number of iterations has been exceeded.'
+          nfev: 6
+           nit: 2
+        status: 2
+       success: False
+             x: array([0.8  , 0.105, 0.1  ])
+[0.011957831325301206]
