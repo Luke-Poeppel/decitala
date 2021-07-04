@@ -31,28 +31,18 @@ class TreeException(Exception):
 class FragmentTreeException(TreeException):
 	pass
 
-####################################################################################################
-# KD-Tree (TODO)
-class KDTree:
-	class Node:
-		def __init__(self):
-			pass
-
-	def __init__(self):
-		pass
-
 class FragmentTree(Tree):
 	"""
 	NaryTree that holds multiplicative or additive representations of a rhythmic dataset.
 
-	:param str data: either a frag_type/rep_type combo, a path to folder of music21-readable files,
-					or a list of fragments.
-	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` (default)
-						and ``difference``.
+	:param data: either a path to folder of music21-readable files or a list of
+					:obj:`decitala.fragment.GeneralFragment` objects (or its subclasses).
+	:param str rep_type: determines the representation of the fragment. Options are ``"ratio"``,
+							``"difference"``, and ``"dseg"``.
 	:param str name: optional name of the Fragment Tree.
 	:raises `~decitala.trees.FragmentTreeException`: if an invalid path or rep_type is given.
 
-	>>> ratio_tree = FragmentTree.from_frag_type(frag_type='greek_foot', rep_type='ratio')
+	>>> ratio_tree = FragmentTree.from_frag_type(frag_type="greek_foot", rep_type="ratio")
 	>>> ratio_tree
 	<trees.FragmentTree greek_foot_ratio: nodes=35>
 	>>> ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0]).name
@@ -73,18 +63,15 @@ class FragmentTree(Tree):
 	<fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]>
 	"""
 	def __init__(self, data, rep_type, name=None, **kwargs):
-		assert rep_type.lower() in ["ratio", "difference"], FragmentTreeException("The only possible rep_types are `ratio` and `difference`") # noqa
+		assert rep_type.lower() in ["ratio", "difference", "dseg"]
 
 		self.rep_type = rep_type.lower()
 		self.name = name
 
 		if isinstance(data, str):
 			assert os.path.isdir(data), FragmentTreeException("Invalid path provided.")
-			new_data = []
-			for this_file in os.listdir(self.data):
-				new_data.append(GeneralFragment(data=this_file))
-
-			self.data = data
+			parsed_data = [GeneralFragment(data=this_file) for this_file in os.listdir(data)]
+			self.data = parsed_data
 
 		if isinstance(data, list):
 			assert all(type(x).__name__ in ["GeneralFragment", "Decitala", "GreekFoot"] for x in data), FragmentTreeException("The elements of data must be GeneralFragment, \
@@ -102,11 +89,17 @@ class FragmentTree(Tree):
 				path = list(this_fragment.successive_ratio_array())
 				root_node.add_path_of_children(path=path, final_node_name=this_fragment)
 			self.root = root_node
-
-		if self.rep_type == "difference":
+		elif self.rep_type == "difference":
 			root_node = Node(value=0.0, name="ROOT")
 			for this_fragment in self.sorted_data:
 				path = list(this_fragment.successive_difference_array())
+				root_node.add_path_of_children(path=path, final_node_name=this_fragment)
+			self.root = root_node
+		elif self.rep_type == "dseg":
+			root_node = Node(value=0.0, name="ROOT")
+			for this_fragment in self.sorted_data:
+				path_pre = list(this_fragment.dseg())
+				path = [0] + path_pre
 				root_node.add_path_of_children(path=path, final_node_name=this_fragment)
 			self.root = root_node
 
@@ -134,11 +127,6 @@ class FragmentTree(Tree):
 							:obj:`~decitala.fragment.GeneralFragment`
 							(default) objects.
 		"""
-		assert frag_type.lower() in ["decitala", "greek_foot"], FragmentTreeException("The only \
-																					possible frag_types are `decitala` and `greek_foot`.")
-		assert rep_type.lower() in ["ratio", "difference"], FragmentTreeException("The only possible \
-																				rep_types are `ratio` and `difference`")
-
 		if frag_type == "decitala":
 			data = get_all_decitalas()
 		elif frag_type == "greek_foot":
@@ -154,7 +142,7 @@ class FragmentTree(Tree):
 	def from_composition(
 			cls,
 			filepath,
-			part=0,
+			part_num=0,
 			rep_type="ratio",
 			windows=list(range(2, 10))
 		):
@@ -162,14 +150,14 @@ class FragmentTree(Tree):
 		Class method for generating a FragmentTree from a composition.
 
 		:param str filepath: path to file.
-		:param int part: part number.
+		:param int part_num: part number.
 		:return: a FragmentTree made from a rolling window of a part in a composition.
 		:rtype: :obj:`~decitala.trees.FragmentTree`
 		"""
 		assert os.path.isfile(filepath)
-		assert type(part) == int
+		assert type(part_num) == int
 
-		object_list = get_object_indices(filepath=filepath, part_num=part)
+		object_list = get_object_indices(filepath=filepath, part_num=part_num)
 		data = []
 		for this_window in windows:
 			frames = roll_window(array=object_list, window_size=this_window)
