@@ -43,7 +43,7 @@ def create_tree_diagram(
 	:return: A folder at the provided path containing an index.html file which has a visualization
 			of the provided :obj:`~decitala.trees.FragmentTree`.
 	"""
-	stupid_tree = treeplotter.Tree()
+	stupid_tree = treeplotter.tree.Tree()
 	if FragmentTree.rep_type == "ratio":
 		root = treeplotter.tree.Node(value=1.0, name=None)
 		for this_fragment in FragmentTree.sorted_data:
