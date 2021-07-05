@@ -10,10 +10,12 @@ First stable release.
 - Added `split_dict` parameter to `search.path_finder`. That way one doesn't need to re-write this post-processing code. 
 - Added a `contour_to_contour_class` in `hm.contour` for experimenting with Schultz's work.
 - Added `NormalizedCounter` and `dict_to_ordered_dict` to `decitala.utils`.
-- WIP: Cleaned up existing hyperparameter calculation and plotting scripts, as well as (re)added a file for hyperparameter optimization via the Nelder-Meade algorithm.  
+- Cleaned up existing hyperparameter calculation and plotting scripts, as well as (re)added a file for hyperparameter optimization (SLSQP and constricted space at finer resolution).
+- Added Di- and Tri- proceleusmatic to corpora.
 
 #### Changed
 - Return type for `hm_utils.pc_counter` is now either a tone counter or the sum of the quarter length values associated with each pitch class; any normalization now must use `hm_utils.normalize_pc_counter`.
+- The default cost function used in `path_finder` and the associated helpers is now `CostFunction3D` with the optimized parameters.
 
 #### Removed
 - Removed unnecessary `frag_type` parameter to `Extraction`. Now a class attribute of `GeneralFragment` (and subclasses).
