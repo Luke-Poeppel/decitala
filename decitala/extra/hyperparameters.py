@@ -10,6 +10,7 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 
+from tqdm import tqdm
 from datetime import datetime
 
 from decitala import (
@@ -125,7 +126,7 @@ def test_all_transcriptions_on_single_point(point):
 	"""Calculates accuracy for single input point."""
 	total = 0
 	correct = 0
-	for transcription in get_all_transcriptions():
+	for transcription in tqdm(get_all_transcriptions()):
 		if transcription.analysis:
 			logger.info(transcription)
 			res = test_single_transcription(
@@ -140,13 +141,13 @@ def test_all_transcriptions_on_single_point(point):
 
 	return (correct, total, correct / total)
 
-# print(test_all_transcriptions_on_single_point([0.8, 0.1, 0.1]))
+# print(test_all_transcriptions_on_single_point([0.89, 0.02, 0.09]))#019]))
 
 def test_all_works_on_single_point(point):
 	"""Calculates accuracy for single input point."""
 	total = 0
 	correct = 0
-	for work, data in compositions.items():
+	for work, data in tqdm(compositions.items()):
 		logger.info(work)
 		res = test_single_work(
 			work=work,
@@ -162,44 +163,39 @@ def test_all_works_on_single_point(point):
 
 # print(test_all_works_on_single_point([0.8, 0.1, 0.1]))
 
-def test_all_points_transcriptions(resolution=0.1):
+def test_all_points_transcriptions(resolution):
 	date = datetime.today().strftime("%m-%d-%Y")
-	ALL_RES = dict()
-	for transcription in get_all_transcriptions():
-		if transcription.analysis:
-			transcription_results = dict()
-			print(transcription)
-			for point in path_finding_utils.make_3D_grid(resolution=resolution):
-				result = test_single_transcription(transcription, point=point)
-				print(result)
-				transcription_results[str(point)] = str(result)
+	out = dict()
+	for point in path_finding_utils.make_3D_grid(resolution=resolution):
+		print(point)
+		res = []
+		transcription_results = test_all_transcriptions_on_single_point(point)
+		res.extend(transcription_results)
+		out[str(point)] = res
 
-			ALL_RES[transcription.name] = transcription_results
-
-	filepath = f"/Users/lukepoeppel/decitala/decitala/extra/{date}_transcription_hyperparameters_{resolution}_greek_foot_4.json" # noqa
+	filepath = f"/Users/lukepoeppel/decitala/decitala/extra/{date}_transcription_hyperparameters_{resolution}.json" # noqa
 	with open(filepath, "w") as fp:
-		json.dump(obj=ALL_RES, fp=fp, ensure_ascii=False, indent=4)
+		json.dump(obj=out, fp=fp, ensure_ascii=False, indent=4)
 	return
 
-def test_all_points_works(resolution=0.1):
+# test_all_points_transcriptions(resolution=0.05)
+
+def test_all_points_works(resolution):
 	date = datetime.today().strftime("%m-%d-%Y")
-	ALL_RES = dict()
-	for work in compositions:
-		results = dict()
-		logger.info(work)
-		for point in path_finding_utils.make_3D_grid(resolution=resolution):
-			result = test_single_work(work, point=point)
-			logger.info(result)
-			results[str(point)] = str(result)
+	out = dict()
+	for point in path_finding_utils.make_3D_grid(resolution=resolution):
+		print(point)
+		res = []
+		composition_results = test_all_works_on_single_point(point)
+		res.extend(composition_results)
+		out[str(point)] = res
 
-		ALL_RES[work] = results
-
-	filepath = f"/Users/lukepoeppel/decitala/decitala/extra/{date}_composition_hyperparameters_{resolution}_greek_foot_4.json" # noqa
+	filepath = f"/Users/lukepoeppel/decitala/decitala/extra/{date}_works_hyperparameters_{resolution}.json" # noqa
 	with open(filepath, "w") as fp:
-		json.dump(obj=ALL_RES, fp=fp, ensure_ascii=False, indent=4)
+		json.dump(obj=out, fp=fp, ensure_ascii=False, indent=4)
 	return
 
-# print(test_all_points_works())
+# test_all_points_works(resolution=0.05)
 
 ####################################################################################################
 # Plotting results
