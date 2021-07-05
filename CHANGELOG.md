@@ -20,6 +20,9 @@ First stable release.
 #### Removed
 - Removed unnecessary `frag_type` parameter to `Extraction`. Now a class attribute of `GeneralFragment` (and subclasses).
 
+#### Fixed
+- Issues #197: bugs in path-finder found while studying SF excerpt; 
+
 ## [v0.14.1](https://github.com/Luke-Poeppel/decitala/tree/v0.14.1) July 2, 2021
 #### Fixed
 - Fixed a number of typos and added missing examples in `decitala.hm`.
