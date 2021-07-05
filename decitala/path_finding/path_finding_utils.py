@@ -327,6 +327,8 @@ def check_accuracy(training_data, calculated_data, mode, return_list):
 			elif mode == "Transcriptions":
 				if (this_training_fragment[0] == this_fragment.fragment) and (tuple(this_training_fragment[1]) == this_fragment.onset_range): # noqa
 					accurate += 1
+			else:
+				raise Exception("Only options are 'Compositions' and 'Transcriptions'.")
 
 	if not(return_list):
 		return (accurate / len(training_data)) * 100
