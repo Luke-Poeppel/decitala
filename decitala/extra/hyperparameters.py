@@ -227,7 +227,7 @@ def plot_3D_points(
 	ax = plt.axes(projection="3d")
 
 	ax.set_title(
-		"Dijkstra Algorithm Accuracy for Annotated Transcriptions and Compositions \n 3D Cost Function",
+		"Dijkstra Algorithm Accuracy for Partially Annotated \n Transcriptions and Compositions using 3D Cost Function", # noqa
 		fontname="Times",
 		fontsize=14
 	)
@@ -246,7 +246,7 @@ def plot_3D_points(
 			point=point
 		)
 		if i == 0:
-			ax.scatter(point[0], point[1], acc_transcription, c="k", s=8, label="Transcriptions (n=103)")
+			ax.scatter(point[0], point[1], acc_transcription, c="k", s=8, label="Transcriptions (n=45)")
 			ax.scatter(point[0], point[1], acc_composition, c="r", s=8, label="Compositions (n=5)")
 		else:
 			ax.scatter(point[0], point[1], acc_transcription, c="k", s=8)
@@ -255,6 +255,7 @@ def plot_3D_points(
 	ax.view_init(azim=-125, elev=15)
 
 	plt.legend(prop="Times")
+	plt.tight_layout()
 
 	if save_path:
 		plt.savefig(save_path, dpi=350)
