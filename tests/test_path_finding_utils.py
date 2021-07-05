@@ -61,6 +61,7 @@ def test_nc_106_split_extractions():
 		split_dict=path_finding_utils.default_split_dict()
 	)
 	calculated_split_fragments = [x.fragment for x in calculated_split]
+	
 	expected_fragments = [
 		GreekFoot("Epitrite_II"),
 		GreekFoot("Iamb"),
@@ -74,3 +75,18 @@ def test_nc_106_split_extractions():
 		GreekFoot("Amphimacer")
 	]
 	assert calculated_split_fragments == expected_fragments
+
+	calculated_split_onset_ranges = [x.onset_range for x in calculated_split]
+	expected_onset_ranges = [
+		(0.0, 0.875),
+		(1.875, 2.25),
+		(2.25, 2.875),
+		(3.875, 4.75),
+		(6.0, 6.5),
+		(6.5, 7.0),
+		(8.0, 8.875),
+		(9.875, 10.375),
+		(10.375, 10.875),
+		(10.875, 11.5)
+	]
+	assert calculated_split_onset_ranges == expected_onset_ranges
