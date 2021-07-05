@@ -8,7 +8,7 @@
 ####################################################################################################
 import json
 import matplotlib.pyplot as plt
-import numpy as np
+import matplotlib as mpl
 
 from tqdm import tqdm
 from datetime import datetime
@@ -24,6 +24,8 @@ from decitala.database.db import (
 from decitala.path_finding import (
 	path_finding_utils,
 )
+
+mpl.rcParams.update(mpl.rcParamsDefault)
 
 sept_haikai_path = "/Users/lukepoeppel/Messiaen/Encodings/Sept_Haikai/1_Introduction.xml"
 liturgie_path = "/Users/lukepoeppel/Messiaen/Encodings/Messiaen_Qt/Messiaen_I_Liturgie/Messiaen_I_Liturgie_de_cristal_CORRECTED.xml" # noqa
@@ -199,30 +201,33 @@ def test_all_points_works(resolution):
 
 ####################################################################################################
 # Plotting results
-latest = "/Users/lukepoeppel/decitala/decitala/extra/06-25-2021_transcription_hyperparameters_0.1_greek_foot_4.json" # noqa
+latest_transcription_data = "/Users/lukepoeppel/decitala/decitala/extra/07-05-2021_transcription_hyperparameters_0.05.json" # noqa
+latest_composition_data = "/Users/lukepoeppel/decitala/decitala/extra/07-05-2021_works_hyperparameters_0.05.json" # noqa
 
-def point_accuracy(filepath, point_in):
+def point_accuracy(filepath, point):
 	loaded = utils.loader(filepath)
-	results = []
-	for work in loaded.keys():
-		points = loaded[work]
-		for point in points.keys():
-			if json.loads(point) == point_in:
-				results.append(json.loads(points[point]))
+	results = None
+	for p, results in loaded.items():
+		loaded_point = json.loads(p)
+		if loaded_point == point:
+			results = loaded[str(loaded_point)]
+			break
 
-	total = sum([x[1] for x in results])
-	correct = sum([x[0] for x in results])
-	return correct / total
+	return results[-1]  # = correct / total
 
-def plot_3D_points(filepath, save_path=None):
-	"""
-	Each points should looks like [(x, y, z), res].
-	"""
+# print(point_accuracy(latest_composition_data, point=[0.8, 0.1, 0.1]))
+
+def plot_3D_points(
+		transcription_results,
+		composition_results,
+		show=False,
+		save_path=None
+	):
 	fig = plt.figure() # noqa
 	ax = plt.axes(projection="3d")
 
 	ax.set_title(
-		"Accuracy From Dijkstra Algorithm for Annotated Transcriptions \n (3D Cost Function)",
+		"Dijkstra Algorithm Accuracy for Annotated Transcriptions and Compositions \n 3D Cost Function",
 		fontname="Times",
 		fontsize=14
 	)
@@ -230,48 +235,33 @@ def plot_3D_points(filepath, save_path=None):
 	ax.set_ylabel("Onset Weight", fontname="Times", fontsize=12)
 	ax.set_zlabel("Accuracy (%)", fontname="Times", fontsize=12)
 
-	# Dumb, but it's ok. :-)
-	max_acc = 0
-	max_acc_point = None
-	for p in path_finding_utils.make_3D_grid(resolution=0.1):
-		acc = point_accuracy(
-			filepath=filepath,
-			point_in=p,
+	# Plot transcription and point data
+	for i, point in enumerate(path_finding_utils.make_3D_grid(resolution=0.1)):
+		acc_transcription = point_accuracy(
+			filepath=transcription_results,
+			point=point
 		)
-		if acc > max_acc:
-			max_acc = acc
-			max_acc_point = p
-
-	for point in path_finding_utils.make_3D_grid(resolution=0.1):
-		acc = point_accuracy(
-			filepath=filepath,
-			point_in=point,
+		acc_composition = point_accuracy(
+			filepath=composition_results,
+			point=point
 		)
-		if point == max_acc_point:
-			ax.scatter(max_acc_point[0], max_acc_point[1], max_acc, c="r", marker="X")
+		if i == 0:
+			ax.scatter(point[0], point[1], acc_transcription, c="k", s=8, label="Transcriptions (n=103)")
+			ax.scatter(point[0], point[1], acc_composition, c="r", s=8, label="Compositions (n=5)")
 		else:
-			ax.scatter(point[0], point[1], acc, c="k", s=8)
+			ax.scatter(point[0], point[1], acc_transcription, c="k", s=8)
+			ax.scatter(point[0], point[1], acc_composition, c="r", s=8)
 
-	ax.set_zlim(0, 0.8)
-	x = np.linspace(max_acc_point[0], max_acc_point[0], 50)
-	y = np.linspace(max_acc_point[1], max_acc_point[1], 50)
-	z = np.linspace(0, 0.75, 50)
-	ax.plot(x, y, z)
+	ax.view_init(azim=-125, elev=15)
 
-	ax.text(
-		max_acc_point[0],
-		max_acc_point[1],
-		max_acc + 0.05,
-		str(round(max_acc, 4)),
-		color="red",
-		fontdict={"family": "Times"}
-	)
-
-	ax.view_init(azim=-145, elev=15)
+	plt.legend(prop="Times")
 
 	if save_path:
 		plt.savefig(save_path, dpi=350)
 
-	plt.show()
-
-# plot_3D_points(latest, "/Users/lukepoeppel/decitala/decitala/extra/3D_results_74.71.png")
+# plot_3D_points(
+# 	transcription_results=latest_transcription_data,
+# 	composition_results=latest_composition_data,
+# 	show=False,
+# 	save_path="/Users/lukepoeppel/Messiaen/ODNC_Analysis/ODNC_A/figures/figure_5/3D_accuracy.png"
+# )
