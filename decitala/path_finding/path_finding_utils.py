@@ -53,12 +53,16 @@ class CostFunction:
 		"""
 		raise NotImplementedError
 
-class DefaultCostFunction(CostFunction):
+class CostFunction2D(CostFunction):
 	"""
 	Default cost function used in the path-finding algorithms. Weights optimized by
 	hyperparameter search.
 	"""
-	def __init__(self, gap_weight=0.75, onset_weight=0.25):
+	def __init__(
+			self,
+			gap_weight=0.75,
+			onset_weight=0.25
+		):
 		self.gap_weight = gap_weight
 		self.onset_weight = onset_weight
 
@@ -106,7 +110,7 @@ class CostFunction3D(CostFunction):
 
 def build_graph(
 		data,
-		cost_function_class=DefaultCostFunction(),
+		cost_function_class=CostFunction3D(),
 		verbose=False
 	):
 	"""

@@ -386,7 +386,7 @@ def path_finder(
 		allow_subdivision=False,
 		allow_contiguous_summation=False,
 		algorithm="dijkstra",
-		cost_function_class=path_finding_utils.DefaultCostFunction(),
+		cost_function_class=path_finding_utils.CostFunction3D(),
 		split_dict=None,
 		slur_constraint=False,
 		enforce_earliest_start=False,

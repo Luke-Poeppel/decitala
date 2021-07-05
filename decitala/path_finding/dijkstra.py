@@ -19,7 +19,7 @@ def dijkstra(
 		data,
 		graph,
 		source,
-		cost_function_class=path_finding_utils.DefaultCostFunction(),
+		cost_function_class=path_finding_utils.CostFunction3D(),
 	):
 	"""
 	Dijkstra path-finding algorithm from dynamic programming. Uses a min-heap
@@ -52,7 +52,7 @@ def dijkstra(
 
 def dijkstra_best_source_and_sink(
 		data,
-		cost_function_class=path_finding_utils.DefaultCostFunction(),
+		cost_function_class=path_finding_utils.CostFunction3D(),
 		enforce_earliest_start=False,
 		verbose=False
 	):

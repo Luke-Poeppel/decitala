@@ -15,13 +15,13 @@ import numpy as np
 from progress.bar import Bar
 
 from ..utils import get_logger
-from .path_finding_utils import DefaultCostFunction
+from .path_finding_utils import CostFunction3D
 
 logger = get_logger(name=__name__, print_to_console=True)
 
 def floyd_warshall(
 		data,
-		cost_function_class=DefaultCostFunction(),
+		cost_function_class=CostFunction3D(),
 		verbose=False
 	):
 	"""
