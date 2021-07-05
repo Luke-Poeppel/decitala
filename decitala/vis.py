@@ -169,7 +169,13 @@ def result_bar_plot(
 	plt.bar(counter.keys(), counter.values(), width=0.3, color="k")
 	return plt
 
-def plot_2D_search_results(data=None, path=None, title=None, save_filepath=None):
+def plot_2D_search_results(
+		data=None,
+		path=None,
+		title=None,
+		legend=True,
+		save_path=None
+	):
 	"""
 	Function for plotting the results of (usually) the full extracted data from a composition,
 	as well as a path extracted from it. The ``data`` parameter will plot the fragments as a
@@ -179,7 +185,8 @@ def plot_2D_search_results(data=None, path=None, title=None, save_filepath=None)
 	:param list data: a list of :obj:`decitala.search.Extraction` objects.
 	:param list path: Intended for data from :obj:`decitala.search.path_finder`. Default is `None.
 	:param str title: Title for the plot. Default is `None`.
-	:param str save_filepath: Optional path to save the plot (DPI=350). Default is `None`.
+	:param bool legend: Whether to include a legend in the final plot. Default is ``True``.
+	:param str save_path: Optional path to save the plot (DPI=350). Default is `None`.
 	"""
 	if data:
 		xs = [x.onset_range[0] for x in data]
@@ -200,10 +207,13 @@ def plot_2D_search_results(data=None, path=None, title=None, save_filepath=None)
 	plt.xlabel("Onset Start", fontname="Times", fontsize=12)
 	plt.ylabel("Onset Stop", fontname="Times", fontsize=12)
 
-	plt.legend(prop="Times")
+	if legend:
+		plt.legend(prop="Times")
 
-	if save_filepath:
-		plt.savefig(save_filepath, dpi=350)
+	plt.tight_layout()
+
+	if save_path:
+		plt.savefig(save_path, dpi=350)
 
 	return plt
 

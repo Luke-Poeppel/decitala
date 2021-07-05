@@ -53,12 +53,16 @@ class CostFunction:
 		"""
 		raise NotImplementedError
 
-class DefaultCostFunction(CostFunction):
+class CostFunction2D(CostFunction):
 	"""
 	Default cost function used in the path-finding algorithms. Weights optimized by
 	hyperparameter search.
 	"""
-	def __init__(self, gap_weight=0.75, onset_weight=0.25):
+	def __init__(
+			self,
+			gap_weight=0.75,
+			onset_weight=0.25
+		):
 		self.gap_weight = gap_weight
 		self.onset_weight = onset_weight
 
@@ -106,7 +110,7 @@ class CostFunction3D(CostFunction):
 
 def build_graph(
 		data,
-		cost_function_class=DefaultCostFunction(),
+		cost_function_class=CostFunction3D(),
 		verbose=False
 	):
 	"""
@@ -283,12 +287,15 @@ def default_split_dict():
 		GreekFoot("Dicretic"): [GreekFoot("Amphimacer"), GreekFoot("Amphimacer")],
 		GreekFoot("Dianapest"): [GreekFoot("Anapest"), GreekFoot("Anapest")],
 		GreekFoot("Didactyl"): [GreekFoot("Dactyl"), GreekFoot("Dactyl")],
+		GreekFoot("Diproceleusmatic"): [GreekFoot("Proceleusmatic"), GreekFoot("Proceleusmatic")],
 		GreekFoot("Dochmius"): [GreekFoot("Iamb"), GreekFoot("Amphimacer")],
 		GreekFoot("Triiamb"): [GreekFoot("Iamb"), GreekFoot("Iamb"), GreekFoot("Iamb")],
+		GreekFoot("Triproceleusmatic"): [GreekFoot("Proceleusmatic"), GreekFoot("Proceleusmatic"), GreekFoot("Proceleusmatic")], # noqa
 	}
 
 def split_extractions(data, all_res, split_dict=default_split_dict()):
 	"""
+	TODO: rename ``all_res`` to ``all_extractions``.
 	Function for splitting a list of extraction objects by a given ``split_dict``.
 
 	:param list data: a list of :obj:`decitala.search.Extraction` objects (corresponding to,
@@ -324,6 +331,8 @@ def check_accuracy(training_data, calculated_data, mode, return_list):
 			elif mode == "Transcriptions":
 				if (this_training_fragment[0] == this_fragment.fragment) and (tuple(this_training_fragment[1]) == this_fragment.onset_range): # noqa
 					accurate += 1
+			else:
+				raise Exception("Only options are 'Compositions' and 'Transcriptions'.")
 
 	if not(return_list):
 		return (accurate / len(training_data)) * 100

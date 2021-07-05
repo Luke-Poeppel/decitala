@@ -44,7 +44,7 @@ class FragmentTree(Tree):
 
 	>>> ratio_tree = FragmentTree.from_frag_type(frag_type="greek_foot", rep_type="ratio")
 	>>> ratio_tree
-	<trees.FragmentTree greek_foot_ratio: nodes=35>
+	<trees.FragmentTree greek_foot_ratio: nodes=43>
 	>>> ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0]).name
 	<fragment.GreekFoot Peon_II>
 	>>> # We can also give it a name.

@@ -76,17 +76,19 @@ class Extraction:
 		if not(self.fragment in split_dict):
 			return [self]
 		else:
-			split = []
-			# This is hilariously stupid, but it should be ok as a temporary solution.
+			# This is dumb, but it should be ok as a temporary solution.
 			filtered_all_res = []
 			for extraction in all_res:
 				if (extraction.onset_range[0] >= self.onset_range[0]) and \
 					(extraction.onset_range[1] <= self.onset_range[1]):
 					filtered_all_res.append(extraction)
 
-			res_copy = copy.deepcopy(filtered_all_res)
-			for i, split_elem in enumerate(split_dict[self.fragment]):
-				for j, extraction in enumerate(res_copy):
+			split = []
+			filtered_copy = copy.deepcopy(filtered_all_res)
+			i = 0
+			while i < len(split_dict[self.fragment]):
+				split_elem = split_dict[self.fragment][i]
+				for j, extraction in enumerate(filtered_copy):
 					if extraction.fragment == split_elem:
 						extraction_obj = Extraction(
 							fragment=extraction.fragment,
@@ -102,10 +104,11 @@ class Extraction:
 							id_=1000 + i  # Random scale to differentiate between standard.
 						)
 						split.append(extraction_obj)
-						res_copy = res_copy[:j]
+						filtered_copy.pop(j)
+						break  # Don't keep looking.
+				i += 1
 
 			return split
-
 
 def frame_to_ql_array(frame):
 	"""
@@ -383,7 +386,7 @@ def path_finder(
 		allow_subdivision=False,
 		allow_contiguous_summation=False,
 		algorithm="dijkstra",
-		cost_function_class=path_finding_utils.DefaultCostFunction(),
+		cost_function_class=path_finding_utils.CostFunction3D(),
 		split_dict=None,
 		slur_constraint=False,
 		enforce_earliest_start=False,
