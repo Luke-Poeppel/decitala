@@ -26,7 +26,9 @@ NEUMES = {
 }
 
 # Morris's Prime Contour Classes (1993, 220-221)
-# Monophonic examples
+# "Linear Prime Classes" (Schultz 92)
+# NOTE: Schultz uses the same linear prime classes to refer to symmetries
+# of these classes: e.g. <0 2 1> and <1 0 2> = L.
 PRIME_CONTOUR_CLASSES = {
 	(0): "A",
 	(0, 0): "B",
