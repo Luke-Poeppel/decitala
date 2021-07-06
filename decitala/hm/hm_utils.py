@@ -340,6 +340,6 @@ def test_all_coefficients(pc_vector, exclude_major_minor=False, molt_tonic_val=1
 		if key in {"Major", "Minor"}:
 			res[key] = KS_diatonic(pc_vector, coefficients)
 		else:
-			res[key] = KS(pc_vector, coefficients, return_p_value=True)
+			res[key] = KS(pc_vector, coefficients)
 
 	return res
