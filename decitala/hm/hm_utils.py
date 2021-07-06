@@ -307,7 +307,7 @@ def KS_diatonic(pc_vector, coefficients, return_tonic=False):
 	coefficients = linalg.circulant(coefficients)
 
 	scores = [
-		stats.spearmanr(x=input_zscores, y=coefficient_collection)
+		stats.spearmanr(input_zscores, coefficient_collection)
 		for coefficient_collection in coefficients
 	]
 	max_correlation = max(scores)
