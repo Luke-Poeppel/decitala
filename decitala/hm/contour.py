@@ -26,9 +26,11 @@ NEUMES = {
 }
 
 # Morris's Prime Contour Classes (1993, 220-221)
-# Monophonic examples
+# "Linear Prime Classes" (Schultz 92)
+# NOTE: Schultz uses the same linear prime classes to refer to symmetries
+# of these classes: e.g. <0 2 1> and <1 0 2> = L.
 PRIME_CONTOUR_CLASSES = {
-	(0): "A",
+	(0,): "A",
 	(0, 0): "B",
 	(0, 1): "D",
 	(0, 1, 0): "G",
@@ -160,20 +162,43 @@ def contour_to_neume(contour):
 	try:
 		return NEUMES[tuple(contour)]
 	except KeyError:
-		return None
+		raise ContourException(f"The contour {contour} was not found in the given current set.")
 
-def contour_to_contour_class(contour):
+def contour_to_contour_class(
+		contour,
+		allow_symmetries=False
+	):
 	"""
 	Returns the associated pitch contour class (a letter) from Morris (1993, 220-221)
 	of a contour.
 
-	:param contour: A pitch contour (iterable).
+	:param contour: a pitch contour (iterable).
+	:param bool allow_symmetries: whether to allow permutations of the given contour to be found.
+									Default is ``False``. Note that ``X`` and ``Y`` are weird cases
+									for this symmetry. May currently fail (don't understand it).
 	:rtype: str
 
 	>>> contour_to_contour_class((1, 0, 3, 2))
 	'X'
+	>>> contour_to_contour_class((0, 1, 0), allow_symmetries=False)
+	'G'
+	>>> contour_to_contour_class((0, 0, 1), allow_symmetries=True)
+	'G'
 	"""
-	return PRIME_CONTOUR_CLASSES[contour]
+	try:
+		if not(allow_symmetries):
+			return PRIME_CONTOUR_CLASSES[contour]
+		elif contour in {(1, 0, 3, 2), (1, 3, 0, 2)}:  # IDK about this case.
+			return PRIME_CONTOUR_CLASSES[contour]
+		else:
+			match = None
+			for key in PRIME_CONTOUR_CLASSES.keys():
+				if len(key) == len(contour) and len(set(key)) == len(set(contour)):
+					match = PRIME_CONTOUR_CLASSES[key]
+					break
+			return match
+	except KeyError:
+		ContourException(f"The contour {contour} is not prime.")
 
 
 ####################################################################################################
