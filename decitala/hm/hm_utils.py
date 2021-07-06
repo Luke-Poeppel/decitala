@@ -295,7 +295,7 @@ def KS(pc_vector, coefficients):
 def KS_diatonic(pc_vector, coefficients, return_tonic=False):
 	"""
 	Krumhansl-Schumckler algorithm for diatonic collections. Circulates over all major and minor
-	scales.
+	scales. Returns the maximum correlation (and its associated pvalue) using Spearman correlation.
 
 	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.
 	:param coefficients: coefficents used in the correlation calculation.
@@ -307,7 +307,7 @@ def KS_diatonic(pc_vector, coefficients, return_tonic=False):
 	coefficients = linalg.circulant(coefficients)
 
 	scores = [
-		stats.pearsonr(x=input_zscores, y=coefficient_collection)[0]
+		stats.spearman(x=input_zscores, y=coefficient_collection)
 		for coefficient_collection in coefficients
 	]
 	max_correlation = max(scores)
