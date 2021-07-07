@@ -45,10 +45,10 @@ jobs:
         pytest -v
 
     - name: Generate coverage report
+      if: ${{ matrix.python-version == '3.9' }}
       run: |
         pip install coverage
         coverage run -m pytest
     - name: Upload Coverage to Codecov
+      if: ${{ matrix.python-version == '3.9' }}
       uses: codecov/codecov-action@v1
-      with:
-        fail_ci_if_error: true
