@@ -6,6 +6,7 @@ coverage:
       # CodeCov too often marks the build as failed when it says that coverage dropped by < 0.01%
       default:
         informational: true
+    patch: no
   
 comment:                  # this is a top-level key
   layout: "diff, files"
