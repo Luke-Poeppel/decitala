@@ -53,6 +53,12 @@ class MOLT:
 	def __repr__(self):
 		return f"<moiseaux.MOLT mode={self.mode}, transposition={self.transposition}>"
 
+	def __hash__(self):
+		return "-".join([str(self.mode), str(self.transposition)])
+
+	def __eq__(self, other):
+		return self.__hash__() == other.__hash__()
+
 	@classmethod
 	def from_str(cls, str_in):
 		"""
