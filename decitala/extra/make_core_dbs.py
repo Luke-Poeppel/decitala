@@ -29,6 +29,7 @@ from decitala.database.db_utils import (
 )
 from decitala.fragment import FragmentEncoder
 from decitala.utils import loader, get_logger
+from decitala.hm import hm_utils
 
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Decitalas/"
@@ -100,7 +101,14 @@ def description_to_colors(description):
 	"""
 	Returns a list holding the colors mentioned in a species description.
 	"""
-	return None
+	colors = []
+	for description_string in description:
+		loaded = json.loads(description_string)
+		for token in loaded.split(" "):
+			for color in hm_utils.COLOR_DICT:
+				if unidecode.unidecode(token.capitalize()) == unidecode.unidecode(color):
+					colors.append(token)
+	return colors
 
 def serialize_species_info(filepath):
 	expected_tags = {
@@ -147,6 +155,9 @@ def serialize_species_info(filepath):
 			species_json[remaining_tag] = None
 
 	return json.dumps(species_json, ensure_ascii=False)
+
+fp = "/Users/lukepoeppel/Messiaen/Oiseaux_De_Nouvelle_Calédonie/11_Les_Siffleurs/A_Le_Siffleur_Calédonien/info.txt" # noqa
+# print(serialize_species_info(fp))
 
 def make_transcription_database(db_path):
 	session = get_session(
