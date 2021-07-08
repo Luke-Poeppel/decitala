@@ -354,12 +354,19 @@ def KS_diatonic(
 	else:
 		return max_correlation_data
 
-def test_all_coefficients(pc_vector, exclude_major_minor=False, molt_tonic_val=1):
+def test_all_coefficients(
+		pc_vector,
+		method="spearman",
+		exclude_major_minor=False,
+		molt_tonic_val=1
+	):
 	"""
 	Function for calculating the correlation between a given ``pc_vector`` and all possible
 	coefficients (binary modes for MOLT and KS coefficients).
 
 	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.
+	:param str method: either 'spearman' or 'pearson' (the method used for calculating correlation).
+						Default is 'spearman'.
 	:param bool exclude_major_minor: whether to exclude major/minor weights from the calculation.
 										Default is ``False``.
 	:param int molt_tonic_val: optional value to set the first element of the MOLT to. Default is
@@ -373,8 +380,16 @@ def test_all_coefficients(pc_vector, exclude_major_minor=False, molt_tonic_val=1
 			molt_tonic_val=molt_tonic_val
 		).items():
 		if key in {"Major", "Minor"}:
-			res[key] = KS_diatonic(pc_vector, coefficients)
+			res[key] = KS_diatonic(
+				pc_vector,
+				coefficients,
+				method
+			)
 		else:
-			res[key] = KS(pc_vector, coefficients)
+			res[key] = KS(
+				pc_vector,
+				coefficients,
+				method
+			)
 
 	return res
