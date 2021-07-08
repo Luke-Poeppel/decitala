@@ -103,9 +103,8 @@ def description_to_colors(description):
 	Returns a list holding the colors mentioned in a species description.
 	"""
 	colors = set()
-	for description_string in description:
-		loaded = json.loads(description_string)
-		for token in loaded.split(" "):
+	for i, description_string in enumerate(description):
+		for token in description_string.split(" "):
 			# Remove punctuation.
 			token = token.translate(str.maketrans("", "", string.punctuation))
 			for color in hm_utils.COLOR_DICT:
