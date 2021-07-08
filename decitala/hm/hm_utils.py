@@ -16,6 +16,9 @@ from music21 import scale
 
 from . import molt
 
+class HMUtilsException(Exception):
+	pass
+
 ####################################################################################################
 # Data
 KS_MAJOR_WEIGHTS = np.array([6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88]) # noqa
@@ -279,37 +282,64 @@ def note_counter(filepath, part_num):
 		count += 1
 	return count
 
-def KS(pc_vector, coefficients):
+def KS(
+		pc_vector,
+		coefficients,
+		method="spearman"
+	):
 	"""
 	Krumhansl-Schumckler algorithm.
 
 	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.
 	:param coefficients: coefficents used in the correlation calculation.
+	:param str method: either 'spearman' or 'pearson' (the method used for calculating correlation).
+						Default is 'spearman'.
 	"""
-	input_zscores = stats.zscore(pc_vector)
+	assert method.lower() in {"spearman", "pearson"}, HMUtilsException("Only supported options are 'spearman' and 'pearson'.") # noqa
 
+	input_zscores = stats.zscore(pc_vector)
 	coefficients = coefficients / np.linalg.norm(coefficients)
-	score = stats.spearmanr(input_zscores, coefficients)
+
+	if method.lower() == "spearman":
+		score = stats.spearmanr(input_zscores, coefficients)
+	else:
+		score = stats.pearsonr(input_zscores, coefficients)
 	return score
 
-def KS_diatonic(pc_vector, coefficients, return_tonic=False):
+def KS_diatonic(
+		pc_vector,
+		coefficients,
+		method="spearman",
+		return_tonic=False
+	):
 	"""
 	Krumhansl-Schumckler algorithm for diatonic collections. Circulates over all major and minor
-	scales. Returns the maximum correlation (and its associated pvalue) using Spearman correlation.
+	scales. Returns the best match (and its associated pvalue) using either Spearman
+	or Pearson correlation.
 
 	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.
 	:param coefficients: coefficents used in the correlation calculation.
+	:param str method: either 'spearman' or 'pearson' (the method used for calculating correlation).
+						Default is 'spearman'.
 	:param bool return_tonic: whether to also return the most highly correlated tonic.
 	"""
-	input_zscores = stats.zscore(pc_vector)
+	assert method.lower() in {"spearman", "pearson"}, HMUtilsException("Only supported options are 'spearman' and 'pearson'.") # noqa
 
+	input_zscores = stats.zscore(pc_vector)
 	coefficients = coefficients / np.linalg.norm(coefficients)
 	coefficients = linalg.circulant(coefficients)
 
-	scores = [
-		stats.spearmanr(input_zscores, coefficient_collection)
-		for coefficient_collection in coefficients
-	]
+	if method.lower() == "spearman":
+		scores = [
+			stats.spearmanr(input_zscores, coefficient_collection)
+			for coefficient_collection in coefficients
+		]
+	else:
+		scores = [
+			stats.pearsonr(input_zscores, coefficient_collection)
+			for coefficient_collection in coefficients
+		]
+
 	max_correlation_data = max(scores, key=lambda x: x.correlation)
 	max_correlation = max_correlation_data.correlation
 	max_correlation_index = 0
