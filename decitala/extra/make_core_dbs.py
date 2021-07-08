@@ -9,6 +9,7 @@
 import json
 import natsort
 import os
+import string
 import unidecode
 
 from music21 import converter
@@ -101,14 +102,16 @@ def description_to_colors(description):
 	"""
 	Returns a list holding the colors mentioned in a species description.
 	"""
-	colors = []
+	colors = set()
 	for description_string in description:
 		loaded = json.loads(description_string)
 		for token in loaded.split(" "):
+			# Remove punctuation.
+			token = token.translate(str.maketrans("", "", string.punctuation))
 			for color in hm_utils.COLOR_DICT:
 				if unidecode.unidecode(token.capitalize()) == unidecode.unidecode(color):
-					colors.append(token)
-	return colors
+					colors.add(token)
+	return list(colors)
 
 def serialize_species_info(filepath):
 	expected_tags = {
@@ -155,9 +158,6 @@ def serialize_species_info(filepath):
 			species_json[remaining_tag] = None
 
 	return json.dumps(species_json, ensure_ascii=False)
-
-fp = "/Users/lukepoeppel/Messiaen/Oiseaux_De_Nouvelle_Calédonie/11_Les_Siffleurs/A_Le_Siffleur_Calédonien/info.txt" # noqa
-# print(serialize_species_info(fp))
 
 def make_transcription_database(db_path):
 	session = get_session(
