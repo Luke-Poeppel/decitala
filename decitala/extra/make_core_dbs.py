@@ -173,7 +173,7 @@ def make_transcription_database(db_path):
 					subgroup_local_name = subgroup_info["local_name"]
 					subgroup_reported_size = subgroup_info["reported_size"]
 					subgroup_description = json.dumps(subgroup_info["description"], ensure_ascii=False)
-					subgroup_locations = json.dumps(subgroup_info["locations"])
+					subgroup_locations = json.dumps(subgroup_info["locations"], ensure_ascii=False)
 
 					subcategory = SubcategoryData(
 						name=subgroup_name,
