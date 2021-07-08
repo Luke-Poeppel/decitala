@@ -334,18 +334,23 @@ def KS_diatonic(
 			stats.spearmanr(input_zscores, coefficient_collection)
 			for coefficient_collection in coefficients
 		]
+		max_correlation_data = max(scores, key=lambda x: x.correlation)
+		max_correlation = max_correlation_data.correlation
+		max_correlation_index = 0
+		for i, score in enumerate(scores):
+			if score.correlation == max_correlation:
+				max_correlation_index == i
 	else:
 		scores = [
 			stats.pearsonr(input_zscores, coefficient_collection)
 			for coefficient_collection in coefficients
 		]
-
-	max_correlation_data = max(scores, key=lambda x: x.correlation)
-	max_correlation = max_correlation_data.correlation
-	max_correlation_index = 0
-	for i, score in enumerate(scores):
-		if score.correlation == max_correlation:
-			max_correlation_index == i
+		max_correlation_data = max(scores, key=lambda x: x[0])
+		max_correlation = max_correlation_data[0]
+		max_correlation_index = 0
+		for i, score in enumerate(scores):
+			if score[0] == max_correlation:
+				max_correlation_index == i
 
 	max_correlation_pitch = Pitch(max_correlation_index).name
 
