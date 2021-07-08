@@ -113,7 +113,7 @@ def description_to_colors(description):
 				continue
 			for color in hm_utils.COLOR_DICT:
 				if unidecode.unidecode(token.capitalize()) == unidecode.unidecode(color):
-					colors.add(token)
+					colors.add(token.lower())
 	return list(colors)
 
 def serialize_species_info(filepath):
