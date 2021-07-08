@@ -107,9 +107,13 @@ def description_to_colors(description):
 		for token in description_string.split(" "):
 			# Remove punctuation.
 			token = token.translate(str.maketrans("", "", string.punctuation))
+			# Only multi-token color descriptor (I think).
+			if token.lower().startswith("bouton"):
+				colors.add("bouton d'or")
+				continue
 			for color in hm_utils.COLOR_DICT:
 				if unidecode.unidecode(token.capitalize()) == unidecode.unidecode(color):
-					colors.add(token)
+					colors.add(token.lower())
 	return list(colors)
 
 def serialize_species_info(filepath):

@@ -291,6 +291,7 @@ class Species:
 		self.local_name = res.local_name
 		self.reported_size = res.reported_size
 		self.description = json.loads(res.description)
+		self.colors = json.loads(res.colors)
 		self.locations = json.loads(res.locations)
 
 		self.transcriptions = [Transcription(transcription.name) for transcription in res.transcriptions]

@@ -9,8 +9,8 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from decitala import database
 from decitala.database.db_utils import get_session
-from decitala.fragment import FragmentDecoder
 from decitala.database import db 
+from decitala.fragment import FragmentDecoder
 from decitala.hash_table import (
 	GreekFootHashTable
 )
@@ -63,3 +63,26 @@ def test_create_database():
 # 		0.24242424242424243
 # 	]
 # 	assert list(ct.aggregated_pc_distribution(normalized=True)) == normalized_expected
+
+def test_species_names():
+	rvj = db.Species("Le Rossignol à ventre jaune")
+	assert rvj.name == "Le Rossignol à ventre jaune"
+	assert rvj.latin == "Eopsaltria flaviventris"
+	assert rvj.local_name == None
+
+def test_species_colors():
+	rvj = db.Species("Le Rossignol à ventre jaune")
+	expected = {
+		"brun",
+		"grisâtre",
+		"chataîgne",
+		"gris",
+		"pâle",
+		"bouton d'or",
+		"jaune"
+	}
+	assert set(rvj.colors) == expected
+
+def test_num_transcriptions():
+	rvj = db.Species("Le Rossignol à ventre jaune")
+	assert rvj.num_transcriptions == 20

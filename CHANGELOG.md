@@ -13,7 +13,7 @@ First stable release.
 - Cleaned up existing hyperparameter calculation and plotting scripts, as well as (re)added a file for hyperparameter optimization (SLSQP and constricted space at finer resolution).
 - Added Di- and Tri- proceleusmatic to corpora.
 - Switched to codecov.io for coverage; it was annoying to include it as part of my workflow –– I'd rather it be automated.
-- Added `colors` column to `ODNC` database.
+- Added `colors` column to `ODNC` database and corresponding attribute to the `Species` wrapper.
 
 #### Changed
 - Return type for `hm_utils.pc_counter` is now either a tone counter or the sum of the quarter length values associated with each pitch class; any normalization now must use `hm_utils.normalize_pc_counter`.
