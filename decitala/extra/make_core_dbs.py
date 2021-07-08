@@ -9,6 +9,7 @@
 import json
 import natsort
 import os
+import string
 import unidecode
 
 from music21 import converter
@@ -29,6 +30,7 @@ from decitala.database.db_utils import (
 )
 from decitala.fragment import FragmentEncoder
 from decitala.utils import loader, get_logger
+from decitala.hm import hm_utils
 
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Decitalas/"
@@ -95,7 +97,21 @@ def make_corpora_database(echo=False):
 # make_corpora_database()
 
 ####################################################################################################
-# NC Transcriptions
+# Messiaen Transcriptions
+def description_to_colors(description):
+	"""
+	Returns a list holding the colors mentioned in a species description.
+	"""
+	colors = set()
+	for i, description_string in enumerate(description):
+		for token in description_string.split(" "):
+			# Remove punctuation.
+			token = token.translate(str.maketrans("", "", string.punctuation))
+			for color in hm_utils.COLOR_DICT:
+				if unidecode.unidecode(token.capitalize()) == unidecode.unidecode(color):
+					colors.add(token)
+	return list(colors)
+
 def serialize_species_info(filepath):
 	expected_tags = {
 		"group",
@@ -131,6 +147,9 @@ def serialize_species_info(filepath):
 				else:
 					species_json[split[0]] = split[1]
 			i += 1
+
+		colors = description_to_colors(species_json["description"])
+		species_json["colors"] = colors
 
 		existing_tags = set(species_json.keys())
 		diff = expected_tags - existing_tags
@@ -173,7 +192,8 @@ def make_transcription_database(db_path):
 					subgroup_local_name = subgroup_info["local_name"]
 					subgroup_reported_size = subgroup_info["reported_size"]
 					subgroup_description = json.dumps(subgroup_info["description"], ensure_ascii=False)
-					subgroup_locations = json.dumps(subgroup_info["locations"])
+					subgroup_colors = json.dumps(subgroup_info["colors"], ensure_ascii=False)
+					subgroup_locations = json.dumps(subgroup_info["locations"], ensure_ascii=False)
 
 					subcategory = SubcategoryData(
 						name=subgroup_name,
@@ -181,6 +201,7 @@ def make_transcription_database(db_path):
 						local_name=subgroup_local_name,
 						reported_size=subgroup_reported_size,
 						description=subgroup_description,
+						colors=subgroup_colors,
 						locations=subgroup_locations
 					)
 					session.add(subcategory)
