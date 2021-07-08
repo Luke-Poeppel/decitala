@@ -95,7 +95,13 @@ def make_corpora_database(echo=False):
 # make_corpora_database()
 
 ####################################################################################################
-# NC Transcriptions
+# Messiaen Transcriptions
+def description_to_colors(description):
+	"""
+	Returns a list holding the colors mentioned in a species description.
+	"""
+	return None
+
 def serialize_species_info(filepath):
 	expected_tags = {
 		"group",
@@ -131,6 +137,9 @@ def serialize_species_info(filepath):
 				else:
 					species_json[split[0]] = split[1]
 			i += 1
+
+		colors = description_to_colors(species_json["description"])
+		species_json["colors"] = colors
 
 		existing_tags = set(species_json.keys())
 		diff = expected_tags - existing_tags
@@ -173,6 +182,7 @@ def make_transcription_database(db_path):
 					subgroup_local_name = subgroup_info["local_name"]
 					subgroup_reported_size = subgroup_info["reported_size"]
 					subgroup_description = json.dumps(subgroup_info["description"], ensure_ascii=False)
+					subgroup_colors = json.dumps(subgroup_info["colors"], ensure_ascii=False)
 					subgroup_locations = json.dumps(subgroup_info["locations"], ensure_ascii=False)
 
 					subcategory = SubcategoryData(
@@ -181,6 +191,7 @@ def make_transcription_database(db_path):
 						local_name=subgroup_local_name,
 						reported_size=subgroup_reported_size,
 						description=subgroup_description,
+						colors=subgroup_colors,
 						locations=subgroup_locations
 					)
 					session.add(subcategory)

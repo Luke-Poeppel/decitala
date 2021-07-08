@@ -85,6 +85,7 @@ class SubcategoryData(TRANSCRIPTION_BASE):
 	reported_size = Column(Integer)
 	description = Column(String)
 	locations = Column(String)
+	colors = Column(String)
 
 	def __repr__(self):
 		return f"<decitala.SubcategoryData {self.name}>"
