@@ -200,6 +200,36 @@ def test_all_points_works(resolution):
 # test_all_points_works(resolution=0.05)
 
 ####################################################################################################
+# Getting individual accuracies
+def test_all_transcriptions_on_single_point_individual_results(point):
+	"""Calculates accuracy for single input point. Saves results."""
+	date = datetime.today().strftime("%m-%d-%Y")
+	out = dict()
+	total = 0
+	correct = 0
+	for transcription in get_all_transcriptions():
+		if transcription.analysis:
+			print(transcription)
+			logger.info(transcription)
+			res = test_single_transcription(
+				transcription=transcription,
+				point=point,
+				show_fragments=False,
+				verbose=False
+			)
+			correct += res[0]
+			total += res[1]
+			out[transcription.name] = res
+
+	filepath = f"/Users/lukepoeppel/decitala/decitala/extra/{date}_transcriptions_results_0.8-0.1-0.1.json" # noqa
+	with open(filepath, "w") as fp:
+		json.dump(obj=out, fp=fp, ensure_ascii=False, indent=4)
+
+	return (correct, total, correct / total)
+
+# print(test_all_transcriptions_on_single_point_individual_results([0.8, 0.1, 0.1]))
+
+####################################################################################################
 # Plotting results
 latest_transcription_data = "/Users/lukepoeppel/decitala/decitala/extra/07-05-2021_transcription_hyperparameters_0.05.json" # noqa
 latest_composition_data = "/Users/lukepoeppel/decitala/decitala/extra/07-05-2021_works_hyperparameters_0.05.json" # noqa
