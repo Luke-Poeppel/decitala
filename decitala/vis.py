@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import os
 import treeplotter
+import natsort
 
 from collections import Counter
 
@@ -84,7 +85,7 @@ def fragment_roll(
 		else:
 			highest_onset = fragment.onset_range[1]
 
-	for i, fragment in enumerate(sorted(data, key=lambda x: x.fragment.name)):
+	for i, fragment in enumerate(natsort.natsorted(data, key=lambda x: x.fragment.name, reverse=True)): # noqa
 		plt.barh(
 			y=fragment.fragment.name,
 			width=fragment.onset_range[1] - fragment.onset_range[0],
