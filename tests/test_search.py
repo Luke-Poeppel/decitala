@@ -11,7 +11,10 @@ from decitala.hash_table import (
 	DecitalaHashTable,
 	GreekFootHashTable
 )
-from decitala.path_finding.path_finding_utils import CostFunction3D
+from decitala.path_finding.path_finding_utils import (
+	CostFunction3D,
+	default_split_dict
+)
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -26,6 +29,10 @@ def fp2():
 @pytest.fixture
 def fp3():
 	return os.path.dirname(here) + "/tests/static/Shuffled_Transcription_3.xml"
+
+# @pytest.fixture
+def fp4():
+	return os.path.dirname(here) + "/tests/static/Shuffled_Transcription_6.xml"
 
 @pytest.fixture
 def povel_essen_example():
@@ -48,13 +55,9 @@ def s1_res(fp1):
 def test_doctests():
 	assert doctest.testmod(search, raise_on_error=True)
 
-class TestRollingHashSearch:
-
-	def test_num_fragments(self, s1_res):
-		assert len(s1_res) == 27
-
-	def test_id(self, s1_res):
-		assert s1_res[0].id_ == 8
+def test_rolling_hash_search_num_and_ids(s1_res):
+	assert len(s1_res) == 27
+	assert s1_res[0].id_ == 8
 
 def test_frame_is_spanned_by_slur_a(fp1):
 	num_slurs = 0
@@ -229,3 +232,27 @@ def test_slur_data(fp3):
 	assert frame_spanned_by_slur == expected_frame_is_spanned_by_slur
 	assert slur_counts == expected_slur_counts
 	assert slur_start_end_counts == expected_slur_start_end_counts
+
+# def test_ex102():
+# 	fp = fp4()
+# 	expected_path = [
+# 		GreekFoot("Iamb"),  # beaming isn't considered ;-(
+# 		GreekFoot("Peon_IV"),
+# 		GreekFoot("Iamb"),
+# 		GreekFoot("Iamb"),
+# 		GreekFoot("Iamb"),
+# 		GreekFoot("Iamb"),
+# 		# GreekFoot("Trochee") # IDK about this
+# 	]
+# 	path = search.path_finder(
+# 		filepath=fp,
+# 		part_num=0,
+# 		table=GreekFootHashTable(),
+# 		allow_subdivision=False,
+# 		enforce_earliest_start=True,
+# 		split_dict=default_split_dict()
+# 	)
+# 	for x in path:
+# 		print(x.fragment, x.onset_range, x.is_spanned_by_slur)
+
+# # print(test_ex102())
