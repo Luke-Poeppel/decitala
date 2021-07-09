@@ -21,6 +21,9 @@ from music21.note import Note
 
 from . import hm_utils
 
+class MoltException(Exception):
+	pass
+
 class MOLT:
 	"""
 	Class representing a Mode of Limited Transposition (Messiaen, 1944), therefore called a MOLT.
@@ -47,18 +50,26 @@ class MOLT:
 	{0: 0, 1: 1, 2: 0, 3: 1, 4: 0, 5: 1, 6: 0, 7: 1, 8: 0, 9: 1, 10: 0, 11: 1}
 	"""
 	def __init__(self, mode, transposition):
+		assert type(mode) == int, MoltException("The `mode` must be an integer.")
+		assert type(transposition) == int, MoltException("The `transposition` must be an integer.")
 		self.mode = mode
 		self.transposition = transposition
 
 	def __repr__(self):
 		return f"<moiseaux.MOLT mode={self.mode}, transposition={self.transposition}>"
 
+	def __hash__(self):
+		return hash("-".join([str(self.mode), str(self.transposition)]))
+
+	def __eq__(self, other):
+		return self.__hash__() == other.__hash__()
+
 	@classmethod
 	def from_str(cls, str_in):
 		"""
 		Return a MOLT object from string input of the form ``"MXTB"``
 		"""
-		return MOLT(mode=str_in[1], transposition=str_in[3])
+		return MOLT(mode=int(str_in[1]), transposition=int(str_in[3]))
 
 	@property
 	def scale(self):
@@ -130,25 +141,31 @@ def MOLT_query(collection):
 	either a list of midi tones, a list of strings, a list of pitch objecs,
 	or a list of note objects.
 	"""
-	# Prepare input
+	# Convert everything to pitch classes.
 	query_collection = set()
 	if all(isinstance(x, int) or isinstance(x, str) for x in collection):
 		for x in collection:
 			query_collection.add(Pitch(x).pitchClass)
 	elif all(isinstance(x, Pitch) or isinstance(x, Note) for x in collection):
 		for x in collection:
-			query_collection.add(x.pitchClass)
+			if isinstance(x, Pitch):
+				query_collection.add(x.pitchClass)
+			elif isinstance(x, Note):
+				query_collection.add(x.pitch.pitchClass)
+			else:
+				raise MoltException("Something is wrong with this collection. File an issue?")
 
 	res = []
-	for key, val in hm_utils.MOLT_DATA.items():
+	# Data: "MODE-1_TRANSPOSITION-1"
+	for mode, pcs_and_colors in hm_utils.MOLT_DATA.items():
 		pcs = set()
-		for this_pitch in val[0]:
+		for this_pitch in pcs_and_colors[0]:
 			pcs.add(Pitch(this_pitch).pitchClass)
 
 		if query_collection.issubset(pcs):
-			split = key.split("_")
-			mode = split[0][-1]
-			transposition = split[1][-1]
-			res.append(MOLT(mode=mode, transposition=transposition))
+			split = mode.split("_")
+			mode_num = int(split[0][-1])
+			transposition = int(split[1][-1])
+			res.append(MOLT(mode=mode_num, transposition=transposition))
 
 	return res

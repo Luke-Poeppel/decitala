@@ -16,6 +16,9 @@ from music21 import scale
 
 from . import molt
 
+class HMUtilsException(Exception):
+	pass
+
 ####################################################################################################
 # Data
 KS_MAJOR_WEIGHTS = np.array([6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88]) # noqa
@@ -279,52 +282,96 @@ def note_counter(filepath, part_num):
 		count += 1
 	return count
 
-def KS(pc_vector, coefficients):
+def KS(
+		pc_vector,
+		coefficients,
+		method="spearman"
+	):
 	"""
 	Krumhansl-Schumckler algorithm.
 
 	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.
 	:param coefficients: coefficents used in the correlation calculation.
+	:param str method: either 'spearman' or 'pearson' (the method used for calculating correlation).
+						Default is 'spearman'.
 	"""
-	input_zscores = stats.zscore(pc_vector)
+	assert method.lower() in {"spearman", "pearson"}, HMUtilsException("Only supported options are 'spearman' and 'pearson'.") # noqa
 
+	input_zscores = stats.zscore(pc_vector)
 	coefficients = coefficients / np.linalg.norm(coefficients)
-	score = stats.spearmanr(input_zscores, coefficients)
+
+	if method.lower() == "spearman":
+		score = stats.spearmanr(input_zscores, coefficients)
+	else:
+		score = stats.pearsonr(input_zscores, coefficients)
 	return score
 
-def KS_diatonic(pc_vector, coefficients, return_tonic=False):
+def KS_diatonic(
+		pc_vector,
+		coefficients,
+		method="spearman",
+		return_tonic=False
+	):
 	"""
 	Krumhansl-Schumckler algorithm for diatonic collections. Circulates over all major and minor
-	scales.
+	scales. Returns the best match (and its associated pvalue) using either Spearman
+	or Pearson correlation.
 
 	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.
 	:param coefficients: coefficents used in the correlation calculation.
+	:param str method: either 'spearman' or 'pearson' (the method used for calculating correlation).
+						Default is 'spearman'.
 	:param bool return_tonic: whether to also return the most highly correlated tonic.
 	"""
-	input_zscores = stats.zscore(pc_vector)
+	assert method.lower() in {"spearman", "pearson"}, HMUtilsException("Only supported options are 'spearman' and 'pearson'.") # noqa
 
+	input_zscores = stats.zscore(pc_vector)
 	coefficients = coefficients / np.linalg.norm(coefficients)
 	coefficients = linalg.circulant(coefficients)
 
-	scores = [
-		stats.pearsonr(x=input_zscores, y=coefficient_collection)[0]
-		for coefficient_collection in coefficients
-	]
-	max_correlation = max(scores)
-	max_correlation_index = scores.index(max_correlation)
+	if method.lower() == "spearman":
+		scores = [
+			stats.spearmanr(input_zscores, coefficient_collection)
+			for coefficient_collection in coefficients
+		]
+		max_correlation_data = max(scores, key=lambda x: x.correlation)
+		max_correlation = max_correlation_data.correlation
+		max_correlation_index = 0
+		for i, score in enumerate(scores):
+			if score.correlation == max_correlation:
+				max_correlation_index == i
+	else:
+		scores = [
+			stats.pearsonr(input_zscores, coefficient_collection)
+			for coefficient_collection in coefficients
+		]
+		max_correlation_data = max(scores, key=lambda x: x[0])
+		max_correlation = max_correlation_data[0]
+		max_correlation_index = 0
+		for i, score in enumerate(scores):
+			if score[0] == max_correlation:
+				max_correlation_index == i
+
 	max_correlation_pitch = Pitch(max_correlation_index).name
 
 	if return_tonic:
-		return max_correlation_pitch, max_correlation
+		return max_correlation_pitch, max_correlation_data
 	else:
-		return max_correlation
+		return max_correlation_data
 
-def test_all_coefficients(pc_vector, exclude_major_minor=False, molt_tonic_val=1):
+def test_all_coefficients(
+		pc_vector,
+		method="spearman",
+		exclude_major_minor=False,
+		molt_tonic_val=1
+	):
 	"""
 	Function for calculating the correlation between a given ``pc_vector`` and all possible
 	coefficients (binary modes for MOLT and KS coefficients).
 
 	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.
+	:param str method: either 'spearman' or 'pearson' (the method used for calculating correlation).
+						Default is 'spearman'.
 	:param bool exclude_major_minor: whether to exclude major/minor weights from the calculation.
 										Default is ``False``.
 	:param int molt_tonic_val: optional value to set the first element of the MOLT to. Default is
@@ -338,8 +385,16 @@ def test_all_coefficients(pc_vector, exclude_major_minor=False, molt_tonic_val=1
 			molt_tonic_val=molt_tonic_val
 		).items():
 		if key in {"Major", "Minor"}:
-			res[key] = KS_diatonic(pc_vector, coefficients)
+			res[key] = KS_diatonic(
+				pc_vector,
+				coefficients,
+				method
+			)
 		else:
-			res[key] = KS(pc_vector, coefficients, return_p_value=True)
+			res[key] = KS(
+				pc_vector,
+				coefficients,
+				method
+			)
 
 	return res

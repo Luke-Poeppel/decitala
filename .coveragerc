@@ -1,9 +1,8 @@
 [run]
 omit = 
     tests/*
-    decitala/cli.py
     decitala/vis.py
-    decitala/extra/hyperparameters.py
+    decitala/extra/*
     setup.py
 
 source = .

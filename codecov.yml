@@ -1,0 +1,16 @@
+# https://community.codecov.com/t/informational-true-check-is-marked-as-failng/2428
+coverage:
+  status:
+    project:
+      # Treat Project coverage info as informational only
+      # CodeCov too often marks the build as failed when it says that coverage dropped by < 0.01%
+      default:
+        informational: true
+    patch: no
+  
+comment:                  # this is a top-level key
+  layout: "diff"
+  behavior: new
+  require_changes: false  # if true: only post the comment if coverage changes
+  require_base: no        # [yes :: must have a base report to post]
+  require_head: yes       # [yes :: must have a head report to post]
