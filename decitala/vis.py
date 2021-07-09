@@ -218,7 +218,7 @@ def plot_2D_search_results(
 	return plt
 
 def plot_pitch_class_distribution_by_species(species, save_path=None):
-	combined_pc_dict = species.aggregate_pc_distribution(as_vector=False)
+	combined_pc_dict = species.aggregated_pc_distribution(as_vector=False)
 	keys = list(combined_pc_dict.keys())
 	values = list(combined_pc_dict.values())
 
