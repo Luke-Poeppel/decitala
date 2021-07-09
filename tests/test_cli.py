@@ -1,0 +1,1 @@
+from decitala import cli

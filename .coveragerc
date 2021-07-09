@@ -1,7 +1,6 @@
 [run]
 omit = 
     tests/*
-    decitala/vis.py
     decitala/extra/*
     setup.py
 
