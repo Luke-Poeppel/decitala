@@ -66,17 +66,17 @@ def create_tree_diagram(
 def fragment_roll(
 		data,
 		title=None,
-		save_filepath=None,
+		save_path=None,
 	):
 	"""
-	Creates a piano-roll type visualization of fragments in the input data.
+	Creates a piano-roll type visualization of the fragments given in ``data``.
 
-	:param list data: a list of :obj:`decitala.search.Extraction` objects.
-	:param str title: Title for the plot. Default is `None`.
-	:param str save_filepath: Optional path to save the plot (DPI=350). Default is `None`.
+	:param list data: a list of :obj:`decitala.search.Extraction` objects. Probably from
+						:obj:`decitala.search.path_finder`.
+	:param str title: title for the plot. Default is ``None``.
+	:param str save_path: optional path to save the plot (DPI=350). Default is `None`.
 	"""
 	plt.figure(figsize=(11, 3))
-	plt.title(title, fontsize=14, fontname="Times")
 	highest_onset = 0
 	for fragment in data:
 		if highest_onset > fragment.onset_range[1]:
@@ -84,25 +84,28 @@ def fragment_roll(
 		else:
 			highest_onset = fragment.onset_range[1]
 
-	plt.xticks(list(range(0, int(highest_onset), 10)))
-	plt.xlim(-0.02, highest_onset + 2.0)
-	plt.xlabel("Onset", fontsize=12, fontname="Times")
-	plt.ylabel("Fragment", fontsize=12, fontname="Times")
-
 	for i, fragment in enumerate(sorted(data, key=lambda x: x.fragment.name)):
 		plt.barh(
 			y=fragment.fragment.name,
 			width=fragment.onset_range[1] - fragment.onset_range[0],
 			height=0.8,
 			left=fragment.onset_range[0],
-			color='k'
+			color="k",
 		)
 
-	# if plot_break_points:
-	# 	pass # TODO
+	plt.xticks(list(range(0, int(highest_onset), 10)), fontname="Times")
+	plt.xlim(-2.0, highest_onset + 2.0)
+	plt.xlabel("Onset", fontsize=12, fontname="Times")
+	plt.ylabel("Fragment", fontsize=12, fontname="Times")
+	plt.yticks(fontname="Times")
 
-	if save_filepath:
-		plt.savefig(save_filepath, dpi=350)
+	if title:
+		plt.title(title, fontsize=14, fontname="Times")
+
+	plt.tight_layout()
+
+	if save_path:
+		plt.savefig(save_path, dpi=350)
 
 	return plt
 
