@@ -66,6 +66,7 @@ def create_tree_diagram(
 
 def fragment_roll(
 		data,
+		flip=False,
 		title=None,
 		save_path=None,
 	):
@@ -74,6 +75,7 @@ def fragment_roll(
 
 	:param list data: a list of :obj:`decitala.search.Extraction` objects. Probably from
 						:obj:`decitala.search.path_finder`.
+	:param bool flip: whether to flip the x-axis of the plot. Default is ``False``.
 	:param str title: title for the plot. Default is ``None``.
 	:param str save_path: optional path to save the plot (DPI=350). Default is `None`.
 	"""
@@ -94,8 +96,12 @@ def fragment_roll(
 			color="k",
 		)
 
+	if flip:
+		plt.xlim(highest_onset + 2.0, -2.0)
+	else:
+		plt.xlim(-2.0, highest_onset + 2.0)
+
 	plt.xticks(list(range(0, int(highest_onset), 10)), fontname="Times")
-	plt.xlim(-2.0, highest_onset + 2.0)
 	plt.xlabel("Onset", fontsize=12, fontname="Times")
 	plt.ylabel("Fragment", fontsize=12, fontname="Times")
 	plt.yticks(fontname="Times")
