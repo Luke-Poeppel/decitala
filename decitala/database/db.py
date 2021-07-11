@@ -293,6 +293,7 @@ class Species:
 		self.description = json.loads(res.description)
 		self.colors = json.loads(res.colors)
 		self.locations = json.loads(res.locations)
+		self.datetimes = json.loads(res.datetimes)
 
 		self.transcriptions = [Transcription(transcription.name) for transcription in res.transcriptions]
 
