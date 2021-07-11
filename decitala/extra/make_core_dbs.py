@@ -198,6 +198,7 @@ def make_transcription_database(db_path):
 					subgroup_description = json.dumps(subgroup_info["description"], ensure_ascii=False)
 					subgroup_colors = json.dumps(subgroup_info["colors"], ensure_ascii=False)
 					subgroup_locations = json.dumps(subgroup_info["locations"], ensure_ascii=False)
+					subgroup_datetimes = json.dumps(subgroup_info["datetimes"])
 
 					subcategory = SubcategoryData(
 						name=subgroup_name,
@@ -206,7 +207,8 @@ def make_transcription_database(db_path):
 						reported_size=subgroup_reported_size,
 						description=subgroup_description,
 						colors=subgroup_colors,
-						locations=subgroup_locations
+						locations=subgroup_locations,
+						datetimes=subgroup_datetimes
 					)
 					session.add(subcategory)
 					subcategory_objects.append(subcategory)
