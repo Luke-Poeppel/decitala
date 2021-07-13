@@ -223,6 +223,26 @@ def retrograde_invert_contour(contour):
 	"""
 	return invert_contour(contour[::-1])
 
+def is_rotationally_symmetric(contour_a, contour_b):
+	"""
+	Returns the degree (i.e. index) by which ``contour_a`` is rotationally symmetric
+	with ``contour_b``, or ``None`` if they are not symmetric.
+
+	>>> contour_a = (1, 3, 0, 2)
+	>>> contour_b = (0, 2, 1, 3)
+	>>> is_rotationally_symmetric(contour_a, contour_b)
+	2
+	"""
+	if len(contour_a) != len(contour_b):
+		return None
+	str_a = str(contour_a)[1:-1]
+	str_b = str(contour_b)[1:-1]
+	dup_b = ", ".join([str_b, str_b])
+	if not(str_a in dup_b):
+		return None
+	else:
+		return dup_b.index(str_a) - len(contour_a)  # str.index returns end point.
+
 def contour_symmetry(contour_a, contour_b):
 	"""
 	Returns the symmetry type and offset of two contours, if a symmetry exists.
@@ -230,6 +250,18 @@ def contour_symmetry(contour_a, contour_b):
 	"""
 	if set(contour_a) != set(contour_b):
 		return None
+
+	# if is_rotationally_symmetric(contour_a, contour_b):
+	# 	return ("P", degree)
+	# elif ...:
+	# 	degree = ...
+	# 	return ("R", degree)
+	# elif ...:
+	# 	degree = ...
+	# 	return ("I", degree)
+	# elif ...:
+	# 	degree = ...
+	# 	return ("RI", degree)
 
 
 ####################################################################################################
