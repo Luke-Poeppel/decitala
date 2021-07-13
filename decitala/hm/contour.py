@@ -70,10 +70,10 @@ def normalize_pitch_content(data, midi_start=60):
 	:rtype: numpy.array
 
 	>>> normalize_pitch_content(data=[58, 60, 62], midi_start=60)
-	array([60, 62, 64])
+	[60, 62, 64]
 	"""
 	diff = data[0] - midi_start
-	return np.array([x - diff for x in data])
+	return [x - diff for x in data]
 
 def uds_contour(data):
 	"""
@@ -116,11 +116,11 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 	:param bool as_str: whether to return the pitch content as a string (standard format),
 						like ``"<0 1 1>"``.
 	:return: the contour of the given ``pitch_content``.
-	:rtype: numpy.array or str
+	:rtype: list or str
 
 	>>> pitch_content_1 = [(80,), (91,), (78,), (85,)]
 	>>> pitch_content_to_contour(pitch_content_1)
-	array([1, 3, 0, 2])
+	[1, 3, 0, 2]
 	>>> pitch_content_2 = [80, 84, 84]
 	>>> pitch_content_to_contour(pitch_content_2, as_str=True)
 	'<0 1 1>'
@@ -141,7 +141,7 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 				seg_vals[i] = value_dict[this_key]
 
 	if not(as_str):
-		return np.array([int(val) for val in seg_vals])
+		return [int(val) for val in seg_vals]
 	else:
 		return "<" + " ".join([str(int(val)) for val in seg_vals]) + ">"
 
@@ -199,6 +199,37 @@ def contour_to_contour_class(
 			return match
 	except KeyError:
 		ContourException(f"The contour {contour} is not prime.")
+
+def invert_contour(contour):
+	"""
+	Returns the inversion of a contour. From Morris (1993, p. 207):
+	I: "inverts the contour; each pitch x in the contour becomes pitch n-x in the inverted
+	contour; n is the highest pitch in the contour."
+
+	>>> c = (0, 1, 3, 2)
+	>>> invert_contour(c)
+	[3, 2, 0, 1]
+	"""
+	max_contour_val = max(contour)
+	return [max_contour_val - c for c in contour]
+
+def retrograde_invert_contour(contour):
+	"""
+	Returns the retrograde inversion of a contour.
+
+	>>> c = (0, 1, 3, 2)
+	>>> retrograde_invert_contour(c)
+	[1, 0, 2, 3]
+	"""
+	return invert_contour(contour[::-1])
+
+def contour_symmetry(contour_a, contour_b):
+	"""
+	Returns the symmetry type and offset of two contours, if a symmetry exists.
+	Offset: a "leftward or rightward displacment" (Schultz 2008, p. 117) of n positions.
+	"""
+	if set(contour_a) != set(contour_b):
+		return None
 
 
 ####################################################################################################
@@ -350,10 +381,10 @@ def contour_to_prime_contour(contour):
 
 	>>> contour_a = [0, 1]
 	>>> contour_to_prime_contour(contour_a)
-	(array([0, 1]), 0)
+	([0, 1], 0)
 	>>> contour_b = [0, 4, 3, 2, 5, 5, 1]
 	>>> contour_to_prime_contour(contour_b)[0]
-	array([0, 2, 1])
+	[0, 2, 1]
 	"""
 	depth = 0
 
@@ -755,7 +786,7 @@ def contour_to_schultz_prime_contour(contour):
 
 	>>> alouette_5 = [2, 5, 3, 1, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 	>>> contour_to_schultz_prime_contour(alouette_5)
-	(array([1, 2, 0]), 3)
+	([1, 2, 0], 3)
 	"""
 	depth = 0
 
