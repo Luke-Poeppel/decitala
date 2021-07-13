@@ -60,6 +60,8 @@ def test_no_schultz_repetition():
 	checked = contour._no_schultz_repetition(c)
 	assert checked == True
 
+####################################################################################################
+# SCHULTZ TEST
 def test_contour_ex15a_schultz():
 	# See p. 109
 	c = [1, 0, 2, 0, 2, 1]
@@ -118,3 +120,10 @@ def test_alouette_9_schultz():
 
 	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_9)
 	assert list(schultz_contour[0]) == expected
+
+####################################################################################################
+def test_contour_symmetry():
+	contour_a = (1, 3, 0, 2)
+	expected = 	("P", 0)
+	calculated = contour.contour_symmetry(contour_a, contour_a)
+	return expected == calculated

@@ -241,27 +241,45 @@ def is_rotationally_symmetric(contour_a, contour_b):
 	if not(str_a in dup_b):
 		return None
 	else:
-		return dup_b.index(str_a) - len(contour_a)  # str.index returns end point.
+		check = dup_b.index(str_a)
+		if check == 0:
+			return 0
+		else:
+			return check - len(contour_a)  # string.index returns end point.
 
 def contour_symmetry(contour_a, contour_b):
 	"""
 	Returns the symmetry type and offset of two contours, if a symmetry exists.
 	Offset: a "leftward or rightward displacment" (Schultz 2008, p. 117) of n positions.
+	Returns ``None`` if no symmetry exists between ``contour_a`` and ``contour_b``.
+
+	NOTE: offset degree is calculated w.r.t to the manipulation.
+
+	>>> contour_a = (1, 3, 0, 2)
+	>>> # RI: (1, 0, 2, 3)
+	>>> contour_b = (0, 2, 3, 1)
+
+	# >>> contour_symmetry(contour_a, contour_b)
+	# ("RI", 1)
 	"""
 	if set(contour_a) != set(contour_b):
 		return None
 
-	# if is_rotationally_symmetric(contour_a, contour_b):
-	# 	return ("P", degree)
-	# elif ...:
-	# 	degree = ...
-	# 	return ("R", degree)
-	# elif ...:
-	# 	degree = ...
-	# 	return ("I", degree)
-	# elif ...:
-	# 	degree = ...
-	# 	return ("RI", degree)
+	p_res = is_rotationally_symmetric(contour_a, contour_b)
+	if p_res is not None:
+		return ("P", p_res)
+	r_res = is_rotationally_symmetric(contour_a, contour_b[:-1])
+	if r_res is not None:
+		return ("R", r_res)
+	i_res = is_rotationally_symmetric(contour_a, invert_contour(contour_b))
+	if i_res is not None:
+		return ("I", i_res)
+	ri_res = is_rotationally_symmetric(contour_a, retrograde_invert_contour(contour_b))
+	if ri_res is not None:
+		return ("RI", ri_res)
+
+	# No symmetry detected.
+	return None
 
 
 ####################################################################################################
