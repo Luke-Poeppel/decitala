@@ -233,6 +233,8 @@ def is_rotationally_symmetric(contour_a, contour_b):
 	>>> is_rotationally_symmetric(contour_a, contour_b)
 	2
 	"""
+	# if contour_b == (0, 2, 3, 1):
+	# 	import pdb; pdb.set_trace()
 	if len(contour_a) != len(contour_b):
 		return None
 	str_a = str(contour_a)[1:-1]
@@ -256,25 +258,24 @@ def contour_symmetry(contour_a, contour_b):
 	NOTE: offset degree is calculated w.r.t to the manipulation.
 
 	>>> contour_a = (1, 3, 0, 2)
-	>>> # RI: (1, 0, 2, 3)
-	>>> contour_b = (0, 2, 3, 1)
-
-	# >>> contour_symmetry(contour_a, contour_b)
-	# ("RI", 1)
 	"""
 	if set(contour_a) != set(contour_b):
 		return None
 
+	retrograde_b = contour_b[::-1]
+	inverted_b = invert_contour(contour_b)
+	retrograde_inverted_b = retrograde_invert_contour(contour_b)
+
 	p_res = is_rotationally_symmetric(contour_a, contour_b)
 	if p_res is not None:
 		return ("P", p_res)
-	r_res = is_rotationally_symmetric(contour_a, contour_b[:-1])
+	r_res = is_rotationally_symmetric(contour_a, retrograde_b)
 	if r_res is not None:
 		return ("R", r_res)
-	i_res = is_rotationally_symmetric(contour_a, invert_contour(contour_b))
+	i_res = is_rotationally_symmetric(contour_a, inverted_b)
 	if i_res is not None:
 		return ("I", i_res)
-	ri_res = is_rotationally_symmetric(contour_a, retrograde_invert_contour(contour_b))
+	ri_res = is_rotationally_symmetric(contour_a, retrograde_inverted_b)
 	if ri_res is not None:
 		return ("RI", ri_res)
 
