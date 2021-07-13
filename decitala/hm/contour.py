@@ -233,21 +233,15 @@ def is_rotationally_symmetric(contour_a, contour_b):
 	>>> is_rotationally_symmetric(contour_a, contour_b)
 	2
 	"""
-	# if contour_b == (0, 2, 3, 1):
-	# 	import pdb; pdb.set_trace()
 	if len(contour_a) != len(contour_b):
 		return None
-	str_a = str(contour_a)[1:-1]
-	str_b = str(contour_b)[1:-1]
-	dup_b = ", ".join([str_b, str_b])
+	str_a = "".join([str(x) for x in contour_a])
+	str_b = "".join([str(x) for x in contour_b])
+	dup_b = str_b + str_b
 	if not(str_a in dup_b):
 		return None
 	else:
-		check = dup_b.index(str_a)
-		if check == 0:
-			return 0
-		else:
-			return check - len(contour_a)  # string.index returns end point.
+		return dup_b.index(str_a)
 
 def contour_symmetry(contour_a, contour_b):
 	"""

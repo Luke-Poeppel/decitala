@@ -142,15 +142,21 @@ class TestContourSymmetries:
 		out = contour.retrograde_invert_contour(forward)
 		assert out == list(contour_a)
 
-# # def test_contour_symmetry_b():
-# # 	contour_a = (1, 3, 0, 2)
-# # 	# RI: (1, 0, 2, 3)
-# # 	contour_b = (0, 2, 3, 1)
-# # 	expected =  ("RI", 1)
-# # 	calculated = contour.contour_symmetry(contour_a, contour_b)
-# # 	assert expected == calculated
+# def test_contour_symmetry_b():
+# 	contour_a = (1, 3, 0, 2)
+# 	# RI: (1, 0, 2, 3)
+# 	contour_b = (0, 2, 3, 1)  # this is Ri, rotated rightwards by 1.
+# 	expected =  ("RI", 1)
+# 	calculated = contour.contour_symmetry(contour_a, contour_b)
+# 	assert expected == calculated
 
-# # print(test_contour_symmetry_b())
+# print(test_contour_symmetry_b())
+
+def test_is_rotationally_symmetric():
+	contour_a = (0, 1, 2, 3, 2, 1)
+	contour_b = (3, 2, 1, 0, 1, 2)
+	calculated = contour.is_rotationally_symmetric(contour_a, contour_b)
+	assert calculated == 3
 
 # def test_contour_retrograde_inversion():
 # 	c = (1, 3, 0, 2)
