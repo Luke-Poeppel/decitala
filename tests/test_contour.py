@@ -142,13 +142,15 @@ class TestContourSymmetries:
 		out = contour.retrograde_invert_contour(forward)
 		assert out == list(contour_a)
 
-# def test_contour_symmetry_b():
-# 	contour_a = (1, 3, 0, 2)
-# 	# RI: (1, 0, 2, 3)
-# 	contour_b = (0, 2, 3, 1)  # this is Ri, rotated rightwards by 1.
-# 	expected =  ("RI", 1)
-# 	calculated = contour.contour_symmetry(contour_a, contour_b)
-# 	assert expected == calculated
+# Something non-commutative going on...
+def test_contour_symmetry_b():
+	start = (1, 3, 0, 2)
+	# RI: (1, 3, 0, 2)
+	end = (0, 2, 1, 3)  # this is Ri of contour_a, rotated rightwards by 1.
+	expected =  ("RI", 2)
+	calculated = contour.contour_symmetry(start, end)
+	print(calculated)
+	# assert expected == calculated
 
 # print(test_contour_symmetry_b())
 

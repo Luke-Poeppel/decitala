@@ -209,6 +209,9 @@ def invert_contour(contour):
 	>>> c = (0, 1, 3, 2)
 	>>> invert_contour(c)
 	[3, 2, 0, 1]
+	>>> c2 = (0, 2, 1, 3)
+	>>> invert_contour(c2)
+	[3, 1, 2, 0]
 	"""
 	max_contour_val = max(contour)
 	return [max_contour_val - c for c in contour]
@@ -220,6 +223,9 @@ def retrograde_invert_contour(contour):
 	>>> c = (0, 1, 3, 2)
 	>>> retrograde_invert_contour(c)
 	[1, 0, 2, 3]
+	>>> c2 = (0, 2, 1, 3)
+	>>> retrograde_invert_contour(c2)
+	[0, 2, 1, 3]
 	"""
 	return invert_contour(contour[::-1])
 
@@ -251,11 +257,20 @@ def contour_symmetry(contour_a, contour_b):
 
 	NOTE: offset degree is calculated w.r.t to the manipulation.
 
-	>>> contour_a = (1, 3, 0, 2)
+	The following is the second shell from Schultz's analysis.
+
+	# >>> contour_a = (1, 2, 0)
+	# >>> contour_b = (1, 0, 2)
+	# >>> contour_symmetry(contour_a, contour_b)
+	# ('P', 1)
+
+	Try moving a single element to every possible new position (O(n2));
+	if equality found
 	"""
 	if set(contour_a) != set(contour_b):
 		return None
 
+	# Operations are commutative, so we reverse the process.
 	retrograde_b = contour_b[::-1]
 	inverted_b = invert_contour(contour_b)
 	retrograde_inverted_b = retrograde_invert_contour(contour_b)
