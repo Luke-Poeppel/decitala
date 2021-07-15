@@ -1,15 +1,26 @@
 import os
 import doctest
+import pytest
+
+from music21 import converter
+from music21 import analysis
 
 from decitala.hm import hm_utils
 
 here = os.path.abspath(os.path.dirname(__file__))
-filepath = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
 
 def test_doctests():
 	assert doctest.testmod(hm_utils, raise_on_error=True)
 
-def test_pc_counter_counts():
+@pytest.fixture
+def fp1():
+	return os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
+
+@pytest.fixture
+def fp2():
+	return os.path.dirname(here) + "/tests/static/deut2290.krn"
+
+def test_pc_counter_counts(fp1):
 	predicted = { # checked 06-26-21
 		0: 0, # correct
 		1: 2, # correct
@@ -25,13 +36,13 @@ def test_pc_counter_counts():
 		11: 0 # correct
 	}
 	calculated = hm_utils.pc_counter(
-		filepath=filepath,
+		filepath=fp1,
 		part_num=0,
 		return_counts=True
 	)
 	assert predicted == calculated
 
-def test_pc_counter_normalized():
+def test_pc_counter_normalized(fp1):
 	highest_time = 2.75 # sum of all the qls below.
 	predicted = { # checked 06-26-21
 		0: 0,
@@ -48,14 +59,14 @@ def test_pc_counter_normalized():
 		11: 0
 	}
 	calculated = hm_utils.pc_counter(
-		filepath=filepath,
+		filepath=fp1,
 		part_num=0,
 		return_counts=False
 	)
 	calculated = hm_utils.normalize_pc_counter(calculated)
 	assert predicted == calculated
 
-def test_pc_dict_to_vector():
+def test_pc_dict_to_vector(fp1):
 	highest_time = 2.75 # sum of all the qls below.
 	normalized_results = { # checked 06-26-21
 		0: 0,
@@ -86,10 +97,40 @@ def test_pc_dict_to_vector():
 		normalized_results[11],
 	]
 	calculated = hm_utils.pc_counter(
-		filepath=filepath,
+		filepath=fp1,
 		part_num=0,
 		return_counts=False
 	)
 	calculated = hm_utils.normalize_pc_counter(calculated)
 	calculated_vector = hm_utils.pc_dict_to_vector(calculated)
 	assert list(calculated_vector) == predicted
+
+def test_ks_diatonic(fp2):
+	"""
+	B- major.
+	"""
+	parsed = converter.parse(fp2)
+	ks = analysis.discrete.KrumhanslSchmuckler()
+	m21_res = ks.getSolution(parsed).tonic
+	
+	pc_counter_dict = hm_utils.pc_counter(
+		filepath=fp2,
+		part_num=0,
+	)
+	pc_counter_vector = hm_utils.pc_dict_to_vector(pc_counter_dict)
+
+	major_res = hm_utils.KS_diatonic(
+		pc_counter_vector,
+		hm_utils.get_all_coefficients()["Major"],
+		method="pearson",
+		return_tonic=True
+	)
+	minor_res = hm_utils.KS_diatonic(
+		pc_counter_vector,
+		hm_utils.get_all_coefficients()["Minor"],
+		method="pearson",
+		return_tonic=True
+	)	
+	decitala_res = max([major_res, minor_res], key=lambda x: x[1][0])	
+
+	assert m21_res.name == decitala_res[0]
