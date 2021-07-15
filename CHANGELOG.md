@@ -24,7 +24,7 @@ First stable release.
 - Removed unnecessary `frag_type` parameter to `Extraction`. Now a class attribute of `GeneralFragment` (and subclasses).
 
 #### Fixed
-- WIP: The `return_tonic` parameter for `KS_diatonic` was returning incorrect values.
+- The `return_tonic` parameter for `KS_diatonic` was returning incorrect values.
 
 ## [v0.14.1](https://github.com/Luke-Poeppel/decitala/tree/v0.14.1) July 2, 2021
 #### Fixed
