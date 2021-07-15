@@ -152,10 +152,9 @@ def get_all_coefficients(exclude_major_minor=False, molt_tonic_val=1):
 		"M7T6": molt.MOLT(mode=7, transposition=6).pc_vector(tonic_value=molt_tonic_val),
 	}
 	if not(exclude_major_minor):
-		return MOLT_COEFFS | {
-			"Major": [6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88],
-			"Minor": [6.33, 2.68, 3.52, 5.38, 2.60, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17],
-		}
+		MOLT_COEFFS["Major"] = [6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88] # noqa
+		MOLT_COEFFS["Minor"] = [6.33, 2.68, 3.52, 5.38, 2.60, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17] # noqa
+		return MOLT_COEFFS
 	else:
 		return MOLT_COEFFS
 
