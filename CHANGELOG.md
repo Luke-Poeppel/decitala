@@ -25,6 +25,7 @@ First stable release.
 
 #### Fixed
 - The `return_tonic` parameter for `KS_diatonic` was returning incorrect values.
+- Issues #217: bugs with Schultz contour calculation;
 
 ## [v0.14.1](https://github.com/Luke-Poeppel/decitala/tree/v0.14.1) July 2, 2021
 #### Fixed
