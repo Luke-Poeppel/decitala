@@ -70,10 +70,10 @@ def normalize_pitch_content(data, midi_start=60):
 	:rtype: numpy.array
 
 	>>> normalize_pitch_content(data=[58, 60, 62], midi_start=60)
-	array([60, 62, 64])
+	[60, 62, 64]
 	"""
 	diff = data[0] - midi_start
-	return np.array([x - diff for x in data])
+	return [x - diff for x in data]
 
 def uds_contour(data):
 	"""
@@ -116,11 +116,11 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 	:param bool as_str: whether to return the pitch content as a string (standard format),
 						like ``"<0 1 1>"``.
 	:return: the contour of the given ``pitch_content``.
-	:rtype: numpy.array or str
+	:rtype: list or str
 
 	>>> pitch_content_1 = [(80,), (91,), (78,), (85,)]
 	>>> pitch_content_to_contour(pitch_content_1)
-	array([1, 3, 0, 2])
+	[1, 3, 0, 2]
 	>>> pitch_content_2 = [80, 84, 84]
 	>>> pitch_content_to_contour(pitch_content_2, as_str=True)
 	'<0 1 1>'
@@ -141,7 +141,7 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 				seg_vals[i] = value_dict[this_key]
 
 	if not(as_str):
-		return np.array([int(val) for val in seg_vals])
+		return [int(val) for val in seg_vals]
 	else:
 		return "<" + " ".join([str(int(val)) for val in seg_vals]) + ">"
 
@@ -199,6 +199,97 @@ def contour_to_contour_class(
 			return match
 	except KeyError:
 		ContourException(f"The contour {contour} is not prime.")
+
+def invert_contour(contour):
+	"""
+	Returns the inversion of a contour. From Morris (1993, p. 207):
+	I: "inverts the contour; each pitch x in the contour becomes pitch n-x in the inverted
+	contour; n is the highest pitch in the contour."
+
+	>>> c = (0, 1, 3, 2)
+	>>> invert_contour(c)
+	[3, 2, 0, 1]
+	>>> c2 = (0, 2, 1, 3)
+	>>> invert_contour(c2)
+	[3, 1, 2, 0]
+	"""
+	max_contour_val = max(contour)
+	return [max_contour_val - c for c in contour]
+
+def retrograde_invert_contour(contour):
+	"""
+	Returns the retrograde inversion of a contour.
+
+	>>> c = (0, 1, 3, 2)
+	>>> retrograde_invert_contour(c)
+	[1, 0, 2, 3]
+	>>> c2 = (0, 2, 1, 3)
+	>>> retrograde_invert_contour(c2)
+	[0, 2, 1, 3]
+	"""
+	return invert_contour(contour[::-1])
+
+def is_rotationally_symmetric(contour_a, contour_b):
+	"""
+	Returns the degree (i.e. index) by which ``contour_a`` is rotationally symmetric
+	with ``contour_b``, or ``None`` if they are not symmetric.
+
+	>>> contour_a = (1, 3, 0, 2)
+	>>> contour_b = (0, 2, 1, 3)
+	>>> is_rotationally_symmetric(contour_a, contour_b)
+	2
+	"""
+	if len(contour_a) != len(contour_b):
+		return None
+	str_a = "".join([str(x) for x in contour_a])
+	str_b = "".join([str(x) for x in contour_b])
+	dup_b = str_b + str_b
+	if not(str_a in dup_b):
+		return None
+	else:
+		return dup_b.index(str_a)
+
+def contour_symmetry(contour_a, contour_b):
+	"""
+	Returns the symmetry type and offset of two contours, if a symmetry exists.
+	Offset: a "leftward or rightward displacment" (Schultz 2008, p. 117) of n positions.
+	Returns ``None`` if no symmetry exists between ``contour_a`` and ``contour_b``.
+
+	NOTE: offset degree is calculated w.r.t to the manipulation.
+
+	The following is the second shell from Schultz's analysis.
+
+	# >>> contour_a = (1, 2, 0)
+	# >>> contour_b = (1, 0, 2)
+	# >>> contour_symmetry(contour_a, contour_b)
+	# ('P', 1)
+
+	Try moving a single element to every possible new position (O(n2));
+	if equality found
+	"""
+	if set(contour_a) != set(contour_b):
+		return None
+
+	# Operations are commutative, so we reverse the process.
+	retrograde_b = contour_b[::-1]
+	inverted_b = invert_contour(contour_b)
+	retrograde_inverted_b = retrograde_invert_contour(contour_b)
+
+	p_res = is_rotationally_symmetric(contour_a, contour_b)
+	if p_res is not None:
+		return ("P", p_res)
+	r_res = is_rotationally_symmetric(contour_a, retrograde_b)
+	if r_res is not None:
+		return ("R", r_res)
+	i_res = is_rotationally_symmetric(contour_a, inverted_b)
+	if i_res is not None:
+		return ("I", i_res)
+	ri_res = is_rotationally_symmetric(contour_a, retrograde_inverted_b)
+	if ri_res is not None:
+		return ("RI", ri_res)
+
+	# No symmetry detected.
+	return None
 
 
 ####################################################################################################
@@ -350,10 +441,10 @@ def contour_to_prime_contour(contour):
 
 	>>> contour_a = [0, 1]
 	>>> contour_to_prime_contour(contour_a)
-	(array([0, 1]), 0)
+	([0, 1], 0)
 	>>> contour_b = [0, 4, 3, 2, 5, 5, 1]
 	>>> contour_to_prime_contour(contour_b)[0]
-	array([0, 2, 1])
+	[0, 2, 1]
 	"""
 	depth = 0
 
@@ -755,7 +846,7 @@ def contour_to_schultz_prime_contour(contour):
 
 	>>> alouette_5 = [2, 5, 3, 1, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 	>>> contour_to_schultz_prime_contour(alouette_5)
-	(array([1, 2, 0]), 3)
+	([1, 2, 0], 3)
 	"""
 	depth = 0
 
