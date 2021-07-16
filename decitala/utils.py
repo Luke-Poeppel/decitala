@@ -160,6 +160,92 @@ def ql_array_to_greek_diacritics(ql_array):
 	return " ".join(greek_string_lst)
 
 ####################################################################################################
+# WINDOWING / PARTITIONING / GROUPING
+####################################################################################################
+def roll_window(array, window_size, fn=None):
+	"""
+	Takes in a list and returns a numpy vstack holding rolling windows of length ``window_size``.
+
+	:param array: a list, tuple, numpy array, etc.
+	:param int window_size: size of the window
+	:param lambda fn: a function evaluating a bool; will only iterate over elements satifying the
+						function.
+	:return: A rolling windows of array, each of length `window_size`.
+	:rtype: numpy.vstack
+
+	>>> composers = np.array(['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet'])
+	>>> for window in roll_window(array=composers, window_size=3):
+	...     print(window)
+	('Mozart', 'Monteverdi', 'Messiaen')
+	('Monteverdi', 'Messiaen', 'Mahler')
+	('Messiaen', 'Mahler', 'MacDowell')
+	('Mahler', 'MacDowell', 'Massenet')
+	>>> # This function also allows the use of a function input for filtering.
+	>>> # Say we wanted to iterate over the elements of the following collection that have
+	>>> # 1s in the set.
+	>>> cseg_data = [[0, {1, -1}], [4, {1}], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
+	>>> fn = lambda x: 1 in x[1]
+	>>> for this_frame in roll_window(cseg_data, 3, fn):
+	... 	print(this_frame)
+	([0, {1, -1}], [4, {1}], [5, {1}])
+	([4, {1}], [5, {1}], [5, {1}])
+	([5, {1}], [5, {1}], [1, {1, -1}])
+	"""
+	if fn is not None:
+		array = [x for x in array if fn(x) is True]
+	return list(windowed(seq=array, n=window_size, step=1))
+
+def power_list(data):
+	"""
+	:param data: an iterable
+	:return: power set of the data as a list (excluding the empty list).
+	:rtype: list
+
+	>>> l = [1, 2, 3]
+	>>> power_list(l)
+	[(1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]
+
+	>>> for x in power_list([(0.0, 2.0), (4.0, 5.5), (6.0, 7.25)]):
+	...     print(x)
+	((0.0, 2.0),)
+	((4.0, 5.5),)
+	((6.0, 7.25),)
+	((0.0, 2.0), (4.0, 5.5))
+	((0.0, 2.0), (6.0, 7.25))
+	((4.0, 5.5), (6.0, 7.25))
+	((0.0, 2.0), (4.0, 5.5), (6.0, 7.25))
+	"""
+	assert type(data) == list
+	power_list = powerset(data)
+	return [x for x in power_list if len(x) != 0]
+
+def get_shells(data):
+	"""
+	:param data: an iterable
+	:return: a list holding tuples. Each tuple holds the shells in outer-to-inner order.
+				If the data holds an odd number of elements, the central element is returned
+				as a singleton.
+	:rtype: list
+
+	>>> l = [1, 2, 3, 4]
+	>>> get_shells(l)
+	[(1, 4), (2, 3)]
+	>>> l2 = [('bob', 1), ('sue', 2), ('andrew', 3), ('luke', 4), ('alex', 5)]
+	>>> get_shells(l2)
+	[(('bob', 1), ('alex', 5)), (('sue', 2), ('luke', 4)), (('andrew', 3),)]
+	"""
+	mid_elem = len(data) // 2
+	i = 0
+	shells = []
+	while i < mid_elem:
+		shells.append((data[i], data[-1 * (i + 1)]))
+		i += 1
+
+	if not(len(data) % 2 == 0):
+		shells.append((data[mid_elem],))
+	return shells
+
+####################################################################################################
 # RHYTHM
 ####################################################################################################
 def augment(ql_array, factor=1.0, difference=0.0):
@@ -581,67 +667,6 @@ def transform_to_time_scale(ql_array):
 			result_out.extend([0] * (int(this_elem) - 1))
 
 	return np.array(result_out)
-
-####################################################################################################
-# WINDOWING / PARTITIONING
-####################################################################################################
-def roll_window(array, window_size, fn=None):
-	"""
-	Takes in a list and returns a numpy vstack holding rolling windows of length ``window_size``.
-
-	:param array: a list, tuple, numpy array, etc.
-	:param int window_size: size of the window
-	:param lambda fn: a function evaluating a bool; will only iterate over elements satifying the
-						function.
-	:return: A rolling windows of array, each of length `window_size`.
-	:rtype: numpy.vstack
-
-	>>> composers = np.array(['Mozart', 'Monteverdi', 'Messiaen', 'Mahler', 'MacDowell', 'Massenet'])
-	>>> for window in roll_window(array=composers, window_size=3):
-	...     print(window)
-	('Mozart', 'Monteverdi', 'Messiaen')
-	('Monteverdi', 'Messiaen', 'Mahler')
-	('Messiaen', 'Mahler', 'MacDowell')
-	('Mahler', 'MacDowell', 'Massenet')
-	>>> # This function also allows the use of a function input for filtering.
-	>>> # Say we wanted to iterate over the elements of the following collection that have
-	>>> # 1s in the set.
-	>>> cseg_data = [[0, {1, -1}], [4, {1}], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
-	>>> fn = lambda x: 1 in x[1]
-	>>> for this_frame in roll_window(cseg_data, 3, fn):
-	... 	print(this_frame)
-	([0, {1, -1}], [4, {1}], [5, {1}])
-	([4, {1}], [5, {1}], [5, {1}])
-	([5, {1}], [5, {1}], [1, {1, -1}])
-	"""
-	if fn is not None:
-		array = [x for x in array if fn(x) is True]
-	windows = list(windowed(seq=array, n=window_size, step=1))
-	return windows
-
-def power_list(data):
-	"""
-	:param data: an iterable
-	:return: power set of the data as a list (excluding the empty list).
-	:rtype: list
-
-	>>> l = [1, 2, 3]
-	>>> power_list(l)
-	[(1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]
-
-	>>> for x in power_list([(0.0, 2.0), (4.0, 5.5), (6.0, 7.25)]):
-	...     print(x)
-	((0.0, 2.0),)
-	((4.0, 5.5),)
-	((6.0, 7.25),)
-	((0.0, 2.0), (4.0, 5.5))
-	((0.0, 2.0), (6.0, 7.25))
-	((4.0, 5.5), (6.0, 7.25))
-	((0.0, 2.0), (4.0, 5.5), (6.0, 7.25))
-	"""
-	assert type(data) == list
-	power_list = powerset(data)
-	return [x for x in power_list if len(x) != 0]
 
 ####################################################################################################
 # SCORE HELPERS
