@@ -15,6 +15,7 @@ First stable release.
 - Switched to codecov.io for coverage; it was annoying to include it as part of my workflow –– I'd rather it be automated.
 - Added `colors` column to `ODNC` database and corresponding attribute to the `Species` wrapper.
 - Allow the user to choose spearman or pearson correlation in the `KS` and `KS_diatonic` functions in `hm.hm_utils`.
+- Added function for getting the "shells" of an iterable to `utils`: `utils.get_shells(iterable)`.
 
 #### Changed
 - Return type for `hm_utils.pc_counter` is now either a tone counter or the sum of the quarter length values associated with each pitch class; any normalization now must use `hm_utils.normalize_pc_counter`.
