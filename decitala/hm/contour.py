@@ -404,8 +404,8 @@ def _window_has_intervening_extrema(window, contour, mode):
 	... 	(2, [2, {1}]),
 	... 	(4, [2, {1}])
 	... ]
-	>>> contour = [[1, {1, -1}], [0, {-1}], [2, {1}], [0, {-1}], [2, {1}], [1, {1, -1}]]
-	>>> _window_has_intervening_extrema(maxima_group, contour=contour, mode="max")
+	>>> full_contour = [[1, {1, -1}], [0, {-1}], [2, {1}], [0, {-1}], [2, {1}], [1, {1, -1}]]
+	>>> _window_has_intervening_extrema(maxima_group, contour=full_contour, mode="max")
 	True
 	"""
 	for tiny_window in roll_window(window, window_size=2):

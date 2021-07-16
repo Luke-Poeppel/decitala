@@ -127,3 +127,10 @@ class TestLongSchultzContours:
 	def test_b(self):
 		c = [1, 4, 3, 6, 7, 5, 8, 5, 4, 0, 2, 1, 1, 1, 6, 1, 6, 3, 4, 1, 8, 0]
 		assert list(contour.contour_to_schultz_prime_contour(c)[0]) == [1, 1, 2, 0]
+
+# def test_c():
+# 	c = [6, 1, 2, 1, 6, 5, 0, 0, 1, 1, 1, 3, 1, 4, 2, 0, 4, 4]
+# 	res = list(contour.contour_to_schultz_prime_contour(c)[0])
+# 	# assert  == [1, 1, 2, 0]
+
+# print(test_c())
