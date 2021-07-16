@@ -118,3 +118,12 @@ def test_alouette_9_schultz():
 
 	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_9)
 	assert list(schultz_contour[0]) == expected
+
+class TestLongSchultzContours:
+	def test_a(self):
+		c = [6, 1, 4, 4, 7, 0, 9, 8, 8, 1, 7, 3, 5, 0, 6, 1, 1, 0, 7, 2, 7, 6]
+		assert list(contour.contour_to_schultz_prime_contour(c)[0]) == [1, 0, 2, 1]
+
+	def test_b(self):
+		c = [1, 4, 3, 6, 7, 5, 8, 5, 4, 0, 2, 1, 1, 1, 6, 1, 6, 3, 4, 1, 8, 0]
+		assert list(contour.contour_to_schultz_prime_contour(c)[0]) == [1, 1, 2, 0]

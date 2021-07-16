@@ -274,27 +274,35 @@ def _get_initial_extrema(contour):
 	return out
 
 def _track_extrema(contour, mode):
+	"""
+	>>> c = [[6, {-1}], [0, {-1}], [7, {1}], [6, {-1}]]
+	>>> _track_extrema(c, mode="max")
+	>>> c
+	[[6, {-1}], [0, {-1}], [7, {1}], [6, {-1}]]
+	"""
 	if mode == "max":
 		check = lambda x: 1 in x[1]
 	else:
 		check = lambda x: -1 in x[1]
 
-	for i, this_window in enumerate(roll_window(array=contour, window_size=3, fn=check)):
-		extrema_tracker = this_window[1][1]
-		if not(extrema_tracker):
-			continue
-		elif None in this_window:
-			continue
-		else:
-			# After level of reduction, the extrema might *say* it's an extrema, but it isn't anymore!
-			# So if it's no longer an extrema, remove it.
-			if _center_of_window_is_extremum(window=this_window, mode=mode):
-				pass
+	windows = roll_window(array=contour, window_size=3, fn=check)
+	for i, this_window in enumerate(windows):
+		if all(x for x in this_window):
+			extrema_tracker = this_window[1][1]
+			if not(extrema_tracker):
+				continue
+			elif None in this_window:
+				continue
 			else:
-				if mode == "max":
-					extrema_tracker.remove(1)
+				# After level of reduction, the extrema might *say* it's an extrema, but it isn't anymore!
+				# So if it's no longer an extrema, remove it.
+				if _center_of_window_is_extremum(window=this_window, mode=mode):
+					pass
 				else:
-					extrema_tracker.remove(-1)
+					if mode == "max":
+						extrema_tracker.remove(1)
+					else:
+						extrema_tracker.remove(-1)
 
 ####################################################################################################
 # Implementation of Morris contour reduction algorithm (1993).
