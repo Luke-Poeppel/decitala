@@ -29,7 +29,6 @@ from sqlalchemy.orm import (
 from music21 import converter
 
 from ..fragment import FragmentDecoder, FragmentEncoder
-from ..search import rolling_hash_search
 from ..utils import get_logger
 from ..hm import hm_utils
 from ..vis import annotate_score
@@ -37,6 +36,11 @@ from .db_utils import (
 	get_session,
 	TRANSCRIPTION_BASE
 )
+from ..search import (
+	rolling_hash_search,
+	path_finder
+)
+from .path_finding import path_finding_utils
 from .corpora_models import (
 	SubcategoryData,
 	TranscriptionData
@@ -157,7 +161,7 @@ class ExtractionData(Base):
 			contiguous_summation=extraction.contiguous_summation
 		)
 
-def _add_results_to_session(
+def _add_extraction_results_to_session(
 		filepath,
 		part_nums,
 		table,
@@ -198,7 +202,7 @@ def create_extraction_database(
 		echo=False
 	):
 	"""
-	Function for creating a database from a single filepath.
+	Function for creating a database from a single filepath. Stores all extracted fragments.
 
 	:param str db_path: Path to the database to be created.
 	:param str filepath: Path to the score to be analyzed.
@@ -221,7 +225,7 @@ def create_extraction_database(
 	Session = sessionmaker(bind=engine)
 	session = Session()
 
-	_add_results_to_session(
+	_add_extraction_results_to_session(
 		filepath,
 		part_nums,
 		table,
@@ -263,11 +267,162 @@ def batch_create_extraction_database(
 	session = Session()
 
 	for filepath, part_nums in data_in.items():
-		_add_results_to_session(
+		_add_extraction_results_to_session(
 			filepath,
 			part_nums,
 			table,
 			windows,
+			session
+		)
+
+	session.commit()
+	return
+
+def _add_path_results_to_session(
+		filepath,
+		part_nums,
+		table,
+		windows,
+		allow_subdivision,
+		allow_contiguous_summation,
+		algorithm,
+		cost_function_class,
+		split_dict,
+		slur_constraint,
+		enforce_earliest_start,
+		session
+	):
+	filepath_name = filepath.split("/")[-1]
+	for part_num in part_nums:
+		data = CompositionData(
+			name=filepath_name,
+			part_num=part_num,
+			local_filepath=filepath
+		)
+		session.add(data)
+
+		path = path_finder(
+			filepath,
+			part_num,
+			table,
+			windows,
+			allow_subdivision,
+			allow_contiguous_summation,
+			algorithm,
+			cost_function_class,
+			split_dict,
+			slur_constraint,
+			enforce_earliest_start
+		)
+		if not(path):
+			return "No fragments extracted –– stopping."
+
+		extraction_objects = []
+		for extraction in path:
+			f = ExtractionData.from_extraction(extraction)
+			extraction_objects.append(f)
+			session.add(f)
+		data.composition_data = extraction_objects
+
+def create_path_database(
+		db_path,
+		filepath,
+		part_nums,
+		table,
+		windows=list(range(2, 19)),
+		allow_subdivision=False,
+		allow_contiguous_summation=False,
+		algorithm="dijkstra",
+		cost_function_class=path_finding_utils.CostFunction3D(),
+		split_dict=None,
+		slur_constraint=False,
+		enforce_earliest_start=False,
+		echo=False
+	):
+	"""
+	Function for creating a database from a single filepath. Stores the extracted path.
+	See :obj:`decitala.search.path_finder` to find the definitions of the relevant parameters.
+
+	:param str db_path: Path to the database to be created.
+	"""
+	assert os.path.isfile(filepath), DatabaseException("✗ The path provided is not a valid file.")
+	assert db_path.endswith(".db"), DatabaseException("✗ The db_path must end with '.db'.")
+	if os.path.isfile(db_path):
+		return "That database already exists ✔"
+
+	logger = get_logger(name=__file__, print_to_console=True)
+	logger.info(f"Preparing database at {db_path}...")
+
+	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
+	Base.metadata.create_all(engine)
+
+	Session = sessionmaker(bind=engine)
+	session = Session()
+
+	_add_path_results_to_session(
+		filepath,
+		part_nums,
+		windows,
+		allow_subdivision,
+		allow_contiguous_summation,
+		algorithm,
+		cost_function_class,
+		split_dict,
+		slur_constraint,
+		enforce_earliest_start,
+		session
+	)
+
+	session.commit()
+	return
+
+def create_batch_path_database(
+		db_path,
+		data_in,
+		table,
+		windows=list(range(2, 19)),
+		allow_subdivision=False,
+		allow_contiguous_summation=False,
+		algorithm="dijkstra",
+		cost_function_class=path_finding_utils.CostFunction3D(),
+		split_dict=None,
+		slur_constraint=False,
+		enforce_earliest_start=False,
+		echo=False
+	):
+	"""
+	This function creates a database from a dictionary of filepaths and desires ``part_nums``
+	to analyze. See :obj:`decitala.search.path_finder` to find the definitions of the relevant
+	parameters.
+
+	:param str db_path: Path to the database to be created.
+	:param dict data_in: Dictionary of filepaths (key) and part nums in a list (value).
+	"""
+	assert db_path.endswith(".db"), DatabaseException("✗ The db_path must end with '.db'.")
+	if os.path.isfile(db_path):
+		return "That database already exists ✔"
+
+	logger = get_logger(name=__file__, print_to_console=True)
+	logger.info(f"Preparing database at {db_path}...")
+
+	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
+	Base.metadata.create_all(engine)
+
+	Session = sessionmaker(bind=engine)
+	session = Session()
+
+	for filepath, part_nums in data_in.items():
+		_add_path_results_to_session(
+			filepath,
+			part_nums,
+			windows,
+			allow_subdivision,
+			allow_contiguous_summation,
+			algorithm,
+			cost_function_class,
+			split_dict,
+			slur_constraint,
+			enforce_earliest_start,
 			session
 		)
 
