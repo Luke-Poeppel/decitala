@@ -40,7 +40,7 @@ from ..search import (
 	rolling_hash_search,
 	path_finder
 )
-from .path_finding import path_finding_utils
+from ..path_finding import path_finding_utils
 from .corpora_models import (
 	SubcategoryData,
 	TranscriptionData
