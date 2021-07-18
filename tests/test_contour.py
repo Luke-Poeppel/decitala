@@ -82,42 +82,43 @@ def test_contour_ex15b_schultz():
 	assert list(calculated[0]) == expected
 	assert calculated[1] == expected_depth
 
-def test_alouette_17_schultz():
-	pitches = [73, 89, 86, 75, 75, 75, 75, 75, 75]
-	alouette_17 = [0, 3, 2, 1, 1, 1, 1, 1, 1]
+class TestNightingaleSchultz:
+	def test_nightingale_17_schultz(self):
+		pitches = [73, 89, 86, 75, 75, 75, 75, 75, 75]
+		nightingale_17 = [0, 3, 2, 1, 1, 1, 1, 1, 1]
 
-	assert list(contour.pitch_content_to_contour(pitches)) == alouette_17
+		assert list(contour.pitch_content_to_contour(pitches)) == nightingale_17
 
-	expected = [0, 2, 1]
-	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_17)
-	assert list(schultz_contour[0]) == expected
+		expected = [0, 2, 1]
+		schultz_contour = contour.contour_to_schultz_prime_contour(nightingale_17)
+		assert list(schultz_contour[0]) == expected
 
-def test_alouette_3_schultz():
-	pitches = [68, 68, 79, 68, 68, 74, 66, 68, 81]
-	alouette_3 = [1, 1, 3, 1, 1, 2, 0, 1, 4]
+	def test_nightingale_3_schultz(self):
+		pitches = [68, 68, 79, 68, 68, 74, 66, 68, 81]
+		nightingale_3 = [1, 1, 3, 1, 1, 2, 0, 1, 4]
 
-	expected = [1, 0, 2]
+		expected = [1, 0, 2]
 
-	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_3)
-	assert list(schultz_contour[0]) == expected
+		schultz_contour = contour.contour_to_schultz_prime_contour(nightingale_3)
+		assert list(schultz_contour[0]) == expected
 
-def test_alouette_8_schultz():
-	pitches = [81, 70, 70, 66, 79]
-	alouette_8 = [3, 1, 1, 0, 2, 2, 2, 2]
+	def test_nightingale_8_schultz(self):
+		pitches = [81, 70, 70, 66, 79]
+		nightingale_8 = [3, 1, 1, 0, 2, 2, 2, 2]
 
-	expected = [2, 0, 1]
+		expected = [2, 0, 1]
 
-	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_8)
-	assert list(schultz_contour[0]) == expected
+		schultz_contour = contour.contour_to_schultz_prime_contour(nightingale_8)
+		assert list(schultz_contour[0]) == expected
 
-def test_alouette_9_schultz():
-	pitches = [68, 79, 68, 79, 68, 79, 68, 79, 68, 79, 68, 79]
-	alouette_9 = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+	def test_nightingale_9_schultz(self):
+		pitches = [68, 79, 68, 79, 68, 79, 68, 79, 68, 79, 68, 79]
+		nightingale_9 = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
 
-	expected = [0, 1]
+		expected = [0, 1]
 
-	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_9)
-	assert list(schultz_contour[0]) == expected
+		schultz_contour = contour.contour_to_schultz_prime_contour(nightingale_9)
+		assert list(schultz_contour[0]) == expected
 
 class TestLongSchultzContours:
 	def test_a(self):
@@ -129,8 +130,8 @@ class TestLongSchultzContours:
 		assert list(contour.contour_to_schultz_prime_contour(c)[0]) == [1, 1, 2, 0]
 
 # def test_c():
-# 	c = [6, 1, 2, 1, 6, 5, 0, 0, 1, 1, 1, 3, 1, 4, 2, 0, 4, 4]
+# 	c = [0, 1, 1, 1, 2, 1, 0, 0, 0, 1, 0, 0, 0, 2, 1, 2, 1, 0]
 # 	res = list(contour.contour_to_schultz_prime_contour(c)[0])
-# 	# assert  == [1, 1, 2, 0]
+# # 	# assert  == [1, 1, 2, 0]
 
 # print(test_c())
