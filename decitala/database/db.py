@@ -199,7 +199,7 @@ def create_extraction_database(
 		table,
 		part_nums=[0],
 		windows=list(range(2, 19)),
-		echo=False
+		verbose=False
 	):
 	"""
 	Function for creating a database from a single filepath. Stores all extracted fragments.
@@ -209,7 +209,7 @@ def create_extraction_database(
 	:param list table: A :obj:`decitala.hash_table.FragmentHashTable` object.
 	:param list part_nums: Parts to be analyzed.
 	:param list windows: Possible lengths of the search frames.
-	:param bool echo: Whether to echo the SQL calls. False by default.
+	:param bool verbose: Whether to log the SQL calls. False by default.
 	"""
 	assert os.path.isfile(filepath), DatabaseException("✗ The path provided is not a valid file.")
 	assert db_path.endswith(".db"), DatabaseException("✗ The db_path must end with '.db'.")
@@ -219,7 +219,7 @@ def create_extraction_database(
 	logger = get_logger(name=__file__, print_to_console=True)
 	logger.info(f"Preparing database at {db_path}...")
 
-	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
+	engine = create_engine(f"sqlite:////{db_path}", echo=verbose)
 	Base.metadata.create_all(engine)
 
 	Session = sessionmaker(bind=engine)
@@ -241,7 +241,7 @@ def batch_create_extraction_database(
 		data_in,
 		table,
 		windows,
-		echo=False
+		verbose=False
 	):
 	"""
 	This function creates a database from a dictionary of filepaths and desires ``part_nums``
@@ -251,7 +251,7 @@ def batch_create_extraction_database(
 	:param dict data_in: Dictionary of filepaths (key) and part nums in a list (value).
 	:param list table: A :obj:`decitala.hash_table.FragmentHashTable` object.
 	:param list windows: Possible lengths of the search frames.
-	:param bool echo: Whether to echo the SQL calls. False by default.
+	:param bool verbose: Whether to log the SQL calls. False by default.
 	"""
 	assert db_path.endswith(".db"), DatabaseException("✗ The db_path must end with '.db'.")
 	if os.path.isfile(db_path):
@@ -260,7 +260,7 @@ def batch_create_extraction_database(
 	logger = get_logger(name=__file__, print_to_console=True)
 	logger.info(f"Preparing database at {db_path}...")
 
-	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
+	engine = create_engine(f"sqlite:////{db_path}", echo=verbose)
 	Base.metadata.create_all(engine)
 
 	Session = sessionmaker(bind=engine)
@@ -337,7 +337,7 @@ def create_path_database(
 		split_dict=None,
 		slur_constraint=False,
 		enforce_earliest_start=False,
-		echo=False
+		verbose=False
 	):
 	"""
 	Function for creating a database from a single filepath. Stores the extracted path.
@@ -353,7 +353,7 @@ def create_path_database(
 	logger = get_logger(name=__file__, print_to_console=True)
 	logger.info(f"Preparing database at {db_path}...")
 
-	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
+	engine = create_engine(f"sqlite:////{db_path}", echo=verbose)
 	Base.metadata.create_all(engine)
 
 	Session = sessionmaker(bind=engine)
@@ -388,7 +388,7 @@ def batch_create_path_database(
 		split_dict=None,
 		slur_constraint=False,
 		enforce_earliest_start=False,
-		echo=False
+		verbose=False
 	):
 	"""
 	This function creates a database from a dictionary of filepaths and desires ``part_nums``
@@ -405,7 +405,7 @@ def batch_create_path_database(
 	logger = get_logger(name=__file__, print_to_console=True)
 	logger.info(f"Preparing database at {db_path}...")
 
-	engine = create_engine(f"sqlite:////{db_path}", echo=echo)
+	engine = create_engine(f"sqlite:////{db_path}", echo=verbose)
 	Base.metadata.create_all(engine)
 
 	Session = sessionmaker(bind=engine)
