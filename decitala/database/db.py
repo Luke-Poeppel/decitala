@@ -376,7 +376,7 @@ def create_path_database(
 	session.commit()
 	return
 
-def create_batch_path_database(
+def batch_create_path_database(
 		db_path,
 		data_in,
 		table,
