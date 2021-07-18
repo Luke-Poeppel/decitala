@@ -17,11 +17,8 @@ from sqlalchemy import (
 	Boolean,
 	Integer,
 	ForeignKey,
-	create_engine
 )
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import (
-	sessionmaker,
 	relationship,
 	backref,
 )
@@ -34,7 +31,8 @@ from ..hm import hm_utils
 from ..vis import annotate_score
 from .db_utils import (
 	get_session,
-	TRANSCRIPTION_BASE
+	TRANSCRIPTION_BASE,
+	USER_BASE
 )
 from ..search import (
 	rolling_hash_search,
@@ -49,12 +47,10 @@ from .corpora_models import (
 here = os.path.abspath(os.path.dirname(__file__))
 ODNC_Database = os.path.dirname(os.path.dirname(here)) + "/databases/ODNC.db"
 
-Base = declarative_base()
-
 class DatabaseException(Exception):
 	pass
 
-class CompositionData(Base):
+class CompositionData(USER_BASE):
 	"""
 	SQLAlchemy model representing the basic composition data for a composition.
 
@@ -78,7 +74,7 @@ class CompositionData(Base):
 		self.local_filepath = local_filepath
 
 # TODO: rename to `ExtractionData`
-class ExtractionData(Base):
+class ExtractionData(USER_BASE):
 	"""
 	SQLAlchemy model representing a fragment extracted from a composition. Intended to be used with
 	the class method :obj:`ExtractionData.from_extraction`. See :obj:`decitala.search.Extraction`
@@ -219,11 +215,7 @@ def create_extraction_database(
 	logger = get_logger(name=__file__, print_to_console=True)
 	logger.info(f"Preparing database at {db_path}...")
 
-	engine = create_engine(f"sqlite:////{db_path}", echo=verbose)
-	Base.metadata.create_all(engine)
-
-	Session = sessionmaker(bind=engine)
-	session = Session()
+	session = get_session(db_path=db_path, base=USER_BASE)
 
 	_add_extraction_results_to_session(
 		filepath,
@@ -260,11 +252,7 @@ def batch_create_extraction_database(
 	logger = get_logger(name=__file__, print_to_console=True)
 	logger.info(f"Preparing database at {db_path}...")
 
-	engine = create_engine(f"sqlite:////{db_path}", echo=verbose)
-	Base.metadata.create_all(engine)
-
-	Session = sessionmaker(bind=engine)
-	session = Session()
+	session = get_session(db_path=db_path, base=USER_BASE)
 
 	for filepath, part_nums in data_in.items():
 		_add_extraction_results_to_session(
@@ -354,11 +342,7 @@ def create_path_database(
 	logger = get_logger(name=__file__, print_to_console=True)
 	logger.info(f"Preparing database at {db_path}...")
 
-	engine = create_engine(f"sqlite:////{db_path}", echo=verbose)
-	Base.metadata.create_all(engine)
-
-	Session = sessionmaker(bind=engine)
-	session = Session()
+	session = get_session(db_path=db_path, base=USER_BASE)
 
 	_add_path_results_to_session(
 		filepath=filepath,
@@ -407,11 +391,7 @@ def batch_create_path_database(
 	logger = get_logger(name=__file__, print_to_console=True)
 	logger.info(f"Preparing database at {db_path}...")
 
-	engine = create_engine(f"sqlite:////{db_path}", echo=verbose)
-	Base.metadata.create_all(engine)
-
-	Session = sessionmaker(bind=engine)
-	session = Session()
+	session = get_session(db_path=db_path, base=USER_BASE)
 
 	for filepath, part_nums in data_in.items():
 		_add_path_results_to_session(
