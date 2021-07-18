@@ -13,3 +13,4 @@ def get_session(db_path, base, echo=False):
 
 FRAGMENT_BASE = declarative_base()
 TRANSCRIPTION_BASE = declarative_base()
+USER_BASE = declarative_base()

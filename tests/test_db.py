@@ -20,10 +20,10 @@ here = os.path.abspath(os.path.dirname(__file__))
 def test_doctests():
 	assert doctest.testmod(database, raise_on_error=True)
 
-def test_create_database():
+def test_create_extraction_database():
 	with tempfile.NamedTemporaryFile() as tmpfile:
 		db_path = tmpfile.name + ".db"
-		db.create_database(
+		db.create_extraction_database(
 			db_path = db_path,
 			filepath = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_2.xml",
 			table = GreekFootHashTable(),
