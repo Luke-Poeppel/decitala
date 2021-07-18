@@ -302,17 +302,18 @@ def _add_path_results_to_session(
 		session.add(data)
 
 		path = path_finder(
-			filepath,
-			part_num,
-			table,
-			windows,
-			allow_subdivision,
-			allow_contiguous_summation,
-			algorithm,
-			cost_function_class,
-			split_dict,
-			slur_constraint,
-			enforce_earliest_start
+			filepath=filepath,
+			part_num=part_num,
+			table=table,
+			windows=windows,
+			allow_subdivision=allow_subdivision,
+			allow_contiguous_summation=allow_contiguous_summation,
+			algorithm=algorithm,
+			cost_function_class=cost_function_class,
+			split_dict=split_dict,
+			slur_constraint=slur_constraint,
+			enforce_earliest_start=enforce_earliest_start,
+			verbose=True
 		)
 		if not(path):
 			return "No fragments extracted –– stopping."
@@ -360,17 +361,18 @@ def create_path_database(
 	session = Session()
 
 	_add_path_results_to_session(
-		filepath,
-		part_nums,
-		windows,
-		allow_subdivision,
-		allow_contiguous_summation,
-		algorithm,
-		cost_function_class,
-		split_dict,
-		slur_constraint,
-		enforce_earliest_start,
-		session
+		filepath=filepath,
+		part_nums=part_nums,
+		table=table,
+		windows=windows,
+		allow_subdivision=allow_subdivision,
+		allow_contiguous_summation=allow_contiguous_summation,
+		algorithm=algorithm,
+		cost_function_class=cost_function_class,
+		split_dict=split_dict,
+		slur_constraint=slur_constraint,
+		enforce_earliest_start=enforce_earliest_start,
+		session=session
 	)
 
 	session.commit()
@@ -413,17 +415,18 @@ def batch_create_path_database(
 
 	for filepath, part_nums in data_in.items():
 		_add_path_results_to_session(
-			filepath,
-			part_nums,
-			windows,
-			allow_subdivision,
-			allow_contiguous_summation,
-			algorithm,
-			cost_function_class,
-			split_dict,
-			slur_constraint,
-			enforce_earliest_start,
-			session
+			filepath=filepath,
+			part_nums=part_nums,
+			table=table,
+			windows=windows,
+			allow_subdivision=allow_subdivision,
+			allow_contiguous_summation=allow_contiguous_summation,
+			algorithm=algorithm,
+			cost_function_class=cost_function_class,
+			split_dict=split_dict,
+			slur_constraint=slur_constraint,
+			enforce_earliest_start=enforce_earliest_start,
+			session=session
 		)
 
 	session.commit()
