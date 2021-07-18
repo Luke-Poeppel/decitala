@@ -189,7 +189,7 @@ def _add_results_to_session(
 			session.add(f)
 		data.composition_data = extraction_objects
 
-def create_database(
+def create_extraction_database(
 		db_path,
 		filepath,
 		table,
@@ -232,7 +232,7 @@ def create_database(
 	session.commit()
 	return
 
-def batch_create_database(
+def batch_create_extraction_database(
 		db_path,
 		data_in,
 		table,
