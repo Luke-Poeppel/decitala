@@ -105,7 +105,7 @@ def uds_contour(data):
 
 	return np.array(out)
 
-def pitch_content_to_contour(pitch_content, as_str=False):
+def pitch_contour(pitch_content, as_str=False):
 	"""
 	This function returns the contour of given pitch content. It accepts either a list of MIDI
 	tones, or the data returned in the :obj:`decitala.search` module. Like
@@ -119,10 +119,10 @@ def pitch_content_to_contour(pitch_content, as_str=False):
 	:rtype: numpy.array or str
 
 	>>> pitch_content_1 = [(80,), (91,), (78,), (85,)]
-	>>> pitch_content_to_contour(pitch_content_1)
+	>>> pitch_contour(pitch_content_1)
 	array([1, 3, 0, 2])
 	>>> pitch_content_2 = [80, 84, 84]
-	>>> pitch_content_to_contour(pitch_content_2, as_str=True)
+	>>> pitch_contour(pitch_content_2, as_str=True)
 	'<0 1 1>'
 	"""
 	if type(pitch_content[0]) == tuple:
@@ -164,7 +164,7 @@ def contour_to_neume(contour):
 	except KeyError:
 		raise ContourException(f"The contour {contour} was not found in the given current set.")
 
-def contour_to_contour_class(
+def contour_class(
 		contour,
 		allow_symmetries=False
 	):
@@ -178,11 +178,11 @@ def contour_to_contour_class(
 									for this symmetry. May currently fail (don't understand it).
 	:rtype: str
 
-	>>> contour_to_contour_class((1, 0, 3, 2))
+	>>> contour_class((1, 0, 3, 2))
 	'X'
-	>>> contour_to_contour_class((0, 1, 0), allow_symmetries=False)
+	>>> contour_class((0, 1, 0), allow_symmetries=False)
 	'G'
-	>>> contour_to_contour_class((0, 0, 1), allow_symmetries=True)
+	>>> contour_class((0, 0, 1), allow_symmetries=True)
 	'G'
 	"""
 	try:
@@ -339,7 +339,7 @@ def _morris_reduce(contour):
 
 	return contour
 
-def contour_to_prime_contour(contour):
+def prime_contour(contour):
 	"""
 	Implementation of Robert Morris' Contour-Reduction algorithm (Morris, 1993). "The algorithm prunes
 	pitches from a contour until it is reduced to a prime." (Schultz)
@@ -349,23 +349,23 @@ def contour_to_prime_contour(contour):
 	:rtype: tuple
 
 	>>> contour_a = [0, 1]
-	>>> contour_to_prime_contour(contour_a)
+	>>> prime_contour(contour_a)
 	(array([0, 1]), 0)
 	>>> contour_b = [0, 4, 3, 2, 5, 5, 1]
-	>>> contour_to_prime_contour(contour_b)[0]
+	>>> prime_contour(contour_b)[0]
 	array([0, 2, 1])
 	"""
 	depth = 0
 
 	# If the segment is of length <= 2, it is prime by definition.
 	if len(contour) <= 2:
-		return (pitch_content_to_contour(contour), depth)
+		return (pitch_contour(contour), depth)
 
 	# If all the values are extremas, it is already prime.
 	prime_contour = _get_initial_extrema(contour)
 	initial_flags = [x[1] for x in prime_contour]
 	if all(x for x in initial_flags):
-		return (pitch_content_to_contour(contour), depth)
+		return (pitch_contour(contour), depth)
 
 	still_unflagged_values = True
 	while still_unflagged_values:
@@ -380,7 +380,7 @@ def contour_to_prime_contour(contour):
 	prime_contour = [x[0] for x in prime_contour if x[1]]
 	depth += 1
 
-	return (pitch_content_to_contour(prime_contour), depth)
+	return (pitch_contour(prime_contour), depth)
 
 ####################################################################################################
 # Implementation of Schultz contour reduction algorithm (2008). Final version (see p. 108).
@@ -743,7 +743,7 @@ def _no_schultz_repetition(contour, allow_unflagged=False):
 		contour_elems = [x[0] for x in contour if x[1]][1:-1]
 		return len(contour_elems) <= len(set(contour_elems)) + 1
 
-def contour_to_schultz_prime_contour(contour):
+def schultz_prime_contour(contour):
 	"""
 	Implementation of Schultz's (2008) modification of Morris' contour-reduction algorithm. Catered
 	to further prune "unnecessary" repetitions of contour elements.
@@ -754,14 +754,14 @@ def contour_to_schultz_prime_contour(contour):
 	:rtype: tuple
 
 	>>> alouette_5 = [2, 5, 3, 1, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-	>>> contour_to_schultz_prime_contour(alouette_5)
+	>>> schultz_prime_contour(alouette_5)
 	(array([1, 2, 0]), 3)
 	"""
 	depth = 0
 
 	# If the segment is of length <= 2, it is prime by definition.
 	if len(contour) <= 2:
-		return (pitch_content_to_contour(contour), depth)
+		return (pitch_contour(contour), depth)
 
 	prime_contour = _get_initial_extrema(contour)
 
@@ -782,4 +782,4 @@ def contour_to_schultz_prime_contour(contour):
 
 	# Get the contour elements.
 	prime_contour = [x[0] for x in prime_contour]
-	return (pitch_content_to_contour(prime_contour), depth)
+	return (pitch_contour(prime_contour), depth)
