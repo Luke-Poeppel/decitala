@@ -3,12 +3,12 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v1.0.0](https://github.com/Luke-Poeppel/decitala/tree/v1.0.0) ???
+## [v1.0.0](https://github.com/Luke-Poeppel/decitala/tree/v1.0.0) July 19, 2021
 First stable release.
 #### Added
 - Added a class method to `db.ExtractionData` to maintain consistency between it and `search.Extraction`.
 - Added `split_dict` parameter to `search.path_finder`. That way one doesn't need to re-write this post-processing code. 
-- Added a `contour_to_contour_class` in `hm.contour` for experimenting with Schultz's work.
+- Added a `contour_class` in `hm.contour` for experimenting with Schultz's work.
 - Added `NormalizedCounter` and `dict_to_ordered_dict` to `decitala.utils`.
 - Cleaned up existing hyperparameter calculation and plotting scripts, as well as (re)added a file for hyperparameter optimization (SLSQP and constricted space at finer resolution).
 - Added Di- and Tri- proceleusmatic to corpora.
