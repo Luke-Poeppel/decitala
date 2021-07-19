@@ -12,18 +12,18 @@ def test_immediately_flagged_prime_contours_morris():
 	contour_1 = [2, 4, 1, 5, 0, 6, 3]
 	contour_2 = [2, 1, 3, 0]
 
-	prime_contour_1 = contour.contour_to_prime_contour(contour_1)
+	prime_contour_1 = contour.prime_contour(contour_1)
 	expected_prime_contour_1 = [2, 4, 1, 5, 0, 6, 3]
 	assert list(prime_contour_1[0]) == expected_prime_contour_1
 	assert prime_contour_1[1] == 0
 	
-	prime_contour_2 = contour.contour_to_prime_contour(contour_2)
+	prime_contour_2 = contour.prime_contour(contour_2)
 	assert list(prime_contour_2[0]) == [2, 1, 3, 0]
 	assert prime_contour_2[1] == 0
 
 def test_contours_morris():
 	c = [1, 3, 1, 2, 0, 1, 4]
-	calculated = contour.contour_to_prime_contour(contour=c)
+	calculated = contour.prime_contour(contour=c)
 	assert list(calculated[0]) == [1, 0, 2]
 	assert calculated[1] == 3
 
@@ -63,7 +63,7 @@ def test_no_schultz_repetition():
 def test_contour_ex15a_schultz():
 	# See p. 109
 	c = [1, 0, 2, 0, 2, 1]
-	calculated = contour.contour_to_schultz_prime_contour(contour=c)
+	calculated = contour.schultz_prime_contour(contour=c)
 
 	expected = [1, 0, 2, 1]
 	expected_depth = 2  # hm...
@@ -74,7 +74,7 @@ def test_contour_ex15a_schultz():
 def test_contour_ex15b_schultz():
 	# See p. 110
 	c = [1, 3, 0, 3, 0, 3, 0, 3, 2]
-	calculated = contour.contour_to_schultz_prime_contour(contour=c)
+	calculated = contour.schultz_prime_contour(contour=c)
 
 	expected = [1, 3, 0, 3, 2]
 	expected_depth = 2
@@ -89,7 +89,7 @@ def test_alouette_17_schultz():
 	assert list(contour.pitch_contour(pitches)) == alouette_17
 
 	expected = [0, 2, 1]
-	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_17)
+	schultz_contour = contour.schultz_prime_contour(alouette_17)
 	assert list(schultz_contour[0]) == expected
 
 def test_alouette_3_schultz():
@@ -98,7 +98,7 @@ def test_alouette_3_schultz():
 
 	expected = [1, 0, 2]
 
-	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_3)
+	schultz_contour = contour.schultz_prime_contour(alouette_3)
 	assert list(schultz_contour[0]) == expected
 
 def test_alouette_8_schultz():
@@ -107,7 +107,7 @@ def test_alouette_8_schultz():
 
 	expected = [2, 0, 1]
 
-	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_8)
+	schultz_contour = contour.schultz_prime_contour(alouette_8)
 	assert list(schultz_contour[0]) == expected
 
 def test_alouette_9_schultz():
@@ -116,5 +116,5 @@ def test_alouette_9_schultz():
 
 	expected = [0, 1]
 
-	schultz_contour = contour.contour_to_schultz_prime_contour(alouette_9)
+	schultz_contour = contour.schultz_prime_contour(alouette_9)
 	assert list(schultz_contour[0]) == expected
