@@ -22,6 +22,7 @@ First stable release.
 - Return type for `hm_utils.pc_counter` is now either a tone counter or the sum of the quarter length values associated with each pitch class; any normalization now must use `hm_utils.normalize_pc_counter`.
 - The default cost function used in `path_finder` and the associated helpers is now `CostFunction3D` with the optimized parameters.
 - Renamed `create_database` to `create_extraction_database`.
+- Renamed poorly named functions in the contour module, e.g. `contour.pitch_content_to_contour` is now just `contour.pitch_contour()`.
 
 #### Removed
 - Removed unnecessary `frag_type` parameter to `Extraction`. Now a class attribute of `GeneralFragment` (and subclasses).
