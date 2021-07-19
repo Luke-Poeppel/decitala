@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>trees &mdash; decitala 0.14.1 documentation</title>
+  <title>trees &mdash; decitala 1.0.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.14.1
+                1.0.0
               </div>
             
           
@@ -198,10 +198,10 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>str</em>) – either a frag_type/rep_type combo, a path to folder of music21-readable files,
-or a list of fragments.</p></li>
-<li><p><strong>rep_type</strong> (<em>str</em>) – determines the representation of the fragment. Options are <code class="docutils literal notranslate"><span class="pre">ratio</span></code> (default)
-and <code class="docutils literal notranslate"><span class="pre">difference</span></code>.</p></li>
+<li><p><strong>data</strong> – either a path to folder of music21-readable files or a list of
+<a class="reference internal" href="fragment.html#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.fragment.GeneralFragment</span></code></a> objects (or its subclasses).</p></li>
+<li><p><strong>rep_type</strong> (<em>str</em>) – determines the representation of the fragment. Options are <code class="docutils literal notranslate"><span class="pre">&quot;ratio&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;difference&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;dseg&quot;</span></code>.</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – optional name of the Fragment Tree.</p></li>
 </ul>
 </dd>
@@ -209,9 +209,9 @@ and <code class="docutils literal notranslate"><span class="pre">difference</spa
 <dd class="field-even"><p><a class="reference internal" href="#decitala.trees.FragmentTreeException" title="decitala.trees.FragmentTreeException"><strong>FragmentTreeException</strong></a> – if an invalid path or rep_type is given.</p>
 </dd>
 </dl>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s1">&#39;greek_foot&#39;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s1">&#39;ratio&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span> <span class="o">=</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">from_frag_type</span><span class="p">(</span><span class="n">frag_type</span><span class="o">=</span><span class="s2">&quot;greek_foot&quot;</span><span class="p">,</span> <span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span>
-<span class="go">&lt;trees.FragmentTree greek_foot_ratio: nodes=35&gt;</span>
+<span class="go">&lt;trees.FragmentTree greek_foot_ratio: nodes=43&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ratio_tree</span><span class="o">.</span><span class="n">search_for_path</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span><span class="o">.</span><span class="n">name</span>
 <span class="go">&lt;fragment.GreekFoot Peon_II&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># We can also give it a name.</span>
@@ -250,13 +250,13 @@ Otherwise creates
 
 <dl class="py method">
 <dt id="decitala.trees.FragmentTree.from_composition">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_composition</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rep_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ratio'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#FragmentTree.from_composition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.FragmentTree.from_composition" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_composition</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rep_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ratio'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/trees.html#FragmentTree.from_composition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.trees.FragmentTree.from_composition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class method for generating a FragmentTree from a composition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filepath</strong> (<em>str</em>) – path to file.</p></li>
-<li><p><strong>part</strong> (<em>int</em>) – part number.</p></li>
+<li><p><strong>part_num</strong> (<em>int</em>) – part number.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

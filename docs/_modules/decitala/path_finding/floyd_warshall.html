@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.path_finding.floyd_warshall &mdash; decitala 0.14.1 documentation</title>
+  <title>decitala.path_finding.floyd_warshall &mdash; decitala 1.0.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.14.1
+                1.0.0
               </div>
             
           
@@ -190,13 +190,13 @@
 <span class="kn">from</span> <span class="nn">progress.bar</span> <span class="kn">import</span> <span class="n">Bar</span>
 
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">get_logger</span>
-<span class="kn">from</span> <span class="nn">.path_finding_utils</span> <span class="kn">import</span> <span class="n">DefaultCostFunction</span>
+<span class="kn">from</span> <span class="nn">.path_finding_utils</span> <span class="kn">import</span> <span class="n">CostFunction3D</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">print_to_console</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="floyd_warshall"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.floyd_warshall.floyd_warshall">[docs]</a><span class="k">def</span> <span class="nf">floyd_warshall</span><span class="p">(</span>
 		<span class="n">data</span><span class="p">,</span>
-		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">DefaultCostFunction</span><span class="p">(),</span>
+		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">CostFunction3D</span><span class="p">(),</span>
 		<span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
 	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>

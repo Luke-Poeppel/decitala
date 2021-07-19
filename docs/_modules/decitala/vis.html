@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.vis &mdash; decitala 0.14.1 documentation</title>
+  <title>decitala.vis &mdash; decitala 1.0.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.14.1
+                1.0.0
               </div>
             
           
@@ -185,6 +185,7 @@
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">treeplotter</span>
+<span class="kn">import</span> <span class="nn">natsort</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 
@@ -218,7 +219,7 @@
 <span class="sd">	:return: A folder at the provided path containing an index.html file which has a visualization</span>
 <span class="sd">			of the provided :obj:`~decitala.trees.FragmentTree`.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">stupid_tree</span> <span class="o">=</span> <span class="n">treeplotter</span><span class="o">.</span><span class="n">Tree</span><span class="p">()</span>
+	<span class="n">stupid_tree</span> <span class="o">=</span> <span class="n">treeplotter</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">Tree</span><span class="p">()</span>
 	<span class="k">if</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;ratio&quot;</span><span class="p">:</span>
 		<span class="n">root</span> <span class="o">=</span> <span class="n">treeplotter</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">Node</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 		<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="n">FragmentTree</span><span class="o">.</span><span class="n">sorted_data</span><span class="p">:</span>
@@ -240,18 +241,20 @@
 
 <div class="viewcode-block" id="fragment_roll"><a class="viewcode-back" href="../../mods/vis.html#decitala.vis.fragment_roll">[docs]</a><span class="k">def</span> <span class="nf">fragment_roll</span><span class="p">(</span>
 		<span class="n">data</span><span class="p">,</span>
+		<span class="n">flip</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 		<span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-		<span class="n">save_filepath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+		<span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Creates a piano-roll type visualization of fragments in the input data.</span>
+<span class="sd">	Creates a piano-roll type visualization of the fragments given in ``data``.</span>
 
-<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
-<span class="sd">	:param str title: Title for the plot. Default is `None`.</span>
-<span class="sd">	:param str save_filepath: Optional path to save the plot (DPI=350). Default is `None`.</span>
+<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects. Probably from</span>
+<span class="sd">						:obj:`decitala.search.path_finder`.</span>
+<span class="sd">	:param bool flip: whether to flip the x-axis of the plot. Default is ``False``.</span>
+<span class="sd">	:param str title: title for the plot. Default is ``None``.</span>
+<span class="sd">	:param str save_path: optional path to save the plot (DPI=350). Default is `None`.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-	<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">)</span>
 	<span class="n">highest_onset</span> <span class="o">=</span> <span class="mi">0</span>
 	<span class="k">for</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
 		<span class="k">if</span> <span class="n">highest_onset</span> <span class="o">&gt;</span> <span class="n">fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
@@ -259,25 +262,32 @@
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">highest_onset</span> <span class="o">=</span> <span class="n">fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-	<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">highest_onset</span><span class="p">),</span> <span class="mi">10</span><span class="p">)))</span>
-	<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">highest_onset</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)</span>
-	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Onset&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">)</span>
-	<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Fragment&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">)</span>
-
-	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">name</span><span class="p">)):</span>
+	<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">fragment</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">natsort</span><span class="o">.</span><span class="n">natsorted</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)):</span> <span class="c1"># noqa</span>
 		<span class="n">plt</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span>
 			<span class="n">y</span><span class="o">=</span><span class="n">fragment</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
 			<span class="n">width</span><span class="o">=</span><span class="n">fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
 			<span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
 			<span class="n">left</span><span class="o">=</span><span class="n">fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-			<span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span>
+			<span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
 		<span class="p">)</span>
 
-	<span class="c1"># if plot_break_points:</span>
-	<span class="c1"># 	pass # TODO</span>
+	<span class="k">if</span> <span class="n">flip</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">highest_onset</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">highest_onset</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)</span>
 
-	<span class="k">if</span> <span class="n">save_filepath</span><span class="p">:</span>
-		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_filepath</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">350</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">highest_onset</span><span class="p">),</span> <span class="mi">10</span><span class="p">)),</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Onset&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Fragment&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">title</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">)</span>
+
+	<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+	<span class="k">if</span> <span class="n">save_path</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">350</span><span class="p">)</span>
 
 	<span class="k">return</span> <span class="n">plt</span></div>
 
@@ -344,7 +354,13 @@
 	<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">counter</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">counter</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
 	<span class="k">return</span> <span class="n">plt</span></div>
 
-<div class="viewcode-block" id="plot_2D_search_results"><a class="viewcode-back" href="../../mods/vis.html#decitala.vis.plot_2D_search_results">[docs]</a><span class="k">def</span> <span class="nf">plot_2D_search_results</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_filepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_2D_search_results"><a class="viewcode-back" href="../../mods/vis.html#decitala.vis.plot_2D_search_results">[docs]</a><span class="k">def</span> <span class="nf">plot_2D_search_results</span><span class="p">(</span>
+		<span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+		<span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+		<span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+		<span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+		<span class="n">save_path</span><span class="o">=</span><span class="kc">None</span>
+	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Function for plotting the results of (usually) the full extracted data from a composition,</span>
 <span class="sd">	as well as a path extracted from it. The ``data`` parameter will plot the fragments as a</span>
@@ -354,7 +370,8 @@
 <span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
 <span class="sd">	:param list path: Intended for data from :obj:`decitala.search.path_finder`. Default is `None.</span>
 <span class="sd">	:param str title: Title for the plot. Default is `None`.</span>
-<span class="sd">	:param str save_filepath: Optional path to save the plot (DPI=350). Default is `None`.</span>
+<span class="sd">	:param bool legend: Whether to include a legend in the final plot. Default is ``True``.</span>
+<span class="sd">	:param str save_path: Optional path to save the plot (DPI=350). Default is `None`.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">if</span> <span class="n">data</span><span class="p">:</span>
 		<span class="n">xs</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
@@ -375,15 +392,18 @@
 	<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Onset Start&quot;</span><span class="p">,</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 	<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Onset Stop&quot;</span><span class="p">,</span> <span class="n">fontname</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 
-	<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">legend</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">prop</span><span class="o">=</span><span class="s2">&quot;Times&quot;</span><span class="p">)</span>
 
-	<span class="k">if</span> <span class="n">save_filepath</span><span class="p">:</span>
-		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_filepath</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">350</span><span class="p">)</span>
+	<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+	<span class="k">if</span> <span class="n">save_path</span><span class="p">:</span>
+		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">350</span><span class="p">)</span>
 
 	<span class="k">return</span> <span class="n">plt</span></div>
 
 <span class="k">def</span> <span class="nf">plot_pitch_class_distribution_by_species</span><span class="p">(</span><span class="n">species</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-	<span class="n">combined_pc_dict</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">aggregate_pc_distribution</span><span class="p">(</span><span class="n">as_vector</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+	<span class="n">combined_pc_dict</span> <span class="o">=</span> <span class="n">species</span><span class="o">.</span><span class="n">aggregated_pc_distribution</span><span class="p">(</span><span class="n">as_vector</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 	<span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">combined_pc_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 	<span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">combined_pc_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.path_finding.path_finding_utils &mdash; decitala 0.14.1 documentation</title>
+  <title>decitala.path_finding.path_finding_utils &mdash; decitala 1.0.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.14.1
+                1.0.0
               </div>
             
           
@@ -228,16 +228,20 @@
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
 
-<div class="viewcode-block" id="DefaultCostFunction"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.DefaultCostFunction">[docs]</a><span class="k">class</span> <span class="nc">DefaultCostFunction</span><span class="p">(</span><span class="n">CostFunction</span><span class="p">):</span>
+<div class="viewcode-block" id="CostFunction2D"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.CostFunction2D">[docs]</a><span class="k">class</span> <span class="nc">CostFunction2D</span><span class="p">(</span><span class="n">CostFunction</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Default cost function used in the path-finding algorithms. Weights optimized by</span>
 <span class="sd">	hyperparameter search.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gap_weight</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">onset_weight</span><span class="o">=</span><span class="mf">0.25</span><span class="p">):</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+			<span class="bp">self</span><span class="p">,</span>
+			<span class="n">gap_weight</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+			<span class="n">onset_weight</span><span class="o">=</span><span class="mf">0.25</span>
+		<span class="p">):</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">gap_weight</span> <span class="o">=</span> <span class="n">gap_weight</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">onset_weight</span> <span class="o">=</span> <span class="n">onset_weight</span>
 
-<div class="viewcode-block" id="DefaultCostFunction.cost"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.DefaultCostFunction.cost">[docs]</a>	<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex_a</span><span class="p">,</span> <span class="n">vertex_b</span><span class="p">):</span>
+<div class="viewcode-block" id="CostFunction2D.cost"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.CostFunction2D.cost">[docs]</a>	<span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex_a</span><span class="p">,</span> <span class="n">vertex_b</span><span class="p">):</span>
 		<span class="n">gap</span> <span class="o">=</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">vertex_a</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 		<span class="n">onsets</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">vertex_a</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span> <span class="o">+</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span><span class="p">)</span>
 		<span class="n">cost</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gap_weight</span> <span class="o">*</span> <span class="n">gap</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">onset_weight</span> <span class="o">*</span> <span class="n">onsets</span><span class="p">)</span>
@@ -281,7 +285,7 @@
 
 <div class="viewcode-block" id="build_graph"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.build_graph">[docs]</a><span class="k">def</span> <span class="nf">build_graph</span><span class="p">(</span>
 		<span class="n">data</span><span class="p">,</span>
-		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">DefaultCostFunction</span><span class="p">(),</span>
+		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">CostFunction3D</span><span class="p">(),</span>
 		<span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
 	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -290,7 +294,7 @@
 <span class="sd">	search algorithms. Requires ``id`` keys in each dictionary input.</span>
 
 <span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects.</span>
-<span class="sd">	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost</span>
+<span class="sd">	:param `path_finding_utils.CostFunction` cost_function_class: a cost</span>
 <span class="sd">		function that will be used in calculating the weights between vertices.</span>
 <span class="sd">	:return: A &quot;graph&quot; holding vertices and the associated cost between all other non-negative edges.</span>
 <span class="sd">	:rtype: dict</span>
@@ -448,7 +452,34 @@
 
 	<span class="k">return</span> <span class="n">combos</span></div>
 
-<span class="k">def</span> <span class="nf">split_extractions</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">split_dict</span><span class="p">,</span> <span class="n">all_res</span><span class="p">):</span>
+<div class="viewcode-block" id="default_split_dict"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.default_split_dict">[docs]</a><span class="k">def</span> <span class="nf">default_split_dict</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Default splits for common compound greek metrics. Splits are either obvious (e.g. triiamb)</span>
+<span class="sd">	or provided by Messiaen.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="p">{</span>
+		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Diiamb&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">)],</span>
+		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Dicretic&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Amphimacer&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Amphimacer&quot;</span><span class="p">)],</span>
+		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Dianapest&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Anapest&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Anapest&quot;</span><span class="p">)],</span>
+		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Didactyl&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Dactyl&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Dactyl&quot;</span><span class="p">)],</span>
+		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Diproceleusmatic&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Proceleusmatic&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Proceleusmatic&quot;</span><span class="p">)],</span>
+		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Dochmius&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Amphimacer&quot;</span><span class="p">)],</span>
+		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Triiamb&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">)],</span>
+		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Triproceleusmatic&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Proceleusmatic&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Proceleusmatic&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Proceleusmatic&quot;</span><span class="p">)],</span> <span class="c1"># noqa</span>
+	<span class="p">}</span></div>
+
+<div class="viewcode-block" id="split_extractions"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.split_extractions">[docs]</a><span class="k">def</span> <span class="nf">split_extractions</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">all_res</span><span class="p">,</span> <span class="n">split_dict</span><span class="o">=</span><span class="n">default_split_dict</span><span class="p">()):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	TODO: rename ``all_res`` to ``all_extractions``.</span>
+<span class="sd">	Function for splitting a list of extraction objects by a given ``split_dict``.</span>
+
+<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects (corresponding to,</span>
+<span class="sd">						probably, a path of fragments).</span>
+<span class="sd">	:param list data: a list of :obj:`decitala.search.Extraction` objects (corresponding to</span>
+<span class="sd">						the complete extractions from a filepath-part.</span>
+<span class="sd">	:param dict split_dict: the dictionary used to split the extracted fragments into their</span>
+<span class="sd">							components. Default is :obj:`path_finding_utils.split_dict`</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">split_extractions</span> <span class="o">=</span> <span class="p">[]</span>
 	<span class="k">for</span> <span class="n">extraction</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
 		<span class="k">if</span> <span class="n">extraction</span><span class="o">.</span><span class="n">fragment</span> <span class="ow">in</span> <span class="n">split_dict</span><span class="p">:</span>
@@ -456,19 +487,7 @@
 			<span class="n">split_extractions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">components</span><span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
 			<span class="n">split_extractions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extraction</span><span class="p">)</span>
-	<span class="k">return</span> <span class="n">split_extractions</span>
-
-<div class="viewcode-block" id="default_split_dict"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.default_split_dict">[docs]</a><span class="k">def</span> <span class="nf">default_split_dict</span><span class="p">():</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Splits for common compound, repeated metrics.</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">return</span> <span class="p">{</span>
-		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Diiamb&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">)],</span>
-		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Triiamb&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">)],</span>
-		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Dicretic&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Amphimacer&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Amphimacer&quot;</span><span class="p">)],</span>
-		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Dianapest&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Anapest&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Anapest&quot;</span><span class="p">)],</span>
-		<span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Dochmius&quot;</span><span class="p">):</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Iamb&quot;</span><span class="p">),</span> <span class="n">GreekFoot</span><span class="p">(</span><span class="s2">&quot;Amphimacer&quot;</span><span class="p">)]</span>
-	<span class="p">}</span></div>
+	<span class="k">return</span> <span class="n">split_extractions</span></div>
 
 <div class="viewcode-block" id="check_accuracy"><a class="viewcode-back" href="../../../mods/path_finding.html#decitala.path_finding.path_finding_utils.check_accuracy">[docs]</a><span class="k">def</span> <span class="nf">check_accuracy</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">calculated_data</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">return_list</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -487,6 +506,8 @@
 			<span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;Transcriptions&quot;</span><span class="p">:</span>
 				<span class="k">if</span> <span class="p">(</span><span class="n">this_training_fragment</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">fragment</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">this_training_fragment</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">this_fragment</span><span class="o">.</span><span class="n">onset_range</span><span class="p">):</span> <span class="c1"># noqa</span>
 					<span class="n">accurate</span> <span class="o">+=</span> <span class="mi">1</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Only options are &#39;Compositions&#39; and &#39;Transcriptions&#39;.&quot;</span><span class="p">)</span>
 
 	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">return_list</span><span class="p">):</span>
 		<span class="k">return</span> <span class="p">(</span><span class="n">accurate</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">training_data</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span>

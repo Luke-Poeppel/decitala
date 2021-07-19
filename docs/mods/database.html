@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>database &mdash; decitala 0.14.1 documentation</title>
+  <title>database &mdash; decitala 1.0.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.14.1
+                1.0.0
               </div>
             
           
@@ -209,33 +209,25 @@
 
 <dl class="py class">
 <dt id="decitala.database.db.ExtractionData">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.database.db.</span></code><code class="sig-name descname"><span class="pre">ExtractionData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">onset_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_stop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fragment_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_hierarchy_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pitch_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_slurred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/db.html#ExtractionData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.db.ExtractionData" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.database.db.</span></code><code class="sig-name descname"><span class="pre">ExtractionData</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fragment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_stop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retrograde</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_hierarchy_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pitch_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_spanned_by_slur</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slur_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slur_start_end_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contiguous_summation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/db.html#ExtractionData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.db.ExtractionData" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">sqlalchemy.orm.decl_api.Base</span></code></p>
-<p>SQLAlchemy model representing a fragment extracted from a composition.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>onset_start</strong> (<em>float</em>) – Starting onset of the extracted fragment.</p></li>
-<li><p><strong>onset_stop</strong> (<em>float</em>) – Ending onset of the extracted fragment
-(onset of final object + quarter length)</p></li>
-<li><p><strong>fragment_type</strong> (<em>str</em>) – Fragment type; options currently include
-<cite>decitala</cite>, <cite>greek_foot</cite>, and <cite>general_fragment</cite>.</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – Name of the fragment.</p></li>
-<li><p><strong>mod_type</strong> (<em>str</em>) – Modification type of the fragment.</p></li>
-<li><p><strong>ratio</strong> (<em>float</em>) – Ratio of the fragment’s values to the values in the database.</p></li>
-<li><p><strong>difference</strong> (<em>float</em>) – Difference between the fragment’s values to the values
-in the database.</p></li>
-<li><p><strong>pitch_content</strong> (<em>str</em>) – Pitch content of the extracted fragment.</p></li>
-<li><p><strong>is_slurred</strong> (<em>bool</em>) – Whether the extracted fragment is spanned by a slur object.</p></li>
-</ul>
-</dd>
-</dl>
+<p>SQLAlchemy model representing a fragment extracted from a composition. Intended to be used with
+the class method <a class="reference internal" href="#decitala.database.db.ExtractionData.from_extraction" title="decitala.database.db.ExtractionData.from_extraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExtractionData.from_extraction</span></code></a>. See <a class="reference internal" href="search.html#decitala.search.Extraction" title="decitala.search.Extraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.Extraction</span></code></a>
+for the relevant information on each column in the database.</p>
+<dl class="py method">
+<dt id="decitala.database.db.ExtractionData.from_extraction">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_extraction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extraction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/db.html#ExtractionData.from_extraction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.db.ExtractionData.from_extraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an <a class="reference internal" href="#decitala.database.db.ExtractionData" title="decitala.database.db.ExtractionData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.database.db.ExtractionData</span></code></a> object from a
+<a class="reference internal" href="search.html#decitala.search.Extraction" title="decitala.search.Extraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.Extraction</span></code></a> object. This is more durable to accidentally breaking
+things when adding data to extractions.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
-<dt id="decitala.database.db.create_database">
-<code class="sig-prename descclassname"><span class="pre">decitala.database.db.</span></code><code class="sig-name descname"><span class="pre">create_database</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_nums</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">echo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/db.html#create_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.db.create_database" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function for creating a database from a single filepath.</p>
+<dt id="decitala.database.db.create_extraction_database">
+<code class="sig-prename descclassname"><span class="pre">decitala.database.db.</span></code><code class="sig-name descname"><span class="pre">create_extraction_database</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_nums</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/db.html#create_extraction_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.db.create_extraction_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for creating a database from a single filepath. Stores all extracted fragments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -244,15 +236,15 @@ in the database.</p></li>
 <li><p><strong>table</strong> (<em>list</em>) – A <a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a> object.</p></li>
 <li><p><strong>part_nums</strong> (<em>list</em>) – Parts to be analyzed.</p></li>
 <li><p><strong>windows</strong> (<em>list</em>) – Possible lengths of the search frames.</p></li>
-<li><p><strong>echo</strong> (<em>bool</em>) – Whether to echo the SQL calls. False by default.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Whether to log the SQL calls. False by default.</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="decitala.database.db.batch_create_database">
-<code class="sig-prename descclassname"><span class="pre">decitala.database.db.</span></code><code class="sig-name descname"><span class="pre">batch_create_database</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">echo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/db.html#batch_create_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.db.batch_create_database" title="Permalink to this definition">¶</a></dt>
+<dt id="decitala.database.db.batch_create_extraction_database">
+<code class="sig-prename descclassname"><span class="pre">decitala.database.db.</span></code><code class="sig-name descname"><span class="pre">batch_create_extraction_database</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/db.html#batch_create_extraction_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.db.batch_create_extraction_database" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function creates a database from a dictionary of filepaths and desires <code class="docutils literal notranslate"><span class="pre">part_nums</span></code>
 to analyze.</p>
 <dl class="field-list simple">
@@ -262,7 +254,35 @@ to analyze.</p>
 <li><p><strong>data_in</strong> (<em>dict</em>) – Dictionary of filepaths (key) and part nums in a list (value).</p></li>
 <li><p><strong>table</strong> (<em>list</em>) – A <a class="reference internal" href="hash_table.html#decitala.hash_table.FragmentHashTable" title="decitala.hash_table.FragmentHashTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.hash_table.FragmentHashTable</span></code></a> object.</p></li>
 <li><p><strong>windows</strong> (<em>list</em>) – Possible lengths of the search frames.</p></li>
-<li><p><strong>echo</strong> (<em>bool</em>) – Whether to echo the SQL calls. False by default.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Whether to log the SQL calls. False by default.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.database.db.create_path_database">
+<code class="sig-prename descclassname"><span class="pre">decitala.database.db.</span></code><code class="sig-name descname"><span class="pre">create_path_database</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">db_path,</span> <span class="pre">filepath,</span> <span class="pre">part_nums,</span> <span class="pre">table,</span> <span class="pre">windows=[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18],</span> <span class="pre">allow_subdivision=False,</span> <span class="pre">allow_contiguous_summation=False,</span> <span class="pre">algorithm='dijkstra',</span> <span class="pre">cost_function_class=&lt;decitala.path_finding.path_finding_utils.CostFunction3D</span> <span class="pre">object&gt;,</span> <span class="pre">split_dict=None,</span> <span class="pre">slur_constraint=False,</span> <span class="pre">enforce_earliest_start=False,</span> <span class="pre">verbose=False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/db.html#create_path_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.db.create_path_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for creating a database from a single filepath. Stores the extracted path.
+See <a class="reference internal" href="search.html#decitala.search.path_finder" title="decitala.search.path_finder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.path_finder</span></code></a> to find the definitions of the relevant parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>db_path</strong> (<em>str</em>) – Path to the database to be created.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.database.db.batch_create_path_database">
+<code class="sig-prename descclassname"><span class="pre">decitala.database.db.</span></code><code class="sig-name descname"><span class="pre">batch_create_path_database</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">db_path,</span> <span class="pre">data_in,</span> <span class="pre">table,</span> <span class="pre">windows=[2,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">7,</span> <span class="pre">8,</span> <span class="pre">9,</span> <span class="pre">10,</span> <span class="pre">11,</span> <span class="pre">12,</span> <span class="pre">13,</span> <span class="pre">14,</span> <span class="pre">15,</span> <span class="pre">16,</span> <span class="pre">17,</span> <span class="pre">18],</span> <span class="pre">allow_subdivision=False,</span> <span class="pre">allow_contiguous_summation=False,</span> <span class="pre">algorithm='dijkstra',</span> <span class="pre">cost_function_class=&lt;decitala.path_finding.path_finding_utils.CostFunction3D</span> <span class="pre">object&gt;,</span> <span class="pre">split_dict=None,</span> <span class="pre">slur_constraint=False,</span> <span class="pre">enforce_earliest_start=False,</span> <span class="pre">verbose=False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/db.html#batch_create_path_database"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.db.batch_create_path_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates a database from a dictionary of filepaths and desires <code class="docutils literal notranslate"><span class="pre">part_nums</span></code>
+to analyze. See <a class="reference internal" href="search.html#decitala.search.path_finder" title="decitala.search.path_finder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.path_finder</span></code></a> to find the definitions of the relevant
+parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db_path</strong> (<em>str</em>) – Path to the database to be created.</p></li>
+<li><p><strong>data_in</strong> (<em>dict</em>) – Dictionary of filepaths (key) and part nums in a list (value).</p></li>
 </ul>
 </dd>
 </dl>
@@ -275,8 +295,8 @@ to analyze.</p>
 <p>This class allows a user to access the SubcategoryData results without relying on SQLAlchemy.
 It only requires a name (and also supports class methods).</p>
 <dl class="py method">
-<dt id="decitala.database.db.Species.aggregate_pc_distribution">
-<code class="sig-name descname"><span class="pre">aggregate_pc_distribution</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/db.html#Species.aggregate_pc_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.db.Species.aggregate_pc_distribution" title="Permalink to this definition">¶</a></dt>
+<dt id="decitala.database.db.Species.aggregated_pc_distribution">
+<code class="sig-name descname"><span class="pre">aggregated_pc_distribution</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_vector</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/database/db.html#Species.aggregated_pc_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.database.db.Species.aggregated_pc_distribution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the aggregate pitch class distribution across all transcriptions in a species.</p>
 </dd></dl>
 

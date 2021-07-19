@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.trees &mdash; decitala 0.14.1 documentation</title>
+  <title>decitala.trees &mdash; decitala 1.0.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.14.1
+                1.0.0
               </div>
             
           
@@ -206,30 +206,20 @@
 <div class="viewcode-block" id="FragmentTreeException"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTreeException">[docs]</a><span class="k">class</span> <span class="nc">FragmentTreeException</span><span class="p">(</span><span class="n">TreeException</span><span class="p">):</span>
 	<span class="k">pass</span></div>
 
-<span class="c1">####################################################################################################</span>
-<span class="c1"># KD-Tree (TODO)</span>
-<span class="k">class</span> <span class="nc">KDTree</span><span class="p">:</span>
-	<span class="k">class</span> <span class="nc">Node</span><span class="p">:</span>
-		<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-			<span class="k">pass</span>
-
-	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-		<span class="k">pass</span>
-
 <div class="viewcode-block" id="FragmentTree"><a class="viewcode-back" href="../../mods/trees.html#decitala.trees.FragmentTree">[docs]</a><span class="k">class</span> <span class="nc">FragmentTree</span><span class="p">(</span><span class="n">Tree</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	NaryTree that holds multiplicative or additive representations of a rhythmic dataset.</span>
 
-<span class="sd">	:param str data: either a frag_type/rep_type combo, a path to folder of music21-readable files,</span>
-<span class="sd">					or a list of fragments.</span>
-<span class="sd">	:param str rep_type: determines the representation of the fragment. Options are ``ratio`` (default)</span>
-<span class="sd">						and ``difference``.</span>
+<span class="sd">	:param data: either a path to folder of music21-readable files or a list of</span>
+<span class="sd">					:obj:`decitala.fragment.GeneralFragment` objects (or its subclasses).</span>
+<span class="sd">	:param str rep_type: determines the representation of the fragment. Options are ``&quot;ratio&quot;``,</span>
+<span class="sd">							``&quot;difference&quot;``, and ``&quot;dseg&quot;``.</span>
 <span class="sd">	:param str name: optional name of the Fragment Tree.</span>
 <span class="sd">	:raises `~decitala.trees.FragmentTreeException`: if an invalid path or rep_type is given.</span>
 
-<span class="sd">	&gt;&gt;&gt; ratio_tree = FragmentTree.from_frag_type(frag_type=&#39;greek_foot&#39;, rep_type=&#39;ratio&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; ratio_tree = FragmentTree.from_frag_type(frag_type=&quot;greek_foot&quot;, rep_type=&quot;ratio&quot;)</span>
 <span class="sd">	&gt;&gt;&gt; ratio_tree</span>
-<span class="sd">	&lt;trees.FragmentTree greek_foot_ratio: nodes=35&gt;</span>
+<span class="sd">	&lt;trees.FragmentTree greek_foot_ratio: nodes=43&gt;</span>
 <span class="sd">	&gt;&gt;&gt; ratio_tree.search_for_path([1.0, 2.0, 0.5, 1.0]).name</span>
 <span class="sd">	&lt;fragment.GreekFoot Peon_II&gt;</span>
 <span class="sd">	&gt;&gt;&gt; # We can also give it a name.</span>
@@ -248,18 +238,15 @@
 <span class="sd">	&lt;fragment.GeneralFragment myfragment: [1. 1. 1. 1. 1.]&gt;</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">rep_type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-		<span class="k">assert</span> <span class="n">rep_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;difference&quot;</span><span class="p">],</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The only possible rep_types are `ratio` and `difference`&quot;</span><span class="p">)</span> <span class="c1"># noqa</span>
+		<span class="k">assert</span> <span class="n">rep_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;difference&quot;</span><span class="p">,</span> <span class="s2">&quot;dseg&quot;</span><span class="p">]</span>
 
 		<span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">=</span> <span class="n">rep_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
 
 		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
 			<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;Invalid path provided.&quot;</span><span class="p">)</span>
-			<span class="n">new_data</span> <span class="o">=</span> <span class="p">[]</span>
-			<span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
-				<span class="n">new_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">this_file</span><span class="p">))</span>
-
-			<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+			<span class="n">parsed_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GeneralFragment</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">this_file</span><span class="p">)</span> <span class="k">for</span> <span class="n">this_file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">data</span><span class="p">)]</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">parsed_data</span>
 
 		<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
 			<span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;GeneralFragment&quot;</span><span class="p">,</span> <span class="s2">&quot;Decitala&quot;</span><span class="p">,</span> <span class="s2">&quot;GreekFoot&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="p">),</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The elements of data must be GeneralFragment, </span><span class="se">\</span>
@@ -277,11 +264,17 @@
 				<span class="n">path</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">successive_ratio_array</span><span class="p">())</span>
 				<span class="n">root_node</span><span class="o">.</span><span class="n">add_path_of_children</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">final_node_name</span><span class="o">=</span><span class="n">this_fragment</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root_node</span>
-
-		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;difference&quot;</span><span class="p">:</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;difference&quot;</span><span class="p">:</span>
 			<span class="n">root_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ROOT&quot;</span><span class="p">)</span>
 			<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_data</span><span class="p">:</span>
 				<span class="n">path</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">successive_difference_array</span><span class="p">())</span>
+				<span class="n">root_node</span><span class="o">.</span><span class="n">add_path_of_children</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">final_node_name</span><span class="o">=</span><span class="n">this_fragment</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root_node</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">rep_type</span> <span class="o">==</span> <span class="s2">&quot;dseg&quot;</span><span class="p">:</span>
+			<span class="n">root_node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ROOT&quot;</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">this_fragment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_data</span><span class="p">:</span>
+				<span class="n">path_pre</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">this_fragment</span><span class="o">.</span><span class="n">dseg</span><span class="p">())</span>
+				<span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">path_pre</span>
 				<span class="n">root_node</span><span class="o">.</span><span class="n">add_path_of_children</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">final_node_name</span><span class="o">=</span><span class="n">this_fragment</span><span class="p">)</span>
 			<span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root_node</span>
 
@@ -309,11 +302,6 @@
 <span class="sd">							:obj:`~decitala.fragment.GeneralFragment`</span>
 <span class="sd">							(default) objects.</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">assert</span> <span class="n">frag_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;decitala&quot;</span><span class="p">,</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">],</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The only </span><span class="se">\</span>
-<span class="s2">																					possible frag_types are `decitala` and `greek_foot`.&quot;</span><span class="p">)</span>
-		<span class="k">assert</span> <span class="n">rep_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span> <span class="s2">&quot;difference&quot;</span><span class="p">],</span> <span class="n">FragmentTreeException</span><span class="p">(</span><span class="s2">&quot;The only possible </span><span class="se">\</span>
-<span class="s2">																				rep_types are `ratio` and `difference`&quot;</span><span class="p">)</span>
-
 		<span class="k">if</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;decitala&quot;</span><span class="p">:</span>
 			<span class="n">data</span> <span class="o">=</span> <span class="n">get_all_decitalas</span><span class="p">()</span>
 		<span class="k">elif</span> <span class="n">frag_type</span> <span class="o">==</span> <span class="s2">&quot;greek_foot&quot;</span><span class="p">:</span>
@@ -329,7 +317,7 @@
 	<span class="k">def</span> <span class="nf">from_composition</span><span class="p">(</span>
 			<span class="bp">cls</span><span class="p">,</span>
 			<span class="n">filepath</span><span class="p">,</span>
-			<span class="n">part</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+			<span class="n">part_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
 			<span class="n">rep_type</span><span class="o">=</span><span class="s2">&quot;ratio&quot;</span><span class="p">,</span>
 			<span class="n">windows</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 		<span class="p">):</span>
@@ -337,14 +325,14 @@
 <span class="sd">		Class method for generating a FragmentTree from a composition.</span>
 
 <span class="sd">		:param str filepath: path to file.</span>
-<span class="sd">		:param int part: part number.</span>
+<span class="sd">		:param int part_num: part number.</span>
 <span class="sd">		:return: a FragmentTree made from a rolling window of a part in a composition.</span>
 <span class="sd">		:rtype: :obj:`~decitala.trees.FragmentTree`</span>
 <span class="sd">		&quot;&quot;&quot;</span>
 		<span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
-		<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span>
+		<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">part_num</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span>
 
-		<span class="n">object_list</span> <span class="o">=</span> <span class="n">get_object_indices</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span> <span class="n">part_num</span><span class="o">=</span><span class="n">part</span><span class="p">)</span>
+		<span class="n">object_list</span> <span class="o">=</span> <span class="n">get_object_indices</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span> <span class="n">part_num</span><span class="o">=</span><span class="n">part_num</span><span class="p">)</span>
 		<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
 		<span class="k">for</span> <span class="n">this_window</span> <span class="ow">in</span> <span class="n">windows</span><span class="p">:</span>
 			<span class="n">frames</span> <span class="o">=</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">array</span><span class="o">=</span><span class="n">object_list</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="n">this_window</span><span class="p">)</span>

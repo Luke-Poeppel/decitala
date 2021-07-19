@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.hm.molt &mdash; decitala 0.14.1 documentation</title>
+  <title>decitala.hm.molt &mdash; decitala 1.0.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.14.1
+                1.0.0
               </div>
             
           
@@ -196,6 +196,9 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">hm_utils</span>
 
+<div class="viewcode-block" id="MoltException"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.molt.MoltException">[docs]</a><span class="k">class</span> <span class="nc">MoltException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+	<span class="k">pass</span></div>
+
 <div class="viewcode-block" id="MOLT"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.molt.MOLT">[docs]</a><span class="k">class</span> <span class="nc">MOLT</span><span class="p">:</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Class representing a Mode of Limited Transposition (Messiaen, 1944), therefore called a MOLT.</span>
@@ -222,18 +225,26 @@
 <span class="sd">	{0: 0, 1: 1, 2: 0, 3: 1, 4: 0, 5: 1, 6: 0, 7: 1, 8: 0, 9: 1, 10: 0, 11: 1}</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">transposition</span><span class="p">):</span>
+		<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">,</span> <span class="n">MoltException</span><span class="p">(</span><span class="s2">&quot;The `mode` must be an integer.&quot;</span><span class="p">)</span>
+		<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">transposition</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">,</span> <span class="n">MoltException</span><span class="p">(</span><span class="s2">&quot;The `transposition` must be an integer.&quot;</span><span class="p">)</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
 		<span class="bp">self</span><span class="o">.</span><span class="n">transposition</span> <span class="o">=</span> <span class="n">transposition</span>
 
 	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;moiseaux.MOLT mode=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="si">}</span><span class="s2">, transposition=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">transposition</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
 
+	<span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transposition</span><span class="p">)]))</span>
+
+	<span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span>
+
 <div class="viewcode-block" id="MOLT.from_str"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.molt.MOLT.from_str">[docs]</a>	<span class="nd">@classmethod</span>
 	<span class="k">def</span> <span class="nf">from_str</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">str_in</span><span class="p">):</span>
 		<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">		Return a MOLT object from string input of the form ``&quot;MXTB&quot;``</span>
 <span class="sd">		&quot;&quot;&quot;</span>
-		<span class="k">return</span> <span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">str_in</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">transposition</span><span class="o">=</span><span class="n">str_in</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span></div>
+		<span class="k">return</span> <span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">str_in</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">transposition</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">str_in</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span></div>
 
 	<span class="nd">@property</span>
 	<span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -305,26 +316,32 @@
 <span class="sd">	either a list of midi tones, a list of strings, a list of pitch objecs,</span>
 <span class="sd">	or a list of note objects.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="c1"># Prepare input</span>
+	<span class="c1"># Convert everything to pitch classes.</span>
 	<span class="n">query_collection</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 	<span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">):</span>
 		<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
 			<span class="n">query_collection</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Pitch</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">pitchClass</span><span class="p">)</span>
 	<span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Pitch</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Note</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">):</span>
 		<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
-			<span class="n">query_collection</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">pitchClass</span><span class="p">)</span>
+			<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Pitch</span><span class="p">):</span>
+				<span class="n">query_collection</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">pitchClass</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Note</span><span class="p">):</span>
+				<span class="n">query_collection</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">pitch</span><span class="o">.</span><span class="n">pitchClass</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="n">MoltException</span><span class="p">(</span><span class="s2">&quot;Something is wrong with this collection. File an issue?&quot;</span><span class="p">)</span>
 
 	<span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
-	<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">hm_utils</span><span class="o">.</span><span class="n">MOLT_DATA</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+	<span class="c1"># Data: &quot;MODE-1_TRANSPOSITION-1&quot;</span>
+	<span class="k">for</span> <span class="n">mode</span><span class="p">,</span> <span class="n">pcs_and_colors</span> <span class="ow">in</span> <span class="n">hm_utils</span><span class="o">.</span><span class="n">MOLT_DATA</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 		<span class="n">pcs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-		<span class="k">for</span> <span class="n">this_pitch</span> <span class="ow">in</span> <span class="n">val</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+		<span class="k">for</span> <span class="n">this_pitch</span> <span class="ow">in</span> <span class="n">pcs_and_colors</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
 			<span class="n">pcs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Pitch</span><span class="p">(</span><span class="n">this_pitch</span><span class="p">)</span><span class="o">.</span><span class="n">pitchClass</span><span class="p">)</span>
 
 		<span class="k">if</span> <span class="n">query_collection</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">pcs</span><span class="p">):</span>
-			<span class="n">split</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
-			<span class="n">mode</span> <span class="o">=</span> <span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-			<span class="n">transposition</span> <span class="o">=</span> <span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-			<span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="n">transposition</span><span class="p">))</span>
+			<span class="n">split</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+			<span class="n">mode_num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+			<span class="n">transposition</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+			<span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="n">mode_num</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="n">transposition</span><span class="p">))</span>
 
 	<span class="k">return</span> <span class="n">res</span></div>
 </pre></div>

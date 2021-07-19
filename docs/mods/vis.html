@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>vis &mdash; decitala 0.14.1 documentation</title>
+  <title>vis &mdash; decitala 1.0.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.14.1
+                1.0.0
               </div>
             
           
@@ -201,14 +201,16 @@ of the provided <a class="reference internal" href="trees.html#decitala.trees.Fr
 
 <dl class="py function">
 <dt id="decitala.vis.fragment_roll">
-<code class="sig-prename descclassname"><span class="pre">decitala.vis.</span></code><code class="sig-name descname"><span class="pre">fragment_roll</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/vis.html#fragment_roll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.vis.fragment_roll" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a piano-roll type visualization of fragments in the input data.</p>
+<code class="sig-prename descclassname"><span class="pre">decitala.vis.</span></code><code class="sig-name descname"><span class="pre">fragment_roll</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/vis.html#fragment_roll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.vis.fragment_roll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a piano-roll type visualization of the fragments given in <code class="docutils literal notranslate"><span class="pre">data</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>list</em>) – a list of <a class="reference internal" href="search.html#decitala.search.Extraction" title="decitala.search.Extraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.Extraction</span></code></a> objects.</p></li>
-<li><p><strong>title</strong> (<em>str</em>) – Title for the plot. Default is <cite>None</cite>.</p></li>
-<li><p><strong>save_filepath</strong> (<em>str</em>) – Optional path to save the plot (DPI=350). Default is <cite>None</cite>.</p></li>
+<li><p><strong>data</strong> (<em>list</em>) – a list of <a class="reference internal" href="search.html#decitala.search.Extraction" title="decitala.search.Extraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.Extraction</span></code></a> objects. Probably from
+<a class="reference internal" href="search.html#decitala.search.path_finder" title="decitala.search.path_finder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.path_finder</span></code></a>.</p></li>
+<li><p><strong>flip</strong> (<em>bool</em>) – whether to flip the x-axis of the plot. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – title for the plot. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – optional path to save the plot (DPI=350). Default is <cite>None</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -248,7 +250,7 @@ the filepath used in the creation of the <cite>data</cite>.</p></li>
 
 <dl class="py function">
 <dt id="decitala.vis.plot_2D_search_results">
-<code class="sig-prename descclassname"><span class="pre">decitala.vis.</span></code><code class="sig-name descname"><span class="pre">plot_2D_search_results</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/vis.html#plot_2D_search_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.vis.plot_2D_search_results" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.vis.</span></code><code class="sig-name descname"><span class="pre">plot_2D_search_results</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legend</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/vis.html#plot_2D_search_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.vis.plot_2D_search_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for plotting the results of (usually) the full extracted data from a composition,
 as well as a path extracted from it. The <code class="docutils literal notranslate"><span class="pre">data</span></code> parameter will plot the fragments as a
 scatter plot of their start and end; the <code class="docutils literal notranslate"><span class="pre">path</span></code> parameter will plot the connected line
@@ -259,7 +261,8 @@ between the <code class="docutils literal notranslate"><span class="pre">path</s
 <li><p><strong>data</strong> (<em>list</em>) – a list of <a class="reference internal" href="search.html#decitala.search.Extraction" title="decitala.search.Extraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.Extraction</span></code></a> objects.</p></li>
 <li><p><strong>path</strong> (<em>list</em>) – Intended for data from <a class="reference internal" href="search.html#decitala.search.path_finder" title="decitala.search.path_finder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search.path_finder</span></code></a>. Default is <a href="#id1"><span class="problematic" id="id2">`</span></a>None.</p></li>
 <li><p><strong>title</strong> (<em>str</em>) – Title for the plot. Default is <cite>None</cite>.</p></li>
-<li><p><strong>save_filepath</strong> (<em>str</em>) – Optional path to save the plot (DPI=350). Default is <cite>None</cite>.</p></li>
+<li><p><strong>legend</strong> (<em>bool</em>) – Whether to include a legend in the final plot. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – Optional path to save the plot (DPI=350). Default is <cite>None</cite>.</p></li>
 </ul>
 </dd>
 </dl>

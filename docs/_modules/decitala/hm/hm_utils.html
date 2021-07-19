@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.hm.hm_utils &mdash; decitala 0.14.1 documentation</title>
+  <title>decitala.hm.hm_utils &mdash; decitala 1.0.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.14.1
+                1.0.0
               </div>
             
           
@@ -190,6 +190,9 @@
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">scale</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">molt</span>
+
+<div class="viewcode-block" id="HMUtilsException"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.HMUtilsException">[docs]</a><span class="k">class</span> <span class="nc">HMUtilsException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+	<span class="k">pass</span></div>
 
 <span class="c1">####################################################################################################</span>
 <span class="c1"># Data</span>
@@ -324,53 +327,73 @@
 		<span class="s2">&quot;M7T6&quot;</span><span class="p">:</span> <span class="n">molt</span><span class="o">.</span><span class="n">MOLT</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">transposition</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">pc_vector</span><span class="p">(</span><span class="n">tonic_value</span><span class="o">=</span><span class="n">molt_tonic_val</span><span class="p">),</span>
 	<span class="p">}</span>
 	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">exclude_major_minor</span><span class="p">):</span>
-		<span class="k">return</span> <span class="n">MOLT_COEFFS</span> <span class="o">|</span> <span class="p">{</span>
-			<span class="s2">&quot;Major&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">6.35</span><span class="p">,</span> <span class="mf">2.23</span><span class="p">,</span> <span class="mf">3.48</span><span class="p">,</span> <span class="mf">2.33</span><span class="p">,</span> <span class="mf">4.38</span><span class="p">,</span> <span class="mf">4.09</span><span class="p">,</span> <span class="mf">2.52</span><span class="p">,</span> <span class="mf">5.19</span><span class="p">,</span> <span class="mf">2.39</span><span class="p">,</span> <span class="mf">3.66</span><span class="p">,</span> <span class="mf">2.29</span><span class="p">,</span> <span class="mf">2.88</span><span class="p">],</span>
-			<span class="s2">&quot;Minor&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">6.33</span><span class="p">,</span> <span class="mf">2.68</span><span class="p">,</span> <span class="mf">3.52</span><span class="p">,</span> <span class="mf">5.38</span><span class="p">,</span> <span class="mf">2.60</span><span class="p">,</span> <span class="mf">3.53</span><span class="p">,</span> <span class="mf">2.54</span><span class="p">,</span> <span class="mf">4.75</span><span class="p">,</span> <span class="mf">3.98</span><span class="p">,</span> <span class="mf">2.69</span><span class="p">,</span> <span class="mf">3.34</span><span class="p">,</span> <span class="mf">3.17</span><span class="p">],</span>
-		<span class="p">}</span>
+		<span class="n">MOLT_COEFFS</span><span class="p">[</span><span class="s2">&quot;Major&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">6.35</span><span class="p">,</span> <span class="mf">2.23</span><span class="p">,</span> <span class="mf">3.48</span><span class="p">,</span> <span class="mf">2.33</span><span class="p">,</span> <span class="mf">4.38</span><span class="p">,</span> <span class="mf">4.09</span><span class="p">,</span> <span class="mf">2.52</span><span class="p">,</span> <span class="mf">5.19</span><span class="p">,</span> <span class="mf">2.39</span><span class="p">,</span> <span class="mf">3.66</span><span class="p">,</span> <span class="mf">2.29</span><span class="p">,</span> <span class="mf">2.88</span><span class="p">]</span> <span class="c1"># noqa</span>
+		<span class="n">MOLT_COEFFS</span><span class="p">[</span><span class="s2">&quot;Minor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">6.33</span><span class="p">,</span> <span class="mf">2.68</span><span class="p">,</span> <span class="mf">3.52</span><span class="p">,</span> <span class="mf">5.38</span><span class="p">,</span> <span class="mf">2.60</span><span class="p">,</span> <span class="mf">3.53</span><span class="p">,</span> <span class="mf">2.54</span><span class="p">,</span> <span class="mf">4.75</span><span class="p">,</span> <span class="mf">3.98</span><span class="p">,</span> <span class="mf">2.69</span><span class="p">,</span> <span class="mf">3.34</span><span class="p">,</span> <span class="mf">3.17</span><span class="p">]</span> <span class="c1"># noqa</span>
+		<span class="k">return</span> <span class="n">MOLT_COEFFS</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">return</span> <span class="n">MOLT_COEFFS</span></div>
 
 <div class="viewcode-block" id="pc_counter"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.pc_counter">[docs]</a><span class="k">def</span> <span class="nf">pc_counter</span><span class="p">(</span>
 		<span class="n">filepath</span><span class="p">,</span>
 		<span class="n">part_num</span><span class="p">,</span>
-		<span class="n">normalize_over_duration</span><span class="o">=</span><span class="kc">False</span>
+		<span class="n">return_counts</span><span class="o">=</span><span class="kc">False</span>
 	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Returns a dictionary holding the pitch classes in the keys and the count (or count normalized</span>
-<span class="sd">	over total duration) in the given filepath-part_num combination.</span>
+<span class="sd">	Returns a dictionary holding the pitch classes in the keys and the sum of the quarter lengths</span>
+<span class="sd">	of this pitch class in a given filepath-part combination.</span>
 
 <span class="sd">	:param str filepath: path to music21-readable file to be parsed.</span>
 <span class="sd">	:param int part_num: part number in the work to be analyzed.</span>
-<span class="sd">	:param bool normalize_over_duration: whether to normalize the counts by the net duration</span>
-<span class="sd">											of the part.</span>
+<span class="sd">	:param bool return_counts: whether to return the counts of the detected pitches, instead of the</span>
+<span class="sd">								net quarter lengths.</span>
 <span class="sd">	:return: a dictionary holding the 12 pitch classes in the keys and the counts/proportion in</span>
 <span class="sd">				the values.</span>
 <span class="sd">	:rtype: dict</span>
-
-<span class="sd">	TODO: allow option for instead returning the net QLs.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">pitch_classes</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">)}</span>
 	<span class="n">converted</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
-	<span class="n">net</span> <span class="o">=</span> <span class="mi">0</span>
 	<span class="k">for</span> <span class="n">tone</span> <span class="ow">in</span> <span class="n">converted</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="n">part_num</span><span class="p">]</span><span class="o">.</span><span class="n">stripTies</span><span class="p">()</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">iter</span><span class="o">.</span><span class="n">notes</span><span class="p">:</span>
 		<span class="k">try</span><span class="p">:</span>
 			<span class="k">if</span> <span class="n">tone</span><span class="o">.</span><span class="n">isChord</span><span class="p">:</span>
 				<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tone</span><span class="o">.</span><span class="n">pitches</span><span class="p">):</span>
 					<span class="n">pitch_classes</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">pitchClass</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tone</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)</span>
-					<span class="n">net</span> <span class="o">+=</span> <span class="n">tone</span><span class="o">.</span><span class="n">quarterLength</span>
 			<span class="k">else</span><span class="p">:</span>
 				<span class="n">pitch_classes</span><span class="p">[</span><span class="n">tone</span><span class="o">.</span><span class="n">pitch</span><span class="o">.</span><span class="n">pitchClass</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tone</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">)</span>
-				<span class="n">net</span> <span class="o">+=</span> <span class="n">tone</span><span class="o">.</span><span class="n">quarterLength</span>
 		<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
 			<span class="k">continue</span>
 
-	<span class="k">if</span> <span class="n">normalize_over_duration</span><span class="p">:</span>
-		<span class="n">normalized_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">net</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">pitch_classes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-		<span class="k">assert</span> <span class="nb">round</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">normalized_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="o">==</span> <span class="mi">1</span>
-		<span class="k">return</span> <span class="n">normalized_dict</span>
+	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">return_counts</span><span class="p">):</span>
+		<span class="k">return</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">pitch_classes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">return</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">pitch_classes</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
+
+<div class="viewcode-block" id="normalize_pc_counter"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.normalize_pc_counter">[docs]</a><span class="k">def</span> <span class="nf">normalize_pc_counter</span><span class="p">(</span><span class="n">dict_in</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Normalize a dictionary by the sum of the total values. Meant to be used with the</span>
+<span class="sd">	net ql values from :obj:`decitala.hm.hm_utils`.</span>
+
+<span class="sd">	&gt;&gt;&gt; d = {0: 0, 1: 0.375, 2: 0, 3: 0.25, 4: 0.375,</span>
+<span class="sd">	... 	5: 0.375, 6: 0.375, 7: 0, 8: 0.75, 9: 0.25, 10: 0, 11: 0</span>
+<span class="sd">	... }</span>
+<span class="sd">	&gt;&gt;&gt; for pc, norm_val in normalize_pc_counter(d).items():</span>
+<span class="sd">	... 	print(pc, norm_val)</span>
+<span class="sd">	0 0.0</span>
+<span class="sd">	1 0.13636363636363635</span>
+<span class="sd">	2 0.0</span>
+<span class="sd">	3 0.09090909090909091</span>
+<span class="sd">	4 0.13636363636363635</span>
+<span class="sd">	5 0.13636363636363635</span>
+<span class="sd">	6 0.13636363636363635</span>
+<span class="sd">	7 0.0</span>
+<span class="sd">	8 0.2727272727272727</span>
+<span class="sd">	9 0.09090909090909091</span>
+<span class="sd">	10 0.0</span>
+<span class="sd">	11 0.0</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">net</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dict_in</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+	<span class="n">normalized_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">y</span> <span class="o">/</span> <span class="n">net</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">dict_in</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+	<span class="k">assert</span> <span class="nb">round</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">normalized_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="o">==</span> <span class="mi">1</span>
+	<span class="k">return</span> <span class="n">normalized_dict</span></div>
 
 <div class="viewcode-block" id="pc_dict_to_vector"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.pc_dict_to_vector">[docs]</a><span class="k">def</span> <span class="nf">pc_dict_to_vector</span><span class="p">(</span><span class="n">dict_in</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -433,57 +456,93 @@
 		<span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
 	<span class="k">return</span> <span class="n">count</span></div>
 
-<div class="viewcode-block" id="KS"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.KS">[docs]</a><span class="k">def</span> <span class="nf">KS</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">return_p_value</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="KS"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.KS">[docs]</a><span class="k">def</span> <span class="nf">KS</span><span class="p">(</span>
+		<span class="n">pc_vector</span><span class="p">,</span>
+		<span class="n">coefficients</span><span class="p">,</span>
+		<span class="n">method</span><span class="o">=</span><span class="s2">&quot;spearman&quot;</span>
+	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Krumhansl-Schumckler algorithm.</span>
 
 <span class="sd">	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.</span>
 <span class="sd">	:param coefficients: coefficents used in the correlation calculation.</span>
-
-<span class="sd">	TODO: remove the stupid return_p_value argument.</span>
+<span class="sd">	:param str method: either &#39;pearson&#39; or &#39;spearman&#39; (the method used for calculating correlation).</span>
+<span class="sd">						Default is &#39;pearson&#39;.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">input_zscores</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">)</span>
+	<span class="k">assert</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;spearman&quot;</span><span class="p">,</span> <span class="s2">&quot;pearson&quot;</span><span class="p">},</span> <span class="n">HMUtilsException</span><span class="p">(</span><span class="s2">&quot;Only supported options are &#39;pearson&#39; or &#39;spearman&#39;.&quot;</span><span class="p">)</span> <span class="c1"># noqa</span>
 
-	<span class="n">coefficients</span> <span class="o">=</span> <span class="n">coefficients</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span>
-	<span class="n">score</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">spearmanr</span><span class="p">(</span><span class="n">input_zscores</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">)</span>
-	<span class="k">if</span> <span class="n">return_p_value</span><span class="p">:</span>
-		<span class="k">return</span> <span class="n">score</span>
+	<span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;pearson&quot;</span><span class="p">:</span>
+		<span class="n">score</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">)</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="k">return</span> <span class="n">score</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+		<span class="n">score</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">spearmanr</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">)</span>
 
-<div class="viewcode-block" id="KS_diatonic"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.KS_diatonic">[docs]</a><span class="k">def</span> <span class="nf">KS_diatonic</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">return_tonic</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+	<span class="k">return</span> <span class="n">score</span></div>
+
+<div class="viewcode-block" id="KS_diatonic"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.KS_diatonic">[docs]</a><span class="k">def</span> <span class="nf">KS_diatonic</span><span class="p">(</span>
+		<span class="n">pc_vector</span><span class="p">,</span>
+		<span class="n">coefficients</span><span class="p">,</span>
+		<span class="n">method</span><span class="o">=</span><span class="s2">&quot;pearson&quot;</span><span class="p">,</span>
+		<span class="n">return_tonic</span><span class="o">=</span><span class="kc">False</span>
+	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Krumhansl-Schumckler algorithm for diatonic collections. Circulates over all major and minor</span>
-<span class="sd">	scales.</span>
+<span class="sd">	Krumhansl-Schumckler algorithm for diatonic collections. Circulates over the weights.</span>
+<span class="sd">	Returns the best match (and its associated pvalue) using either Pearson or</span>
+<span class="sd">	Spearman correlation.</span>
 
 <span class="sd">	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.</span>
 <span class="sd">	:param coefficients: coefficents used in the correlation calculation.</span>
-<span class="sd">	:param bool return_tonic: whether to also return the most highly correlated tonic.</span>
+<span class="sd">	:param str method: either &#39;spearman&#39; or &#39;pearson&#39; (the method used for calculating correlation).</span>
+<span class="sd">						Default is &#39;pearson&#39;.</span>
+<span class="sd">	:param bool return_tonic: whether to also return the pitch object of the most highly correlated</span>
+<span class="sd">							tonic.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">input_zscores</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">)</span>
+	<span class="k">assert</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;spearman&quot;</span><span class="p">,</span> <span class="s2">&quot;pearson&quot;</span><span class="p">},</span> <span class="n">HMUtilsException</span><span class="p">(</span><span class="s2">&quot;Only supported options are &#39;pearson&#39; or &#39;spearman&#39;.&quot;</span><span class="p">)</span> <span class="c1"># noqa</span>
 
-	<span class="n">coefficients</span> <span class="o">=</span> <span class="n">coefficients</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span>
-	<span class="n">coefficients</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">circulant</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span>
+	<span class="n">coefficients</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">circulant</span><span class="p">(</span><span class="n">coefficients</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 
-	<span class="n">scores</span> <span class="o">=</span> <span class="p">[</span>
-		<span class="n">stats</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">input_zscores</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">coefficient_collection</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-		<span class="k">for</span> <span class="n">coefficient_collection</span> <span class="ow">in</span> <span class="n">coefficients</span>
-	<span class="p">]</span>
-	<span class="n">max_correlation</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
-	<span class="n">max_correlation_index</span> <span class="o">=</span> <span class="n">scores</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">max_correlation</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;pearson&quot;</span><span class="p">:</span>
+		<span class="n">scores</span> <span class="o">=</span> <span class="p">[</span>
+			<span class="n">stats</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficient_collection</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">coefficient_collection</span> <span class="ow">in</span> <span class="n">coefficients</span>
+		<span class="p">]</span>
+		<span class="n">max_correlation_data</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+		<span class="n">max_correlation</span> <span class="o">=</span> <span class="n">max_correlation_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">max_correlation_index</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scores</span><span class="p">):</span>
+			<span class="k">if</span> <span class="n">score</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">max_correlation</span><span class="p">:</span>
+				<span class="n">max_correlation_index</span> <span class="o">=</span> <span class="n">i</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">scores</span> <span class="o">=</span> <span class="p">[</span>
+			<span class="n">stats</span><span class="o">.</span><span class="n">spearmanr</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficient_collection</span><span class="p">)</span>
+			<span class="k">for</span> <span class="n">coefficient_collection</span> <span class="ow">in</span> <span class="n">coefficients</span>
+		<span class="p">]</span>
+		<span class="n">max_correlation_data</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">correlation</span><span class="p">)</span>
+		<span class="n">max_correlation</span> <span class="o">=</span> <span class="n">max_correlation_data</span><span class="o">.</span><span class="n">correlation</span>
+		<span class="n">max_correlation_index</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scores</span><span class="p">):</span>
+			<span class="k">if</span> <span class="n">score</span><span class="o">.</span><span class="n">correlation</span> <span class="o">==</span> <span class="n">max_correlation</span><span class="p">:</span>
+				<span class="n">max_correlation_index</span> <span class="o">=</span> <span class="n">i</span>
+
 	<span class="n">max_correlation_pitch</span> <span class="o">=</span> <span class="n">Pitch</span><span class="p">(</span><span class="n">max_correlation_index</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
 
 	<span class="k">if</span> <span class="n">return_tonic</span><span class="p">:</span>
-		<span class="k">return</span> <span class="n">max_correlation_pitch</span><span class="p">,</span> <span class="n">max_correlation</span>
+		<span class="k">return</span> <span class="n">max_correlation_pitch</span><span class="p">,</span> <span class="n">max_correlation_data</span>
 	<span class="k">else</span><span class="p">:</span>
-		<span class="k">return</span> <span class="n">max_correlation</span></div>
+		<span class="k">return</span> <span class="n">max_correlation_data</span></div>
 
-<div class="viewcode-block" id="test_all_coefficients"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.test_all_coefficients">[docs]</a><span class="k">def</span> <span class="nf">test_all_coefficients</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">exclude_major_minor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">molt_tonic_val</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="test_all_coefficients"><a class="viewcode-back" href="../../../mods/hm.html#decitala.hm.hm_utils.test_all_coefficients">[docs]</a><span class="k">def</span> <span class="nf">test_all_coefficients</span><span class="p">(</span>
+		<span class="n">pc_vector</span><span class="p">,</span>
+		<span class="n">method</span><span class="o">=</span><span class="s2">&quot;pearson&quot;</span><span class="p">,</span>
+		<span class="n">exclude_major_minor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+		<span class="n">molt_tonic_val</span><span class="o">=</span><span class="mi">1</span>
+	<span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Function for calculating the correlation between a given ``pc_vector`` and all possible</span>
 <span class="sd">	coefficients (binary modes for MOLT and KS coefficients).</span>
 
 <span class="sd">	:param pc_vector: a vector of pitch class probabilities, ordered by pitch class.</span>
+<span class="sd">	:param str method: either &#39;spearman&#39; or &#39;pearson&#39; (the method used for calculating correlation).</span>
+<span class="sd">						Default is &#39;pearson&#39;.</span>
 <span class="sd">	:param bool exclude_major_minor: whether to exclude major/minor weights from the calculation.</span>
 <span class="sd">										Default is ``False``.</span>
 <span class="sd">	:param int molt_tonic_val: optional value to set the first element of the MOLT to. Default is</span>
@@ -497,9 +556,17 @@
 			<span class="n">molt_tonic_val</span><span class="o">=</span><span class="n">molt_tonic_val</span>
 		<span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 		<span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;Major&quot;</span><span class="p">,</span> <span class="s2">&quot;Minor&quot;</span><span class="p">}:</span>
-			<span class="n">res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">KS_diatonic</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">)</span>
+			<span class="n">res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">KS_diatonic</span><span class="p">(</span>
+				<span class="n">pc_vector</span><span class="p">,</span>
+				<span class="n">coefficients</span><span class="p">,</span>
+				<span class="n">method</span>
+			<span class="p">)</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="n">res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">KS</span><span class="p">(</span><span class="n">pc_vector</span><span class="p">,</span> <span class="n">coefficients</span><span class="p">,</span> <span class="n">return_p_value</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+			<span class="n">res</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">KS</span><span class="p">(</span>
+				<span class="n">pc_vector</span><span class="p">,</span>
+				<span class="n">coefficients</span><span class="p">,</span>
+				<span class="n">method</span>
+			<span class="p">)</span>
 
 	<span class="k">return</span> <span class="n">res</span></div>
 </pre></div>

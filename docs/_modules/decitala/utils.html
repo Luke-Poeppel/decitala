@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.utils &mdash; decitala 0.14.1 documentation</title>
+  <title>decitala.utils &mdash; decitala 1.0.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.14.1
+                1.0.0
               </div>
             
           
@@ -190,6 +190,7 @@
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">groupby</span>
 <span class="kn">from</span> <span class="nn">more_itertools</span> <span class="kn">import</span> <span class="n">consecutive_groups</span><span class="p">,</span> <span class="n">windowed</span><span class="p">,</span> <span class="n">powerset</span>
 <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">norm</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">converter</span>
 <span class="kn">from</span> <span class="nn">music21</span> <span class="kn">import</span> <span class="n">note</span>
@@ -332,6 +333,92 @@
 				<span class="n">greek_string_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_diacritic_symbol</span><span class="p">)</span>
 
 	<span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">greek_string_lst</span><span class="p">)</span></div>
+
+<span class="c1">####################################################################################################</span>
+<span class="c1"># WINDOWING / PARTITIONING / GROUPING</span>
+<span class="c1">####################################################################################################</span>
+<div class="viewcode-block" id="roll_window"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.roll_window">[docs]</a><span class="k">def</span> <span class="nf">roll_window</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Takes in a list and returns a numpy vstack holding rolling windows of length ``window_size``.</span>
+
+<span class="sd">	:param array: a list, tuple, numpy array, etc.</span>
+<span class="sd">	:param int window_size: size of the window</span>
+<span class="sd">	:param lambda fn: a function evaluating a bool; will only iterate over elements satifying the</span>
+<span class="sd">						function.</span>
+<span class="sd">	:return: A rolling windows of array, each of length `window_size`.</span>
+<span class="sd">	:rtype: numpy.vstack</span>
+
+<span class="sd">	&gt;&gt;&gt; composers = np.array([&#39;Mozart&#39;, &#39;Monteverdi&#39;, &#39;Messiaen&#39;, &#39;Mahler&#39;, &#39;MacDowell&#39;, &#39;Massenet&#39;])</span>
+<span class="sd">	&gt;&gt;&gt; for window in roll_window(array=composers, window_size=3):</span>
+<span class="sd">	...     print(window)</span>
+<span class="sd">	(&#39;Mozart&#39;, &#39;Monteverdi&#39;, &#39;Messiaen&#39;)</span>
+<span class="sd">	(&#39;Monteverdi&#39;, &#39;Messiaen&#39;, &#39;Mahler&#39;)</span>
+<span class="sd">	(&#39;Messiaen&#39;, &#39;Mahler&#39;, &#39;MacDowell&#39;)</span>
+<span class="sd">	(&#39;Mahler&#39;, &#39;MacDowell&#39;, &#39;Massenet&#39;)</span>
+<span class="sd">	&gt;&gt;&gt; # This function also allows the use of a function input for filtering.</span>
+<span class="sd">	&gt;&gt;&gt; # Say we wanted to iterate over the elements of the following collection that have</span>
+<span class="sd">	&gt;&gt;&gt; # 1s in the set.</span>
+<span class="sd">	&gt;&gt;&gt; cseg_data = [[0, {1, -1}], [4, {1}], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]</span>
+<span class="sd">	&gt;&gt;&gt; fn = lambda x: 1 in x[1]</span>
+<span class="sd">	&gt;&gt;&gt; for this_frame in roll_window(cseg_data, 3, fn):</span>
+<span class="sd">	... 	print(this_frame)</span>
+<span class="sd">	([0, {1, -1}], [4, {1}], [5, {1}])</span>
+<span class="sd">	([4, {1}], [5, {1}], [5, {1}])</span>
+<span class="sd">	([5, {1}], [5, {1}], [1, {1, -1}])</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+		<span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">array</span> <span class="k">if</span> <span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">]</span>
+	<span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">windowed</span><span class="p">(</span><span class="n">seq</span><span class="o">=</span><span class="n">array</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">window_size</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="power_list"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.power_list">[docs]</a><span class="k">def</span> <span class="nf">power_list</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:param data: an iterable</span>
+<span class="sd">	:return: power set of the data as a list (excluding the empty list).</span>
+<span class="sd">	:rtype: list</span>
+
+<span class="sd">	&gt;&gt;&gt; l = [1, 2, 3]</span>
+<span class="sd">	&gt;&gt;&gt; power_list(l)</span>
+<span class="sd">	[(1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]</span>
+
+<span class="sd">	&gt;&gt;&gt; for x in power_list([(0.0, 2.0), (4.0, 5.5), (6.0, 7.25)]):</span>
+<span class="sd">	...     print(x)</span>
+<span class="sd">	((0.0, 2.0),)</span>
+<span class="sd">	((4.0, 5.5),)</span>
+<span class="sd">	((6.0, 7.25),)</span>
+<span class="sd">	((0.0, 2.0), (4.0, 5.5))</span>
+<span class="sd">	((0.0, 2.0), (6.0, 7.25))</span>
+<span class="sd">	((4.0, 5.5), (6.0, 7.25))</span>
+<span class="sd">	((0.0, 2.0), (4.0, 5.5), (6.0, 7.25))</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span>
+	<span class="n">power_list</span> <span class="o">=</span> <span class="n">powerset</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+	<span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">power_list</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="get_shells"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.get_shells">[docs]</a><span class="k">def</span> <span class="nf">get_shells</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	:param data: an iterable</span>
+<span class="sd">	:return: a list holding tuples. Each tuple holds the shells in outer-to-inner order.</span>
+<span class="sd">				If the data holds an odd number of elements, the central element is returned</span>
+<span class="sd">				as a singleton.</span>
+<span class="sd">	:rtype: list</span>
+
+<span class="sd">	&gt;&gt;&gt; l = [1, 2, 3, 4]</span>
+<span class="sd">	&gt;&gt;&gt; get_shells(l)</span>
+<span class="sd">	[(1, 4), (2, 3)]</span>
+<span class="sd">	&gt;&gt;&gt; l2 = [(&#39;bob&#39;, 1), (&#39;sue&#39;, 2), (&#39;andrew&#39;, 3), (&#39;luke&#39;, 4), (&#39;alex&#39;, 5)]</span>
+<span class="sd">	&gt;&gt;&gt; get_shells(l2)</span>
+<span class="sd">	[((&#39;bob&#39;, 1), (&#39;alex&#39;, 5)), ((&#39;sue&#39;, 2), (&#39;luke&#39;, 4)), ((&#39;andrew&#39;, 3),)]</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">mid_elem</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+	<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="n">shells</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">mid_elem</span><span class="p">:</span>
+		<span class="n">shells</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]))</span>
+		<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+	<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+		<span class="n">shells</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="n">mid_elem</span><span class="p">],))</span>
+	<span class="k">return</span> <span class="n">shells</span></div>
 
 <span class="c1">####################################################################################################</span>
 <span class="c1"># RHYTHM</span>
@@ -757,67 +844,6 @@
 	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">result_out</span><span class="p">)</span></div>
 
 <span class="c1">####################################################################################################</span>
-<span class="c1"># WINDOWING / PARTITIONING</span>
-<span class="c1">####################################################################################################</span>
-<div class="viewcode-block" id="roll_window"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.roll_window">[docs]</a><span class="k">def</span> <span class="nf">roll_window</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	Takes in a list and returns a numpy vstack holding rolling windows of length ``window_size``.</span>
-
-<span class="sd">	:param array: a list, tuple, numpy array, etc.</span>
-<span class="sd">	:param int window_size: size of the window</span>
-<span class="sd">	:param lambda fn: a function evaluating a bool; will only iterate over elements satifying the</span>
-<span class="sd">						function.</span>
-<span class="sd">	:return: A rolling windows of array, each of length `window_size`.</span>
-<span class="sd">	:rtype: numpy.vstack</span>
-
-<span class="sd">	&gt;&gt;&gt; composers = np.array([&#39;Mozart&#39;, &#39;Monteverdi&#39;, &#39;Messiaen&#39;, &#39;Mahler&#39;, &#39;MacDowell&#39;, &#39;Massenet&#39;])</span>
-<span class="sd">	&gt;&gt;&gt; for window in roll_window(array=composers, window_size=3):</span>
-<span class="sd">	...     print(window)</span>
-<span class="sd">	(&#39;Mozart&#39;, &#39;Monteverdi&#39;, &#39;Messiaen&#39;)</span>
-<span class="sd">	(&#39;Monteverdi&#39;, &#39;Messiaen&#39;, &#39;Mahler&#39;)</span>
-<span class="sd">	(&#39;Messiaen&#39;, &#39;Mahler&#39;, &#39;MacDowell&#39;)</span>
-<span class="sd">	(&#39;Mahler&#39;, &#39;MacDowell&#39;, &#39;Massenet&#39;)</span>
-<span class="sd">	&gt;&gt;&gt; # This function also allows the use of a function input for filtering.</span>
-<span class="sd">	&gt;&gt;&gt; # Say we wanted to iterate over the elements of the following collection that have</span>
-<span class="sd">	&gt;&gt;&gt; # 1s in the set.</span>
-<span class="sd">	&gt;&gt;&gt; cseg_data = [[0, {1, -1}], [4, {1}], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]</span>
-<span class="sd">	&gt;&gt;&gt; fn = lambda x: 1 in x[1]</span>
-<span class="sd">	&gt;&gt;&gt; for this_frame in roll_window(cseg_data, 3, fn):</span>
-<span class="sd">	... 	print(this_frame)</span>
-<span class="sd">	([0, {1, -1}], [4, {1}], [5, {1}])</span>
-<span class="sd">	([4, {1}], [5, {1}], [5, {1}])</span>
-<span class="sd">	([5, {1}], [5, {1}], [1, {1, -1}])</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-		<span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">array</span> <span class="k">if</span> <span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">]</span>
-	<span class="n">windows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">windowed</span><span class="p">(</span><span class="n">seq</span><span class="o">=</span><span class="n">array</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">window_size</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-	<span class="k">return</span> <span class="n">windows</span></div>
-
-<div class="viewcode-block" id="power_list"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.power_list">[docs]</a><span class="k">def</span> <span class="nf">power_list</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	:param data: an iterable</span>
-<span class="sd">	:return: power set of the data as a list (excluding the empty list).</span>
-<span class="sd">	:rtype: list</span>
-
-<span class="sd">	&gt;&gt;&gt; l = [1, 2, 3]</span>
-<span class="sd">	&gt;&gt;&gt; power_list(l)</span>
-<span class="sd">	[(1,), (2,), (3,), (1, 2), (1, 3), (2, 3), (1, 2, 3)]</span>
-
-<span class="sd">	&gt;&gt;&gt; for x in power_list([(0.0, 2.0), (4.0, 5.5), (6.0, 7.25)]):</span>
-<span class="sd">	...     print(x)</span>
-<span class="sd">	((0.0, 2.0),)</span>
-<span class="sd">	((4.0, 5.5),)</span>
-<span class="sd">	((6.0, 7.25),)</span>
-<span class="sd">	((0.0, 2.0), (4.0, 5.5))</span>
-<span class="sd">	((0.0, 2.0), (6.0, 7.25))</span>
-<span class="sd">	((4.0, 5.5), (6.0, 7.25))</span>
-<span class="sd">	((0.0, 2.0), (4.0, 5.5), (6.0, 7.25))</span>
-<span class="sd">	&quot;&quot;&quot;</span>
-	<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span>
-	<span class="n">power_list</span> <span class="o">=</span> <span class="n">powerset</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-	<span class="k">return</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">power_list</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span></div>
-
-<span class="c1">####################################################################################################</span>
 <span class="c1"># SCORE HELPERS</span>
 <span class="c1">####################################################################################################</span>
 <div class="viewcode-block" id="get_object_indices"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.get_object_indices">[docs]</a><span class="k">def</span> <span class="nf">get_object_indices</span><span class="p">(</span>
@@ -1201,6 +1227,41 @@
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>
 		<span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">fragment</span><span class="o">.</span><span class="n">FragmentEncoder</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+<span class="c1">####################################################################################################</span>
+<span class="c1"># MISC. TOOLS</span>
+<span class="c1">####################################################################################################</span>
+<div class="viewcode-block" id="NormalizedCounter"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.NormalizedCounter">[docs]</a><span class="k">class</span> <span class="nc">NormalizedCounter</span><span class="p">(</span><span class="n">Counter</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Class that inherits from collections.Counter. Takes in an array-like object, but the values</span>
+<span class="sd">	of the &#39;counter&#39; become proportions, unless count is set to True (in which case it acts like a</span>
+<span class="sd">	regular counter).</span>
+
+<span class="sd">	&gt;&gt;&gt; l = [1, 1, 2, 2, 3, 3, 4, 4]</span>
+<span class="sd">	&gt;&gt;&gt; NormalizedCounter(l, count=True)</span>
+<span class="sd">	NormalizedCounter({1: 2, 2: 2, 3: 2, 4: 2})</span>
+<span class="sd">	&gt;&gt;&gt; NormalizedCounter(l, count=False)</span>
+<span class="sd">	NormalizedCounter({1: 0.25, 2: 0.25, 3: 0.25, 4: 0.25})</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="n">Counter</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+			<span class="n">all_counts</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+			<span class="k">for</span> <span class="n">this_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+				<span class="bp">self</span><span class="p">[</span><span class="n">this_key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">this_key</span><span class="p">]</span> <span class="o">/</span> <span class="n">all_counts</span></div>
+
+<div class="viewcode-block" id="dict_to_ordered_dict"><a class="viewcode-back" href="../../mods/utils.html#decitala.utils.dict_to_ordered_dict">[docs]</a><span class="k">def</span> <span class="nf">dict_to_ordered_dict</span><span class="p">(</span><span class="n">dict_in</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Takes in a dict and returns an OrderedDict object sorted by a given key (in the form of a</span>
+<span class="sd">	lambda expression).</span>
+
+<span class="sd">	:param dict dict_in: a dictionary to be turned into an ordered dictionary.</span>
+<span class="sd">	:param key: lambda expression.</span>
+<span class="sd">	:param bool reverse: whether to sort the dict in reverse.</span>
+<span class="sd">	:return: the dictionary input, ordered by the given key.</span>
+<span class="sd">	:rtype: collections.OrderedDict</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">dict_in</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">))</span></div>
 </pre></div>
 
            </div>

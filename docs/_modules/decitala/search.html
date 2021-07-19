@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.search &mdash; decitala 0.14.1 documentation</title>
+  <title>decitala.search &mdash; decitala 1.0.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.14.1
+                1.0.0
               </div>
             
           
@@ -223,7 +223,6 @@
 <div class="viewcode-block" id="Extraction"><a class="viewcode-back" href="../../mods/search.html#decitala.search.Extraction">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Extraction</span><span class="p">:</span>
 	<span class="n">fragment</span><span class="p">:</span> <span class="n">GeneralFragment</span>
-	<span class="n">frag_type</span><span class="p">:</span> <span class="nb">str</span>
 	<span class="n">onset_range</span><span class="p">:</span> <span class="nb">tuple</span>
 
 	<span class="n">retrograde</span><span class="p">:</span> <span class="nb">bool</span>
@@ -252,21 +251,22 @@
 		<span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fragment</span> <span class="ow">in</span> <span class="n">split_dict</span><span class="p">):</span>
 			<span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
 		<span class="k">else</span><span class="p">:</span>
-			<span class="n">split</span> <span class="o">=</span> <span class="p">[]</span>
-			<span class="c1"># This is hilariously stupid, but it should be ok as a temporary solution.</span>
+			<span class="c1"># This is dumb, but it should be ok as a temporary solution.</span>
 			<span class="n">filtered_all_res</span> <span class="o">=</span> <span class="p">[]</span>
 			<span class="k">for</span> <span class="n">extraction</span> <span class="ow">in</span> <span class="n">all_res</span><span class="p">:</span>
 				<span class="k">if</span> <span class="p">(</span><span class="n">extraction</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> \
 					<span class="p">(</span><span class="n">extraction</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
 					<span class="n">filtered_all_res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extraction</span><span class="p">)</span>
 
-			<span class="n">res_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">filtered_all_res</span><span class="p">)</span>
-			<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">split_elem</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">split_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fragment</span><span class="p">]):</span>
-				<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">extraction</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">res_copy</span><span class="p">):</span>
+			<span class="n">split</span> <span class="o">=</span> <span class="p">[]</span>
+			<span class="n">filtered_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">filtered_all_res</span><span class="p">)</span>
+			<span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+			<span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">split_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fragment</span><span class="p">]):</span>
+				<span class="n">split_elem</span> <span class="o">=</span> <span class="n">split_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fragment</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+				<span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">extraction</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">filtered_copy</span><span class="p">):</span>
 					<span class="k">if</span> <span class="n">extraction</span><span class="o">.</span><span class="n">fragment</span> <span class="o">==</span> <span class="n">split_elem</span><span class="p">:</span>
 						<span class="n">extraction_obj</span> <span class="o">=</span> <span class="n">Extraction</span><span class="p">(</span>
 							<span class="n">fragment</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">fragment</span><span class="p">,</span>
-							<span class="n">frag_type</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">frag_type</span><span class="p">,</span>
 							<span class="n">onset_range</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">onset_range</span><span class="p">,</span>
 							<span class="n">retrograde</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">retrograde</span><span class="p">,</span>
 							<span class="n">factor</span><span class="o">=</span><span class="n">extraction</span><span class="o">.</span><span class="n">factor</span><span class="p">,</span>
@@ -279,15 +279,11 @@
 							<span class="n">id_</span><span class="o">=</span><span class="mi">1000</span> <span class="o">+</span> <span class="n">i</span>  <span class="c1"># Random scale to differentiate between standard.</span>
 						<span class="p">)</span>
 						<span class="n">split</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">extraction_obj</span><span class="p">)</span>
-						<span class="n">res_copy</span> <span class="o">=</span> <span class="n">res_copy</span><span class="p">[:</span><span class="n">j</span><span class="p">]</span>
+						<span class="n">filtered_copy</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+						<span class="k">break</span>  <span class="c1"># Don&#39;t keep looking.</span>
+				<span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
 			<span class="k">return</span> <span class="n">split</span></div></div>
-
-<div class="viewcode-block" id="Frame"><a class="viewcode-back" href="../../mods/search.html#decitala.search.Frame">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">Frame</span><span class="p">:</span>
-	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	A frame of the objects in the score.</span>
-<span class="sd">	&quot;&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="frame_to_ql_array"><a class="viewcode-back" href="../../mods/search.html#decitala.search.frame_to_ql_array">[docs]</a><span class="k">def</span> <span class="nf">frame_to_ql_array</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
@@ -435,7 +431,6 @@
 			<span class="n">offset_2</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 			<span class="k">return</span> <span class="n">Extraction</span><span class="p">(</span>
 				<span class="n">fragment</span><span class="o">=</span><span class="n">searched</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">],</span>
-				<span class="n">frag_type</span><span class="o">=</span><span class="n">searched</span><span class="p">[</span><span class="s2">&quot;fragment&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">frag_type</span><span class="p">,</span>
 				<span class="n">onset_range</span><span class="o">=</span><span class="p">(</span><span class="n">offset_1</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">offset</span> <span class="o">+</span> <span class="n">offset_2</span><span class="o">.</span><span class="n">quarterLength</span><span class="p">),</span>
 				<span class="n">retrograde</span><span class="o">=</span><span class="n">searched</span><span class="p">[</span><span class="s2">&quot;retrograde&quot;</span><span class="p">],</span>
 				<span class="n">factor</span><span class="o">=</span><span class="n">searched</span><span class="p">[</span><span class="s2">&quot;factor&quot;</span><span class="p">],</span>
@@ -566,7 +561,8 @@
 		<span class="n">allow_subdivision</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 		<span class="n">allow_contiguous_summation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 		<span class="n">algorithm</span><span class="o">=</span><span class="s2">&quot;dijkstra&quot;</span><span class="p">,</span>
-		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">path_finding_utils</span><span class="o">.</span><span class="n">DefaultCostFunction</span><span class="p">(),</span>
+		<span class="n">cost_function_class</span><span class="o">=</span><span class="n">path_finding_utils</span><span class="o">.</span><span class="n">CostFunction3D</span><span class="p">(),</span>
+		<span class="n">split_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 		<span class="n">slur_constraint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 		<span class="n">enforce_earliest_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 		<span class="n">save_filepath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -592,7 +588,7 @@
 <span class="sd">							can then be loaded with the :meth:`decitala.utils.loader`.</span>
 <span class="sd">	:param bool verbose: Whether to log messages. Default is ``False``.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">fragments</span> <span class="o">=</span> <span class="n">rolling_hash_search</span><span class="p">(</span>
+	<span class="n">extractions</span> <span class="o">=</span> <span class="n">rolling_hash_search</span><span class="p">(</span>
 		<span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span>
 		<span class="n">part_num</span><span class="o">=</span><span class="n">part_num</span><span class="p">,</span>
 		<span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span>
@@ -600,14 +596,14 @@
 		<span class="n">allow_subdivision</span><span class="o">=</span><span class="n">allow_subdivision</span><span class="p">,</span>
 		<span class="n">allow_contiguous_summation</span><span class="o">=</span><span class="n">allow_contiguous_summation</span>
 	<span class="p">)</span>
-	<span class="k">if</span> <span class="ow">not</span> <span class="n">fragments</span><span class="p">:</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">extractions</span><span class="p">:</span>
 		<span class="k">return</span> <span class="kc">None</span>
 
 	<span class="k">if</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;dijkstra&quot;</span><span class="p">:</span>
 		<span class="k">if</span> <span class="n">slur_constraint</span><span class="p">:</span>
 			<span class="k">raise</span> <span class="n">SearchException</span><span class="p">(</span><span class="s2">&quot;This is not yet supported. Coming soon.&quot;</span><span class="p">)</span>
 		<span class="n">source</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">best_pred</span> <span class="o">=</span> <span class="n">dijkstra</span><span class="o">.</span><span class="n">dijkstra_best_source_and_sink</span><span class="p">(</span>
-			<span class="n">data</span><span class="o">=</span><span class="n">fragments</span><span class="p">,</span>
+			<span class="n">data</span><span class="o">=</span><span class="n">extractions</span><span class="p">,</span>
 			<span class="n">cost_function_class</span><span class="o">=</span><span class="n">cost_function_class</span><span class="p">,</span>
 			<span class="n">enforce_earliest_start</span><span class="o">=</span><span class="n">enforce_earliest_start</span><span class="p">,</span>
 			<span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
@@ -617,14 +613,14 @@
 			<span class="n">source</span><span class="p">,</span>
 			<span class="n">target</span>
 		<span class="p">)</span>
-		<span class="n">best_path</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">fragments</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">id_</span> <span class="ow">in</span> <span class="n">best_path</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># noqa</span>
+		<span class="n">best_path</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">extractions</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">id_</span> <span class="ow">in</span> <span class="n">best_path</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">onset_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># noqa</span>
 	<span class="k">elif</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;floyd-warshall&quot;</span><span class="p">:</span>
 		<span class="n">best_source</span><span class="p">,</span> <span class="n">best_sink</span> <span class="o">=</span> <span class="n">path_finding_utils</span><span class="o">.</span><span class="n">best_source_and_sink</span><span class="p">(</span>
-			<span class="n">data</span><span class="o">=</span><span class="n">fragments</span><span class="p">,</span>
+			<span class="n">data</span><span class="o">=</span><span class="n">extractions</span><span class="p">,</span>
 			<span class="n">enforce_earliest_start</span><span class="o">=</span><span class="n">enforce_earliest_start</span>
 		<span class="p">)</span>
 		<span class="n">distance_matrix</span><span class="p">,</span> <span class="n">next_matrix</span> <span class="o">=</span> <span class="n">floyd_warshall</span><span class="o">.</span><span class="n">floyd_warshall</span><span class="p">(</span>
-			<span class="n">data</span><span class="o">=</span><span class="n">fragments</span><span class="p">,</span>
+			<span class="n">data</span><span class="o">=</span><span class="n">extractions</span><span class="p">,</span>
 			<span class="n">cost_function_class</span><span class="o">=</span><span class="n">cost_function_class</span><span class="p">,</span>
 			<span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
 		<span class="p">)</span>
@@ -632,11 +628,18 @@
 			<span class="n">start</span><span class="o">=</span><span class="n">best_source</span><span class="p">,</span>
 			<span class="n">end</span><span class="o">=</span><span class="n">best_sink</span><span class="p">,</span>
 			<span class="n">next_matrix</span><span class="o">=</span><span class="n">next_matrix</span><span class="p">,</span>
-			<span class="n">data</span><span class="o">=</span><span class="n">fragments</span><span class="p">,</span>
+			<span class="n">data</span><span class="o">=</span><span class="n">extractions</span><span class="p">,</span>
 			<span class="n">slur_constraint</span><span class="o">=</span><span class="n">slur_constraint</span>
 		<span class="p">)</span>
 	<span class="k">else</span><span class="p">:</span>
 		<span class="k">raise</span> <span class="n">SearchException</span><span class="p">(</span><span class="s2">&quot;The only available options are &#39;dijkstra&#39; and &#39;floyd-warshall&#39;.&quot;</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">split_dict</span><span class="p">:</span>
+		<span class="n">best_path</span> <span class="o">=</span> <span class="n">path_finding_utils</span><span class="o">.</span><span class="n">split_extractions</span><span class="p">(</span>
+			<span class="n">data</span><span class="o">=</span><span class="n">best_path</span><span class="p">,</span>
+			<span class="n">split_dict</span><span class="o">=</span><span class="n">split_dict</span><span class="p">,</span>
+			<span class="n">all_res</span><span class="o">=</span><span class="n">extractions</span>
+		<span class="p">)</span>
 
 	<span class="k">if</span> <span class="n">save_filepath</span><span class="p">:</span>
 		<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">save_filepath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>

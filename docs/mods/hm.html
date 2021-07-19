@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>hm &mdash; decitala 0.14.1 documentation</title>
+  <title>hm &mdash; decitala 1.0.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.14.1
+                1.0.0
               </div>
             
           
@@ -266,8 +266,8 @@ to start at 0.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="decitala.hm.contour.pitch_content_to_contour">
-<code class="sig-prename descclassname"><span class="pre">decitala.hm.contour.</span></code><code class="sig-name descname"><span class="pre">pitch_content_to_contour</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pitch_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/contour.html#pitch_content_to_contour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.contour.pitch_content_to_contour" title="Permalink to this definition">¶</a></dt>
+<dt id="decitala.hm.contour.pitch_contour">
+<code class="sig-prename descclassname"><span class="pre">decitala.hm.contour.</span></code><code class="sig-name descname"><span class="pre">pitch_contour</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pitch_content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/contour.html#pitch_contour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.contour.pitch_contour" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function returns the contour of given pitch content. It accepts either a list of MIDI
 tones, or the data returned in the <a class="reference internal" href="search.html#module-decitala.search" title="decitala.search"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.search</span></code></a> module. Like
 <a class="reference internal" href="#decitala.hm.contour.strip_monotonic_pitch_content" title="decitala.hm.contour.strip_monotonic_pitch_content"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.hm.contour.strip_monotonic_pitch_content</span></code></a>, if non-monotonic pitch content is
@@ -288,10 +288,10 @@ like <code class="docutils literal notranslate"><span class="pre">&quot;&lt;0</s
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_content_1</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">80</span><span class="p">,),</span> <span class="p">(</span><span class="mi">91</span><span class="p">,),</span> <span class="p">(</span><span class="mi">78</span><span class="p">,),</span> <span class="p">(</span><span class="mi">85</span><span class="p">,)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">pitch_content_1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_contour</span><span class="p">(</span><span class="n">pitch_content_1</span><span class="p">)</span>
 <span class="go">array([1, 3, 0, 2])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_content_2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">80</span><span class="p">,</span> <span class="mi">84</span><span class="p">,</span> <span class="mi">84</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_content_to_contour</span><span class="p">(</span><span class="n">pitch_content_2</span><span class="p">,</span> <span class="n">as_str</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pitch_contour</span><span class="p">(</span><span class="n">pitch_content_2</span><span class="p">,</span> <span class="n">as_str</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="go">&#39;&lt;0 1 1&gt;&#39;</span>
 </pre></div>
 </div>
@@ -321,8 +321,36 @@ three onset contours are supported.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="decitala.hm.contour.contour_to_prime_contour">
-<code class="sig-prename descclassname"><span class="pre">decitala.hm.contour.</span></code><code class="sig-name descname"><span class="pre">contour_to_prime_contour</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contour</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/contour.html#contour_to_prime_contour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.contour.contour_to_prime_contour" title="Permalink to this definition">¶</a></dt>
+<dt id="decitala.hm.contour.contour_class">
+<code class="sig-prename descclassname"><span class="pre">decitala.hm.contour.</span></code><code class="sig-name descname"><span class="pre">contour_class</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contour</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_symmetries</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/contour.html#contour_class"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.contour.contour_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the associated pitch contour class (a letter) from Morris (1993, 220-221)
+of a contour.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contour</strong> – a pitch contour (iterable).</p></li>
+<li><p><strong>allow_symmetries</strong> (<em>bool</em>) – whether to allow permutations of the given contour to be found.
+Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>. Note that <code class="docutils literal notranslate"><span class="pre">X</span></code> and <code class="docutils literal notranslate"><span class="pre">Y</span></code> are weird cases
+for this symmetry. May currently fail (don’t understand it).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">contour_class</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="go">&#39;X&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_class</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">allow_symmetries</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">&#39;G&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_class</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">allow_symmetries</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">&#39;G&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.hm.contour.prime_contour">
+<code class="sig-prename descclassname"><span class="pre">decitala.hm.contour.</span></code><code class="sig-name descname"><span class="pre">prime_contour</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contour</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/contour.html#prime_contour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.contour.prime_contour" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implementation of Robert Morris’ Contour-Reduction algorithm (Morris, 1993). “The algorithm prunes
 pitches from a contour until it is reduced to a prime.” (Schultz)</p>
 <dl class="field-list simple">
@@ -337,18 +365,18 @@ pitches from a contour until it is reduced to a prime.” (Schultz)</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">contour_a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour_a</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prime_contour</span><span class="p">(</span><span class="n">contour_a</span><span class="p">)</span>
 <span class="go">(array([0, 1]), 0)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">contour_b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_to_prime_contour</span><span class="p">(</span><span class="n">contour_b</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">prime_contour</span><span class="p">(</span><span class="n">contour_b</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="go">array([0, 2, 1])</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="py function">
-<dt id="decitala.hm.contour.contour_to_schultz_prime_contour">
-<code class="sig-prename descclassname"><span class="pre">decitala.hm.contour.</span></code><code class="sig-name descname"><span class="pre">contour_to_schultz_prime_contour</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contour</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/contour.html#contour_to_schultz_prime_contour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.contour.contour_to_schultz_prime_contour" title="Permalink to this definition">¶</a></dt>
+<dt id="decitala.hm.contour.schultz_prime_contour">
+<code class="sig-prename descclassname"><span class="pre">decitala.hm.contour.</span></code><code class="sig-name descname"><span class="pre">schultz_prime_contour</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contour</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/contour.html#schultz_prime_contour"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.contour.schultz_prime_contour" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implementation of Schultz’s (2008) modification of Morris’ contour-reduction algorithm. Catered
 to further prune “unnecessary” repetitions of contour elements.</p>
 <dl class="field-list simple">
@@ -364,7 +392,7 @@ reduction.</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">alouette_5</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_to_schultz_prime_contour</span><span class="p">(</span><span class="n">alouette_5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">schultz_prime_contour</span><span class="p">(</span><span class="n">alouette_5</span><span class="p">)</span>
 <span class="go">(array([1, 2, 0]), 3)</span>
 </pre></div>
 </div>
@@ -375,7 +403,13 @@ reduction.</p>
 <h2>hm_utils<a class="headerlink" href="#hm-utils" title="Permalink to this headline">¶</a></h2>
 <p>General utilities for harmony and melody analysis. Includes implementation
 of Krumhansl-Schmuckler/Krumhansl-Kessler with the original weights.</p>
-<span class="target" id="module-decitala.hm.hm_utils"></span><dl class="py function">
+<span class="target" id="module-decitala.hm.hm_utils"></span><dl class="py exception">
+<dt id="decitala.hm.hm_utils.HMUtilsException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.hm.hm_utils.</span></code><code class="sig-name descname"><span class="pre">HMUtilsException</span></code><a class="reference internal" href="../_modules/decitala/hm/hm_utils.html#HMUtilsException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.hm_utils.HMUtilsException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
+<dl class="py function">
 <dt id="decitala.hm.hm_utils.get_all_coefficients">
 <code class="sig-prename descclassname"><span class="pre">decitala.hm.hm_utils.</span></code><code class="sig-name descname"><span class="pre">get_all_coefficients</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exclude_major_minor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molt_tonic_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/hm_utils.html#get_all_coefficients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.hm_utils.get_all_coefficients" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a giant dictionary holding the binary weights for all Modes of Limited Transposition,
@@ -394,16 +428,16 @@ all scale values set to 1.</p></li>
 
 <dl class="py function">
 <dt id="decitala.hm.hm_utils.pc_counter">
-<code class="sig-prename descclassname"><span class="pre">decitala.hm.hm_utils.</span></code><code class="sig-name descname"><span class="pre">pc_counter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_over_duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/hm_utils.html#pc_counter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.hm_utils.pc_counter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a dictionary holding the pitch classes in the keys and the count (or count normalized
-over total duration) in the given filepath-part_num combination.</p>
+<code class="sig-prename descclassname"><span class="pre">decitala.hm.hm_utils.</span></code><code class="sig-name descname"><span class="pre">pc_counter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_counts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/hm_utils.html#pc_counter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.hm_utils.pc_counter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary holding the pitch classes in the keys and the sum of the quarter lengths
+of this pitch class in a given filepath-part combination.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filepath</strong> (<em>str</em>) – path to music21-readable file to be parsed.</p></li>
 <li><p><strong>part_num</strong> (<em>int</em>) – part number in the work to be analyzed.</p></li>
-<li><p><strong>normalize_over_duration</strong> (<em>bool</em>) – whether to normalize the counts by the net duration
-of the part.</p></li>
+<li><p><strong>return_counts</strong> (<em>bool</em>) – whether to return the counts of the detected pitches, instead of the
+net quarter lengths.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -414,7 +448,32 @@ the values.</p>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
-<p>TODO: allow option for instead returning the net QLs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.hm.hm_utils.normalize_pc_counter">
+<code class="sig-prename descclassname"><span class="pre">decitala.hm.hm_utils.</span></code><code class="sig-name descname"><span class="pre">normalize_pc_counter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict_in</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/hm_utils.html#normalize_pc_counter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.hm_utils.normalize_pc_counter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalize a dictionary by the sum of the total values. Meant to be used with the
+net ql values from <a class="reference internal" href="#module-decitala.hm.hm_utils" title="decitala.hm.hm_utils"><code class="xref py py-obj docutils literal notranslate"><span class="pre">decitala.hm.hm_utils</span></code></a>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="mf">0.375</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="mf">0.375</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="mi">5</span><span class="p">:</span> <span class="mf">0.375</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span> <span class="mf">0.375</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mi">9</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">10</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">11</span><span class="p">:</span> <span class="mi">0</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">pc</span><span class="p">,</span> <span class="n">norm_val</span> <span class="ow">in</span> <span class="n">normalize_pc_counter</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">norm_val</span><span class="p">)</span>
+<span class="go">0 0.0</span>
+<span class="go">1 0.13636363636363635</span>
+<span class="go">2 0.0</span>
+<span class="go">3 0.09090909090909091</span>
+<span class="go">4 0.13636363636363635</span>
+<span class="go">5 0.13636363636363635</span>
+<span class="go">6 0.13636363636363635</span>
+<span class="go">7 0.0</span>
+<span class="go">8 0.2727272727272727</span>
+<span class="go">9 0.09090909090909091</span>
+<span class="go">10 0.0</span>
+<span class="go">11 0.0</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -483,30 +542,35 @@ combination.</p>
 
 <dl class="py function">
 <dt id="decitala.hm.hm_utils.KS">
-<code class="sig-prename descclassname"><span class="pre">decitala.hm.hm_utils.</span></code><code class="sig-name descname"><span class="pre">KS</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pc_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_p_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/hm_utils.html#KS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.hm_utils.KS" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.hm.hm_utils.</span></code><code class="sig-name descname"><span class="pre">KS</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pc_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spearman'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/hm_utils.html#KS"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.hm_utils.KS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Krumhansl-Schumckler algorithm.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pc_vector</strong> – a vector of pitch class probabilities, ordered by pitch class.</p></li>
 <li><p><strong>coefficients</strong> – coefficents used in the correlation calculation.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – either ‘pearson’ or ‘spearman’ (the method used for calculating correlation).
+Default is ‘pearson’.</p></li>
 </ul>
 </dd>
 </dl>
-<p>TODO: remove the stupid return_p_value argument.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt id="decitala.hm.hm_utils.KS_diatonic">
-<code class="sig-prename descclassname"><span class="pre">decitala.hm.hm_utils.</span></code><code class="sig-name descname"><span class="pre">KS_diatonic</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pc_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_tonic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/hm_utils.html#KS_diatonic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.hm_utils.KS_diatonic" title="Permalink to this definition">¶</a></dt>
-<dd><p>Krumhansl-Schumckler algorithm for diatonic collections. Circulates over all major and minor
-scales.</p>
+<code class="sig-prename descclassname"><span class="pre">decitala.hm.hm_utils.</span></code><code class="sig-name descname"><span class="pre">KS_diatonic</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pc_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficients</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pearson'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_tonic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/hm_utils.html#KS_diatonic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.hm_utils.KS_diatonic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Krumhansl-Schumckler algorithm for diatonic collections. Circulates over the weights.
+Returns the best match (and its associated pvalue) using either Pearson or
+Spearman correlation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pc_vector</strong> – a vector of pitch class probabilities, ordered by pitch class.</p></li>
 <li><p><strong>coefficients</strong> – coefficents used in the correlation calculation.</p></li>
-<li><p><strong>return_tonic</strong> (<em>bool</em>) – whether to also return the most highly correlated tonic.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – either ‘spearman’ or ‘pearson’ (the method used for calculating correlation).
+Default is ‘pearson’.</p></li>
+<li><p><strong>return_tonic</strong> (<em>bool</em>) – whether to also return the pitch object of the most highly correlated
+tonic.</p></li>
 </ul>
 </dd>
 </dl>
@@ -514,13 +578,15 @@ scales.</p>
 
 <dl class="py function">
 <dt id="decitala.hm.hm_utils.test_all_coefficients">
-<code class="sig-prename descclassname"><span class="pre">decitala.hm.hm_utils.</span></code><code class="sig-name descname"><span class="pre">test_all_coefficients</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pc_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_major_minor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molt_tonic_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/hm_utils.html#test_all_coefficients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.hm_utils.test_all_coefficients" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">decitala.hm.hm_utils.</span></code><code class="sig-name descname"><span class="pre">test_all_coefficients</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pc_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pearson'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_major_minor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molt_tonic_val</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/hm_utils.html#test_all_coefficients"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.hm_utils.test_all_coefficients" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function for calculating the correlation between a given <code class="docutils literal notranslate"><span class="pre">pc_vector</span></code> and all possible
 coefficients (binary modes for MOLT and KS coefficients).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pc_vector</strong> – a vector of pitch class probabilities, ordered by pitch class.</p></li>
+<li><p><strong>method</strong> (<em>str</em>) – either ‘spearman’ or ‘pearson’ (the method used for calculating correlation).
+Default is ‘pearson’.</p></li>
 <li><p><strong>exclude_major_minor</strong> (<em>bool</em>) – whether to exclude major/minor weights from the calculation.
 Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 <li><p><strong>molt_tonic_val</strong> (<em>int</em>) – optional value to set the first element of the MOLT to. Default is
@@ -547,6 +613,12 @@ it, to see inwardly, in the mind’s eye, colors which move with the music,
 and I sense these colors in an extremely vivid manner… .” (Samuel, 1976)</p>
 <p>Color translations come from
 <a class="reference external" href="https://www.musicandpractice.org/volume-2/visualizing-visions-the-significance-of-messiaens-colours/">Håkon Austbø</a> # noqa</p>
+<dl class="py exception">
+<dt id="decitala.hm.molt.MoltException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.hm.molt.</span></code><code class="sig-name descname"><span class="pre">MoltException</span></code><a class="reference internal" href="../_modules/decitala/hm/molt.html#MoltException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.molt.MoltException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+</dd></dl>
+
 <dl class="py class">
 <dt id="decitala.hm.molt.MOLT">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.hm.molt.</span></code><code class="sig-name descname"><span class="pre">MOLT</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transposition</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/hm/molt.html#MOLT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.hm.molt.MOLT" title="Permalink to this definition">¶</a></dt>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.path_finding.pofp &mdash; decitala 0.14.1 documentation</title>
+  <title>decitala.path_finding.pofp &mdash; decitala 1.0.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                0.14.1
+                1.0.0
               </div>
             
           
@@ -251,11 +251,11 @@
 <span class="sd">	&gt;&gt;&gt; from decitala.search import Extraction</span>
 <span class="sd">	&gt;&gt;&gt; from decitala.fragment import GreekFoot, GeneralFragment</span>
 <span class="sd">	&gt;&gt;&gt; data = [</span>
-<span class="sd">	... 	Extraction(fragment=GreekFoot(&quot;Spondee&quot;), frag_type=&quot;greek_foot&quot;, onset_range=(0.0, 0.5), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, slur_start_end_count=0, id_=1), # noqa</span>
-<span class="sd">	... 	Extraction(fragment=GeneralFragment([0.25, 0.25], name=&quot;cs-test1&quot;), frag_type=&quot;general_fragment&quot;, onset_range=(0.0, 0.5), retrograde=False, factor=2.0, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, slur_start_end_count=0, id_=2), # noqa</span>
-<span class="sd">	... 	Extraction(fragment=GreekFoot(&quot;Trochee&quot;), frag_type=&quot;greek_foot&quot;, onset_range=(0.25, 0.625), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, slur_start_end_count=0, id_=3), # noqa</span>
-<span class="sd">	... 	Extraction(fragment=GeneralFragment([0.25, 0.125], name=&quot;cs-test2&quot;), frag_type=&quot;general_fragment&quot;, onset_range=(0.25, 0.625), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, slur_start_end_count=0, id_=4), # noqa</span>
-<span class="sd">	... 	Extraction(fragment=GreekFoot(&quot;Dactyl&quot;), frag_type=&quot;greek_foot&quot;, onset_range=(0.5, 1.0), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, slur_start_end_count=0, id_=5) # noqa</span>
+<span class="sd">	... 	Extraction(fragment=GreekFoot(&quot;Spondee&quot;), onset_range=(0.0, 0.5), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, slur_start_end_count=0, id_=1), # noqa</span>
+<span class="sd">	... 	Extraction(fragment=GeneralFragment([0.25, 0.25], name=&quot;cs-test1&quot;), onset_range=(0.0, 0.5), retrograde=False, factor=2.0, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, slur_start_end_count=0, id_=2), # noqa</span>
+<span class="sd">	... 	Extraction(fragment=GreekFoot(&quot;Trochee&quot;), onset_range=(0.25, 0.625), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, slur_start_end_count=0, id_=3), # noqa</span>
+<span class="sd">	... 	Extraction(fragment=GeneralFragment([0.25, 0.125], name=&quot;cs-test2&quot;), onset_range=(0.25, 0.625), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, slur_start_end_count=0, id_=4), # noqa</span>
+<span class="sd">	... 	Extraction(fragment=GreekFoot(&quot;Dactyl&quot;), onset_range=(0.5, 1.0), retrograde=False, factor=0.125, difference=0.0, mod_hierarchy_val=1, pitch_content=[None], is_spanned_by_slur=False, slur_count=0, slur_start_end_count=0, id_=5) # noqa</span>
 <span class="sd">	... ]</span>
 <span class="sd">	&gt;&gt;&gt; for path in get_pareto_optimal_longest_paths(data):</span>
 <span class="sd">	... 	for fragment in path:</span>
