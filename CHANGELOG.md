@@ -3,6 +3,8 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.1](https://github.com/Luke-Poeppel/decitala/tree/v1.0.1) ???
+
 ## [v1.0.0](https://github.com/Luke-Poeppel/decitala/tree/v1.0.0) July 19, 2021
 First stable release.
 #### Added
