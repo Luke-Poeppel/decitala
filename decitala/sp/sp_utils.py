@@ -19,11 +19,25 @@ mpl.style.use("bmh")
 SAMPLE_RATE = 44100
 
 def resample_(samples, source_rate, target_rate):
+	"""
+	Function for resampling an array (with fs ``source_rate``) to ``target_rate``.
+
+	:param samples: an array of samples.
+	:param int source_rate: the sample rate of the source samples.
+	:param int target_rate: the desired sample rate of the resampled array.
+	"""
 	resample_factor = float(target_rate) / float(source_rate)
 	resampled = resample(samples, int(len(samples) * resample_factor))
 	return resampled
 
 def plot_audio_file(filepath, title=None, save_path=None):
+	"""
+	Function for plotting an audio file.
+
+	:param str filepath: a path to an audio file.
+	:param str title: optional title for the plot. Default is ``None``.
+	:param str save_path: optional path to save the plot. Default is ``None``.
+	"""
 	samples, fs = librosa.load(filepath)
 	samples = resample_(samples, source_rate=fs, target_rate=SAMPLE_RATE)
 
