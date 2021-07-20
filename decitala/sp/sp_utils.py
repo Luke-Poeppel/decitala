@@ -36,9 +36,7 @@ def plot_audio_file(filepath, title=None, save_path=None):
 	if save_path:
 		plt.savefig(save_path, dpi=350)
 
-	plt.show()
-
-# plot_audio_file(scarlet_tanager)
+	return plt
 
 def plot_spectrogram(
 		filepath,
@@ -74,4 +72,4 @@ def plot_spectrogram(
 	if save_path:
 		plt.savefig(save_path, dpi=350)
 
-	plt.show()
+	return plt
