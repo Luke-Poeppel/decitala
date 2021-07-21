@@ -1,0 +1,1 @@
+This directory stores the Prosodic Meters described in Tome I of the Traité (Annexe I, pp. 133-144).
