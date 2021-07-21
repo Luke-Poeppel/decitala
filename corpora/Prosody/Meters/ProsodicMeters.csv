@@ -37,8 +37,21 @@ Cretic_Tetrameter_5,"[1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0
 Cretic_Tetrameter_6,"[2.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Ionic_Major, Peon_IV, Macron, Macron, Macron, Amphimacer]",latin
 
 Bacchiac_Tetrameter,"[1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0]","[Bacchius, Bacchius, Bacchius, Bacchius]",greek
-
 Bacchiac_Tetrameter,"[1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0]",[Bacchius, Peon_IV, Ionic_Minor, Bacchius]",latin
 Bacchiac_Tetrameter_2,"[1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 2.0, 2.0]","[Peon_IV, Breve, Breve, Breve, Breve, Breve, Macron, Macron, Macron, Bacchius]",latin
 Bacchiac_Tetrameter_3,"[2.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0]","[Macron, Macron, Macron, Bacchius, Peon_II, Bacchius]",latin
 Bacchiac_Tetrameter_4,"[2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0]","[Macron, Breve, Breve, Breve, Breve, Bacchius, Bacchius, Bacchius]",latin
+
+Adonic,"[2.0, 1.0, 1.0, 2.0, 1.0]","[Dactyl, Trochee]",logaoedic
+Pherecratean,"[2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0]","[Spondee, Dactyl, Trochee]",logaoedic
+Glyconic,"[2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Spondee, Dactyl, Trochee, Macron]",logaoedic
+Little_Asclepiade,"[2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0]","[Spondee, Choriamb, Dactyl, Dactyl, Macron]",logaoedic
+Large_Asclepiade,"[2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Spondee, Choriamb, Choriamb, Dactyl, Trochee, Macron]",logaoedic
+Hendecasyllabic_Alcaic,"[2.0, 2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Macron, Trochee, Trochee, Dactyl, Trochee, Macron]",logaoedic
+Aristophanien,"[2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0]","[Dactyl, Trochee, Trochee]",logaoedic
+Aristophanien,"[2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 2.0]","[Dactyl, Trochee, Spondee]",logaoedic
+Saphic_Minor,"[2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0]","[Trochee, Trochee, Dactyl, Trochee, Trochee]",logaoedic
+Saphic_Minor_2,"[2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 2.0]","[Trochee, Spondee, Dactyl, Trochee, Spondee]",logaoedic
+Saphic_Minor_3,"[2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0]","[Trochee, Trochee, Choriamb, Dactyl, Trochee, Trochee]",logaoedic
+Saphic_Major,"[2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0]","[Trochee, Trochee, Choriamb, Dactyl, Trochee, Trochee]",logaoedic
+Decasyllabic_Alcaic,"[2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0]","[Dactyl, Dactyl, Trochee, Trochee]",logaoedic
