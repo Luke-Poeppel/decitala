@@ -10,17 +10,16 @@ from decitala.hash_table import (
 	FragmentHashTable,
 	DecitalaHashTable,
 	GreekFootHashTable,
-	ProsodicFragmentHashTable,
+	ProsodicMeterHashTable,
 	generate_all_modifications
 )
 from decitala.fragment import (
 	Decitala,
 	GeneralFragment,
 	GreekFoot,
-	ProsodicFragment,
 	get_all_decitalas,
 	get_all_greek_feet,
-	get_all_prosodic_fragments
+	get_all_prosodic_meters
 )
 
 FACTORS = [0.125, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0, 4.0]
@@ -110,8 +109,8 @@ def test_greek_foot_hash_table():
 		assert search_result is not None
 
 def test_prosodic_fragment_hash_table():
-	PFHT = ProsodicFragmentHashTable()
-	fragments = get_all_prosodic_fragments()
+	PFHT = ProsodicMeterHashTable()
+	fragments = get_all_prosodic_meters()
 	for fragment in fragments:
 		modification_and_mod_val = random.choice(funcs)(fragment.ql_array())
 		if any(x <= 0 for x in modification_and_mod_val[0]):

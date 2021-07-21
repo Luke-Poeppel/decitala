@@ -305,10 +305,10 @@ class GreekFootHashTable(FragmentHashTable):
 		super().__init__(datasets=["greek_foot"])
 		self.load()
 
-class ProsodicFragmentHashTable(FragmentHashTable):
+class ProsodicMeterHashTable(FragmentHashTable):
 	"""
 	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``
-	parameter set to ``["prosodic_fragment"]`` and automatically loads.
+	parameter set to ``["prosodic_meter"]`` and automatically loads.
 	"""
 	def __init__(self):
 		super().__init__(datasets=["prosodic_meter"])
