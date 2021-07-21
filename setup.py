@@ -39,6 +39,7 @@ setup(
 		"music21>=6.5.0",
 		"natsort",
 		"numpy>=1.16.5",
+		"pandas",
 		"progress",
 		"sqlalchemy",
 		"scipy",

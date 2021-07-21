@@ -8,3 +8,14 @@ Dactylic_Hexameter_3,"[1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.
 
 Catalectic_Anapestic_Tetrameter,"[1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0]","[Anapest, Anapest, Dactyl, Spondee, Anapest, Anapest, Anapest, Macron]",greek
 Catalectic_Anapestic_Tetrameter,"[1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0]","[Anapest, Anapest, Dactyl, Spondee, Proceleusmatic, Spondee, Anapest, Macron]",latin
+
+Iambic_Trimeter,"[1.0, 1.0, 2.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Anapest, Iamb, Dactyl, Iamb, Spondee, Iamb]",greek
+Iambic_Trimeter_2,"[1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0]","[Iamb, Tribrach, Spondee, Tribrach, Spondee, Iamb]",greek
+
+Catalectic_Iambic_Tetrameter,"[1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 2.0, 2.0]","[Anapest, Iamb, Spondee, Iamb, Iamb, Iamb, Iamb, Macron]",greek
+Catalectic_Iambic_Tetrameter_2,"[2.0, 2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0]","[Spondee, Iamb, Spondee, Tribrach, Tribrach, Tribrach, Iamb, Macron]",greek
+Catalectic_Iambic_Tetrameter,"[1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Tribrach, Spondee, Spondee, Spondee, Spondee, Iamb]",latin
+Catalectic_Iambic_Tetrameter_2,"[1.0, 2.0, 1.0, 2.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Iamb, Iamb, Iamb, Spondee, Spondee, Iamb]",latin
+Catalectic_Iambic_Tetrameter_3,"[2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0]","[Spondee, Tribrach, Dactyl, Iamb, Dactyl, Iamb]",latin
+Catalectic_Iambic_Tetrameter_4,"[1.0, 2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0]","[Iamb, Iamb, Spondee, Tribrach, Spondee, Iamb]",latin
+Catalectic_Iambic_Tetrameter_4,"[2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Spondee, Dactyl, Spondee, Iamb, Spondee, Iamb]",latin
