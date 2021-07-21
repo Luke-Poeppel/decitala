@@ -9,6 +9,8 @@ from decitala.fragment import (
 	Decitala,
 	DecitalaException,
 	GreekFoot,
+	Breve,
+	Macron,
 	ProsodicFragment,
 	GeneralFragment,
 	FragmentEncoder,
@@ -147,3 +149,15 @@ class TestMorrisSymmetryClass():
 	def test_class_two(self): # XY
 		iamb = GreekFoot("Iamb")
 		assert iamb.morris_symmetry_class() == 2
+
+def test_macron():
+	m = Macron()
+	assert m.name == "Macron"
+	assert list(m.ql_array()) == [2.0]
+	assert m.frag_type == "macron"
+
+def test_breve():
+	m = Breve()
+	assert m.name == "Breve"
+	assert list(m.ql_array()) == [1.0]
+	assert m.frag_type == "breve"
