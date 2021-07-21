@@ -19,3 +19,13 @@ Catalectic_Iambic_Tetrameter_2,"[1.0, 2.0, 1.0, 2.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.
 Catalectic_Iambic_Tetrameter_3,"[2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0]","[Spondee, Tribrach, Dactyl, Iamb, Dactyl, Iamb]",latin
 Catalectic_Iambic_Tetrameter_4,"[1.0, 2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0]","[Iamb, Iamb, Spondee, Tribrach, Spondee, Iamb]",latin
 Catalectic_Iambic_Tetrameter_4,"[2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Spondee, Dactyl, Spondee, Iamb, Spondee, Iamb]",latin
+
+Catalectic_Trochaic_Tetrameter,"[2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 2.0]","[Trochee, Trochee, Trochee, Anapest, Trochee, Trochee, Trochee, Macron]",greek
+Catalectic_Trochaic_Tetrameter_2,"[2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0]","[Trochee, Spondee, Trochee, Anapest, Tribrach, Spondee, Iamb, Macron]",greek
+Catalectic_Trochaic_Tetrameter,"[2.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Trochee, Spondee, Spondee, Spondee, Spondee, Spondee, Trochee, Macron]",latin
+Catalectic_Trochaic_Tetrameter_2,"[2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Dactyl, Trochee, Dactyl, Spondee, Spondee, Spondee, Trochee, Macron]",latin
+Catalectic_Trochaic_Tetrameter_3,"[2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Dactyl, Spondee, Dactyl, Tribrach, Spondee, Proceleusmatic, Trochee, Macron]",latin
+
+Cretic_Tetrameter,"[2.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Amphimacer, Peon_IV, Peon_I, Amphimacer]",greek
+Cretic_Tetrameter_2,"[2.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Amphimacer, Peon_IV, Breve, Breve, Breve, Breve, Breve, Amphimacer]",greek
+Cretic_Tetrameter_3,"[2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 2.0]","[Peon_I, Peon_I, Trochee, Trochee, Amphimacer]",greek
