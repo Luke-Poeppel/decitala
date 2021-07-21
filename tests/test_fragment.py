@@ -14,8 +14,10 @@ from decitala.fragment import (
 	ProsodicMeter,
 	GeneralFragment,
 	FragmentEncoder,
-	FragmentDecoder
+	FragmentDecoder,
+	get_all_prosodic_meters
 )
+from decitala.utils import flatten
 
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
@@ -166,3 +168,9 @@ def test_latin_cretic_tetrameter():
 	assert list(ct2.ql_array()) == [1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0]
 	assert len(ct2.components) == 4
 	assert ct2.origin == "latin"
+
+def test_prosodic_meter_components():
+	all_prosodic_meters = get_all_prosodic_meters()
+	for f in all_prosodic_meters:
+		gen_ql = flatten([list(c.ql_array()) for c in f.components])
+		assert list(f.ql_array()) == gen_ql
