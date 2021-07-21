@@ -49,7 +49,7 @@ Little_Asclepiade,"[2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 
 Large_Asclepiade,"[2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Spondee, Choriamb, Choriamb, Dactyl, Trochee, Macron]",logaoedic
 Hendecasyllabic_Alcaic,"[2.0, 2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Macron, Trochee, Trochee, Dactyl, Trochee, Macron]",logaoedic
 Aristophanien,"[2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0]","[Dactyl, Trochee, Trochee]",logaoedic
-Aristophanien,"[2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 2.0]","[Dactyl, Trochee, Spondee]",logaoedic
+Aristophanien_2,"[2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 2.0]","[Dactyl, Trochee, Spondee]",logaoedic
 Saphic_Minor,"[2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0]","[Trochee, Trochee, Dactyl, Trochee, Trochee]",logaoedic
 Saphic_Minor_2,"[2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 2.0]","[Trochee, Spondee, Dactyl, Trochee, Spondee]",logaoedic
 Saphic_Minor_3,"[2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0]","[Trochee, Trochee, Choriamb, Dactyl, Trochee, Trochee]",logaoedic
