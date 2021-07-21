@@ -1,0 +1,10 @@
+name,ql_array,components,origin
+Dactylic_Hexameter,"[2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0]","[Dactyl, Dactyl, Dactyl, Dactyl, Dactyl, Spondee]",greek
+Dactylic_Hexameter,"[2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0]","[Dactyl, Dactyl, Dactyl, Dactyl, Dactyl, Spondee]",latin
+Dactylic_Hexameter_2,"[2.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0]","[Dactyl, Spondee, Dactyl, Spondee, Dactyl, Trochee]",greek
+Dactylic_Hexameter_2,"[2.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0]","[Dactyl, Spondee, Dactyl, Spondee, Dactyl, Trochee]",latin
+Dactylic_Hexameter_3,"[1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0]","[Iamb, Spondee, Tribrach, Dactyl, Dactyl, Trochee]",greek
+Dactylic_Hexameter_3,"[1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0]","[Iamb, Spondee, Tribrach, Dactyl, Dactyl, Trochee]",latin
+
+Catalectic_Anapestic_Tetrameter,"[1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0]","[Anapest, Anapest, Dactyl, Spondee, Anapest, Anapest, Anapest, Macron]",greek
+Catalectic_Anapestic_Tetrameter,"[1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0]","[Anapest, Anapest, Dactyl, Spondee, Proceleusmatic, Spondee, Anapest, Macron]",latin
