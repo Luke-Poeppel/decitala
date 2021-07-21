@@ -11,6 +11,7 @@ import natsort
 import os
 import string
 import unidecode
+import pandas as pd
 
 from music21 import converter
 from music21 import note
@@ -18,7 +19,7 @@ from music21 import note
 from decitala.database.corpora_models import (
 	GreekFootData,
 	DecitalaData,
-	ProsodicFragmentData,
+	ProsodicMeterData,
 	TranscriptionData,
 	SubcategoryData,
 	CategoryData
@@ -35,7 +36,7 @@ from decitala.hm import hm_utils
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Decitalas/"
 greek_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Greek_Metrics/"
-prosody_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Prosody/"
+prosodic_meters_path = os.path.dirname(os.path.dirname(here)) + "/corpora/Prosody/Meters/ProsodicMeters.csv"  # noqa
 
 oiseaux_de_nouvelle_caledonie = "/Users/lukepoeppel/Messiaen/Oiseaux_De_Nouvelle_Calédonie"
 ODNC_Database = os.path.dirname(os.path.dirname(here)) + "/databases/ODNC.db"
@@ -78,19 +79,15 @@ def make_corpora_database(echo=False):
 		)
 		session.add(greek_foot)
 
-	for this_dir in os.listdir(prosody_path):
-		if this_dir == "README.md":
-			continue
-		subdir = os.path.join(prosody_path, this_dir)
-		for this_file in os.listdir(subdir):
-			converted = converter.parse(os.path.join(subdir, this_file))
-			ql_array = json.dumps([x.quarterLength for x in converted.flat.getElementsByClass(note.Note)])
-			prosodic_fragment = ProsodicFragmentData(
-				name=unidecode.unidecode(this_file[:-4]),
-				source=unidecode.unidecode(this_dir),
-				ql_array=ql_array
-			)
-			session.add(prosodic_fragment)
+	prosodic_meters = pd.read_csv(prosodic_meters_path)
+	for i, row in prosodic_meters.iterrows():
+		prosodic_meter = ProsodicMeterData(
+			name=row["name"],
+			ql_array=row["ql_array"],
+			components=row["components"],
+			origin=row["origin"]
+		)
+		session.add(prosodic_meter)
 
 	session.commit()
 

@@ -9,7 +9,7 @@
 from .fragment import (
 	get_all_decitalas,
 	get_all_greek_feet,
-	get_all_prosodic_fragments
+	get_all_prosodic_meters
 )
 from .utils import (
 	augment,
@@ -261,8 +261,8 @@ class FragmentHashTable:
 				fragments = get_all_greek_feet()
 			elif this_dataset == "decitala":
 				fragments = get_all_decitalas()
-			elif this_dataset == "prosodic_fragment":
-				fragments = get_all_prosodic_fragments()
+			elif this_dataset == "prosodic_meter":
+				fragments = get_all_prosodic_meters()
 
 			for this_fragment in fragments:
 				generate_all_modifications(
@@ -311,7 +311,7 @@ class ProsodicFragmentHashTable(FragmentHashTable):
 	parameter set to ``["prosodic_fragment"]`` and automatically loads.
 	"""
 	def __init__(self):
-		super().__init__(datasets=["prosodic_fragment"])
+		super().__init__(datasets=["prosodic_meter"])
 		self.load()
 
 class AllCorporaHashTable(FragmentHashTable):
@@ -320,5 +320,5 @@ class AllCorporaHashTable(FragmentHashTable):
 	parameter set to all available datasets in the ``corpora`` directory and automatically loads.
 	"""
 	def __init__(self):
-		super().__init__(datasets=["greek_foot", "decitala", "prosodic_fragment"])
+		super().__init__(datasets=["greek_foot", "decitala", "prosodic_meter"])
 		self.load()

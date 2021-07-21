@@ -44,16 +44,17 @@ class GreekFootData(FRAGMENT_BASE):
 	name = Column(String)
 	ql_array = Column(String)
 
-class ProsodicFragmentData(FRAGMENT_BASE):
+class ProsodicMeterData(FRAGMENT_BASE):
 	"""
-	SQLAlchemy model representing a prosodic fragment from the encoded datasets (given in ``corpora``).
+	SQLAlchemy model representing a prosodic meter from the encoded datasets (given in ``corpora``).
 	"""
-	__tablename__ = "ProsodicFragmentData"
+	__tablename__ = "ProsodicMeterData"
 
 	id = Column(Integer, primary_key=True)
 	name = Column(String)
-	source = Column(String)
 	ql_array = Column(String)
+	components = Column(String)
+	origin = Column(String)
 
 ####################################################################################################
 # Transcriptions

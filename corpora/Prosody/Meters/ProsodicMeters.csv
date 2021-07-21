@@ -37,7 +37,7 @@ Cretic_Tetrameter_5,"[1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0
 Cretic_Tetrameter_6,"[2.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Ionic_Major, Peon_IV, Macron, Macron, Macron, Amphimacer]",latin
 
 Bacchiac_Tetrameter,"[1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0]","[Bacchius, Bacchius, Bacchius, Bacchius]",greek
-Bacchiac_Tetrameter,"[1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0]",[Bacchius, Peon_IV, Ionic_Minor, Bacchius]",latin
+Bacchiac_Tetrameter,"[1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0]","[Bacchius, Peon_IV, Ionic_Minor, Bacchius]",latin
 Bacchiac_Tetrameter_2,"[1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 2.0, 2.0]","[Peon_IV, Breve, Breve, Breve, Breve, Breve, Macron, Macron, Macron, Bacchius]",latin
 Bacchiac_Tetrameter_3,"[2.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0]","[Macron, Macron, Macron, Bacchius, Peon_II, Bacchius]",latin
 Bacchiac_Tetrameter_4,"[2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0]","[Macron, Breve, Breve, Breve, Breve, Bacchius, Bacchius, Bacchius]",latin

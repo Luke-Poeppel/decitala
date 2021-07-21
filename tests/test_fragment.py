@@ -11,7 +11,7 @@ from decitala.fragment import (
 	GreekFoot,
 	Breve,
 	Macron,
-	ProsodicFragment,
+	ProsodicMeter,
 	GeneralFragment,
 	FragmentEncoder,
 	FragmentDecoder
@@ -89,10 +89,6 @@ def test_all_greek_foot_names():
 		this_greek_foot = GreekFoot(new_name)
 		assert this_greek_foot.full_path == greek_path + "/" + this_file
 
-def test_prosody_misc():
-	asclepiad_minor = ProsodicFragment("Asclépiade_Mineur")
-	assert asclepiad_minor.source == "Misc"
-
 def test_get_by_id():
 	random_nums = [str(x) for x in [71, 23, 14, 91, 108, 44]]
 	for this_id in random_nums:
@@ -161,3 +157,12 @@ def test_breve():
 	assert m.name == "Breve"
 	assert list(m.ql_array()) == [1.0]
 	assert m.frag_type == "breve"
+
+def test_latin_cretic_tetrameter():
+	"""
+	Cretic_Tetrameter_2,"[1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0]","[Peon_IV, Amphimacer, Amphimacer, Amphimacer]",latin
+	"""
+	ct2 = ProsodicMeter(name="Cretic_Tetrameter_2", origin="latin")
+	assert list(ct2.ql_array()) == [1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0]
+	assert len(ct2.components) == 4
+	assert ct2.origin == "latin"
