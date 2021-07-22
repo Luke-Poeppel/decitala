@@ -94,14 +94,11 @@ def test_dijkstra_path_3(s4_fragments):
 	assert len(path_frags) == 1
 	assert path_frags[0].fragment == expected_fragment
 
-# def test_dijkstra_best_source_and_sink():
-	# p = path_finder(
-	# 	bach_fp,
-	# 	0,
-	# 	DecitalaHashTable(exact=True),
-	# 	enforce_earliest_start=True
-	# )
-	# from decitala.vis import annotate_score
-	# annotate_score(p, bach_fp, 0).show()
-
-# print(test_dijkstra_best_source_and_sink())
+def test_dijkstra_best_source_and_sink():
+	exact_bach_frags = rolling_hash_search(
+		filepath=bach_fp,
+		part_num=0,
+		table=DecitalaHashTable(exact=True),
+	)
+	source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=exact_bach_frags)
+	assert source == target
