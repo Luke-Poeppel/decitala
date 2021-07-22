@@ -178,7 +178,7 @@ def test_prosodic_meter_components():
 
 def test_prosodic_meter_query_unordered():
 	collection={GreekFoot("Ionic_Major"), GreekFoot("Amphimacer")}
-	assert prosodic_meter_query(collection=collection, allow_unordered=True) == [
+	assert prosodic_meter_query(collection=collection) == [
 		ProsodicMeter("Cretic_Tetrameter", origin="latin"),
 		ProsodicMeter("Cretic_Tetrameter_3", origin="latin"),
 		ProsodicMeter("Cretic_Tetrameter_5", origin="latin"),
