@@ -729,24 +729,16 @@ def get_all_prosodic_fragments():
 
 def prosodic_meter_query(
 		collection,
-		allow_unordered=False
 	):
 	"""
 	Function for returning all Prosodic Meters that contain the queried collection of
 	:obj:`fragment.GreekFoot` objects.
 
 	:param collection: an iterable collection of :obj:`fragment.GreekFoot` objects.
-	:param bool allow_unordered: whether to allow unordered components to be searched.
-									Default is ``False``.
 	"""
 	all_prosodic_meters = get_all_prosodic_meters()
 	res = []
 	for meter in all_prosodic_meters:
-		if not(allow_unordered):
-			# import pdb; pdb.set_trace()
-			if collection in meter.components:
-				res.append(meter)
-		else:
-			if all(x in set(meter.components) for x in collection):
-				res.append(meter)
+		if all(x in set(meter.components) for x in collection):
+			res.append(meter)
 	return res

@@ -184,14 +184,3 @@ def test_prosodic_meter_query_unordered():
 		ProsodicMeter("Cretic_Tetrameter_5", origin="latin"),
 		ProsodicMeter("Cretic_Tetrameter_6", origin="latin"),
 	]
-
-# def test_prosodic_meter_query_ordered():
-# 	collection=[GreekFoot("Ionic_Major"), GreekFoot("Amphimacer")]
-# 	expected = [
-# 		ProsodicMeter("Cretic_Tetrameter", origin="latin"),
-# 		ProsodicMeter("Cretic_Tetrameter_3", origin="latin"),
-# 		ProsodicMeter("Cretic_Tetrameter_5", origin="latin"),
-# 	]
-# 	assert prosodic_meter_query(collection=collection, allow_unordered=False) == expected
-
-# print(test_prosodic_meter_query_ordered())
