@@ -17,6 +17,7 @@ from more_itertools import consecutive_groups, windowed, powerset
 from scipy.linalg import norm
 from collections import Counter, OrderedDict
 
+from music21 import bar
 from music21 import converter
 from music21 import note
 from music21 import stream
@@ -694,6 +695,13 @@ def get_object_indices(
 	score = converter.parse(filepath)
 	part = score.parts[part_num]
 	stripped = part.stripTies(retainContainers=True)
+
+	# Remove repeat signs (easier to deal with onsets).
+	for m in stripped.getElementsByClass(stream.Measure):
+		for e in m.getElementsByClass(bar.Barline):
+			if type(e).__name__ == "Repeat":
+				m.remove(e)
+
 	if not measure_divider_mode:
 		data_out = []
 		for this_obj in stripped.recurse().stream().iter.notesAndRests:
