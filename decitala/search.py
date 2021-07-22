@@ -390,6 +390,7 @@ def path_finder(
 		split_dict=None,
 		slur_constraint=False,
 		enforce_earliest_start=False,
+		min_segment_length=None,
 		save_filepath=None,
 		verbose=False
 	):
@@ -409,6 +410,8 @@ def path_finder(
 						Default is ``"dijkstra"``.
 	:param bool slur_constraint: Whether to force slurred fragments to appear in the final path.
 								Only possible if `algorithm="floyd-warshall"`.
+	:param bool min_segment_length: the minimal length of to use :obj:`fragment.Segment` fragments.
+									Default is ``None``, i.e. segments are not used. 
 	:param str save_filepath: An optional path to a JSON file for saving search results. This file
 							can then be loaded with the :meth:`decitala.utils.loader`.
 	:param bool verbose: Whether to log messages. Default is ``False``.
