@@ -221,10 +221,7 @@ class GeneralFragment:
 		return hash(lil_repr)
 
 	def __eq__(self, other):
-		if self.__hash__() == other.__hash__():
-			return True
-		else:
-			return False
+		return self.__hash__() == other.__hash__()
 
 	@lru_cache(maxsize=None)
 	def ql_array(self, retrograde=False):
@@ -707,10 +704,16 @@ class ProsodicFragment(GeneralFragment):
 ####################################################################################################
 # Some simple queries for quick access.
 def get_all_greek_feet():
+	"""
+	Function for returning all Greek Feet in a list.
+	"""
 	all_greek_feet = session.query(GreekFootData)
 	return [GreekFoot(x.name) for x in all_greek_feet]
 
 def get_all_decitalas():
+	"""
+	Function for returning all Decitalas in a list.
+	"""
 	all_decitalas = session.query(DecitalaData)
 	return [Decitala(x.name) for x in all_decitalas]
 
@@ -723,3 +726,27 @@ def get_all_prosodic_fragments():
 	WILL BE DEPRECTATED! USE `get_all_prosodic_meters`.
 	"""
 	return get_all_prosodic_meters()
+
+def prosodic_meter_query(
+		collection,
+		allow_unordered=False
+	):
+	"""
+	Function for returning all Prosodic Meters that contain the queried collection of
+	:obj:`fragment.GreekFoot` objects.
+
+	:param collection: an iterable collection of :obj:`fragment.GreekFoot` objects.
+	:param bool allow_unordered: whether to allow unordered components to be searched.
+									Default is ``False``.
+	"""
+	all_prosodic_meters = get_all_prosodic_meters()
+	res = []
+	for meter in all_prosodic_meters:
+		if not(allow_unordered):
+			# import pdb; pdb.set_trace()
+			if collection in meter.components:
+				res.append(meter)
+		else:
+			if all(x in set(meter.components) for x in collection):
+				res.append(meter)
+	return res

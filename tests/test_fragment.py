@@ -15,7 +15,8 @@ from decitala.fragment import (
 	GeneralFragment,
 	FragmentEncoder,
 	FragmentDecoder,
-	get_all_prosodic_meters
+	get_all_prosodic_meters,
+	prosodic_meter_query
 )
 from decitala.utils import flatten
 
@@ -174,3 +175,23 @@ def test_prosodic_meter_components():
 	for f in all_prosodic_meters:
 		gen_ql = flatten([list(c.ql_array()) for c in f.components])
 		assert list(f.ql_array()) == gen_ql
+
+def test_prosodic_meter_query_unordered():
+	collection={GreekFoot("Ionic_Major"), GreekFoot("Amphimacer")}
+	assert prosodic_meter_query(collection=collection, allow_unordered=True) == [
+		ProsodicMeter("Cretic_Tetrameter", origin="latin"),
+		ProsodicMeter("Cretic_Tetrameter_3", origin="latin"),
+		ProsodicMeter("Cretic_Tetrameter_5", origin="latin"),
+		ProsodicMeter("Cretic_Tetrameter_6", origin="latin"),
+	]
+
+# def test_prosodic_meter_query_ordered():
+# 	collection=[GreekFoot("Ionic_Major"), GreekFoot("Amphimacer")]
+# 	expected = [
+# 		ProsodicMeter("Cretic_Tetrameter", origin="latin"),
+# 		ProsodicMeter("Cretic_Tetrameter_3", origin="latin"),
+# 		ProsodicMeter("Cretic_Tetrameter_5", origin="latin"),
+# 	]
+# 	assert prosodic_meter_query(collection=collection, allow_unordered=False) == expected
+
+# print(test_prosodic_meter_query_ordered())
