@@ -98,7 +98,14 @@ def dijkstra_best_source_and_sink(
 				return possible_source, possible_source, pred
 
 		# otherwise choose the longest source.
-		return max(sources, key=lambda x: x.fragment.num_onsets)
+		max_source = max(sources, key=lambda x: x.fragment.num_onsets)
+		dist, pred = dijkstra(
+			data,
+			graph,
+			max_source,
+			cost_function_class
+		)
+		return max_source, max_source, pred
 
 	best_path_cost = np.inf
 	best_source = None
