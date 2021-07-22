@@ -39,6 +39,7 @@ TRY_RETROGRADE = True
 ALLOW_MIXED_AUGMENTATION = False
 ALLOW_STRETCH_AUGMENTATION = True
 CUSTOM_OVERRIDES_DATASETS = False
+EXACT = False
 
 class HashTableException(Exception):
 	pass
@@ -111,7 +112,8 @@ def generate_all_modifications(
 		try_retrograde,
 		allow_stretch_augmentation,
 		allow_mixed_augmentation,
-		force_override=False
+		force_override=False,
+		exact=False
 	):
 	"""
 	Helper function for generating and storing all possible modifications of an input fragment.
@@ -127,9 +129,23 @@ def generate_all_modifications(
 	:param bool force_override: Whether to force the given fragment to override the
 								existing fragment in the table (if it exists).
 								Not yet supported.
+	:param bool exact: If set to ``True``, returns only the exact fragment in the the dictionary.
+						Default is ``False``.
 	"""
 	if allow_mixed_augmentation or force_override:
 		raise HashTableException("These options are not yet supported. Coming soon.")
+
+	if exact:
+		_single_factor_or_difference_augmentation(
+			fragment=fragment,
+			factor=1.0,
+			difference=0.0,
+			stretch_factor=1,
+			try_retrograde=False,
+			dict_in=dict_in,
+			mode="multiplicative"
+		)
+		return
 
 	for this_factor in factors:
 		_single_factor_or_difference_augmentation(
@@ -237,7 +253,8 @@ class FragmentHashTable:
 			allow_stretch_augmentation=ALLOW_STRETCH_AUGMENTATION,
 			allow_mixed_augmentation=ALLOW_MIXED_AUGMENTATION,
 			modification_hierarchy=MODIFICATION_HIERARCHY,
-			force_override=CUSTOM_OVERRIDES_DATASETS
+			force_override=CUSTOM_OVERRIDES_DATASETS,
+			exact=EXACT
 		):
 		"""
 		Function for loading the modifications. Allows the user to override the default attributes.
@@ -252,7 +269,8 @@ class FragmentHashTable:
 				try_retrograde=try_retrograde,
 				allow_stretch_augmentation=allow_stretch_augmentation,
 				allow_mixed_augmentation=allow_mixed_augmentation,
-				force_override=force_override
+				force_override=force_override,
+				exact=exact
 			)
 
 		# Process datasets
@@ -273,7 +291,8 @@ class FragmentHashTable:
 					try_retrograde=try_retrograde,
 					allow_stretch_augmentation=allow_stretch_augmentation,
 					allow_mixed_augmentation=allow_mixed_augmentation,
-					force_override=force_override
+					force_override=force_override,
+					exact=exact
 				)
 
 		self.loaded = True
@@ -283,9 +302,9 @@ class DecitalaHashTable(FragmentHashTable):
 	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``
 	parameter set to ``["decitala"]`` and automatically loads.
 	"""
-	def __init__(self):
+	def __init__(self, exact=False):
 		super().__init__(datasets=["decitala"])
-		self.load()
+		self.load(exact=exact)
 
 class GreekFootHashTable(FragmentHashTable):
 	"""
@@ -300,25 +319,28 @@ class GreekFootHashTable(FragmentHashTable):
 	>>> ght.load(try_retrograde=False, allow_stretch_augmentation=False)
 	>>> ght
 	<decitala.hash_table.FragmentHashTable 755 fragments>
+	>>> ght_exact = GreekFootHashTable(exact=True)
+	>>> ght_exact
+	<decitala.hash_table.FragmentHashTable 32 fragments>
 	"""
-	def __init__(self):
+	def __init__(self, exact=False):
 		super().__init__(datasets=["greek_foot"])
-		self.load()
+		self.load(exact=exact)
 
 class ProsodicMeterHashTable(FragmentHashTable):
 	"""
 	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``
 	parameter set to ``["prosodic_meter"]`` and automatically loads.
 	"""
-	def __init__(self):
+	def __init__(self, exact=False):
 		super().__init__(datasets=["prosodic_meter"])
-		self.load()
+		self.load(exact=exact)
 
 class AllCorporaHashTable(FragmentHashTable):
 	"""
 	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``
 	parameter set to all available datasets in the ``corpora`` directory and automatically loads.
 	"""
-	def __init__(self):
+	def __init__(self, exact=False):
 		super().__init__(datasets=["greek_foot", "decitala", "prosodic_meter"])
-		self.load()
+		self.load(exact=exact)

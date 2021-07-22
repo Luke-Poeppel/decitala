@@ -151,3 +151,7 @@ def test_stretch_augmentation():
 	found_2 = GFHT.data[tuple(nc_ex2_2)]
 	assert found_2["fragment"].name == "Iamb"
 	assert found_2["mod_hierarchy_val"] == 7 # Stretch augmentation
+
+def test_exact_decitala_hash_table():
+	DHT = DecitalaHashTable(exact=True)
+	assert len(DHT.data) == 119
