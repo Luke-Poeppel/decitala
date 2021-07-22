@@ -1,0 +1,57 @@
+name,ql_array,components,origin
+Dactylic_Hexameter,"[2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0]","[Dactyl, Dactyl, Dactyl, Dactyl, Dactyl, Spondee]",greek
+Dactylic_Hexameter,"[2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0]","[Dactyl, Dactyl, Dactyl, Dactyl, Dactyl, Spondee]",latin
+Dactylic_Hexameter_2,"[2.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0]","[Dactyl, Spondee, Dactyl, Spondee, Dactyl, Trochee]",greek
+Dactylic_Hexameter_2,"[2.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0]","[Dactyl, Spondee, Dactyl, Spondee, Dactyl, Trochee]",latin
+Dactylic_Hexameter_3,"[1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0]","[Iamb, Spondee, Tribrach, Dactyl, Dactyl, Trochee]",greek
+Dactylic_Hexameter_3,"[1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0]","[Iamb, Spondee, Tribrach, Dactyl, Dactyl, Trochee]",latin
+
+Catalectic_Anapestic_Tetrameter,"[1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0]","[Anapest, Anapest, Dactyl, Spondee, Anapest, Anapest, Anapest, Macron]",greek
+Catalectic_Anapestic_Tetrameter,"[1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0]","[Anapest, Anapest, Dactyl, Spondee, Proceleusmatic, Spondee, Anapest, Macron]",latin
+
+Iambic_Trimeter,"[1.0, 1.0, 2.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Anapest, Iamb, Dactyl, Iamb, Spondee, Iamb]",greek
+Iambic_Trimeter_2,"[1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0]","[Iamb, Tribrach, Spondee, Tribrach, Spondee, Iamb]",greek
+
+Catalectic_Iambic_Tetrameter,"[1.0, 1.0, 2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 2.0, 2.0]","[Anapest, Iamb, Spondee, Iamb, Iamb, Iamb, Iamb, Macron]",greek
+Catalectic_Iambic_Tetrameter_2,"[2.0, 2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0]","[Spondee, Iamb, Spondee, Tribrach, Tribrach, Tribrach, Iamb, Macron]",greek
+Catalectic_Iambic_Tetrameter,"[1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Tribrach, Spondee, Spondee, Spondee, Spondee, Iamb]",latin
+Catalectic_Iambic_Tetrameter_2,"[1.0, 2.0, 1.0, 2.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Iamb, Iamb, Iamb, Spondee, Spondee, Iamb]",latin
+Catalectic_Iambic_Tetrameter_3,"[2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0]","[Spondee, Tribrach, Dactyl, Iamb, Dactyl, Iamb]",latin
+Catalectic_Iambic_Tetrameter_4,"[1.0, 2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0]","[Iamb, Iamb, Spondee, Tribrach, Spondee, Iamb]",latin
+Catalectic_Iambic_Tetrameter_4,"[2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Spondee, Dactyl, Spondee, Iamb, Spondee, Iamb]",latin
+
+Catalectic_Trochaic_Tetrameter,"[2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 2.0]","[Trochee, Trochee, Trochee, Anapest, Trochee, Trochee, Trochee, Macron]",greek
+Catalectic_Trochaic_Tetrameter_2,"[2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0]","[Trochee, Spondee, Trochee, Anapest, Tribrach, Spondee, Iamb, Macron]",greek
+Catalectic_Trochaic_Tetrameter,"[2.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Trochee, Spondee, Spondee, Spondee, Spondee, Spondee, Trochee, Macron]",latin
+Catalectic_Trochaic_Tetrameter_2,"[2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Dactyl, Trochee, Dactyl, Spondee, Spondee, Spondee, Trochee, Macron]",latin
+Catalectic_Trochaic_Tetrameter_3,"[2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Dactyl, Spondee, Anapest, Tribrach, Spondee, Proceleusmatic, Trochee, Macron]",latin
+
+Cretic_Tetrameter,"[2.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Amphimacer, Peon_IV, Peon_I, Amphimacer]",greek
+Cretic_Tetrameter_2,"[2.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Amphimacer, Peon_IV, Breve, Breve, Breve, Breve, Breve, Amphimacer]",greek
+Cretic_Tetrameter_3,"[2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 2.0]","[Peon_I, Peon_I, Trochee, Trochee, Amphimacer]",greek
+Cretic_Tetrameter,"[2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Amphimacer, Amphimacer, Ionic_Major, Amphimacer]",latin
+Cretic_Tetrameter_2,"[1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0]","[Peon_IV, Amphimacer, Amphimacer, Amphimacer]",latin
+Cretic_Tetrameter_3,"[2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Macron, Macron, Macron, Peon_IV, Ionic_Major, Amphimacer]",latin
+Cretic_Tetrameter_4,"[2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Peon_I, Amphimacer, Macron, Macron, Macron, Amphimacer]",latin
+Cretic_Tetrameter_5,"[1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Peon_IV, Breve, Breve, Breve, Breve, Breve, Ionic_Major, Amphimacer]",latin
+Cretic_Tetrameter_6,"[2.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 1.0, 2.0]","[Ionic_Major, Peon_IV, Macron, Macron, Macron, Amphimacer]",latin
+
+Bacchiac_Tetrameter,"[1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0]","[Bacchius, Bacchius, Bacchius, Bacchius]",greek
+Bacchiac_Tetrameter,"[1.0, 2.0, 2.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0]","[Bacchius, Peon_IV, Ionic_Minor, Bacchius]",latin
+Bacchiac_Tetrameter_2,"[1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 1.0, 2.0, 2.0]","[Peon_IV, Breve, Breve, Breve, Breve, Breve, Macron, Macron, Macron, Bacchius]",latin
+Bacchiac_Tetrameter_3,"[2.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 1.0, 1.0, 1.0, 2.0, 2.0]","[Macron, Macron, Macron, Bacchius, Peon_II, Bacchius]",latin
+Bacchiac_Tetrameter_4,"[2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0]","[Macron, Breve, Breve, Breve, Breve, Bacchius, Bacchius, Bacchius]",latin
+
+Adonic,"[2.0, 1.0, 1.0, 2.0, 1.0]","[Dactyl, Trochee]",logaoedic
+Pherecratean,"[2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0]","[Spondee, Dactyl, Trochee]",logaoedic
+Glyconic,"[2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Spondee, Dactyl, Trochee, Macron]",logaoedic
+Little_Asclepiade,"[2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0]","[Spondee, Choriamb, Dactyl, Dactyl, Macron]",logaoedic
+Large_Asclepiade,"[2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Spondee, Choriamb, Choriamb, Dactyl, Trochee, Macron]",logaoedic
+Hendecasyllabic_Alcaic,"[2.0, 2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0]","[Macron, Trochee, Trochee, Dactyl, Trochee, Macron]",logaoedic
+Aristophanien,"[2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0]","[Dactyl, Trochee, Trochee]",logaoedic
+Aristophanien_2,"[2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 2.0]","[Dactyl, Trochee, Spondee]",logaoedic
+Saphic_Minor,"[2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0]","[Trochee, Trochee, Dactyl, Trochee, Trochee]",logaoedic
+Saphic_Minor_2,"[2.0, 1.0, 2.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 2.0]","[Trochee, Spondee, Dactyl, Trochee, Spondee]",logaoedic
+Saphic_Minor_3,"[2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0]","[Trochee, Trochee, Choriamb, Dactyl, Trochee, Trochee]",logaoedic
+Saphic_Major,"[2.0, 1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 2.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0]","[Trochee, Trochee, Choriamb, Dactyl, Trochee, Trochee]",logaoedic
+Decasyllabic_Alcaic,"[2.0, 1.0, 1.0, 2.0, 1.0, 1.0, 2.0, 1.0, 2.0, 1.0]","[Dactyl, Dactyl, Trochee, Trochee]",logaoedic

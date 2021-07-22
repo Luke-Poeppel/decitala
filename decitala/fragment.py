@@ -10,7 +10,6 @@
 import json
 import numpy as np
 import os
-import unidecode
 
 from collections import Counter
 from functools import lru_cache
@@ -22,7 +21,7 @@ from . import utils
 from .database.corpora_models import (
 	DecitalaData,
 	GreekFootData,
-	ProsodicFragmentData,
+	ProsodicMeterData,
 )
 from .database.db_utils import (
 	get_session,
@@ -222,10 +221,7 @@ class GeneralFragment:
 		return hash(lil_repr)
 
 	def __eq__(self, other):
-		if self.__hash__() == other.__hash__():
-			return True
-		else:
-			return False
+		return self.__hash__() == other.__hash__()
 
 	@lru_cache(maxsize=None)
 	def ql_array(self, retrograde=False):
@@ -623,45 +619,81 @@ class GreekFoot(GeneralFragment):
 		return f"<fragment.GreekFoot {self.name}>"
 
 class Breve(GeneralFragment):
+	"""
+	A :obj:`fragment.GeneralFragment` object representing a Breve.
+	"""
 	frag_type = "breve"
 
 	def __init__(self, **kwargs):
 		super().__init__(data=[1.0], name="Breve")
 
 class Macron(GeneralFragment):
+	"""
+	A :obj:`fragment.GeneralFragment` object representing a Macron.
+	"""
 	frag_type = "macron"
 
 	def __init__(self, **kwargs):
 		super().__init__(data=[2.0], name="Macron")
+
+class ProsodicMeter(GeneralFragment):
+	"""
+	>>> ct = ProsodicMeter("Cretic_Tetrameter", origin="greek")
+	>>> ct
+	<fragment.ProsodicMeter Cretic_Tetrameter Greek>
+	>>> ct.ql_array()
+	array([2., 1., 2., 1., 1., 1., 2., 2., 1., 1., 1., 2., 1., 2.])
+	>>> for f in ct.components:
+	... 	print(f)
+	<fragment.GreekFoot Amphimacer>
+	<fragment.GreekFoot Peon_IV>
+	<fragment.GreekFoot Peon_I>
+	<fragment.GreekFoot Amphimacer>
+	>>> ct.origin
+	'greek'
+	"""
+	frag_type = "prosodic_meter"
+
+	def __init__(self, name, origin=None, **kwargs):
+		if not origin:
+			match = session.query(ProsodicMeterData).filter(ProsodicMeterData.name == name).all()
+		else:
+			match = session.query(ProsodicMeterData).filter(
+				ProsodicMeterData.name == name,
+				ProsodicMeterData.origin == origin,
+				).first()
+		if not match:
+			raise ProsodicException(f"No matches were found for name {name}.")
+
+		super().__init__(data=json.loads(match.ql_array), name=match.name)
+
+		component_strings = match.components[1:-1].split(", ")
+		component_fragments = []
+		for s in component_strings:
+			if s == "Macron":
+				component_fragments.append(Macron())
+			elif s == "Breve":
+				component_fragments.append(Breve())
+			else:
+				component_fragments.append(GreekFoot(s))
+
+		self.components = component_fragments
+		self.origin = match.origin
+
+	def __repr__(self):
+		return f"<fragment.ProsodicMeter {self.name} {self.origin.capitalize()}>"
 
 class ProsodicFragment(GeneralFragment):
 	"""
 	Class that stores prosodic data. The class reads from the fragments_db file in the databases
 	directory (see the ProsodicFragments table).
 
-	# >>> asclepiad_m = ProsodicFragment("Asclépiade_Mineur")
-	# >>> asclepiad_m
-	# <fragment.ProsodicFragment Asclépiade_Mineur>
+	NOTE: This class be deprecated eventually. Currently wraps `ProsodicMeter`.
 	"""
 	frag_type = "prosodic_fragment"
 
 	def __init__(self, name, **kwargs):
-		if name.endswith(".xml"):
-			name = name[:-4]
-
-		name = unidecode.unidecode(name)
-		match = session.query(ProsodicFragmentData).filter(ProsodicFragmentData.name == name).first()
-		if not match:
-			raise ProsodicException(f"No matches were found for name {name}.")
-
-		match_name = unidecode.unidecode(match.name) + ".xml"
-		full_path = "/".join([prosody_path, match.source, match_name])
-		name = match_name[:-4]
-
-		self.source = match.source
-		self.full_path = full_path
-
-		super().__init__(data=full_path, name=name)
+		return ProsodicMeter(name=name)
 
 	def __repr__(self):
 		return f"<fragment.ProsodicFragment {self.name}>"
@@ -672,13 +704,41 @@ class ProsodicFragment(GeneralFragment):
 ####################################################################################################
 # Some simple queries for quick access.
 def get_all_greek_feet():
+	"""
+	Function for returning all Greek Feet in a list.
+	"""
 	all_greek_feet = session.query(GreekFootData)
 	return [GreekFoot(x.name) for x in all_greek_feet]
 
 def get_all_decitalas():
+	"""
+	Function for returning all Decitalas in a list.
+	"""
 	all_decitalas = session.query(DecitalaData)
 	return [Decitala(x.name) for x in all_decitalas]
 
+def get_all_prosodic_meters():
+	all_prosodic_meters = session.query(ProsodicMeterData)
+	return [ProsodicMeter(x.name, x.origin) for x in all_prosodic_meters]
+
 def get_all_prosodic_fragments():
-	all_prosodic_fragments = session.query(ProsodicFragmentData)
-	return [ProsodicFragment(x.name) for x in all_prosodic_fragments]
+	"""
+	WILL BE DEPRECTATED! USE `get_all_prosodic_meters`.
+	"""
+	return get_all_prosodic_meters()
+
+def prosodic_meter_query(
+		collection,
+	):
+	"""
+	Function for returning all Prosodic Meters that contain the queried collection of
+	:obj:`fragment.GreekFoot` objects.
+
+	:param collection: an iterable collection of :obj:`fragment.GreekFoot` objects.
+	"""
+	all_prosodic_meters = get_all_prosodic_meters()
+	res = []
+	for meter in all_prosodic_meters:
+		if all(x in set(meter.components) for x in collection):
+			res.append(meter)
+	return res

@@ -9,11 +9,16 @@ from decitala.fragment import (
 	Decitala,
 	DecitalaException,
 	GreekFoot,
-	ProsodicFragment,
+	Breve,
+	Macron,
+	ProsodicMeter,
 	GeneralFragment,
 	FragmentEncoder,
-	FragmentDecoder
+	FragmentDecoder,
+	get_all_prosodic_meters,
+	prosodic_meter_query
 )
+from decitala.utils import flatten
 
 here = os.path.abspath(os.path.dirname(__file__))
 decitala_path = os.path.dirname(here) + "/corpora/Decitalas"
@@ -87,10 +92,6 @@ def test_all_greek_foot_names():
 		this_greek_foot = GreekFoot(new_name)
 		assert this_greek_foot.full_path == greek_path + "/" + this_file
 
-def test_prosody_misc():
-	asclepiad_minor = ProsodicFragment("Asclépiade_Mineur")
-	assert asclepiad_minor.source == "Misc"
-
 def test_get_by_id():
 	random_nums = [str(x) for x in [71, 23, 14, 91, 108, 44]]
 	for this_id in random_nums:
@@ -147,3 +148,39 @@ class TestMorrisSymmetryClass():
 	def test_class_two(self): # XY
 		iamb = GreekFoot("Iamb")
 		assert iamb.morris_symmetry_class() == 2
+
+def test_macron():
+	m = Macron()
+	assert m.name == "Macron"
+	assert list(m.ql_array()) == [2.0]
+	assert m.frag_type == "macron"
+
+def test_breve():
+	m = Breve()
+	assert m.name == "Breve"
+	assert list(m.ql_array()) == [1.0]
+	assert m.frag_type == "breve"
+
+def test_latin_cretic_tetrameter():
+	"""
+	Cretic_Tetrameter_2,"[1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0]","[Peon_IV, Amphimacer, Amphimacer, Amphimacer]",latin
+	"""
+	ct2 = ProsodicMeter(name="Cretic_Tetrameter_2", origin="latin")
+	assert list(ct2.ql_array()) == [1.0, 1.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0, 2.0, 1.0, 2.0]
+	assert len(ct2.components) == 4
+	assert ct2.origin == "latin"
+
+def test_prosodic_meter_components():
+	all_prosodic_meters = get_all_prosodic_meters()
+	for f in all_prosodic_meters:
+		gen_ql = flatten([list(c.ql_array()) for c in f.components])
+		assert list(f.ql_array()) == gen_ql
+
+def test_prosodic_meter_query_unordered():
+	collection={GreekFoot("Ionic_Major"), GreekFoot("Amphimacer")}
+	assert prosodic_meter_query(collection=collection) == [
+		ProsodicMeter("Cretic_Tetrameter", origin="latin"),
+		ProsodicMeter("Cretic_Tetrameter_3", origin="latin"),
+		ProsodicMeter("Cretic_Tetrameter_5", origin="latin"),
+		ProsodicMeter("Cretic_Tetrameter_6", origin="latin"),
+	]

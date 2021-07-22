@@ -9,7 +9,7 @@
 from .fragment import (
 	get_all_decitalas,
 	get_all_greek_feet,
-	get_all_prosodic_fragments
+	get_all_prosodic_meters
 )
 from .utils import (
 	augment,
@@ -190,7 +190,7 @@ class FragmentHashTable:
 	<decitala.hash_table.FragmentHashTable 0 fragments>
 	>>> fht.load()
 	>>> fht
-	<decitala.hash_table.FragmentHashTable 2941 fragments>
+	<decitala.hash_table.FragmentHashTable 2761 fragments>
 	>>> fht.datasets
 	['greek_foot']
 	>>> fht.custom_fragments
@@ -261,8 +261,8 @@ class FragmentHashTable:
 				fragments = get_all_greek_feet()
 			elif this_dataset == "decitala":
 				fragments = get_all_decitalas()
-			elif this_dataset == "prosodic_fragment":
-				fragments = get_all_prosodic_fragments()
+			elif this_dataset == "prosodic_meter":
+				fragments = get_all_prosodic_meters()
 
 			for this_fragment in fragments:
 				generate_all_modifications(
@@ -296,22 +296,22 @@ class GreekFootHashTable(FragmentHashTable):
 
 	>>> ght = GreekFootHashTable()
 	>>> ght
-	<decitala.hash_table.FragmentHashTable 2897 fragments>
+	<decitala.hash_table.FragmentHashTable 2717 fragments>
 	>>> ght.load(try_retrograde=False, allow_stretch_augmentation=False)
 	>>> ght
-	<decitala.hash_table.FragmentHashTable 779 fragments>
+	<decitala.hash_table.FragmentHashTable 755 fragments>
 	"""
 	def __init__(self):
 		super().__init__(datasets=["greek_foot"])
 		self.load()
 
-class ProsodicFragmentHashTable(FragmentHashTable):
+class ProsodicMeterHashTable(FragmentHashTable):
 	"""
 	This class subclasses :obj:`decitala.hash_table.FragmentHashTable` with the ``datasets``
-	parameter set to ``["prosodic_fragment"]`` and automatically loads.
+	parameter set to ``["prosodic_meter"]`` and automatically loads.
 	"""
 	def __init__(self):
-		super().__init__(datasets=["prosodic_fragment"])
+		super().__init__(datasets=["prosodic_meter"])
 		self.load()
 
 class AllCorporaHashTable(FragmentHashTable):
@@ -320,5 +320,5 @@ class AllCorporaHashTable(FragmentHashTable):
 	parameter set to all available datasets in the ``corpora`` directory and automatically loads.
 	"""
 	def __init__(self):
-		super().__init__(datasets=["greek_foot", "decitala", "prosodic_fragment"])
+		super().__init__(datasets=["greek_foot", "decitala", "prosodic_meter"])
 		self.load()
