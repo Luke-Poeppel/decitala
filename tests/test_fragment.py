@@ -16,7 +16,8 @@ from decitala.fragment import (
 	FragmentEncoder,
 	FragmentDecoder,
 	get_all_prosodic_meters,
-	prosodic_meter_query
+	prosodic_meter_query,
+	Segment
 )
 from decitala.utils import flatten
 
@@ -184,3 +185,9 @@ def test_prosodic_meter_query_unordered():
 		ProsodicMeter("Cretic_Tetrameter_5", origin="latin"),
 		ProsodicMeter("Cretic_Tetrameter_6", origin="latin"),
 	]
+
+def test_segment():
+	s1 = Segment(ql=0.25, count=138)
+	assert list(s1.ql_array()) == [s1.ql] * s1.count
+	assert s1.ql == 0.25
+	assert s1.count = 138

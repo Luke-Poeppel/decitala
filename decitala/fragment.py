@@ -704,13 +704,19 @@ class ProsodicFragment(GeneralFragment):
 class Segment(GeneralFragment):
 	"""
 	Class that represents a series of equal-duration tones. Used for clustering
-	in path-finding.
+	in path-finding. This isn't really useful for general use –– better to use the
+	:obj:`fragment.GeneralFragment` class.
 	"""
 	frag_type = "segment"
 
-	def __init__(self, ql, num, **kwargs):
-		ql_array = [ql] * num
-		super().__init__(data=ql_array, name=f"Segment-{num}")
+	def __init__(self, ql, count, **kwargs):
+		ql_array = [ql] * count
+		super().__init__(data=ql_array, name=f"Segment-{count}")
+		self.ql = ql
+		self.count = count
+
+	def __repr__(self):
+		return f"<fragment.Segment ql={self.ql} count={self.count}>"
 
 ####################################################################################################
 # Some simple queries for quick access.
