@@ -190,4 +190,4 @@ def test_segment():
 	s1 = Segment(ql=0.25, count=138)
 	assert list(s1.ql_array()) == [s1.ql] * s1.count
 	assert s1.ql == 0.25
-	assert s1.count = 138
+	assert s1.count == 138

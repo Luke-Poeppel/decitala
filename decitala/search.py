@@ -14,6 +14,7 @@ import json
 import numpy as np
 
 from dataclasses import dataclass
+from itertools import groupby
 
 from .utils import (
 	successive_ratio_array,
@@ -26,7 +27,8 @@ from .utils import (
 )
 from .fragment import (
 	FragmentEncoder,
-	GeneralFragment
+	GeneralFragment,
+	Segment
 )
 from .hash_table import (
 	FragmentHashTable
@@ -277,7 +279,8 @@ def rolling_hash_search(
 		windows=list(range(2, 19)),
 		allow_subdivision=False,
 		allow_contiguous_summation=False,
-		min_segment_length=None
+		min_segment_length=None,
+		sbc=0
 	):
 	"""
 	Function for searching a score for rhythmic fragments and modifications of rhythmic fragments.
@@ -291,30 +294,37 @@ def rolling_hash_search(
 	:param bool allow_subdivision: Whether to check for subdivisions of a frame in the search.
 	:param bool min_segment_length: the minimal length of to use :obj:`fragment.Segment` fragments.
 									Default is ``None``, i.e. segments are not used. 
+	:param int sbc: If ``min_segment_length`` is not ``None``, set the ``sbc`` ('segment boundary
+					check') to search for fragments using edges (of length ``sbc``) in the search.
 	"""
 	object_list = get_object_indices(filepath=filepath, part_num=part_num, ignore_grace=True)
 
 	if type(table) == FragmentHashTable:  # sensitive to inheritance.
 		table.load()
 
+	# TODO: can't this be done in the search itself? If the window is too big, stop.
+	# that way you don't have to doo all of the O(n)...
 	max_dataset_length = len(max(table.data, key=lambda x: len(x)))
 	max_window_size = min(max_dataset_length, len(object_list))
 	closest_window = min(windows, key=lambda x: abs(x - max_window_size))
 	index_of_closest = windows.index(closest_window)
 	windows = windows[0:index_of_closest + 1]
 
-	# if min_segment_length:
-	# TODO:
-	# Using groupby, cluster equal duration values (>=min_segment_length).
-	# Ensure roll_window doesn't skip over...
-	# tmp_grouper = []
-	# fn = lambda x: -1 in x[1]
-
 	fragment_id = 0
 	fragments_found = []
 	for this_win in windows:
-		# The segment-ignoring can be implemented via the fn parameter to `roll_window!`
-		frames = roll_window(array=object_list, window_size=this_win)
+		if min_segment_length:
+			frames = []
+			grouped = groupby(object_list, key=lambda x: x.quarterLength)
+			groups = [list(x) for x in grouped]
+			for elem in groups:
+				if len(elem) >= min_segment_length:
+					first_val = elem[0][0].quarterLength
+					frames.append(Segment(ql=first_val, count=len(elem)))
+
+			frames = roll_window(array=object_list, window_size=this_win, fn=lambda x: type(x) != Segment)
+		else:
+			frames = roll_window(array=object_list, window_size=this_win)
 		for this_frame in frames:
 			frame_ql_array = frame_to_ql_array(this_frame)
 			if len(frame_ql_array) < 2:
