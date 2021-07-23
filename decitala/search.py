@@ -276,7 +276,8 @@ def rolling_hash_search(
 		table,
 		windows=list(range(2, 19)),
 		allow_subdivision=False,
-		allow_contiguous_summation=False
+		allow_contiguous_summation=False,
+		min_segment_length=None
 	):
 	"""
 	Function for searching a score for rhythmic fragments and modifications of rhythmic fragments.
@@ -288,6 +289,8 @@ def rolling_hash_search(
 	 													object or one of its subclasses.
 	:param list windows: The allowed window sizes for search. Default is all integers in range 2-19.
 	:param bool allow_subdivision: Whether to check for subdivisions of a frame in the search.
+	:param bool min_segment_length: the minimal length of to use :obj:`fragment.Segment` fragments.
+									Default is ``None``, i.e. segments are not used. 
 	"""
 	object_list = get_object_indices(filepath=filepath, part_num=part_num, ignore_grace=True)
 
@@ -303,6 +306,7 @@ def rolling_hash_search(
 	fragment_id = 0
 	fragments_found = []
 	for this_win in windows:
+		# The segment-ignoring can be implemented via the fn parameter to `roll_window!`
 		frames = roll_window(array=object_list, window_size=this_win)
 		for this_frame in frames:
 			frame_ql_array = frame_to_ql_array(this_frame)
@@ -422,7 +426,8 @@ def path_finder(
 		table=table,
 		windows=windows,
 		allow_subdivision=allow_subdivision,
-		allow_contiguous_summation=allow_contiguous_summation
+		allow_contiguous_summation=allow_contiguous_summation,
+		min_segment_length=min_segment_length
 	)
 	if not extractions:
 		return None
