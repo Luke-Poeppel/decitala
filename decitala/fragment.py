@@ -701,6 +701,17 @@ class ProsodicFragment(GeneralFragment):
 # class TheorieKarnatique(GeneralFragment):
 # 	pass
 
+class Segment(GeneralFragment):
+	"""
+	Class that represents a series of equal-duration tones. Used for clustering
+	in path-finding.
+	"""
+	frag_type = "segment"
+
+	def __init__(self, ql, num, **kwargs):
+		ql_array = [ql] * num
+		super().__init__(data=ql_array, name=f"Segment-{num}")
+
 ####################################################################################################
 # Some simple queries for quick access.
 def get_all_greek_feet():

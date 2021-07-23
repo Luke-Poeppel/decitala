@@ -303,6 +303,13 @@ def rolling_hash_search(
 	index_of_closest = windows.index(closest_window)
 	windows = windows[0:index_of_closest + 1]
 
+	# if min_segment_length:
+	# TODO:
+	# Using groupby, cluster equal duration values (>=min_segment_length).
+	# Ensure roll_window doesn't skip over...
+	# tmp_grouper = []
+	# fn = lambda x: -1 in x[1]
+
 	fragment_id = 0
 	fragments_found = []
 	for this_win in windows:
