@@ -10,7 +10,7 @@ The changelog format is based on [Keep a Changelog](https://keepachangelog.com/e
 - Added ditrochee to `default_split_dict`.
 
 #### Fixed
-- Issues #227: SP plotting utils were incorrectly returning `plt.show`;
+- Issues #227: SP plotting utils were incorrectly returning `plt.show`.
 
 ## [v1.0.0](https://github.com/Luke-Poeppel/decitala/tree/v1.0.0) July 19, 2021
 First stable release.

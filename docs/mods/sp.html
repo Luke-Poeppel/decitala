@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>sp &mdash; decitala 1.0.0 documentation</title>
+  <title>sp &mdash; decitala 1.1.0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.1.0
               </div>
             
           
@@ -184,6 +184,36 @@
 <p>Signal processing (sp)</p>
 <div class="section" id="module-decitala.sp.sp_utils">
 <span id="sp-utils"></span><h2>sp_utils<a class="headerlink" href="#module-decitala.sp.sp_utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="decitala.sp.sp_utils.resample_">
+<code class="sig-prename descclassname"><span class="pre">decitala.sp.sp_utils.</span></code><code class="sig-name descname"><span class="pre">resample_</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_rate</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/sp/sp_utils.html#resample_"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.sp.sp_utils.resample_" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for resampling an array (with fs <code class="docutils literal notranslate"><span class="pre">source_rate</span></code>) to <code class="docutils literal notranslate"><span class="pre">target_rate</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samples</strong> – an array of samples.</p></li>
+<li><p><strong>source_rate</strong> (<em>int</em>) – the sample rate of the source samples.</p></li>
+<li><p><strong>target_rate</strong> (<em>int</em>) – the desired sample rate of the resampled array.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.sp.sp_utils.plot_audio_file">
+<code class="sig-prename descclassname"><span class="pre">decitala.sp.sp_utils.</span></code><code class="sig-name descname"><span class="pre">plot_audio_file</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/sp/sp_utils.html#plot_audio_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.sp.sp_utils.plot_audio_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for plotting an audio file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – a path to an audio file.</p></li>
+<li><p><strong>title</strong> (<em>str</em>) – optional title for the plot. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>save_path</strong> (<em>str</em>) – optional path to save the plot. Default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt id="decitala.sp.sp_utils.plot_spectrogram">
 <code class="sig-prename descclassname"><span class="pre">decitala.sp.sp_utils.</span></code><code class="sig-name descname"><span class="pre">plot_spectrogram</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/sp/sp_utils.html#plot_spectrogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.sp.sp_utils.plot_spectrogram" title="Permalink to this definition">¶</a></dt>

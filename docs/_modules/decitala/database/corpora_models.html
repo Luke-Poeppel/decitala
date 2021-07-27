@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.database.corpora_models &mdash; decitala 1.0.0 documentation</title>
+  <title>decitala.database.corpora_models &mdash; decitala 1.1.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.1.0
               </div>
             
           
@@ -219,16 +219,17 @@
 	<span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
 	<span class="n">ql_array</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ProsodicFragmentData"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.corpora_models.ProsodicFragmentData">[docs]</a><span class="k">class</span> <span class="nc">ProsodicFragmentData</span><span class="p">(</span><span class="n">FRAGMENT_BASE</span><span class="p">):</span>
+<div class="viewcode-block" id="ProsodicMeterData"><a class="viewcode-back" href="../../../mods/database.html#decitala.database.corpora_models.ProsodicMeterData">[docs]</a><span class="k">class</span> <span class="nc">ProsodicMeterData</span><span class="p">(</span><span class="n">FRAGMENT_BASE</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">	SQLAlchemy model representing a prosodic fragment from the encoded datasets (given in ``corpora``).</span>
+<span class="sd">	SQLAlchemy model representing a prosodic meter from the encoded datasets (given in ``corpora``).</span>
 <span class="sd">	&quot;&quot;&quot;</span>
-	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;ProsodicFragmentData&quot;</span>
+	<span class="n">__tablename__</span> <span class="o">=</span> <span class="s2">&quot;ProsodicMeterData&quot;</span>
 
 	<span class="nb">id</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 	<span class="n">name</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
-	<span class="n">source</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
-	<span class="n">ql_array</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span></div>
+	<span class="n">ql_array</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
+	<span class="n">components</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span>
+	<span class="n">origin</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">String</span><span class="p">)</span></div>
 
 <span class="c1">####################################################################################################</span>
 <span class="c1"># Transcriptions</span>

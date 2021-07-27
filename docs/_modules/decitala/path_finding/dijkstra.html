@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.path_finding.dijkstra &mdash; decitala 1.0.0 documentation</title>
+  <title>decitala.path_finding.dijkstra &mdash; decitala 1.1.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.1.0
               </div>
             
           
@@ -273,7 +273,14 @@
 				<span class="k">return</span> <span class="n">possible_source</span><span class="p">,</span> <span class="n">possible_source</span><span class="p">,</span> <span class="n">pred</span>
 
 		<span class="c1"># otherwise choose the longest source.</span>
-		<span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span><span class="p">)</span>
+		<span class="n">max_source</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">fragment</span><span class="o">.</span><span class="n">num_onsets</span><span class="p">)</span>
+		<span class="n">dist</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">dijkstra</span><span class="p">(</span>
+			<span class="n">data</span><span class="p">,</span>
+			<span class="n">graph</span><span class="p">,</span>
+			<span class="n">max_source</span><span class="p">,</span>
+			<span class="n">cost_function_class</span>
+		<span class="p">)</span>
+		<span class="k">return</span> <span class="n">max_source</span><span class="p">,</span> <span class="n">max_source</span><span class="p">,</span> <span class="n">pred</span>
 
 	<span class="n">best_path_cost</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 	<span class="n">best_source</span> <span class="o">=</span> <span class="kc">None</span>
