@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>fragment &mdash; decitala 1.0.0 documentation</title>
+  <title>fragment &mdash; decitala 1.1.0 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.1.0
               </div>
             
           
@@ -688,12 +688,35 @@ directory (see the Greek_Metrics table).</p>
 <dt id="decitala.fragment.Breve">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.fragment.</span></code><code class="sig-name descname"><span class="pre">Breve</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#Breve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.Breve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.GeneralFragment</span></code></a></p>
+<p>A <code class="xref py py-obj docutils literal notranslate"><span class="pre">fragment.GeneralFragment</span></code> object representing a Breve.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="decitala.fragment.Macron">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.fragment.</span></code><code class="sig-name descname"><span class="pre">Macron</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#Macron"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.Macron" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.GeneralFragment</span></code></a></p>
+<p>A <code class="xref py py-obj docutils literal notranslate"><span class="pre">fragment.GeneralFragment</span></code> object representing a Macron.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="decitala.fragment.ProsodicMeter">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">decitala.fragment.</span></code><code class="sig-name descname"><span class="pre">ProsodicMeter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#ProsodicMeter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.ProsodicMeter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.GeneralFragment</span></code></a></p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ct</span> <span class="o">=</span> <span class="n">ProsodicMeter</span><span class="p">(</span><span class="s2">&quot;Cretic_Tetrameter&quot;</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s2">&quot;greek&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ct</span>
+<span class="go">&lt;fragment.ProsodicMeter Cretic_Tetrameter Greek&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ct</span><span class="o">.</span><span class="n">ql_array</span><span class="p">()</span>
+<span class="go">array([2., 1., 2., 1., 1., 1., 2., 2., 1., 1., 1., 2., 1., 2.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">ct</span><span class="o">.</span><span class="n">components</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="go">&lt;fragment.GreekFoot Amphimacer&gt;</span>
+<span class="go">&lt;fragment.GreekFoot Peon_IV&gt;</span>
+<span class="go">&lt;fragment.GreekFoot Peon_I&gt;</span>
+<span class="go">&lt;fragment.GreekFoot Amphimacer&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ct</span><span class="o">.</span><span class="n">origin</span>
+<span class="go">&#39;greek&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py class">
@@ -702,9 +725,37 @@ directory (see the Greek_Metrics table).</p>
 <dd><p>Bases: <a class="reference internal" href="#decitala.fragment.GeneralFragment" title="decitala.fragment.GeneralFragment"><code class="xref py py-class docutils literal notranslate"><span class="pre">decitala.fragment.GeneralFragment</span></code></a></p>
 <p>Class that stores prosodic data. The class reads from the fragments_db file in the databases
 directory (see the ProsodicFragments table).</p>
-<p># &gt;&gt;&gt; asclepiad_m = ProsodicFragment(“Asclépiade_Mineur”)
-# &gt;&gt;&gt; asclepiad_m
-# &lt;fragment.ProsodicFragment Asclépiade_Mineur&gt;</p>
+<p>NOTE: This class be deprecated eventually. Currently wraps <cite>ProsodicMeter</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.fragment.get_all_greek_feet">
+<code class="sig-prename descclassname"><span class="pre">decitala.fragment.</span></code><code class="sig-name descname"><span class="pre">get_all_greek_feet</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#get_all_greek_feet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.get_all_greek_feet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for returning all Greek Feet in a list.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.fragment.get_all_decitalas">
+<code class="sig-prename descclassname"><span class="pre">decitala.fragment.</span></code><code class="sig-name descname"><span class="pre">get_all_decitalas</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#get_all_decitalas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.get_all_decitalas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for returning all Decitalas in a list.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.fragment.get_all_prosodic_fragments">
+<code class="sig-prename descclassname"><span class="pre">decitala.fragment.</span></code><code class="sig-name descname"><span class="pre">get_all_prosodic_fragments</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#get_all_prosodic_fragments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.get_all_prosodic_fragments" title="Permalink to this definition">¶</a></dt>
+<dd><p>WILL BE DEPRECTATED! USE <cite>get_all_prosodic_meters</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="decitala.fragment.prosodic_meter_query">
+<code class="sig-prename descclassname"><span class="pre">decitala.fragment.</span></code><code class="sig-name descname"><span class="pre">prosodic_meter_query</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/decitala/fragment.html#prosodic_meter_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#decitala.fragment.prosodic_meter_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for returning all Prosodic Meters that contain the queried collection of
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">fragment.GreekFoot</span></code> objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>collection</strong> – an iterable collection of <code class="xref py py-obj docutils literal notranslate"><span class="pre">fragment.GreekFoot</span></code> objects.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

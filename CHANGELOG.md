@@ -3,9 +3,14 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v1.0.1](https://github.com/Luke-Poeppel/decitala/tree/v1.0.1) ???
+## [v1.1.0](https://github.com/Luke-Poeppel/decitala/tree/v1.1.0) July 27, 2021
+#### Added
+- Added prosodic meters CSV file to the `corpora/prosody` directory. These encodings map to the new `ProsodicMeter` object.
+- Added `exact` parameter to `FragmentHashTable` –– this allows you to more easily create exact-match hash tables for the various corpora.
+- Added ditrochee to `default_split_dict`.
+
 #### Fixed
-- Issues #227: SP plotting utils were incorrectly returning `plt.show`;
+- Issues #227: SP plotting utils were incorrectly returning `plt.show`.
 
 ## [v1.0.0](https://github.com/Luke-Poeppel/decitala/tree/v1.0.0) July 19, 2021
 First stable release.

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.fragment &mdash; decitala 1.0.0 documentation</title>
+  <title>decitala.fragment &mdash; decitala 1.1.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.1.0
               </div>
             
           
@@ -185,7 +185,6 @@
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">unidecode</span>
 
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
@@ -197,7 +196,7 @@
 <span class="kn">from</span> <span class="nn">.database.corpora_models</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">DecitalaData</span><span class="p">,</span>
 	<span class="n">GreekFootData</span><span class="p">,</span>
-	<span class="n">ProsodicFragmentData</span><span class="p">,</span>
+	<span class="n">ProsodicMeterData</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.database.db_utils</span> <span class="kn">import</span> <span class="p">(</span>
 	<span class="n">get_session</span><span class="p">,</span>
@@ -397,10 +396,7 @@
 		<span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="n">lil_repr</span><span class="p">)</span>
 
 	<span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">():</span>
-			<span class="k">return</span> <span class="kc">True</span>
-		<span class="k">else</span><span class="p">:</span>
-			<span class="k">return</span> <span class="kc">False</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span>
 
 <div class="viewcode-block" id="GeneralFragment.ql_array"><a class="viewcode-back" href="../../mods/fragment.html#decitala.fragment.GeneralFragment.ql_array">[docs]</a>	<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 	<span class="k">def</span> <span class="nf">ql_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retrograde</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -798,45 +794,81 @@
 		<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;fragment.GreekFoot </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 <div class="viewcode-block" id="Breve"><a class="viewcode-back" href="../../mods/fragment.html#decitala.fragment.Breve">[docs]</a><span class="k">class</span> <span class="nc">Breve</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A :obj:`fragment.GeneralFragment` object representing a Breve.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">frag_type</span> <span class="o">=</span> <span class="s2">&quot;breve&quot;</span>
 
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mf">1.0</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Breve&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Macron"><a class="viewcode-back" href="../../mods/fragment.html#decitala.fragment.Macron">[docs]</a><span class="k">class</span> <span class="nc">Macron</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	A :obj:`fragment.GeneralFragment` object representing a Macron.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">frag_type</span> <span class="o">=</span> <span class="s2">&quot;macron&quot;</span>
 
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mf">2.0</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Macron&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ProsodicMeter"><a class="viewcode-back" href="../../mods/fragment.html#decitala.fragment.ProsodicMeter">[docs]</a><span class="k">class</span> <span class="nc">ProsodicMeter</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	&gt;&gt;&gt; ct = ProsodicMeter(&quot;Cretic_Tetrameter&quot;, origin=&quot;greek&quot;)</span>
+<span class="sd">	&gt;&gt;&gt; ct</span>
+<span class="sd">	&lt;fragment.ProsodicMeter Cretic_Tetrameter Greek&gt;</span>
+<span class="sd">	&gt;&gt;&gt; ct.ql_array()</span>
+<span class="sd">	array([2., 1., 2., 1., 1., 1., 2., 2., 1., 1., 1., 2., 1., 2.])</span>
+<span class="sd">	&gt;&gt;&gt; for f in ct.components:</span>
+<span class="sd">	... 	print(f)</span>
+<span class="sd">	&lt;fragment.GreekFoot Amphimacer&gt;</span>
+<span class="sd">	&lt;fragment.GreekFoot Peon_IV&gt;</span>
+<span class="sd">	&lt;fragment.GreekFoot Peon_I&gt;</span>
+<span class="sd">	&lt;fragment.GreekFoot Amphimacer&gt;</span>
+<span class="sd">	&gt;&gt;&gt; ct.origin</span>
+<span class="sd">	&#39;greek&#39;</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">frag_type</span> <span class="o">=</span> <span class="s2">&quot;prosodic_meter&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">origin</span><span class="p">:</span>
+			<span class="n">match</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ProsodicMeterData</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">ProsodicMeterData</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">match</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ProsodicMeterData</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+				<span class="n">ProsodicMeterData</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">,</span>
+				<span class="n">ProsodicMeterData</span><span class="o">.</span><span class="n">origin</span> <span class="o">==</span> <span class="n">origin</span><span class="p">,</span>
+				<span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="n">ProsodicException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No matches were found for name </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">ql_array</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="n">match</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+		<span class="n">component_strings</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">)</span>
+		<span class="n">component_fragments</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">component_strings</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="s2">&quot;Macron&quot;</span><span class="p">:</span>
+				<span class="n">component_fragments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Macron</span><span class="p">())</span>
+			<span class="k">elif</span> <span class="n">s</span> <span class="o">==</span> <span class="s2">&quot;Breve&quot;</span><span class="p">:</span>
+				<span class="n">component_fragments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Breve</span><span class="p">())</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">component_fragments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">GreekFoot</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">components</span> <span class="o">=</span> <span class="n">component_fragments</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">origin</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">origin</span>
+
+	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;fragment.ProsodicMeter </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
 
 <div class="viewcode-block" id="ProsodicFragment"><a class="viewcode-back" href="../../mods/fragment.html#decitala.fragment.ProsodicFragment">[docs]</a><span class="k">class</span> <span class="nc">ProsodicFragment</span><span class="p">(</span><span class="n">GeneralFragment</span><span class="p">):</span>
 	<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">	Class that stores prosodic data. The class reads from the fragments_db file in the databases</span>
 <span class="sd">	directory (see the ProsodicFragments table).</span>
 
-<span class="sd">	# &gt;&gt;&gt; asclepiad_m = ProsodicFragment(&quot;Asclépiade_Mineur&quot;)</span>
-<span class="sd">	# &gt;&gt;&gt; asclepiad_m</span>
-<span class="sd">	# &lt;fragment.ProsodicFragment Asclépiade_Mineur&gt;</span>
+<span class="sd">	NOTE: This class be deprecated eventually. Currently wraps `ProsodicMeter`.</span>
 <span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">frag_type</span> <span class="o">=</span> <span class="s2">&quot;prosodic_fragment&quot;</span>
 
 	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-		<span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.xml&quot;</span><span class="p">):</span>
-			<span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
-
-		<span class="n">name</span> <span class="o">=</span> <span class="n">unidecode</span><span class="o">.</span><span class="n">unidecode</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-		<span class="n">match</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ProsodicFragmentData</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">ProsodicFragmentData</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
-		<span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
-			<span class="k">raise</span> <span class="n">ProsodicException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No matches were found for name </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-
-		<span class="n">match_name</span> <span class="o">=</span> <span class="n">unidecode</span><span class="o">.</span><span class="n">unidecode</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.xml&quot;</span>
-		<span class="n">full_path</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">prosody_path</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">match_name</span><span class="p">])</span>
-		<span class="n">name</span> <span class="o">=</span> <span class="n">match_name</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
-
-		<span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">source</span>
-		<span class="bp">self</span><span class="o">.</span><span class="n">full_path</span> <span class="o">=</span> <span class="n">full_path</span>
-
-		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">full_path</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">ProsodicMeter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
 	<span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 		<span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;fragment.ProsodicFragment </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&gt;&quot;</span></div>
@@ -846,17 +878,45 @@
 
 <span class="c1">####################################################################################################</span>
 <span class="c1"># Some simple queries for quick access.</span>
-<span class="k">def</span> <span class="nf">get_all_greek_feet</span><span class="p">():</span>
+<div class="viewcode-block" id="get_all_greek_feet"><a class="viewcode-back" href="../../mods/fragment.html#decitala.fragment.get_all_greek_feet">[docs]</a><span class="k">def</span> <span class="nf">get_all_greek_feet</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for returning all Greek Feet in a list.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">all_greek_feet</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">GreekFootData</span><span class="p">)</span>
-	<span class="k">return</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_greek_feet</span><span class="p">]</span>
+	<span class="k">return</span> <span class="p">[</span><span class="n">GreekFoot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_greek_feet</span><span class="p">]</span></div>
 
-<span class="k">def</span> <span class="nf">get_all_decitalas</span><span class="p">():</span>
+<div class="viewcode-block" id="get_all_decitalas"><a class="viewcode-back" href="../../mods/fragment.html#decitala.fragment.get_all_decitalas">[docs]</a><span class="k">def</span> <span class="nf">get_all_decitalas</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for returning all Decitalas in a list.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">all_decitalas</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DecitalaData</span><span class="p">)</span>
-	<span class="k">return</span> <span class="p">[</span><span class="n">Decitala</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_decitalas</span><span class="p">]</span>
+	<span class="k">return</span> <span class="p">[</span><span class="n">Decitala</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_decitalas</span><span class="p">]</span></div>
 
-<span class="k">def</span> <span class="nf">get_all_prosodic_fragments</span><span class="p">():</span>
-	<span class="n">all_prosodic_fragments</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ProsodicFragmentData</span><span class="p">)</span>
-	<span class="k">return</span> <span class="p">[</span><span class="n">ProsodicFragment</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_prosodic_fragments</span><span class="p">]</span>
+<span class="k">def</span> <span class="nf">get_all_prosodic_meters</span><span class="p">():</span>
+	<span class="n">all_prosodic_meters</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">ProsodicMeterData</span><span class="p">)</span>
+	<span class="k">return</span> <span class="p">[</span><span class="n">ProsodicMeter</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">all_prosodic_meters</span><span class="p">]</span>
+
+<div class="viewcode-block" id="get_all_prosodic_fragments"><a class="viewcode-back" href="../../mods/fragment.html#decitala.fragment.get_all_prosodic_fragments">[docs]</a><span class="k">def</span> <span class="nf">get_all_prosodic_fragments</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	WILL BE DEPRECTATED! USE `get_all_prosodic_meters`.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="n">get_all_prosodic_meters</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="prosodic_meter_query"><a class="viewcode-back" href="../../mods/fragment.html#decitala.fragment.prosodic_meter_query">[docs]</a><span class="k">def</span> <span class="nf">prosodic_meter_query</span><span class="p">(</span>
+		<span class="n">collection</span><span class="p">,</span>
+	<span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for returning all Prosodic Meters that contain the queried collection of</span>
+<span class="sd">	:obj:`fragment.GreekFoot` objects.</span>
+
+<span class="sd">	:param collection: an iterable collection of :obj:`fragment.GreekFoot` objects.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">all_prosodic_meters</span> <span class="o">=</span> <span class="n">get_all_prosodic_meters</span><span class="p">()</span>
+	<span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="k">for</span> <span class="n">meter</span> <span class="ow">in</span> <span class="n">all_prosodic_meters</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">components</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">):</span>
+			<span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">meter</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">res</span></div>
 </pre></div>
 
            </div>

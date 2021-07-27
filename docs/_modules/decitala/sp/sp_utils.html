@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.sp.sp_utils &mdash; decitala 1.0.0 documentation</title>
+  <title>decitala.sp.sp_utils &mdash; decitala 1.1.0 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.1.0
               </div>
             
           
@@ -193,12 +193,26 @@
 
 <span class="n">SAMPLE_RATE</span> <span class="o">=</span> <span class="mi">44100</span>
 
-<span class="k">def</span> <span class="nf">resample_</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">source_rate</span><span class="p">,</span> <span class="n">target_rate</span><span class="p">):</span>
+<div class="viewcode-block" id="resample_"><a class="viewcode-back" href="../../../mods/sp.html#decitala.sp.sp_utils.resample_">[docs]</a><span class="k">def</span> <span class="nf">resample_</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">source_rate</span><span class="p">,</span> <span class="n">target_rate</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for resampling an array (with fs ``source_rate``) to ``target_rate``.</span>
+
+<span class="sd">	:param samples: an array of samples.</span>
+<span class="sd">	:param int source_rate: the sample rate of the source samples.</span>
+<span class="sd">	:param int target_rate: the desired sample rate of the resampled array.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">resample_factor</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">target_rate</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">source_rate</span><span class="p">)</span>
 	<span class="n">resampled</span> <span class="o">=</span> <span class="n">resample</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="o">*</span> <span class="n">resample_factor</span><span class="p">))</span>
-	<span class="k">return</span> <span class="n">resampled</span>
+	<span class="k">return</span> <span class="n">resampled</span></div>
 
-<span class="k">def</span> <span class="nf">plot_audio_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="plot_audio_file"><a class="viewcode-back" href="../../../mods/sp.html#decitala.sp.sp_utils.plot_audio_file">[docs]</a><span class="k">def</span> <span class="nf">plot_audio_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function for plotting an audio file.</span>
+
+<span class="sd">	:param str filepath: a path to an audio file.</span>
+<span class="sd">	:param str title: optional title for the plot. Default is ``None``.</span>
+<span class="sd">	:param str save_path: optional path to save the plot. Default is ``None``.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
 	<span class="n">samples</span><span class="p">,</span> <span class="n">fs</span> <span class="o">=</span> <span class="n">librosa</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
 	<span class="n">samples</span> <span class="o">=</span> <span class="n">resample_</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">source_rate</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">target_rate</span><span class="o">=</span><span class="n">SAMPLE_RATE</span><span class="p">)</span>
 
@@ -211,9 +225,7 @@
 	<span class="k">if</span> <span class="n">save_path</span><span class="p">:</span>
 		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">350</span><span class="p">)</span>
 
-	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="c1"># plot_audio_file(scarlet_tanager)</span>
+	<span class="k">return</span> <span class="n">plt</span></div>
 
 <div class="viewcode-block" id="plot_spectrogram"><a class="viewcode-back" href="../../../mods/sp.html#decitala.sp.sp_utils.plot_spectrogram">[docs]</a><span class="k">def</span> <span class="nf">plot_spectrogram</span><span class="p">(</span>
 		<span class="n">filepath</span><span class="p">,</span>
@@ -249,7 +261,7 @@
 	<span class="k">if</span> <span class="n">save_path</span><span class="p">:</span>
 		<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">350</span><span class="p">)</span>
 
-	<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+	<span class="k">return</span> <span class="n">plt</span></div>
 </pre></div>
 
            </div>
