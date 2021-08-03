@@ -169,8 +169,8 @@ def roll_window(array, window_size, fn=None):
 
 	:param array: a list, tuple, numpy array, etc.
 	:param int window_size: size of the window
-	:param lambda fn: a function evaluating a bool; will only iterate over elements satifying the
-						function.
+	:param lambda fn: a function evaluating a bool; will only iterate over elements satifying a
+						condition.
 	:return: A rolling windows of array, each of length `window_size`.
 	:rtype: numpy.vstack
 
@@ -181,12 +181,9 @@ def roll_window(array, window_size, fn=None):
 	('Monteverdi', 'Messiaen', 'Mahler')
 	('Messiaen', 'Mahler', 'MacDowell')
 	('Mahler', 'MacDowell', 'Massenet')
-	>>> # This function also allows the use of a function input for filtering.
-	>>> # Say we wanted to iterate over the elements of the following collection that have
-	>>> # 1s in the set.
-	>>> cseg_data = [[0, {1, -1}], [4, {1}], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
-	>>> fn = lambda x: 1 in x[1]
-	>>> for this_frame in roll_window(cseg_data, 3, fn):
+	>>> contour_extrema = [[0, {1, -1}], [4, {1}], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
+	>>> max_check = lambda x: 1 in x[1]
+	>>> for this_frame in roll_window(contour_extrema, window_size=3, fn=max_check):
 	... 	print(this_frame)
 	([0, {1, -1}], [4, {1}], [5, {1}])
 	([4, {1}], [5, {1}], [5, {1}])

@@ -31,11 +31,13 @@ from .hm import (
 	contour,
 	molt,
 	hm_utils,
-	schultz
+	schultz,
+	contour_utils
 )
 
 ALL_MODULES = [
 	contour,
+	contour_utils,
 	database,
 	fragment,
 	utils,

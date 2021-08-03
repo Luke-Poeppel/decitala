@@ -14,7 +14,7 @@ from itertools import groupby
 from .schultz import spc
 from .contour_utils import (
 	_get_initial_extrema,
-	_track_extrema,
+	_recheck_extrema,
 	_pitch_contour
 )
 
@@ -207,9 +207,9 @@ def _morris_reduce(contour):
 	True
 	"""
 	# Reiterate over maxima.
-	_track_extrema(contour=contour, mode="max")
+	_recheck_extrema(contour=contour, mode="max")
 	# Reiterate over minima
-	_track_extrema(contour=contour, mode="min")
+	_recheck_extrema(contour=contour, mode="min")
 
 	cluster_ranges = []
 	index_range_of_contour = range(len(contour))

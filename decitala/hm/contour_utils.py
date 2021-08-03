@@ -109,25 +109,34 @@ def _get_initial_extrema(contour):
 	out.append([contour[-1], {-1, 1}])  # Maxima by definition.
 	return out
 
-def _track_extrema(contour, mode):
+def _recheck_extrema(contour, mode):
+	"""
+	Recall that the data are contour elements (integers) and their extrema trackers (a set
+	holding -1, 1, or nothing). After a level of reduction, a contour element may or may not
+	still be an extrema. This function re-iterates over the windows and updates the
+	extrema data.
+
+	If iterating over maxima to check, use ``mode='max'``, otherwise ``mode='min'``.
+
+	>>> post_reduction = [[2, {-1, 1}], [1, {1}], [3, {1}], [2, {-1, 1}]]
+	>>> _recheck_extrema(post_reduction, mode="max")
+	>>> post_reduction
+	[[2, {1, -1}], [1, set()], [3, {1}], [2, {1, -1}]]
+	"""
 	if mode == "max":
 		check = lambda x: 1 in x[1]
 	else:
 		check = lambda x: -1 in x[1]
 
 	for i, this_window in enumerate(roll_window(array=contour, window_size=3, fn=check)):
-		extrema_tracker = this_window[1][1]
-		if not(extrema_tracker):
+		mid_elem_extrema = this_window[1][1]
+		if not(mid_elem_extrema):  # element is not an extrema.
 			continue
-		elif None in this_window:
+		elif None in this_window:  # aren't enough elements for complete frame.
 			continue
-		else:
-			# After level of reduction, the extrema might *say* it's an extrema, but it isn't anymore!
-			# So if it's no longer an extrema, remove it.
-			if _center_of_window_is_extremum(window=this_window, mode=mode):
-				pass
+
+		if not(_center_of_window_is_extremum(window=this_window, mode=mode)):
+			if mode == "max":
+				mid_elem_extrema.remove(1)
 			else:
-				if mode == "max":
-					extrema_tracker.remove(1)
-				else:
-					extrema_tracker.remove(-1)
+				mid_elem_extrema.remove(-1)

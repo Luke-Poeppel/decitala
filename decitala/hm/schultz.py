@@ -18,10 +18,9 @@ from collections import Counter
 
 from .contour_utils import (
 	_get_initial_extrema,
-	_track_extrema,
+	_recheck_extrema,
 	_pitch_contour
 )
-
 from ..utils import roll_window
 
 class SchultzException(Exception):
@@ -68,9 +67,9 @@ def _schultz_extrema_check(contour):
 	Steps 6-9.
 	"""
 	# Reiterate over maxima.
-	_track_extrema(contour=contour, mode="max")
+	_recheck_extrema(contour=contour, mode="max")
 	# Reiterate over minima
-	_track_extrema(contour=contour, mode="min")
+	_recheck_extrema(contour=contour, mode="min")
 
 	# Get clusters of maxima and minima.
 	maxima = [(i, x) for (i, x) in enumerate(contour) if 1 in x[1]]
