@@ -272,4 +272,16 @@ def prime_contour(contour):
 	return (pitch_contour(prime_contour), depth)
 
 def schultz_prime_contour(contour):
+	"""
+	Implementation of Schultz's (2008) modification of Morris' contour-reduction algorithm.
+
+	:param contour: A pitch contour (iterable).
+	:return: the Schultz Prime Contour (SPC) of the given contour, along with the depth of the
+			reduction.
+	:rtype: tuple
+
+	>>> alouette_5 = [2, 5, 3, 1, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+	>>> spc(alouette_5)
+	(array([1, 2, 0]), 3)
+	"""
 	return spc(contour)
