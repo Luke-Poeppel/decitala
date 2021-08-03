@@ -83,6 +83,8 @@ def test_alouette_9_schultz():
 	schultz_contour = schultz.spc(alouette_9)
 	assert list(schultz_contour[0]) == expected
 
+print(test_alouette_9_schultz())
+
 # def test_long_schultz_contour():
 # 	c = [6, 1, 4, 4, 7, 0, 9, 8, 8, 1, 7, 3, 5, 0, 6, 1, 1, 0, 7, 2, 7, 6]
 # 	print(contour.schultz_prime_contour(c))

@@ -66,75 +66,41 @@ def _schultz_extrema_check(contour):
 	"""
 	Steps 6-9.
 	"""
-	# Reiterate over maxima.
+	# Reiterate over maxima/minima
+	# Look at docs in contour_utils if confused! No more than a safety rail.
 	_recheck_extrema(contour=contour, mode="max")
-	# Reiterate over minima
 	_recheck_extrema(contour=contour, mode="min")
-
-	# Get clusters of maxima and minima.
-	maxima = [(i, x) for (i, x) in enumerate(contour) if 1 in x[1]]
-	minima = [(i, x) for (i, x) in enumerate(contour) if -1 in x[1]]
-
-	maxima_grouped = groupby(maxima, lambda x: x[1][0])
-	maxima_indices = []
-	for _, index in maxima_grouped:
-		maxima_indices.append(list(index))
-	maxima_indices = list(filter(lambda x: len(x) > 1, maxima_indices))
-
-	minima_grouped = groupby(minima, lambda x: x[1][0])
-	minima_indices = []
-	for _, index in minima_grouped:
-		minima_indices.append(list(index))
-	minima_indices = list(filter(lambda x: len(x) > 1, minima_indices))
 
 	# Step 6/7 "unless": check if any of the clusters start or end with the actual contour elems.
 	# in those cases, remove flags from all except those starts or ends.
-	for max_grouping in maxima_indices:
-		# Check if both first; if so, continues to next iteration.
-		if max_grouping[0][0] == 0 and max_grouping[-1][0] == len(contour):
+
+	# Find clusters of maxima and minima.
+	maxima = [(i, x) for (i, x) in enumerate(contour) if 1 in x[1]]
+	maxima_grouped = groupby(maxima, lambda x: x[1][0])
+	maxima_groups = [list(val) for _, val in maxima_grouped]
+	maxima_groups = [x for x in maxima_groups if len(x) > 1]
+	for max_grouping in maxima_groups:
+		if max_grouping[0][0] == 0 or max_grouping[-1][0] == len(contour) - 1:
 			for elem in max_grouping:
 				grouped_elem = contour[elem[0]]
-				if elem[0] != 0 and elem[0] != len(contour) - 1:
-					grouped_elem[1].remove(1)
-			continue
-		elif max_grouping[0][0] == 0:
-			for elem in max_grouping:
-				grouped_elem = contour[elem[0]]
-				if elem[0] != 0:
-					grouped_elem[1].remove(1)
-		elif max_grouping[-1][0] == len(contour) - 1:  # 0-indexed.
-			for elem in max_grouping:
-				grouped_elem = contour[elem[0]]
-				if elem[0] != len(contour) - 1:
+				if elem[0] != 0 or elem[0] != len(contour):
 					grouped_elem[1].remove(1)
 
-	for min_grouping in minima_indices:
-		# Check if both first; if so, continues to next iteration.
-		if min_grouping[0][0] == 0 and min_grouping[-1][0] == len(contour):
+	minima = [(i, x) for (i, x) in enumerate(contour) if -1 in x[1]]
+	minima_grouped = groupby(minima, lambda x: x[1][0])
+	minima_groups = [list(val) for _, val in minima_grouped]
+	minima_groups = [x for x in minima_groups if len(x) > 1]
+	for min_grouping in minima_groups:
+		if min_grouping[0][0] == 0 or min_grouping[-1][0] == len(contour) - 1:
 			for elem in min_grouping:
 				grouped_elem = contour[elem[0]]
 				if elem[0] != 0 and elem[0] != len(contour) - 1:
 					grouped_elem[1].remove(-1)
-			continue
-		elif min_grouping[0][0] == 0:
-			for elem in min_grouping:
-				grouped_elem = contour[elem[0]]
-				if elem[0] != 0:
-					grouped_elem[1].remove(-1)
-		elif min_grouping[-1][0] == len(contour) - 1:  # 0-indexed.
-			for elem in min_grouping:
-				grouped_elem = contour[elem[0]]
-				if elem[0] != len(contour) - 1:
-					grouped_elem[1].remove(-1)
-
-	# Filter again...
-	maxima_indices = list(filter(lambda x: len(x) > 1, maxima_indices))
-	minima_indices = list(filter(lambda x: len(x) > 1, minima_indices))
 
 	# Step 8 and 9: find strings of equal and adjacent extrema; delete all but one of them.
 	# UNLESS: they have an intervening extrema, i.e. between any two.
 	# Group by both the element and the stored extrema (now correct, after the above check).
-	for max_grouping in maxima_indices:
+	for max_grouping in maxima_groups:
 		if not(_window_has_intervening_extrema(max_grouping, contour=contour, mode="max")):
 			for elem in max_grouping[1:]:  # Remove flag from all but one.
 				# Unsure about this try-except...
@@ -143,7 +109,7 @@ def _schultz_extrema_check(contour):
 				except KeyError:
 					continue
 
-	for min_grouping in minima_indices:
+	for min_grouping in minima_groups:
 		if not(_window_has_intervening_extrema(min_grouping, contour=contour, mode="min")):
 			for elem in min_grouping[1:]:  # Remove flag from all but one.
 				# Unsure about this try-except...
@@ -392,11 +358,10 @@ def spc(contour):
 		return (_pitch_contour(contour), depth)
 
 	prime_contour = _get_initial_extrema(contour)
-
 	if all(x[1] for x in prime_contour):
-		pass  # Proceed directly to Step 6.
+		pass  # Proceed directly to Step 6. Morris (1993) stops at this stage.
 	else:
-		# Steps 4 & 5 (delete unflagged values and increment).
+		# Steps 4 & 5 (delete unflagged values and increment depth).
 		prime_contour = [x for x in prime_contour if x[1]]
 		depth += 1
 
