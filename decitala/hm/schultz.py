@@ -80,53 +80,39 @@ def _schultz_extrema_check(contour):
 	_recheck_extrema(contour=contour, mode="max")
 	_recheck_extrema(contour=contour, mode="min")
 
-	# Step 6. For each cluster of maxima, flag all unless:
-	# (1) one of the pitches in the string is the first or last element -> flag only the first/last.
-	# (2) both the first and last elements are in the string -> flag only the first and last.
-	maxima = [(i, x) for (i, x) in enumerate(contour) if 1 in x[1]]
-	maxima_grouped = groupby(maxima, lambda x: x[1][0])
-	maxima_groups = [list(val) for _, val in maxima_grouped]
-	maxima_groups = [x for x in maxima_groups if len(x) > 1]
-	for max_grouping in maxima_groups:
-		if max_grouping[0][0] == 0 or max_grouping[-1][0] == len(contour) - 1:
-			for elem in max_grouping:
-				if elem[0] not in {0, len(contour) - 1}:
-					grouped_elem = contour[elem[0]]
-					grouped_elem[1].remove(1)
+	def adjacency_and_intervening_checks(contour, mode):
+		if mode == "max":
+			extrema_elem = 1
 		else:
-			for elem in max_grouping:
-				grouped_elem = contour[elem[0]]
-				grouped_elem[1].add(1)
+			extrema_elem = -1
 
-	# Step 7. For each cluster of minima, flag all unless:
-	# (1) one of the pitches in the string is the first or last element -> flag only the first/last.
-	# (2) both the first and last elements are in the string -> flag only the first and last.
-	minima = [(i, x) for (i, x) in enumerate(contour) if -1 in x[1]]
-	minima_grouped = groupby(minima, lambda x: x[1][0])
-	minima_groups = [list(val) for _, val in minima_grouped]
-	minima_groups = [x for x in minima_groups if len(x) > 1]
-	for min_grouping in minima_groups:
-		if min_grouping[0][0] == 0 or min_grouping[-1][0] == len(contour) - 1:
-			for elem in min_grouping:
-				if elem[0] not in {0, len(contour) - 1}:
+		# Step 6/7. For each cluster of maxima/minima, flag all unless:
+		# (1) one of the pitches in the string is the first or last element -> flag only the first/last.
+		# (2) both the first and last elements are in the string -> flag only the first and last.
+		extrema = [(i, x) for (i, x) in enumerate(contour) if extrema_elem in x[1]]
+		extrema_grouped = groupby(extrema, lambda x: x[1][0])
+		extrema_groups = [list(val) for _, val in extrema_grouped]
+		extrema_groups = [x for x in extrema_groups if len(x) > 1]
+		for max_grouping in extrema_groups:
+			if max_grouping[0][0] == 0 or max_grouping[-1][0] == len(contour) - 1:
+				for elem in max_grouping:
+					if elem[0] not in {0, len(contour) - 1}:
+						grouped_elem = contour[elem[0]]
+						grouped_elem[1].remove(extrema_elem)
+			else:
+				for elem in max_grouping:
 					grouped_elem = contour[elem[0]]
-					grouped_elem[1].remove(-1)
-		else:
-			for elem in min_grouping:
-				grouped_elem = contour[elem[0]]
-				grouped_elem[1].add(-1)
+					grouped_elem[1].add(extrema_elem)
 
-	# Step 8. Iterate again over maxima. If cluster has no intervening minima, remove
-	# the flag from all but one. (Say 1st).
-	for max_grouping in maxima_groups:
-		if not(_window_has_intervening_extrema(max_grouping, contour=contour, mode="max")):
-			for elem in max_grouping[1:]:  # Remove flag from all but one.
-				elem[1][1].remove(1)
+		# Step 8/9. Iterate again over maxima/minima. If cluster has no intervening extremum, remove
+		# the flag from all but one. (Say 1st).
+		for grouping in extrema_groups:
+			if not(_window_has_intervening_extrema(grouping, contour=contour, mode=mode)):
+				for elem in grouping[1:]:  # Remove flag from all but one.
+					elem[1][1].remove(extrema_elem)
 
-	for min_grouping in minima_groups:
-		if not(_window_has_intervening_extrema(min_grouping, contour=contour, mode="min")):
-			for elem in min_grouping[1:]:  # Remove flag from all but one.
-				elem[1][1].remove(-1)
+	adjacency_and_intervening_checks(contour, mode="max")
+	adjacency_and_intervening_checks(contour, mode="min")
 
 def _schultz_get_closest_extrema(
 		contour,
