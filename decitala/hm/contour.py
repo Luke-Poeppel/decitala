@@ -7,7 +7,6 @@
 # Location: Kent, 2021
 ####################################################################################################
 import copy
-import numpy as np
 
 from itertools import groupby
 
@@ -72,10 +71,10 @@ def normalize_pitch_content(data, midi_start=60):
 	:rtype: numpy.array
 
 	>>> normalize_pitch_content(data=[58, 60, 62], midi_start=60)
-	array([60, 62, 64])
+	[60, 62, 64]
 	"""
 	diff = data[0] - midi_start
-	return np.array([x - diff for x in data])
+	return [x - diff for x in data]
 
 def uds_contour(data):
 	"""
@@ -88,7 +87,7 @@ def uds_contour(data):
 
 	>>> midis = [47, 42, 45, 51, 51, 61, 58]
 	>>> uds_contour(midis)
-	array([ 0, -1,  1,  1,  0,  1, -1])
+	[0, -1, 1, 1, 0, 1, -1]
 	"""
 	out = [0]
 	i = 1
@@ -105,7 +104,7 @@ def uds_contour(data):
 
 		i += 1
 
-	return np.array(out)
+	return out
 
 def pitch_contour(pitch_content, as_str=False):
 	"""
@@ -122,7 +121,7 @@ def pitch_contour(pitch_content, as_str=False):
 
 	>>> pitch_content_1 = [(80,), (91,), (78,), (85,)]
 	>>> pitch_contour(pitch_content_1)
-	array([1, 3, 0, 2])
+	[1, 3, 0, 2]
 	>>> pitch_content_2 = [80, 84, 84]
 	>>> pitch_contour(pitch_content_2, as_str=True)
 	'<0 1 1>'
@@ -239,10 +238,10 @@ def prime_contour(contour):
 
 	>>> contour_a = [0, 1]
 	>>> prime_contour(contour_a)
-	(array([0, 1]), 0)
+	([0, 1], 0)
 	>>> contour_b = [0, 4, 3, 2, 5, 5, 1]
 	>>> prime_contour(contour_b)[0]
-	array([0, 2, 1])
+	[0, 2, 1]
 	"""
 	depth = 0
 
@@ -284,6 +283,6 @@ def schultz_prime_contour(contour):
 
 	>>> alouette_5 = [2, 5, 3, 1, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 	>>> spc(alouette_5)
-	(array([1, 2, 0]), 3)
+	([1, 2, 0], 3)
 	"""
 	return spc(contour)

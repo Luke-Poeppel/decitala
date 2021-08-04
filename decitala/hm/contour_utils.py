@@ -11,7 +11,6 @@ After refactoring the Schultz calculations, there were some circular import issu
 be removed at some point.
 """
 import copy
-import numpy as np
 
 from ..utils import roll_window
 
@@ -32,7 +31,7 @@ def _pitch_contour(pitch_content, as_str=False):
 				seg_vals[i] = value_dict[this_key]
 
 	if not(as_str):
-		return np.array([int(val) for val in seg_vals])
+		return [int(val) for val in seg_vals]
 	else:
 		return "<" + " ".join([str(int(val)) for val in seg_vals]) + ">"
 
