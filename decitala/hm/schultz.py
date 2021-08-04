@@ -42,7 +42,13 @@ def _window_has_intervening_extrema(window, contour, mode):
 	>>> _window_has_intervening_extrema(maxima_group, contour=contour, mode="max")
 	True
 	"""
-	for tiny_window in roll_window(window, window_size=2):
+	# import pdb; pdb.set_trace()
+	if mode == "max":
+		check = lambda x: 1 in x[1]
+	else:
+		check = lambda x: -1 in x[1]
+
+	for tiny_window in roll_window(window, window_size=2, fn=check):
 		contour_index_range = [tiny_window[0][0], tiny_window[1][0]]
 		if contour_index_range[1] == (contour_index_range[0] + 1):
 			return False  # Impossible for there to be an intervening interval.
@@ -71,10 +77,9 @@ def _schultz_extrema_check(contour):
 	_recheck_extrema(contour=contour, mode="max")
 	_recheck_extrema(contour=contour, mode="min")
 
-	# Step 6/7 "unless": check if any of the clusters start or end with the actual contour elems.
-	# in those cases, remove flags from all except those starts or ends.
-
-	# Find clusters of maxima and minima.
+	# Step 6. For each cluster of maxima, flag all unless:
+	# (1) one of the pitches in the string is the first or last element -> flag only the first/last.
+	# (2) both the first and last elements are in the string -> flag only the first and last.
 	maxima = [(i, x) for (i, x) in enumerate(contour) if 1 in x[1]]
 	maxima_grouped = groupby(maxima, lambda x: x[1][0])
 	maxima_groups = [list(val) for _, val in maxima_grouped]
@@ -82,10 +87,17 @@ def _schultz_extrema_check(contour):
 	for max_grouping in maxima_groups:
 		if max_grouping[0][0] == 0 or max_grouping[-1][0] == len(contour) - 1:
 			for elem in max_grouping:
-				grouped_elem = contour[elem[0]]
-				if elem[0] != 0 or elem[0] != len(contour):
+				if elem[0] not in {0, len(contour) - 1}:
+					grouped_elem = contour[elem[0]]
 					grouped_elem[1].remove(1)
+		else:
+			for elem in max_grouping:
+				grouped_elem = contour[elem[0]]
+				grouped_elem[1].add(1)
 
+	# Step 7. For each cluster of minima, flag all unless:
+	# (1) one of the pitches in the string is the first or last element -> flag only the first/last.
+	# (2) both the first and last elements are in the string -> flag only the first and last.
 	minima = [(i, x) for (i, x) in enumerate(contour) if -1 in x[1]]
 	minima_grouped = groupby(minima, lambda x: x[1][0])
 	minima_groups = [list(val) for _, val in minima_grouped]
@@ -93,34 +105,27 @@ def _schultz_extrema_check(contour):
 	for min_grouping in minima_groups:
 		if min_grouping[0][0] == 0 or min_grouping[-1][0] == len(contour) - 1:
 			for elem in min_grouping:
-				grouped_elem = contour[elem[0]]
-				if elem[0] != 0 and elem[0] != len(contour) - 1:
+				if elem[0] not in {0, len(contour) - 1}:
+					grouped_elem = contour[elem[0]]
 					grouped_elem[1].remove(-1)
+		else:
+			for elem in min_grouping:
+				grouped_elem = contour[elem[0]]
+				grouped_elem[1].add(-1)
 
-	# Step 8 and 9: find strings of equal and adjacent extrema; delete all but one of them.
-	# UNLESS: they have an intervening extrema, i.e. between any two.
-	# Group by both the element and the stored extrema (now correct, after the above check).
+	# import pdb; pdb.set_trace()
+
+	# Step 8. Iterate again over maxima. If cluster has no intervening minima, remove
+	# the flag from all but one. (Say 1st).
 	for max_grouping in maxima_groups:
 		if not(_window_has_intervening_extrema(max_grouping, contour=contour, mode="max")):
 			for elem in max_grouping[1:]:  # Remove flag from all but one.
-				# Unsure about this try-except...
-				try:
-					elem[1][1].remove(1)
-				except KeyError:
-					continue
+				elem[1][1].remove(1)
 
 	for min_grouping in minima_groups:
 		if not(_window_has_intervening_extrema(min_grouping, contour=contour, mode="min")):
 			for elem in min_grouping[1:]:  # Remove flag from all but one.
-				# Unsure about this try-except...
-				try:
-					elem[1][1].remove(-1)
-				except KeyError:
-					continue
-
-	# I don't love this, but it does ensure the start and end are flagged as maxima and minima...
-	contour[0][1].update({-1, 1})
-	contour[-1][1].update({-1, 1})
+				elem[1][1].remove(-1)
 
 def _schultz_get_closest_extrema(
 		contour,
