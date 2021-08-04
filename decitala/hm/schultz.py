@@ -28,8 +28,6 @@ class SchultzException(Exception):
 
 def _window_has_intervening_extrema(window, contour, mode):
 	"""
-	NOTE: Still a component missing: unflag all but one if repetition found...
-
 	Steps 8/9. If there exists a sequence of equal maxima or minima, check if the sequence
 	contains an intervening opposite extrema, i.e. if a sequence of two equal maxima contains
 	a minima between them.
