@@ -54,23 +54,20 @@ def _window_has_intervening_extrema(window, contour, mode):
 			return True
 		check = lambda x: -1 in x[1][1]
 
+	# import pdb; pdb.set_trace()
+
 	for tiny_window in roll_window(window, window_size=2, fn=check):
 		contour_index_range = [tiny_window[0][0], tiny_window[1][0]]
-		if contour_index_range[1] == (contour_index_range[0] + 1):
+		if (contour_index_range[0] + 1) == contour_index_range[1]:
 			return False  # Impossible for there to be an intervening interval.
 		else:
-			# NOTE: I think this is wrong... Could randomly choose an element that just isn't an extrema...
-			# Check if there exists a maxima/minima (opposite) between the extrema. Should be if any(...)
-			intervening_index = random.randint(contour_index_range[0] + 1, contour_index_range[1] - 1)
+			# -1 + 1 because looking one element before ending, but list indexing so add 1.
+			intervening_range = contour[contour_index_range[0] + 1:contour_index_range[-1] - 1 + 1]
 			if mode == "max":  # Looking for min.
-				if -1 in contour[intervening_index][1]:
-					continue
-				else:
+				if not(any(-1 in x[1] for x in intervening_range)):
 					return False
 			if mode == "min":  # Looking for max.
-				if 1 in contour[intervening_index][1]:
-					continue
-				else:
+				if not(any(1 in x[1] for x in intervening_range)):
 					return False
 	return True
 

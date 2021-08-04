@@ -6,7 +6,10 @@ from decitala.hm import contour
 def test_doctests():
 	assert doctest.testmod(schultz, raise_on_error=True)
 
+####################################################################################################
+# Tools
 def test_has_intervening_extrema_min():
+	# intervening maximum between indices 1 and 3?
 	window = [(1, [0, {-1}]), (3, [0, {-1}])]
 	c = [[1, {1, -1}], [0, {-1}], [2, {1}], [0, {-1}], [2, {1}], [1, {1, -1}]]
 	mode = "min"
@@ -17,7 +20,7 @@ def test_has_intervening_extrema_min():
 		contour=c,
 		mode=mode
 	)
-	assert expected == calculated
+	assert calculated == True
 
 def test_has_intervening_extrema_max():
 	"""
@@ -35,13 +38,15 @@ def test_has_intervening_extrema_max():
 	)
 	assert expected == calculated
 
-print(test_has_intervening_extrema_max())
+# print(test_has_intervening_extrema_max())
 
 def test_no_schultz_repetition():
 	c = [[1, {1, -1}], [3, {1}], [0, {-1}], [3, {1}], [2, {1, -1}]]
 	checked = schultz._no_schultz_repetition(c)
 	assert checked == True
 
+####################################################################################################
+# Examples
 def test_contour_ex15a_schultz():
 	# See p. 109
 	c = [1, 0, 2, 0, 2, 1]
@@ -49,17 +54,6 @@ def test_contour_ex15a_schultz():
 
 	expected = [1, 0, 2, 1]
 	expected_depth = 2  # hm...
-
-	assert list(calculated[0]) == expected
-	assert calculated[1] == expected_depth
-
-def test_contour_ex15b_schultz():
-	# See p. 110
-	c = [1, 3, 0, 3, 0, 3, 0, 3, 2]
-	calculated = schultz.spc(contour=c)
-
-	expected = [1, 3, 0, 3, 2]
-	expected_depth = 2
 
 	assert list(calculated[0]) == expected
 	assert calculated[1] == expected_depth
@@ -103,8 +97,15 @@ def test_alouette_9_schultz():
 
 # print(test_alouette_9_schultz())
 
-# def test_long_schultz_contour():
-# 	c = [6, 1, 4, 4, 7, 0, 9, 8, 8, 1, 7, 3, 5, 0, 6, 1, 1, 0, 7, 2, 7, 6]
-# 	print(contour.schultz_prime_contour(c))
+def test_contour_ex15b_schultz():
+	# See p. 110
+	c = [1, 3, 0, 3, 0, 3, 0, 3, 2]
+	calculated = schultz.spc(contour=c)
 
-# print(test_long_schultz_contour())
+	expected = [1, 3, 0, 3, 2]
+	expected_depth = 2
+
+	assert list(calculated[0]) == expected
+	assert calculated[1] == expected_depth
+
+# print(test_contour_ex15b_schultz())

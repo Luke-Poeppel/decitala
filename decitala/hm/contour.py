@@ -274,6 +274,8 @@ def prime_contour(contour):
 def schultz_prime_contour(contour):
 	"""
 	Implementation of Schultz's (2008) modification of Morris' contour-reduction algorithm.
+	See the Schultz module for the implementation. (It was complicated enough to warrent its
+	own module...)
 
 	:param contour: A pitch contour (iterable).
 	:return: the Schultz Prime Contour (SPC) of the given contour, along with the depth of the
