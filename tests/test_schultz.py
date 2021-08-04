@@ -104,18 +104,26 @@ def test_contour_ex15b_schultz():
 	assert list(calculated[0]) == expected
 	assert calculated[1] == expected_depth
 
+# From Wallentinsen PhD Thesis. See p. 15.
+def wallentinsen_example():
+	c = [2, 4, 1, 5, 0, 6, 3]
+	calculated = schultz.spc(contour=c)
+
+	assert list(calculated[0]) == [1, 0, 3, 2]
+	assert calculated[1] == 2
+
 class TestLongContour:
-	def test_long_contour_a():
+	def test_long_contour_a(self):
 		c = [6, 1, 4, 4, 7, 0, 9, 8, 8, 1, 7, 3, 5, 0, 6, 1, 1, 0, 7, 2, 7, 6]
 		calculated = schultz.spc(contour=c)
 		assert list(calculated[0]) == [1, 0, 2, 1]
 
-	def test_long_contour_b():
+	def test_long_contour_b(self):
 		c = [1, 4, 3, 6, 7, 5, 8, 5, 4, 0, 2, 1, 1, 1, 6, 1, 6, 3, 4, 1, 8, 0]
 		calculated = schultz.spc(contour=c)
 		assert list(calculated[0]) == [1, 1, 2, 0]
 		
-	def test_long_contour_c():
+	def test_long_contour_c(self):
 		c = [1, 8, 6, 0, 8, 1, 4, 1, 7, 3, 4, 6, 2, 8, 6, 5, 1, 0]
 		calculated = schultz.spc(contour=c)
 		assert list(calculated[0]) == [1, 1, 2, 0]
