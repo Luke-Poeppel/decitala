@@ -20,21 +20,22 @@ def test_has_intervening_extrema_min():
 	assert expected == calculated
 
 def test_has_intervening_extrema_max():
-	pass
-	# """
-	# Example for checking when only a single value, in this case the ending, is flagged.
-	# """
-	# window = [(1, [1, set()]), (3, [1, set()]), (5, [1, set()]), (7, [1, set()]), (9, [1, set()]), (11, [1, {-1}])]
-	# c = [[0, {1}], [1, set()], [0, set()], [1, set()], [0, set()], [1, set()], [0, set()], [1, set()], [0, set()], [1, set()], [0, set()], [1, {-1}]]
-	# mode = "max"
+	"""
+	Example for checking when only a single value, in this case the ending, is flagged.
+	"""
+	window = [(1, [1, set()]), (3, [1, set()]), (5, [1, set()]), (7, [1, set()]), (9, [1, set()]), (11, [1, {-1, 1}])]
+	c = [[0, {1, -1}], [1, set()], [0, set()], [1, set()], [0, set()], [1, set()], [0, set()], [1, set()], [0, set()], [1, set()], [0, set()], [1, {-1, 1}]]
+	mode = "max" # Unneeded. 
 
-	# expected = True
-	# calculated = schultz._window_has_intervening_extrema(
-	# 	window=window,
-	# 	contour=c,
-	# 	mode=mode
-	# )
-	# assert expected == calculated
+	expected = True
+	calculated = schultz._window_has_intervening_extrema(
+		window=window,
+		contour=c,
+		mode=mode
+	)
+	assert expected == calculated
+
+print(test_has_intervening_extrema_max())
 
 def test_no_schultz_repetition():
 	c = [[1, {1, -1}], [3, {1}], [0, {-1}], [3, {1}], [2, {1, -1}]]
@@ -100,7 +101,7 @@ def test_alouette_9_schultz():
 	schultz_contour = schultz.spc(alouette_9)
 	assert list(schultz_contour[0]) == expected
 
-print(test_alouette_9_schultz())
+# print(test_alouette_9_schultz())
 
 # def test_long_schultz_contour():
 # 	c = [6, 1, 4, 4, 7, 0, 9, 8, 8, 1, 7, 3, 5, 0, 6, 1, 1, 0, 7, 2, 7, 6]

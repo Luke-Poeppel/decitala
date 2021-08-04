@@ -42,11 +42,17 @@ def _window_has_intervening_extrema(window, contour, mode):
 	>>> _window_has_intervening_extrema(maxima_group, contour=contour, mode="max")
 	True
 	"""
-	# import pdb; pdb.set_trace()
 	if mode == "max":
-		check = lambda x: 1 in x[1]
+		# Only a single extrema found.
+		if len([x for x in window if 1 in x[1][1]]) == 1:
+			return True
+		else:
+			check = lambda x: 1 in x[1][1]
 	else:
-		check = lambda x: -1 in x[1]
+		# Only a single extrema found.
+		if len([x for x in window if -1 in x[1][1]]) == 1:
+			return True
+		check = lambda x: -1 in x[1][1]
 
 	for tiny_window in roll_window(window, window_size=2, fn=check):
 		contour_index_range = [tiny_window[0][0], tiny_window[1][0]]
@@ -112,8 +118,6 @@ def _schultz_extrema_check(contour):
 			for elem in min_grouping:
 				grouped_elem = contour[elem[0]]
 				grouped_elem[1].add(-1)
-
-	# import pdb; pdb.set_trace()
 
 	# Step 8. Iterate again over maxima. If cluster has no intervening minima, remove
 	# the flag from all but one. (Say 1st).
