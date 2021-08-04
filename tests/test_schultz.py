@@ -38,8 +38,6 @@ def test_has_intervening_extrema_max():
 	)
 	assert expected == calculated
 
-# print(test_has_intervening_extrema_max())
-
 def test_no_schultz_repetition():
 	c = [[1, {1, -1}], [3, {1}], [0, {-1}], [3, {1}], [2, {1, -1}]]
 	checked = schultz._no_schultz_repetition(c)
@@ -95,8 +93,6 @@ def test_alouette_9_schultz():
 	schultz_contour = schultz.spc(alouette_9)
 	assert list(schultz_contour[0]) == expected
 
-# print(test_alouette_9_schultz())
-
 def test_contour_ex15b_schultz():
 	# See p. 110
 	c = [1, 3, 0, 3, 0, 3, 0, 3, 2]
@@ -108,11 +104,18 @@ def test_contour_ex15b_schultz():
 	assert list(calculated[0]) == expected
 	assert calculated[1] == expected_depth
 
-# print(test_contour_ex15b_schultz())
+class TestLongContour:
+	def test_long_contour_a():
+		c = [6, 1, 4, 4, 7, 0, 9, 8, 8, 1, 7, 3, 5, 0, 6, 1, 1, 0, 7, 2, 7, 6]
+		calculated = schultz.spc(contour=c)
+		assert list(calculated[0]) == [1, 0, 2, 1]
 
-def test_long_contour_a():
-	c = [6, 1, 4, 4, 7, 0, 9, 8, 8, 1, 7, 3, 5, 0, 6, 1, 1, 0, 7, 2, 7, 6]
-	calculated = schultz.spc(contour=c)
-	print(calculated)
-
-# print(test_long_contour_a())
+	def test_long_contour_b():
+		c = [1, 4, 3, 6, 7, 5, 8, 5, 4, 0, 2, 1, 1, 1, 6, 1, 6, 3, 4, 1, 8, 0]
+		calculated = schultz.spc(contour=c)
+		assert list(calculated[0]) == [1, 1, 2, 0]
+		
+	def test_long_contour_c():
+		c = [1, 8, 6, 0, 8, 1, 4, 1, 7, 3, 4, 6, 2, 8, 6, 5, 1, 0]
+		calculated = schultz.spc(contour=c)
+		assert list(calculated[0]) == [1, 1, 2, 0]

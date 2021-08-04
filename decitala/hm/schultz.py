@@ -193,9 +193,6 @@ def _schultz_get_closest_extrema(
 	# This list holds the closts repeating min and max to the end (in that order).
 	end_elems = [("min", closest_min_end), ("max", closest_max_end)] # noqa
 
-	if any(x is None for x in [closest_min_start, closest_max_start, closest_min_end, closest_max_end]): # noqa
-		raise SchultzException("Something is wrong.")
-
 	closest_start_extrema = min(start_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
 	closest_end_extrema = max(end_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
 
@@ -255,16 +252,16 @@ def _schultz_remove_flag_repetitions_except_closest(contour):
 			# Unflag everything except the closest stuff.
 			if i not in {closest_start_extrema[1][0], closest_end_extrema[1][0]}:
 				if contour_elem[0] in repeated_max_keys:
-					try:  # It may be empty already.
+					if 1 in contour_elem[1]:
 						contour_elem[1].remove(1)
 						unflagged_maxima.append((i, contour_elem))
-					except KeyError:
+					else:
 						continue
 				elif contour_elem[0] in repeated_min_keys:
-					try:
+					if -1 in contour_elem[1]:
 						contour_elem[1].remove(-1)
 						unflagged_minima.append((i, contour_elem))
-					except KeyError:
+					else:
 						continue
 			else:
 				continue
