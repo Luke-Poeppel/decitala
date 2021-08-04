@@ -54,8 +54,6 @@ def _window_has_intervening_extrema(window, contour, mode):
 			return True
 		check = lambda x: -1 in x[1][1]
 
-	# import pdb; pdb.set_trace()
-
 	for tiny_window in roll_window(window, window_size=2, fn=check):
 		contour_index_range = [tiny_window[0][0], tiny_window[1][0]]
 		if (contour_index_range[0] + 1) == contour_index_range[1]:
@@ -279,8 +277,7 @@ def _schultz_reduce(contour, depth):
 	"""
 	# Steps 11, 12, 13, 14, 15
 	"""
-	# Step 11
-	if _no_schultz_repetition(contour, allow_unflagged=True) is False:
+	if not(_no_schultz_repetition(contour, allow_unflagged=True)):
 		(
 			contour,
 			closest_start_extrema,
@@ -337,15 +334,15 @@ def _no_schultz_repetition(contour, allow_unflagged=False):
 			return len(contour_elems) <= len(set(contour_elems)) + 1  # Only allow for one repetition.
 		else:
 			return False
-	else:
-		# Only interested in the flagged values, of course ;-)
+	else:  # Used in steps 11/12.
+		# Still only interested in the flagged values, though ;-)
 		contour_elems = [x[0] for x in contour if x[1]][1:-1]
 		return len(contour_elems) <= len(set(contour_elems)) + 1
 
 def spc(contour):
 	depth = 0
 
-	# If the segment is of length <= 2, it is prime by definition.
+	# If the contour is of length <= 2, it is prime by definition.
 	if len(contour) <= 2:
 		return (_pitch_contour(contour), depth)
 
@@ -363,6 +360,7 @@ def spc(contour):
 		if _no_schultz_repetition(prime_contour, allow_unflagged=False):  # Step 10.
 			still_unflagged_values = False
 		else:
+			# You need to redefine these or it gets stuck.
 			prime_contour, depth = _schultz_reduce(prime_contour, depth=depth)  # Steps 11-15.
 
 	# Get the contour elements.

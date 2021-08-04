@@ -109,3 +109,10 @@ def test_contour_ex15b_schultz():
 	assert calculated[1] == expected_depth
 
 # print(test_contour_ex15b_schultz())
+
+def test_long_contour_a():
+	c = [6, 1, 4, 4, 7, 0, 9, 8, 8, 1, 7, 3, 5, 0, 6, 1, 1, 0, 7, 2, 7, 6]
+	calculated = schultz.spc(contour=c)
+	print(calculated)
+
+# print(test_long_contour_a())

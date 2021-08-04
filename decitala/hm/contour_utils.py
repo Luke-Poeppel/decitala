@@ -129,13 +129,11 @@ def _recheck_extrema(contour, mode):
 		check = lambda x: -1 in x[1]
 
 	for i, this_window in enumerate(roll_window(array=contour, window_size=3, fn=check)):
-		mid_elem_extrema = this_window[1][1]
-		if not(mid_elem_extrema):  # element is not an extrema.
-			continue
-		elif None in this_window:  # aren't enough elements for complete frame.
+		if any(x is None for x in this_window):
 			continue
 
 		if not(_center_of_window_is_extremum(window=this_window, mode=mode)):
+			mid_elem_extrema = this_window[1][1]
 			if mode == "max":
 				mid_elem_extrema.remove(1)
 			else:
