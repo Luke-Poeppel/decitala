@@ -290,18 +290,11 @@ def _schultz_reduce(contour, depth):
 		# If both are maxes or both are mins, reflag one of the opposite removed values.
 		if closest_start_extrema[0] == closest_end_extrema[0]:
 			if closest_start_extrema[0] == "max":
-				# re-add single flag to minlist.
-				try:
-					reflag = random.choice(unflagged_minima)
-					contour[reflag[0]][1].add(-1)
-				except IndexError:  # No minima were removed. Not totally sure this is right.
-					pass
+				reflag = random.choice(unflagged_minima)
+				contour[reflag[0]][1].add(-1)
 			else:
-				try:
-					reflag = random.choice(unflagged_maxima)
-					contour[reflag[0]][1].add(1)
-				except IndexError:  # No minima were removed. Not totally sure this is right.
-					pass
+				reflag = random.choice(unflagged_maxima)
+				contour[reflag[0]][1].add(1)
 
 	# Steps 13-15
 	contour = [x for x in contour if x[1]]
