@@ -30,11 +30,14 @@ from .path_finding import (
 from .hm import (
 	contour,
 	molt,
-	hm_utils
+	hm_utils,
+	schultz,
+	contour_utils
 )
 
 ALL_MODULES = [
 	contour,
+	contour_utils,
 	database,
 	fragment,
 	utils,
@@ -45,6 +48,7 @@ ALL_MODULES = [
 	floyd_warshall,
 	path_finding_utils,
 	pofp,
+	schultz,
 	molt,
 	hm_utils
 ]
