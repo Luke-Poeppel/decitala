@@ -57,7 +57,6 @@ def test_contour_ex15a_schultz():
 	assert calculated[0] == expected
 	assert calculated[1] == expected_depth
 
-
 def test_contour_ex15b_schultz():
 	# See p. 110
 	c = [1, 3, 0, 3, 0, 3, 0, 3, 2]
@@ -69,7 +68,9 @@ def test_contour_ex15b_schultz():
 	assert calculated[0] == expected
 	assert calculated[1] == expected_depth
 
-class SchultzNightingle:
+# print(test_contour_ex15b_schultz())
+
+class TestSchultzNightingle:
 
 	def test_nightingale_3_schultz(self):
 		pitches = [68, 68, 79, 68, 68, 74, 66, 68, 81]
@@ -109,25 +110,41 @@ class SchultzNightingle:
 		assert schultz_contour[0] == expected
 
 # From Wallentinsen PhD Thesis. See p. 15.
-def wallentinsen_example():
+def test_wallentinsen_example():
 	c = [2, 4, 1, 5, 0, 6, 3]
 	calculated = schultz.spc(contour=c)
 
 	assert calculated[0] == [1, 0, 3, 2]
 	assert calculated[1] == 2
 
-class TestLongContour:
-	def test_long_contour_a(self):
-		c = [6, 1, 4, 4, 7, 0, 9, 8, 8, 1, 7, 3, 5, 0, 6, 1, 1, 0, 7, 2, 7, 6]
-		calculated = schultz.spc(contour=c)
-		assert calculated[0] == [1, 0, 2, 1]
+# class TestLongContour:
 
-	def test_long_contour_b(self):
-		c = [1, 4, 3, 6, 7, 5, 8, 5, 4, 0, 2, 1, 1, 1, 6, 1, 6, 3, 4, 1, 8, 0]
-		calculated = schultz.spc(contour=c)
-		assert calculated[0] == [1, 1, 2, 0]
+# 	def test_long_contour_b(self):
+# 		c = [1, 4, 3, 6, 7, 5, 8, 5, 4, 0, 2, 1, 1, 1, 6, 1, 6, 3, 4, 1, 8, 0]
+# 		calculated = schultz.spc(contour=c)
+# 		assert calculated[0] == [1, 1, 2, 0]
 		
-	def test_long_contour_c(self):
-		c = [1, 8, 6, 0, 8, 1, 4, 1, 7, 3, 4, 6, 2, 8, 6, 5, 1, 0]
-		calculated = schultz.spc(contour=c)
-		assert calculated[0] == [1, 1, 2, 0]
+# 	def test_long_contour_c(self):
+# 		c = [1, 8, 6, 0, 8, 1, 4, 1, 7, 3, 4, 6, 2, 8, 6, 5, 1, 0]
+# 		calculated = schultz.spc(contour=c)
+# 		assert calculated[0] == [1, 1, 2, 0]
+
+# def test_long_contour_a():
+# 	c = [6, 1, 4, 4, 7, 0, 9, 8, 8, 1, 7, 3, 5, 0, 6, 1, 1, 0, 7, 2, 7, 6]
+# 	calculated = schultz.spc(contour=c)
+# 	assert calculated[0] == [1, 0, 2, 1]
+
+# print(test_long_contour_a())
+
+# # Unsure about this...
+# def test_long_contour_d():
+# 	c = [0, 1, 0, 0, 0, 2, 1, 0, 1, 0, 1, 0, 1, 1, 1, 2, 0, 2]
+# 	calculated = schultz.spc(contour=c)
+# 	return calculated
+
+# def test_long_contour_e():
+# 	c = [2, 4, 1, 3, 1, 5, 1, 6, 1, 1, 6, 7, 4, 1, 1, 1, 1, 0, 5, 1, 1, 7]
+# 	calculated = schultz.spc(contour=c)
+# 	return calculated
+
+# print(test_long_contour_e())

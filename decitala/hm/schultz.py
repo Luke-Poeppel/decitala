@@ -7,14 +7,13 @@
 # Location: NYC, 2021
 ####################################################################################################
 """
-Implementation of the final version of Schultz's contour reduction algorithm
-(see Spectrum, Schultz 2008: 108). This was originally in the contour module, but the implementation
-was complex enough to warrent its own module...
+Implementation of Schultz's contour reduction algorithm (final version). See Schultz 2008: 108 in
+Spectrum. This was originally in the contour module, but the implementation was complex enough to
+warrent its own module...
 """
 import random
 
 from itertools import groupby
-from collections import Counter
 
 from .contour_utils import (
 	_get_initial_extrema,
@@ -110,12 +109,9 @@ def _schultz_extrema_check(contour):
 	adjacency_and_intervening_checks(contour, mode="max")
 	adjacency_and_intervening_checks(contour, mode="min")
 
-def _schultz_get_closest_extrema(
-		contour,
-		maxima,
-		minima
-	):
+def _schultz_get_closest_extrema(contour):
 	"""
+	Part of Step 11. Hardest step... Deep breath!
 	Returns the closest repeating extrema to the start and end of the contour.
 
 	From Ex15B:
@@ -132,75 +128,19 @@ def _schultz_get_closest_extrema(
 	... ]
 	>>> maxima = [(1, [3, {1}]), (3, [3, {1}]), (5, [3, {1}]), (7, [3, {1}])]
 	>>> minima = [(2, [0, {-1}]), (4, [0, {-1}]), (6, [0, {-1}])]
-	>>> (c_start, c_end, rep_max, rep_min) = _schultz_get_closest_extrema(
-	... 	contour,
-	... 	maxima,
-	... 	minima
-	... )
+	>>> (c_start, c_end) = _schultz_get_closest_extrema(contour)
 	>>> c_start
 	('max', (1, [3, {1}]))
 	>>> c_end
 	('max', (7, [3, {1}]))
 	"""
-	# For minima/maxima that repeat themselves, stores the closest to start and end.
-	maxima_contour_elems = Counter([x[1][0] for x in maxima])
-	repeated_max_keys = set([key for key, val in maxima_contour_elems.items()])
-
-	minima_contour_elems = Counter([x[1][0] for x in minima])
-	repeated_min_keys = set([key for key, val in minima_contour_elems.items()])
-
-	closest_max_start = None  # Correct by Ex. 15A
-	closest_max_start_distance = 100
-	closest_max_end = None  # Correct by Ex. 15A
-	closest_max_end_distance = 100
-
-	closest_min_start = None  # Correct by Ex. 15A
-	closest_min_start_distance = 100
-	closest_min_end = None  # Correct by Ex. 15A
-	closest_min_end_distance = 100
-
-	for repeated_max_key in repeated_max_keys:
-		# Already sorted, so we just look at [0] and [-1].
-		relevant_maxima = [x for x in maxima if x[1][0] == repeated_max_key]
-		start_dist = len(contour) - relevant_maxima[0][0]
-		end_dist = len(contour) - relevant_maxima[-1][0]
-		if start_dist < closest_max_start_distance:
-			closest_max_start_distance = start_dist
-			closest_max_start = relevant_maxima[0]
-		if end_dist < closest_max_end_distance:
-			closest_max_end_distance = end_dist
-			closest_max_end = relevant_maxima[-1]
-
-	for repeated_min_key in repeated_min_keys:
-		# Already sorted, so we just look at [0] and [-1].
-		relevant_minima = [x for x in minima if x[1][0] == repeated_min_key]
-		start_dist = len(contour) - relevant_minima[0][0]
-		end_dist = len(contour) - relevant_minima[-1][0]
-		if start_dist < closest_min_start_distance:
-			closest_min_start_distance = start_dist
-			closest_min_start = relevant_minima[0]
-		if end_dist < closest_min_end_distance:
-			closest_min_end_distance = end_dist
-			closest_min_end = relevant_minima[-1]
-
-	# The starts and ends shouldn't be touched!
-	assert contour[0][1] == {1, -1}, SchultzException("Something is wrong (start flags).")
-	assert contour[-1][1] == {1, -1}, SchultzException("Something is wrong (end flags).")
-
-	# This list holds the closts repeating min and max to the start (in that order).
-	# Also tracks whether the chosen element is a minima or maxima.
-	start_elems = [("min", closest_min_start), ("max", closest_max_start)] # noqa
-	# This list holds the closts repeating min and max to the end (in that order).
-	end_elems = [("min", closest_min_end), ("max", closest_max_end)] # noqa
-
-	closest_start_extrema = min(start_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
-	closest_end_extrema = max(end_elems, key=lambda x: x[1][0])  # noqa Correct by Ex. 15A
+	# Find the closest elements. Unflag (and store) all repetions that are not those from above.
+	closest_start_extrema = next((i + 1, x) for (i, x) in enumerate(contour[1:-1]) if 1 in x[1] or -1 in x[1])  # noqa
+	closest_end_extrema = next((len(contour) - i - 2, x) for (i, x) in enumerate(contour[1:-1][::-1]) if 1 in x[1] or -1 in x[1])  # noqa
 
 	return (
 		closest_start_extrema,
 		closest_end_extrema,
-		repeated_max_keys,
-		repeated_min_keys
 	)
 
 def _schultz_remove_flag_repetitions_except_closest(contour):
@@ -232,39 +172,25 @@ def _schultz_remove_flag_repetitions_except_closest(contour):
 	[3, {1}]
 	[2, {1, -1}]
 	"""
-	# These exclude the first and last (by design).
-	maxima = [(i, x) for (i, x) in enumerate(contour) if 1 in x[1]][1:-1]
-	minima = [(i, x) for (i, x) in enumerate(contour) if -1 in x[1]][1:-1]
 	(
 		closest_start_extrema,
 		closest_end_extrema,
-		repeated_max_keys,
-		repeated_min_keys
-	) = _schultz_get_closest_extrema(contour, maxima, minima)
+	) = _schultz_get_closest_extrema(contour)
 
 	# Unflag all repeated maxes/mins that are not closest to first and last.
 	unflagged_maxima = []
 	unflagged_minima = []
+	closest_indices = {closest_start_extrema[1][0], closest_end_extrema[1][0]}
 	for i, contour_elem in enumerate(contour):
-		# Really weird bug, won't accept contour_elem[0] in (repeated_max_keys or repeated_min_keys)...
-		if (contour_elem[0] in repeated_max_keys) or (contour_elem[0] in repeated_min_keys):
-			# Make sure we're not unflagging the closest flagged extrema.
-			# Unflag everything except the closest stuff.
-			if i not in {closest_start_extrema[1][0], closest_end_extrema[1][0]}:
-				if contour_elem[0] in repeated_max_keys:
-					if 1 in contour_elem[1]:
-						contour_elem[1].remove(1)
-						unflagged_maxima.append((i, contour_elem))
-					else:
-						continue
-				elif contour_elem[0] in repeated_min_keys:
-					if -1 in contour_elem[1]:
-						contour_elem[1].remove(-1)
-						unflagged_minima.append((i, contour_elem))
-					else:
-						continue
-			else:
-				continue
+		if i in closest_indices or i in {0, len(contour)}:
+			continue
+
+		if -1 in contour_elem[1]:
+			unflagged_minima.append((i, contour_elem))
+			contour_elem[1].clear()
+		elif 1 in contour_elem[1]:
+			unflagged_maxima.append((i, contour_elem))
+			contour_elem[1].clear()
 
 	return (contour, closest_start_extrema, closest_end_extrema, unflagged_minima, unflagged_maxima)
 
@@ -283,13 +209,21 @@ def _schultz_reduce(contour, depth):
 
 		# Step 12
 		# If both are maxes or both are mins, reflag one of the opposite removed values.
-		if closest_start_extrema[0] == closest_end_extrema[0]:
+		# Not totally sure about the exception (would like to ask contour expert).
+		# Basically, what if there are no extrema flags of a certain type to flag/unflag?
+		if closest_start_extrema[0] == closest_end_extrema[0]:  # "max" == "max" or "min" == "min"
 			if closest_start_extrema[0] == "max":
-				reflag = random.choice(unflagged_minima)
-				contour[reflag[0]][1].add(-1)
+				try:
+					reflag = random.choice(unflagged_minima)
+					contour[reflag[0]][1].add(-1)
+				except IndexError:
+					pass
 			else:
-				reflag = random.choice(unflagged_maxima)
-				contour[reflag[0]][1].add(1)
+				try:
+					reflag = random.choice(unflagged_maxima)
+					contour[reflag[0]][1].add(1)
+				except IndexError:
+					pass
 
 	# Steps 13-15
 	contour = [x for x in contour if x[1]]
