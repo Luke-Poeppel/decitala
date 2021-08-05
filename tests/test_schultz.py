@@ -43,6 +43,22 @@ def test_no_schultz_repetition():
 	checked = schultz._no_schultz_repetition(c)
 	assert checked == True
 
+def test_remove_flags_except_flags_except_closest():
+	contour = [
+		[1, {1, -1}],
+		[3, {1}],
+		[0, {-1}],
+		[3, {1}],
+		[0, {-1}],
+		[3, {1}],
+		[0, {-1}],
+		[3, {1}],
+		[2, {1, -1}]
+	]
+	calculated = schultz._schultz_remove_flag_repetitions_except_closest(contour)[0]
+	expected = [[1, {1, -1}], [3, {1}], [0, set()], [3, set()], [0, set()], [3, set()], [0, set()], [3, {1}], [2, {1, -1}]]
+	assert calculated == expected
+
 ####################################################################################################
 # Examples
 

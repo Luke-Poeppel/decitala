@@ -138,39 +138,25 @@ def _schultz_get_closest_extrema(contour):
 	closest_start_extrema = next((i + 1, x) for (i, x) in enumerate(contour[1:-1]) if 1 in x[1] or -1 in x[1])  # noqa
 	closest_end_extrema = next((len(contour) - i - 2, x) for (i, x) in enumerate(contour[1:-1][::-1]) if 1 in x[1] or -1 in x[1])  # noqa
 
+	if -1 in closest_start_extrema[1][1]:
+		closest_start_out = ("min", closest_start_extrema)
+	else:
+		closest_start_out = ("max", closest_start_extrema)
+
+	if -1 in closest_end_extrema[1][1]:
+		closest_end_out = ("min", closest_end_extrema)
+	else:
+		closest_end_out = ("max", closest_end_extrema)
+
 	return (
-		closest_start_extrema,
-		closest_end_extrema,
+		closest_start_out,
+		closest_end_out,
 	)
 
 def _schultz_remove_flag_repetitions_except_closest(contour):
 	"""
 	Step 11. Check if repetitions; if so, remove all except those closest to the start and end of
 	the contour.
-
-	From Ex15B:
-	>>> contour = [
-	...		[1, {1, -1}],
-	... 	[3, {1}],
-	... 	[0, {-1}],
-	... 	[3, {1}],
-	... 	[0, {-1}],
-	... 	[3, {1}],
-	... 	[0, {-1}],
-	... 	[3, {1}],
-	... 	[2, {1, -1}]
-	... ]
-	>>> for x in _schultz_remove_flag_repetitions_except_closest(contour)[0]:
-	... 	print(x)
-	[1, {1, -1}]
-	[3, {1}]
-	[0, set()]
-	[3, set()]
-	[0, set()]
-	[3, set()]
-	[0, set()]
-	[3, {1}]
-	[2, {1, -1}]
 	"""
 	(
 		closest_start_extrema,
@@ -182,7 +168,7 @@ def _schultz_remove_flag_repetitions_except_closest(contour):
 	unflagged_minima = []
 	closest_indices = {closest_start_extrema[1][0], closest_end_extrema[1][0]}
 	for i, contour_elem in enumerate(contour):
-		if i in closest_indices or i in {0, len(contour)}:
+		if i in closest_indices or i in {0, len(contour) - 1}:
 			continue
 
 		if -1 in contour_elem[1]:
