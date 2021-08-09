@@ -11,8 +11,6 @@ Implementation of Schultz's contour reduction algorithm (final version). See Sch
 Spectrum. This was originally in the contour module, but the implementation was complex enough to
 warrent its own module...
 """
-import random
-
 from itertools import groupby
 
 from .contour_utils import (
@@ -40,7 +38,7 @@ def _window_has_intervening_extrema(window, contour, mode):
 	True
 	"""
 	if mode == "max":
-		# Only a single extrema found.
+		# Only a single extrema found. Trivial case.
 		if len([x for x in window if 1 in x[1][1]]) == 1:
 			return True
 		else:
@@ -54,7 +52,14 @@ def _window_has_intervening_extrema(window, contour, mode):
 	for tiny_window in roll_window(window, window_size=2, fn=check):
 		contour_index_range = [tiny_window[0][0], tiny_window[1][0]]
 		if (contour_index_range[0] + 1) == contour_index_range[1]:
-			return False  # Impossible for there to be an intervening interval.
+			# import pdb; pdb.set_trace()
+			# Check if second element in tiny-window contains opposite flag.
+			if mode == "max":
+				if not(-1 in contour[contour_index_range[1]][1]):
+					return False
+			if mode == "min":
+				if not(1 in contour[contour_index_range[1]][1]):
+					return False
 		else:
 			# -1 + 1 because looking one element before ending, but list indexing so add 1.
 			intervening_range = contour[contour_index_range[0] + 1:contour_index_range[-1] - 1 + 1]
@@ -72,6 +77,7 @@ def _schultz_extrema_check(contour):
 	"""
 	# Reiterate over maxima/minima
 	# Look at docs in contour_utils if confused! No more than a safety rail.
+	# import pdb; pdb.set_trace()
 	_recheck_extrema(contour=contour, mode="max")
 	_recheck_extrema(contour=contour, mode="min")
 
@@ -99,6 +105,7 @@ def _schultz_extrema_check(contour):
 					grouped_elem = contour[elem[0]]
 					grouped_elem[1].add(extrema_elem)
 
+		# import pdb; pdb.set_trace()
 		# Step 8/9. Iterate again over maxima/minima. If cluster has no intervening extremum, remove
 		# the flag from all but one. (Say 1st).
 		for grouping in extrema_groups:
@@ -106,12 +113,13 @@ def _schultz_extrema_check(contour):
 				for elem in grouping[1:]:  # Remove flag from all but one.
 					elem[1][1].remove(extrema_elem)
 
+	# import pdb; pdb.set_trace()
 	adjacency_and_intervening_checks(contour, mode="max")
 	adjacency_and_intervening_checks(contour, mode="min")
 
 def _schultz_get_closest_extrema(contour):
 	"""
-	Part of Step 11. Hardest step... Deep breath!
+	Part of Step 11.
 	Returns the closest repeating extrema to the start and end of the contour.
 
 	From Ex15B:
@@ -200,13 +208,13 @@ def _schultz_reduce(contour, depth):
 		if closest_start_extrema[0] == closest_end_extrema[0]:  # "max" == "max" or "min" == "min"
 			if closest_start_extrema[0] == "max":
 				try:
-					reflag = random.choice(unflagged_minima)
+					reflag = unflagged_minima[0]
 					contour[reflag[0]][1].add(-1)
 				except IndexError:
 					pass
 			else:
 				try:
-					reflag = random.choice(unflagged_maxima)
+					reflag = unflagged_maxima[0]
 					contour[reflag[0]][1].add(1)
 				except IndexError:
 					pass

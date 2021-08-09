@@ -19,7 +19,7 @@ def _pitch_contour(pitch_content, as_str=False):
 		to_mono = [x[0] for x in pitch_content]
 	else:
 		to_mono = pitch_content
-	seg_vals = copy.copy(to_mono)
+	seg_vals = copy.deepcopy(to_mono)
 	value_dict = dict()
 
 	for i, this_val in zip(range(0, len(sorted(set(seg_vals)))), sorted(set(seg_vals))):

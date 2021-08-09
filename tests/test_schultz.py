@@ -1,7 +1,9 @@
 import doctest
+import copy
 
 from decitala.hm import schultz
 from decitala.hm import contour
+from decitala.hm import contour_utils
 
 def test_doctests():
 	assert doctest.testmod(schultz, raise_on_error=True)
@@ -38,6 +40,27 @@ def test_has_intervening_extrema_max():
 	)
 	assert expected == calculated
 
+# def test_has_intervening_extrema_ex13():
+# 	c = [[1, {1, -1}], [3, {1}], [3, {1}], [3, {1, -1}], [3, {1}], [3, {1}], [0, {-1}], [0, {-1}], [0, {1, -1}], [0, {1, -1}], [0, {1, -1}], [0, {1, -1}], [0, {1, -1}], [0, {1, -1}], [0, {-1}], [0, {-1}], [4, {1, -1}]]
+
+# 	ex13_max_string = [(1, [3, {1}]), (2, [3, {1}]), (3, [3, {1, -1}]), (4, [3, {1}]), (5, [3, {1}])]	
+# 	calculated_max = schultz._window_has_intervening_extrema(
+# 		window=ex13_max_string,
+# 		contour=c,
+# 		mode="max"
+# 	)
+# 	assert calculated_max == True
+
+# 	ex13_min_string = [(8, [0, {1, -1}]), (9, [0, {1, -1}]), (10, [0, {1, -1}]), (11, [0, {1, -1}]), (12, [0, {1, -1}]), (13, [0, {1, -1}])]
+	# calculated_min = schultz._window_has_intervening_extrema(
+	# 	window=ex13_min_string,
+	# 	contour=c,
+	# 	mode="min"
+	# )
+	# assert calculated_min == True
+
+# print(test_has_intervening_extrema_ex13())
+
 def test_no_schultz_repetition():
 	c = [[1, {1, -1}], [3, {1}], [0, {-1}], [3, {1}], [2, {1, -1}]]
 	checked = schultz._no_schultz_repetition(c)
@@ -58,6 +81,33 @@ def test_remove_flags_except_flags_except_closest():
 	calculated = schultz._schultz_remove_flag_repetitions_except_closest(contour)[0]
 	expected = [[1, {1, -1}], [3, {1}], [0, set()], [3, set()], [0, set()], [3, set()], [0, set()], [3, {1}], [2, {1, -1}]]
 	assert calculated == expected
+
+# (from contour utils)
+def test_recheck():
+	c = [
+		[1, {1, -1}],
+		[3, {1}],
+		[3, {1, -1}],
+		[3, {1, -1}],
+		[3, {1, -1}],
+		[3, {1}],
+		[0, {-1}],
+		[0, {1, -1}],
+		[0, {1, -1}],
+		[0, {1, -1}],
+		[0, {1, -1}],
+		[0, {1, -1}],
+		[0, {1, -1}],
+		[0, {1, -1}],
+		[0, {1, -1}],
+		[0, {-1}],
+		[4, {1, -1}]
+	]
+	cpy = copy.deepcopy(c)
+	contour_utils._recheck_extrema(c, mode="max")
+	# assert cpy == c
+
+# print(test_recheck())
 
 ####################################################################################################
 # Examples
@@ -114,10 +164,16 @@ class TestSchultzNightingle:
 		schultz_contour = schultz.spc(nightingale_9)
 		assert schultz_contour[0] == expected
 	
+	# def test_nightingale_13_schultz(self):
+	# 	pitches = [80, 86, 88, 88, 88, 88, 88, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 91]
+	# 	nightingale_13 = contour.pitch_contour(pitches)
+	# 	expected = [1, 0, 2]
+	# 	assert expected == schultz.spc(nightingale_13)[0]
+	
 	def test_nightingale_17_schultz(self):
 		pitches = [73, 89, 86, 75, 75, 75, 75, 75, 75]
 		nightingale_17 = [0, 3, 2, 1, 1, 1, 1, 1, 1]
-
+		
 		assert contour.pitch_contour(pitches) == nightingale_17
 
 		expected = [0, 2, 1]
@@ -157,3 +213,24 @@ class TestLongContour:
 		c = [2, 4, 1, 3, 1, 5, 1, 6, 1, 1, 6, 7, 4, 1, 1, 1, 1, 0, 5, 1, 1, 7]
 		calculated = schultz.spc(contour=c)[0]
 		assert calculated == [1, 0, 2]
+
+# def test_nightingale_13_schultz():
+# 	pitches = [80, 86, 88, 88, 88, 88, 88, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 91]
+# 	nightingale_13 = contour.pitch_contour(pitches)
+# 	expected = [1, 0, 2]
+
+# 	calculated = schultz.spc(nightingale_13)[0]
+# 	print(calculated)
+# 	assert calculated == expected
+
+# print(test_nightingale_13_schultz())
+
+
+
+
+"""
+BAD
+[[1, {1, -1}], [3, {1}], [3, set()], [0, set()], [4, {1, -1}]]
+[[1, {1, -1}], [3, {1}], [4, {1, -1}]]
+# It reduces this set even further! 
+"""
