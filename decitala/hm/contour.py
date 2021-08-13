@@ -186,21 +186,6 @@ def contour_class(
 def _morris_reduce(contour, depth):
 	"""
 	Steps 4-7 of the contour reduction algorithm.
-
-	>>> data = [
-	...		[1, {1, -1}],
-	... 	[3, {1}],
-	... 	[1, set()],
-	... 	[2, set()],
-	... 	[0, {-1}],
-	... 	[1, set()],
-	... 	[4, {1, -1}]
-	... ]
-	>>> morris_reduced = _morris_reduce(data)
-	>>> morris_reduced
-	[[1, {1, -1}], [3, set()], [1, set()], [2, set()], [0, {-1}], [1, set()], [4, {1, -1}]]
-	>>> _morris_reduce(morris_reduced) == morris_reduced
-	True
 	"""
 	# import pdb; pdb.set_trace()
 	contour = [x for x in contour if x[1]]  # Step 4
