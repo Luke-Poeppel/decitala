@@ -43,4 +43,17 @@ def test_contours_morris():
 	assert calculated[0] == [1, 0, 2]
 	assert calculated[1] == 3
 
+def test_contour_ex14():
+	"""
+	See Morris (1993: 213).
+	"""
+	c = [0, 4, 3, 2, 5, 5, 1]
+	calculated = contour.prime_contour(contour=c)
+	expected = [0, 2, 1]
+	assert calculated[0] == expected
+	assert calculated[1] == 2
+
+print(test_contour_ex14())
+
+
 # All Schultz relevant tests are in tests/test_schultz.

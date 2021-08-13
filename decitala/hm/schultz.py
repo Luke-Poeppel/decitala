@@ -77,7 +77,9 @@ def _schultz_extrema_check(contour):
 	# Reiterate over maxima/minima
 	# Reflag because of first sentence in Steps 6 and 7. I think this is right...
 	# import pdb; pdb.set_trace()
-	contour = _track_extrema([x[0] for x in contour])
+	# _recheck_extrema(contour, mode="max")
+	# _recheck_extrema(contour, mode="min")
+	# contour = _track_extrema([x[0] for x in contour])
 
 	def adjacency_and_intervening_checks(contour, mode):
 		if mode == "max":

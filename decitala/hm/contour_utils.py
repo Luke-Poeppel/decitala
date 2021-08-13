@@ -12,6 +12,8 @@ be removed at some point.
 """
 import copy
 
+from itertools import groupby
+
 from ..utils import roll_window
 
 def _pitch_contour(pitch_content, as_str=False):
@@ -124,10 +126,12 @@ def _recheck_extrema(contour, mode):
 	"""
 	if mode == "max":
 		extrema_elem = 1
+		check = lambda x: 1 in x[1]
 	else:
 		extrema_elem = -1
+		check = lambda x: -1 in x[1]
 
-	for i, this_window in enumerate(roll_window(array=contour, window_size=3)):
+	for i, this_window in enumerate(roll_window(array=contour, window_size=3, fn=check)):
 		if any(x is None for x in this_window):
 			continue
 
@@ -135,3 +139,38 @@ def _recheck_extrema(contour, mode):
 			mid_elem_extrema = this_window[1][1]
 			if extrema_elem in mid_elem_extrema:
 				mid_elem_extrema.remove(extrema_elem)
+
+
+"""
+The following function is used in both the Morris and Schultz reduction algorithms.
+"""
+def _adjacency_and_intervening_checks(contour, mode, algorithm):
+	"""
+	See Step 6/7 in Morris/Schultz.
+	"""
+	if mode == "max":
+		extrema_elem = 1
+	else:
+		extrema_elem = -1
+
+	# For each cluster of maxima/minima, flag all/one unless:
+	# (1) one of the pitches in the string is the first or last element -> flag only the first/last.
+	# (2) both the first and last elements are in the string -> flag only the first and last.
+	extrema = [(i, x) for (i, x) in enumerate(contour) if extrema_elem in x[1]]
+	extrema_grouped = groupby(extrema, lambda x: x[1][0])
+	extrema_groups = [list(val) for _, val in extrema_grouped]
+	extrema_groups = [x for x in extrema_groups if len(x) > 1]
+	for max_grouping in extrema_groups:
+		if max_grouping[0][0] == 0 or max_grouping[-1][0] == len(contour) - 1:
+			for elem in max_grouping:
+				if elem[0] not in {0, len(contour) - 1}:
+					grouped_elem = contour[elem[0]]
+					grouped_elem[1].remove(extrema_elem)
+		else:
+			if algorithm == "morris":
+				# Flag only 1.
+				for elem in max_grouping[1:]:
+					elem[1][1].remove(extrema_elem)
+			elif algorithm == "schultz":
+				# Flag all.
+				pass
