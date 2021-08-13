@@ -1,31 +1,10 @@
+import copy
+import doctest
+
 from decitala.hm import contour_utils
 
 def test_doctests():
 	assert doctest.testmod(contour_utils, raise_on_error=True)
-
-def test_recheck():
-	curr = [
-		[1, {1, -1}],
-		[3, {1}],
-		[3, {1, -1}],
-		[3, {1, -1}],
-		[3, {1, -1}],
-		[3, {1}],
-		[0, {-1}],
-		[0, {1, -1}],
-		[0, {1, -1}],
-		[0, {1, -1}],
-		[0, {1, -1}],
-		[0, {1, -1}],
-		[0, {1, -1}],
-		[0, {1, -1}],
-		[0, {1, -1}],
-		[0, {-1}],
-		[4, {1, -1}]
-	]
-	cpy = copy.deepcopy(curr)
-	contour_utils._recheck_extrema(cpy, mode="max")
-	assert cpy == curr
 
 def test_adjacent_repetition():
 	"""

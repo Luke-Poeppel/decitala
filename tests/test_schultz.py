@@ -62,143 +62,143 @@ def test_remove_flags_except_flags_except_closest():
 
 ####################################################################################################
 # Examples
-def test_contour_ex15a_schultz():
-	# See p. 109
-	c = [1, 0, 2, 0, 2, 1]
-	calculated = schultz.spc(contour=c)
+# def test_contour_ex15a_schultz():
+# 	# See p. 109
+# 	c = [1, 0, 2, 0, 2, 1]
+# 	calculated = schultz.spc(contour=c)
 
-	expected = [1, 0, 2, 1]
-	expected_depth = 2  # hm...
+# 	expected = [1, 0, 2, 1]
+# 	expected_depth = 2  # hm...
 
-	assert calculated[0] == expected
-	assert calculated[1] == expected_depth
+# 	assert calculated[0] == expected
+# 	assert calculated[1] == expected_depth
 
-def test_contour_ex15b_schultz():
-	# See p. 110
-	c = [1, 3, 0, 3, 0, 3, 0, 3, 2]
-	calculated = schultz.spc(contour=c)
+# def test_contour_ex15b_schultz():
+# 	# See p. 110
+# 	c = [1, 3, 0, 3, 0, 3, 0, 3, 2]
+# 	calculated = schultz.spc(contour=c)
 
-	expected = [1, 3, 0, 3, 2]
-	expected_depth = 2
+# 	expected = [1, 3, 0, 3, 2]
+# 	expected_depth = 2
 
-	assert calculated[0] == expected
-	assert calculated[1] == expected_depth
+# 	assert calculated[0] == expected
+# 	assert calculated[1] == expected_depth
 
-ROSSIGNOL_DATA = [
-	[92, 90, 92, 90, 92, 90, 92, 90, 86, 93, 80],
-	[92, 90, 92, 90, 92, 90, 92, 90, 86, 93, 80, 80, 80, 86, 93, 80, 80, 80],
-	[80, 80, 91, 80, 80, 86, 78, 80, 93],
-	[78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 89],
-	[86, 92, 90, 84, 91, 91, 91, 78, 78, 78, 78, 78, 78, 78, 78, 78],
-	[89, 78, 78, 78, 78, 78, 78, 78, 78, 86, 80, 93],
-	[89, 83, 89, 83, 89, 83, 89, 83, 86, 80, 93],
-	[93, 82, 82, 78, 91, 91, 91, 91],
-	[80, 91, 80, 91, 80, 91, 80, 91, 80, 91, 80, 93],
-	[93, 93, 93, 80, 80, 91, 80, 91, 80, 91, 80, 91, 80, 91, 80, 91, 80, 91],
-	[89, 89, 89, 89, 89, 89, 89, 78, 80, 93],
-	[83, 89, 83, 89, 89, 78, 78, 78],
-	[80, 86, 88, 88, 88, 88, 88, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 91],
-	[93, 93, 93, 80, 86, 93],
-	[80, 91, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78],
-	[91, 91, 81, 86, 89, 78, 84, 86, 75, 92, 78, 89, 78, 78, 78, 78, 78, 78, 78, 78, 78, 92],
-	[73, 89, 86, 75, 75, 75, 75, 75, 75]
-]
+# ROSSIGNOL_DATA = [
+# 	[92, 90, 92, 90, 92, 90, 92, 90, 86, 93, 80],
+# 	[92, 90, 92, 90, 92, 90, 92, 90, 86, 93, 80, 80, 80, 86, 93, 80, 80, 80],
+# 	[80, 80, 91, 80, 80, 86, 78, 80, 93],
+# 	[78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 89],
+# 	[86, 92, 90, 84, 91, 91, 91, 78, 78, 78, 78, 78, 78, 78, 78, 78],
+# 	[89, 78, 78, 78, 78, 78, 78, 78, 78, 86, 80, 93],
+# 	[89, 83, 89, 83, 89, 83, 89, 83, 86, 80, 93],
+# 	[93, 82, 82, 78, 91, 91, 91, 91],
+# 	[80, 91, 80, 91, 80, 91, 80, 91, 80, 91, 80, 93],
+# 	[93, 93, 93, 80, 80, 91, 80, 91, 80, 91, 80, 91, 80, 91, 80, 91, 80, 91],
+# 	[89, 89, 89, 89, 89, 89, 89, 78, 80, 93],
+# 	[83, 89, 83, 89, 89, 78, 78, 78],
+# 	[80, 86, 88, 88, 88, 88, 88, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 91],
+# 	[93, 93, 93, 80, 86, 93],
+# 	[80, 91, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78],
+# 	[91, 91, 81, 86, 89, 78, 84, 86, 75, 92, 78, 89, 78, 78, 78, 78, 78, 78, 78, 78, 78, 92],
+# 	[73, 89, 86, 75, 75, 75, 75, 75, 75]
+# ]
 
-class TestSchultzNightingle:
+# class TestSchultzNightingle:
 
-	def test_nightingale_8_schultz(self):
-		pitches = [81, 70, 70, 66, 79]
-		nightingale_8 = [3, 1, 1, 0, 2, 2, 2, 2]
+# 	def test_nightingale_8_schultz(self):
+# 		pitches = [81, 70, 70, 66, 79]
+# 		nightingale_8 = [3, 1, 1, 0, 2, 2, 2, 2]
 
-		expected = [2, 0, 1]
+# 		expected = [2, 0, 1]
 
-		schultz_contour = schultz.spc(nightingale_8)
-		assert schultz_contour[0] == expected
+# 		schultz_contour = schultz.spc(nightingale_8)
+# 		assert schultz_contour[0] == expected
 
-	def test_nightingale_9_schultz(self):
-		pitches = [68, 79, 68, 79, 68, 79, 68, 79, 68, 79, 68, 79]
-		nightingale_9 = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+# 	def test_nightingale_9_schultz(self):
+# 		pitches = [68, 79, 68, 79, 68, 79, 68, 79, 68, 79, 68, 79]
+# 		nightingale_9 = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
 
-		expected = [0, 1]
+# 		expected = [0, 1]
 
-		schultz_contour = schultz.spc(nightingale_9)
-		assert schultz_contour[0] == expected
+# 		schultz_contour = schultz.spc(nightingale_9)
+# 		assert schultz_contour[0] == expected
 	
-	# def test_nightingale_13_schultz(self):
-	# 	pitches = [80, 86, 88, 88, 88, 88, 88, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 91]
-	# 	nightingale_13 = contour.pitch_contour(pitches)
-	# 	expected = [1, 0, 2]
-	# 	assert expected == schultz.spc(nightingale_13)[0]
+# 	# def test_nightingale_13_schultz(self):
+# 	# 	pitches = [80, 86, 88, 88, 88, 88, 88, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 91]
+# 	# 	nightingale_13 = contour.pitch_contour(pitches)
+# 	# 	expected = [1, 0, 2]
+# 	# 	assert expected == schultz.spc(nightingale_13)[0]
 	
-	def test_nightingale_17_schultz(self):
-		pitches = [73, 89, 86, 75, 75, 75, 75, 75, 75]
-		nightingale_17 = [0, 3, 2, 1, 1, 1, 1, 1, 1]
+# 	def test_nightingale_17_schultz(self):
+# 		pitches = [73, 89, 86, 75, 75, 75, 75, 75, 75]
+# 		nightingale_17 = [0, 3, 2, 1, 1, 1, 1, 1, 1]
 		
-		assert contour.pitch_contour(pitches) == nightingale_17
+# 		assert contour.pitch_contour(pitches) == nightingale_17
 
-		expected = [0, 2, 1]
-		schultz_contour = contour.spc(nightingale_17)
-		assert schultz_contour[0] == expected
+# 		expected = [0, 2, 1]
+# 		schultz_contour = contour.spc(nightingale_17)
+# 		assert schultz_contour[0] == expected
 
-# From Wallentinsen PhD Thesis. See p. 15.
-def test_wallentinsen_example():
-	c = [2, 4, 1, 5, 0, 6, 3]
-	calculated = schultz.spc(contour=c)
+# # From Wallentinsen PhD Thesis. See p. 15.
+# def test_wallentinsen_example():
+# 	c = [2, 4, 1, 5, 0, 6, 3]
+# 	calculated = schultz.spc(contour=c)
 
-	assert calculated[0] == [1, 0, 3, 2]
-	assert calculated[1] == 2
+# 	assert calculated[0] == [1, 0, 3, 2]
+# 	assert calculated[1] == 2
 
-class TestLongContour:
-	def test_long_contour_a(self):
-		c = [6, 1, 4, 4, 7, 0, 9, 8, 8, 1, 7, 3, 5, 0, 6, 1, 1, 0, 7, 2, 7, 6]
-		calculated = schultz.spc(contour=c)
-		assert calculated[0] == [1, 0, 2, 1]
+# class TestLongContour:
+# 	def test_long_contour_a(self):
+# 		c = [6, 1, 4, 4, 7, 0, 9, 8, 8, 1, 7, 3, 5, 0, 6, 1, 1, 0, 7, 2, 7, 6]
+# 		calculated = schultz.spc(contour=c)
+# 		assert calculated[0] == [1, 0, 2, 1]
 		
-	def test_long_contour_b(self):
-		c = [1, 4, 3, 6, 7, 5, 8, 5, 4, 0, 2, 1, 1, 1, 6, 1, 6, 3, 4, 1, 8, 0]
-		calculated = schultz.spc(contour=c)
-		assert calculated[0] == [1, 2, 0]
+# 	def test_long_contour_b(self):
+# 		c = [1, 4, 3, 6, 7, 5, 8, 5, 4, 0, 2, 1, 1, 1, 6, 1, 6, 3, 4, 1, 8, 0]
+# 		calculated = schultz.spc(contour=c)
+# 		assert calculated[0] == [1, 2, 0]
 		
-	def test_long_contour_c(self):
-		c = [1, 8, 6, 0, 8, 1, 4, 1, 7, 3, 4, 6, 2, 8, 6, 5, 1, 0]
-		calculated = schultz.spc(contour=c)
-		assert calculated[0] == [1, 2, 0]
+# 	def test_long_contour_c(self):
+# 		c = [1, 8, 6, 0, 8, 1, 4, 1, 7, 3, 4, 6, 2, 8, 6, 5, 1, 0]
+# 		calculated = schultz.spc(contour=c)
+# 		assert calculated[0] == [1, 2, 0]
 
-	def test_long_contour_d(self):
-		c = [0, 1, 0, 0, 0, 2, 1, 0, 1, 0, 1, 0, 1, 1, 1, 2, 0, 2]
-		calculated = schultz.spc(contour=c)[0]
-		assert calculated == [0, 1]
+# 	def test_long_contour_d(self):
+# 		c = [0, 1, 0, 0, 0, 2, 1, 0, 1, 0, 1, 0, 1, 1, 1, 2, 0, 2]
+# 		calculated = schultz.spc(contour=c)[0]
+# 		assert calculated == [0, 1]
 
-	def test_long_contour_e(self):
-		c = [2, 4, 1, 3, 1, 5, 1, 6, 1, 1, 6, 7, 4, 1, 1, 1, 1, 0, 5, 1, 1, 7]
-		calculated = schultz.spc(contour=c)[0]
-		assert calculated == [1, 0, 2]
+# 	def test_long_contour_e(self):
+# 		c = [2, 4, 1, 3, 1, 5, 1, 6, 1, 1, 6, 7, 4, 1, 1, 1, 1, 0, 5, 1, 1, 7]
+# 		calculated = schultz.spc(contour=c)[0]
+# 		assert calculated == [1, 0, 2]
 
-# def test_nightingale_13_schultz():
-# 	# I think Schultz made a mistake here... [1, 2, 0, 3] makes more sense... 
-# 	pitches = [80, 86, 88, 88, 88, 88, 88, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 91]
-# 	nightingale_13 = contour.pitch_contour(pitches)
+# # def test_nightingale_13_schultz():
+# # 	# I think Schultz made a mistake here... [1, 2, 0, 3] makes more sense... 
+# # 	pitches = [80, 86, 88, 88, 88, 88, 88, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 91]
+# # 	nightingale_13 = contour.pitch_contour(pitches)
+# # 	expected = [1, 0, 2]
+
+# # 	calculated = schultz.spc(nightingale_13)[0]
+# # 	print(calculated)
+# # 	assert calculated == expected
+
+# # print(test_nightingale_13_schultz())
+# # c = [1, 2, 0, 3]
+# # print(schultz.spc(c))
+
+# def test_nightingale_3_schultz():
+# 	pitches = [68, 68, 79, 68, 68, 74, 66, 68, 81]
+# 	nightingale_3 = [1, 1, 3, 1, 1, 2, 0, 1, 4]
+
 # 	expected = [1, 0, 2]
 
-# 	calculated = schultz.spc(nightingale_13)[0]
-# 	print(calculated)
-# 	assert calculated == expected
+# 	schultz_contour = contour.spc(nightingale_3)
+# 	print(schultz_contour)
+# 	assert schultz_contour[0] == expected
 
-# print(test_nightingale_13_schultz())
-# c = [1, 2, 0, 3]
-# print(schultz.spc(c))
-
-def test_nightingale_3_schultz():
-	pitches = [68, 68, 79, 68, 68, 74, 66, 68, 81]
-	nightingale_3 = [1, 1, 3, 1, 1, 2, 0, 1, 4]
-
-	expected = [1, 0, 2]
-
-	schultz_contour = contour.spc(nightingale_3)
-	print(schultz_contour)
-	assert schultz_contour[0] == expected
-
-print(test_nightingale_3_schultz())
+# print(test_nightingale_3_schultz())
 
 # c = [1, 3, 2, 0, 4]
 # print(schultz.spc(c))
