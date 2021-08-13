@@ -11,11 +11,11 @@ Implementation of Schultz's contour reduction algorithm (final version). See Sch
 Spectrum. This was originally in the contour module, but the implementation was complex enough to
 warrent its own module...
 """
-from itertools import groupby
-
 from .contour_utils import (
 	_track_extrema,
-	_pitch_contour
+	_pitch_contour,
+	_recheck_extrema,
+	_adjacency_and_intervening_checks
 )
 from ..utils import roll_window
 
@@ -77,45 +77,13 @@ def _schultz_extrema_check(contour):
 	# Reiterate over maxima/minima
 	# Reflag because of first sentence in Steps 6 and 7. I think this is right...
 	# import pdb; pdb.set_trace()
-	# _recheck_extrema(contour, mode="max")
-	# _recheck_extrema(contour, mode="min")
-	# contour = _track_extrema([x[0] for x in contour])
+	# Step 6. Flag maxima and *keep* repetitions.
+	_recheck_extrema(contour, mode="max")
+	_adjacency_and_intervening_checks(contour, mode="max", algorithm="schultz")
 
-	def adjacency_and_intervening_checks(contour, mode):
-		if mode == "max":
-			extrema_elem = 1
-		else:
-			extrema_elem = -1
-
-		# Step 6/7. For each cluster of maxima/minima, flag all unless:
-		# (1) one of the pitches in the string is the first or last element -> flag only the first/last.
-		# (2) both the first and last elements are in the string -> flag only the first and last.
-		extrema = [(i, x) for (i, x) in enumerate(contour) if extrema_elem in x[1]]
-		extrema_grouped = groupby(extrema, lambda x: x[1][0])
-		extrema_groups = [list(val) for _, val in extrema_grouped]
-		extrema_groups = [x for x in extrema_groups if len(x) > 1]
-		for max_grouping in extrema_groups:
-			if max_grouping[0][0] == 0 or max_grouping[-1][0] == len(contour) - 1:
-				for elem in max_grouping:
-					if elem[0] not in {0, len(contour) - 1}:
-						grouped_elem = contour[elem[0]]
-						grouped_elem[1].remove(extrema_elem)
-			else:
-				for elem in max_grouping:
-					grouped_elem = contour[elem[0]]
-					grouped_elem[1].add(extrema_elem)
-
-		# import pdb; pdb.set_trace()
-		# Step 8/9. Iterate again over maxima/minima. If cluster has no intervening extremum, remove
-		# the flag from all but one. (Say 1st).
-		for grouping in extrema_groups:
-			if not(_window_has_intervening_extrema(grouping, contour=contour, mode=mode)):
-				for elem in grouping[1:]:  # Remove flag from all but one.
-					elem[1][1].remove(extrema_elem)
-
-	# import pdb; pdb.set_trace()
-	adjacency_and_intervening_checks(contour, mode="max")
-	adjacency_and_intervening_checks(contour, mode="min")
+	# Step 7. Flag minima and *keep* repetitions.
+	_recheck_extrema(contour, mode="min")
+	_adjacency_and_intervening_checks(contour, mode="min", algorithm="schultz")
 
 def _schultz_get_closest_extrema(contour):
 	"""
@@ -262,7 +230,6 @@ def spc(contour):
 	if len(contour) <= 2:
 		return (_pitch_contour(contour), depth)
 
-	# import pdb; pdb.set_trace()
 	prime_contour = _track_extrema(contour)
 	if all(x[1] for x in prime_contour):
 		pass  # Proceed directly to Step 6. Morris (1993) stops at this stage.

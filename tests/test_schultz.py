@@ -84,6 +84,16 @@ def test_remove_flags_except_flags_except_closest():
 # 	assert calculated[0] == expected
 # 	assert calculated[1] == expected_depth
 
+# From Wallentinsen PhD Thesis. See p. 15.
+# def test_wallentinsen_example():
+# 	c = [2, 4, 1, 5, 0, 6, 3]
+# 	calculated = schultz.spc(contour=c)
+
+# 	assert calculated[0] == [1, 0, 3, 2]
+# 	assert calculated[1] == 2
+
+# print(test_wallentinsen_example())
+
 # ROSSIGNOL_DATA = [
 # 	[92, 90, 92, 90, 92, 90, 92, 90, 86, 93, 80],
 # 	[92, 90, 92, 90, 92, 90, 92, 90, 86, 93, 80, 80, 80, 86, 93, 80, 80, 80],
@@ -139,14 +149,6 @@ def test_remove_flags_except_flags_except_closest():
 # 		expected = [0, 2, 1]
 # 		schultz_contour = contour.spc(nightingale_17)
 # 		assert schultz_contour[0] == expected
-
-# # From Wallentinsen PhD Thesis. See p. 15.
-# def test_wallentinsen_example():
-# 	c = [2, 4, 1, 5, 0, 6, 3]
-# 	calculated = schultz.spc(contour=c)
-
-# 	assert calculated[0] == [1, 0, 3, 2]
-# 	assert calculated[1] == 2
 
 # class TestLongContour:
 # 	def test_long_contour_a(self):
