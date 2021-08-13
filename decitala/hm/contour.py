@@ -12,7 +12,7 @@ from itertools import groupby
 
 from .schultz import spc
 from .contour_utils import (
-	_get_initial_extrema,
+	_track_extrema,
 	_recheck_extrema,
 	_pitch_contour
 )
@@ -250,7 +250,7 @@ def prime_contour(contour):
 		return (pitch_contour(contour), depth)
 
 	# If all the values are extremas, it is already prime.
-	prime_contour = _get_initial_extrema(contour)
+	prime_contour = _track_extrema(contour)
 	initial_flags = [x[1] for x in prime_contour]
 	if all(x for x in initial_flags):
 		return (pitch_contour(contour), depth)

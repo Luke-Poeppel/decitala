@@ -20,7 +20,7 @@ def test_get_initial_extrema():
 		[1, {-1, 1}],
 		[1, {-1, 1}]
 	]
-	assert contour._get_initial_extrema(c) == expected
+	assert contour._track_extrema(c) == expected
 
 # Examples from the Schultz article.
 def test_immediately_flagged_prime_contours_morris():

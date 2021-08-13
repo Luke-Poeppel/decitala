@@ -84,7 +84,7 @@ def test_remove_flags_except_flags_except_closest():
 
 # (from contour utils)
 def test_recheck():
-	c = [
+	curr = [
 		[1, {1, -1}],
 		[3, {1}],
 		[3, {1, -1}],
@@ -103,11 +103,9 @@ def test_recheck():
 		[0, {-1}],
 		[4, {1, -1}]
 	]
-	cpy = copy.deepcopy(c)
-	contour_utils._recheck_extrema(c, mode="max")
-	# assert cpy == c
-
-# print(test_recheck())
+	cpy = copy.deepcopy(curr)
+	contour_utils._recheck_extrema(cpy, mode="max")
+	assert cpy == curr
 
 ####################################################################################################
 # Examples
@@ -133,10 +131,27 @@ def test_contour_ex15b_schultz():
 	assert calculated[0] == expected
 	assert calculated[1] == expected_depth
 
-# print(test_contour_ex15b_schultz())
+ROSSIGNOL_DATA = [
+	[92, 90, 92, 90, 92, 90, 92, 90, 86, 93, 80],
+	[92, 90, 92, 90, 92, 90, 92, 90, 86, 93, 80, 80, 80, 86, 93, 80, 80, 80],
+	[80, 80, 91, 80, 80, 86, 78, 80, 93],
+	[78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 89],
+	[86, 92, 90, 84, 91, 91, 91, 78, 78, 78, 78, 78, 78, 78, 78, 78],
+	[89, 78, 78, 78, 78, 78, 78, 78, 78, 86, 80, 93],
+	[89, 83, 89, 83, 89, 83, 89, 83, 86, 80, 93],
+	[93, 82, 82, 78, 91, 91, 91, 91],
+	[80, 91, 80, 91, 80, 91, 80, 91, 80, 91, 80, 93],
+	[93, 93, 93, 80, 80, 91, 80, 91, 80, 91, 80, 91, 80, 91, 80, 91, 80, 91],
+	[89, 89, 89, 89, 89, 89, 89, 78, 80, 93],
+	[83, 89, 83, 89, 89, 78, 78, 78],
+	[80, 86, 88, 88, 88, 88, 88, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 91],
+	[93, 93, 93, 80, 86, 93],
+	[80, 91, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78],
+	[91, 91, 81, 86, 89, 78, 84, 86, 75, 92, 78, 89, 78, 78, 78, 78, 78, 78, 78, 78, 78, 92],
+	[73, 89, 86, 75, 75, 75, 75, 75, 75]
+]
 
 class TestSchultzNightingle:
-
 	def test_nightingale_3_schultz(self):
 		pitches = [68, 68, 79, 68, 68, 74, 66, 68, 81]
 		nightingale_3 = [1, 1, 3, 1, 1, 2, 0, 1, 4]
@@ -214,23 +229,16 @@ class TestLongContour:
 		calculated = schultz.spc(contour=c)[0]
 		assert calculated == [1, 0, 2]
 
-# def test_nightingale_13_schultz():
-# 	pitches = [80, 86, 88, 88, 88, 88, 88, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 91]
-# 	nightingale_13 = contour.pitch_contour(pitches)
-# 	expected = [1, 0, 2]
+def test_nightingale_13_schultz():
+	pitches = [80, 86, 88, 88, 88, 88, 88, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 91]
+	nightingale_13 = contour.pitch_contour(pitches)
+	expected = [1, 0, 2]
 
-# 	calculated = schultz.spc(nightingale_13)[0]
-# 	print(calculated)
-# 	assert calculated == expected
+	calculated = schultz.spc(nightingale_13)[0]
+	print(calculated)
+	assert calculated == expected
 
-# print(test_nightingale_13_schultz())
+print(test_nightingale_13_schultz())
 
-
-
-
-"""
-BAD
-[[1, {1, -1}], [3, {1}], [3, set()], [0, set()], [4, {1, -1}]]
-[[1, {1, -1}], [3, {1}], [4, {1, -1}]]
-# It reduces this set even further! 
-"""
+# c = [1, 2, 0, 3]
+# print(schultz.spc(c))

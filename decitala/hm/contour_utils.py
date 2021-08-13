@@ -71,7 +71,7 @@ def _center_of_window_is_extremum(window, mode):
 	elif mode == "min":
 		return (middle_val <= window[0]) and (middle_val <= window[2])
 
-def _get_initial_extrema(contour):
+def _track_extrema(contour):
 	"""
 	Gets the initial extrema of a contour. Returns a list in which each element is a list holding a
 	contour element and a set which tells you whether that element defines a local maxima, local
@@ -79,10 +79,10 @@ def _get_initial_extrema(contour):
 	local minima; otherwise the set is left empty.
 
 	>>> contour = [0, 4, 3, 2, 5, 5, 1]
-	>>> _get_initial_extrema(contour)
+	>>> _track_extrema(contour)
 	[[0, {1, -1}], [4, {1}], [3, set()], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
 	>>> contour_2 = [1, 3, 0, 3, 0, 3, 0, 3, 2]
-	>>> for x in _get_initial_extrema(contour_2):
+	>>> for x in _track_extrema(contour_2):
 	... 	print(x)
 	[1, {1, -1}]
 	[3, {1}]
@@ -123,17 +123,15 @@ def _recheck_extrema(contour, mode):
 	[[2, {1, -1}], [1, set()], [3, {1}], [2, {1, -1}]]
 	"""
 	if mode == "max":
-		check = lambda x: 1 in x[1]
+		extrema_elem = 1
 	else:
-		check = lambda x: -1 in x[1]
+		extrema_elem = -1
 
-	for i, this_window in enumerate(roll_window(array=contour, window_size=3, fn=check)):
+	for i, this_window in enumerate(roll_window(array=contour, window_size=3)):
 		if any(x is None for x in this_window):
 			continue
 
 		if not(_center_of_window_is_extremum(window=this_window, mode=mode)):
 			mid_elem_extrema = this_window[1][1]
-			if mode == "max":
-				mid_elem_extrema.remove(1)
-			else:
-				mid_elem_extrema.remove(-1)
+			if extrema_elem in mid_elem_extrema:
+				mid_elem_extrema.remove(extrema_elem)

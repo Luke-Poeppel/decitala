@@ -14,8 +14,7 @@ warrent its own module...
 from itertools import groupby
 
 from .contour_utils import (
-	_get_initial_extrema,
-	_recheck_extrema,
+	_track_extrema,
 	_pitch_contour
 )
 from ..utils import roll_window
@@ -76,10 +75,9 @@ def _schultz_extrema_check(contour):
 	Steps 6-9.
 	"""
 	# Reiterate over maxima/minima
-	# Look at docs in contour_utils if confused! No more than a safety rail.
+	# Reflag because of first sentence in Steps 6 and 7. I think this is right...
 	# import pdb; pdb.set_trace()
-	_recheck_extrema(contour=contour, mode="max")
-	_recheck_extrema(contour=contour, mode="min")
+	contour = _track_extrema([x[0] for x in contour])
 
 	def adjacency_and_intervening_checks(contour, mode):
 		if mode == "max":
@@ -262,7 +260,8 @@ def spc(contour):
 	if len(contour) <= 2:
 		return (_pitch_contour(contour), depth)
 
-	prime_contour = _get_initial_extrema(contour)
+	# import pdb; pdb.set_trace()
+	prime_contour = _track_extrema(contour)
 	if all(x[1] for x in prime_contour):
 		pass  # Proceed directly to Step 6. Morris (1993) stops at this stage.
 	else:
