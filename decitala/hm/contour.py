@@ -187,7 +187,6 @@ def _morris_reduce(contour, depth):
 	"""
 	Steps 4-7 of the contour reduction algorithm.
 	"""
-	# import pdb; pdb.set_trace()
 	contour = [x for x in contour if x[1]]  # Step 4
 	depth += 1  # Step 5
 
