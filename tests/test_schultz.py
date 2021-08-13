@@ -92,6 +92,11 @@ def test_wallentinsen_example():
 	assert calculated[0] == [1, 0, 3, 2]
 	assert calculated[1] == 2
 
+def test_trivial():
+	c = [0, 0, 0, 0, 0, 0]
+	calculated = schultz.spc(contour=c)
+	assert calculated[0] == [0, 0]
+
 ROSSIGNOL_DATA = [
 	[92, 90, 92, 90, 92, 90, 92, 90, 86, 93, 80],
 	[92, 90, 92, 90, 92, 90, 92, 90, 86, 93, 80, 80, 80, 86, 93, 80, 80, 80],
@@ -159,28 +164,28 @@ class TestSchultzNightingle:
 		schultz_contour = contour.spc(nightingale_17)
 		assert schultz_contour[0] == expected
 
-# class TestLongContour:
-# 	def test_long_contour_a(self):
-# 		c = [6, 1, 4, 4, 7, 0, 9, 8, 8, 1, 7, 3, 5, 0, 6, 1, 1, 0, 7, 2, 7, 6]
-# 		calculated = schultz.spc(contour=c)
-# 		assert calculated[0] == [1, 0, 2, 1]
+class TestLongContour:
+	def test_long_contour_a(self):
+		c = [6, 1, 4, 4, 7, 0, 9, 8, 8, 1, 7, 3, 5, 0, 6, 1, 1, 0, 7, 2, 7, 6]
+		calculated = schultz.spc(contour=c)
+		assert calculated[0] == [1, 0, 2, 1]
 		
-# 	def test_long_contour_b(self):
-# 		c = [1, 4, 3, 6, 7, 5, 8, 5, 4, 0, 2, 1, 1, 1, 6, 1, 6, 3, 4, 1, 8, 0]
-# 		calculated = schultz.spc(contour=c)
-# 		assert calculated[0] == [1, 2, 0]
+	def test_long_contour_b(self):
+		c = [1, 4, 3, 6, 7, 5, 8, 5, 4, 0, 2, 1, 1, 1, 6, 1, 6, 3, 4, 1, 8, 0]
+		calculated = schultz.spc(contour=c)
+		assert calculated[0] == [1, 2, 2, 0]
 		
-# 	def test_long_contour_c(self):
-# 		c = [1, 8, 6, 0, 8, 1, 4, 1, 7, 3, 4, 6, 2, 8, 6, 5, 1, 0]
-# 		calculated = schultz.spc(contour=c)
-# 		assert calculated[0] == [1, 2, 0]
+	def test_long_contour_c(self):
+		c = [1, 8, 6, 0, 8, 1, 4, 1, 7, 3, 4, 6, 2, 8, 6, 5, 1, 0]
+		calculated = schultz.spc(contour=c)
+		assert calculated[0] == [1, 2, 2, 0]
 
-# 	def test_long_contour_d(self):
-# 		c = [0, 1, 0, 0, 0, 2, 1, 0, 1, 0, 1, 0, 1, 1, 1, 2, 0, 2]
-# 		calculated = schultz.spc(contour=c)[0]
-# 		assert calculated == [0, 1]
+	def test_long_contour_d(self):
+		c = [0, 1, 0, 0, 0, 2, 1, 0, 1, 0, 1, 0, 1, 1, 1, 2, 0, 2]
+		calculated = schultz.spc(contour=c)[0]
+		assert calculated == [0, 1]
 
-# 	def test_long_contour_e(self):
-# 		c = [2, 4, 1, 3, 1, 5, 1, 6, 1, 1, 6, 7, 4, 1, 1, 1, 1, 0, 5, 1, 1, 7]
-# 		calculated = schultz.spc(contour=c)[0]
-# 		assert calculated == [1, 0, 2]
+	def test_long_contour_e(self):
+		c = [2, 4, 1, 3, 1, 5, 1, 6, 1, 1, 6, 7, 4, 1, 1, 1, 1, 0, 5, 1, 1, 7]
+		calculated = schultz.spc(contour=c)[0]
+		assert calculated == [1, 0, 2]
