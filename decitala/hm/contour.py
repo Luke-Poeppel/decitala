@@ -6,15 +6,12 @@
 #
 # Location: Kent, 2021
 ####################################################################################################
-import copy
-
-from itertools import groupby
-
 from .schultz import spc
 from .contour_utils import (
-	_get_initial_extrema,
+	_track_extrema,
 	_recheck_extrema,
-	_pitch_contour
+	_pitch_contour,
+	_adjacency_and_intervening_checks
 )
 
 NEUMES = {
@@ -97,9 +94,9 @@ def uds_contour(data):
 
 		if curr > prev:
 			out.append(1)
-		if curr < prev:
+		elif curr < prev:
 			out.append(-1)
-		if curr == prev:
+		elif curr == prev:
 			out.append(0)
 
 		i += 1
@@ -186,46 +183,22 @@ def contour_class(
 ####################################################################################################
 # Contour reduction tools.
 # Implementation of Morris contour reduction algorithm (1993).
-def _morris_reduce(contour):
+def _morris_reduce(contour, depth):
 	"""
-	Runs one iteration of the Morris contour reduction.
+	Steps 4-7 of the contour reduction algorithm.
+	"""
+	contour = [x for x in contour if x[1]]  # Step 4
+	depth += 1  # Step 5
 
-	>>> data = [
-	...		[1, {1, -1}],
-	... 	[3, {1}],
-	... 	[1, set()],
-	... 	[2, set()],
-	... 	[0, {-1}],
-	... 	[1, set()],
-	... 	[4, {1, -1}]
-	... ]
-	>>> morris_reduced = _morris_reduce(data)
-	>>> morris_reduced
-	[[1, {1, -1}], [3, set()], [1, set()], [2, set()], [0, {-1}], [1, set()], [4, {1, -1}]]
-	>>> _morris_reduce(morris_reduced) == morris_reduced
-	True
-	"""
-	# Reiterate over maxima.
+	# Step 6. Flag maxima and *delete* repetitions.
 	_recheck_extrema(contour=contour, mode="max")
-	# Reiterate over minima
+	_adjacency_and_intervening_checks(contour, mode="max", algorithm="morris")
+
+	# Step 7. Flag minima and *delete* repetitions.
 	_recheck_extrema(contour=contour, mode="min")
+	_adjacency_and_intervening_checks(contour, mode="min", algorithm="morris")
 
-	cluster_ranges = []
-	index_range_of_contour = range(len(contour))
-	# Group by both the element and the stored extrema (now correct, after the above check).
-	grouped = groupby(index_range_of_contour, lambda i: (contour[i][0], contour[i][1]))
-	for _, index_range in grouped:
-		cluster_ranges.append(list(index_range))
-
-	for this_cluster in sorted(cluster_ranges):
-		if len(this_cluster) > 1:
-			# The del_range keeps the first item in the cluster (deleting only the repeated elem).
-			# (Option 1 in Schultz: flag only one of them)
-			del_range = this_cluster[1:]
-			for index in del_range:
-				del contour[index]
-
-	return contour
+	return contour, depth
 
 def prime_contour(contour):
 	"""
@@ -250,24 +223,19 @@ def prime_contour(contour):
 		return (pitch_contour(contour), depth)
 
 	# If all the values are extremas, it is already prime.
-	prime_contour = _get_initial_extrema(contour)
+	prime_contour = _track_extrema(contour)
 	initial_flags = [x[1] for x in prime_contour]
 	if all(x for x in initial_flags):
 		return (pitch_contour(contour), depth)
 
 	still_unflagged_values = True
 	while still_unflagged_values:
-		_morris_reduce(prime_contour)
-		depth += 1
-		# Check if next iteration is identical.
-		contour_copy = copy.deepcopy(prime_contour)
-		if _morris_reduce(contour_copy) == prime_contour:
+		prime_contour, depth = _morris_reduce(prime_contour, depth)
+		if all(x[1] for x in prime_contour):  # Step 3
 			still_unflagged_values = False
 
-	# Remove elements that are unflagged.
-	prime_contour = [x[0] for x in prime_contour if x[1]]
-	depth += 1
-
+	# Remove flags.
+	prime_contour = [x[0] for x in prime_contour]
 	return (pitch_contour(prime_contour), depth)
 
 def schultz_prime_contour(contour):
@@ -281,8 +249,8 @@ def schultz_prime_contour(contour):
 			reduction.
 	:rtype: tuple
 
-	>>> alouette_5 = [2, 5, 3, 1, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-	>>> spc(alouette_5)
+	nightingale_5 = [2, 5, 3, 1, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+	spc(alouette_5)
 	([1, 2, 0], 3)
 	"""
 	return spc(contour)

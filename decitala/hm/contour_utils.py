@@ -12,6 +12,8 @@ be removed at some point.
 """
 import copy
 
+from itertools import groupby
+
 from ..utils import roll_window
 
 def _pitch_contour(pitch_content, as_str=False):
@@ -19,7 +21,7 @@ def _pitch_contour(pitch_content, as_str=False):
 		to_mono = [x[0] for x in pitch_content]
 	else:
 		to_mono = pitch_content
-	seg_vals = copy.copy(to_mono)
+	seg_vals = copy.deepcopy(to_mono)
 	value_dict = dict()
 
 	for i, this_val in zip(range(0, len(sorted(set(seg_vals)))), sorted(set(seg_vals))):
@@ -71,7 +73,7 @@ def _center_of_window_is_extremum(window, mode):
 	elif mode == "min":
 		return (middle_val <= window[0]) and (middle_val <= window[2])
 
-def _get_initial_extrema(contour):
+def _track_extrema(contour):
 	"""
 	Gets the initial extrema of a contour. Returns a list in which each element is a list holding a
 	contour element and a set which tells you whether that element defines a local maxima, local
@@ -79,10 +81,10 @@ def _get_initial_extrema(contour):
 	local minima; otherwise the set is left empty.
 
 	>>> contour = [0, 4, 3, 2, 5, 5, 1]
-	>>> _get_initial_extrema(contour)
+	>>> _track_extrema(contour)
 	[[0, {1, -1}], [4, {1}], [3, set()], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]
 	>>> contour_2 = [1, 3, 0, 3, 0, 3, 0, 3, 2]
-	>>> for x in _get_initial_extrema(contour_2):
+	>>> for x in _track_extrema(contour_2):
 	... 	print(x)
 	[1, {1, -1}]
 	[3, {1}]
@@ -123,8 +125,10 @@ def _recheck_extrema(contour, mode):
 	[[2, {1, -1}], [1, set()], [3, {1}], [2, {1, -1}]]
 	"""
 	if mode == "max":
+		extrema_elem = 1
 		check = lambda x: 1 in x[1]
 	else:
+		extrema_elem = -1
 		check = lambda x: -1 in x[1]
 
 	for i, this_window in enumerate(roll_window(array=contour, window_size=3, fn=check)):
@@ -133,7 +137,80 @@ def _recheck_extrema(contour, mode):
 
 		if not(_center_of_window_is_extremum(window=this_window, mode=mode)):
 			mid_elem_extrema = this_window[1][1]
-			if mode == "max":
-				mid_elem_extrema.remove(1)
-			else:
-				mid_elem_extrema.remove(-1)
+			if extrema_elem in mid_elem_extrema:
+				mid_elem_extrema.remove(extrema_elem)
+
+
+"""
+The following functions are used in both the Morris and Schultz reduction algorithms.
+"""
+def _window_has_intervening_extrema(window, contour, mode):
+	"""
+	Steps 8/9. If there exists a sequence of equal maxima or minima, check if the sequence
+	contains an intervening opposite extrema, i.e. if a sequence of two equal maxima contains
+	a minima between them.
+
+	>>> maxima_group = [
+	... 	(2, [2, {1}]),
+	... 	(4, [2, {1}])
+	... ]
+	>>> contour = [[1, {1, -1}], [0, {-1}], [2, {1}], [0, {-1}], [2, {1}], [1, {1, -1}]]
+	>>> _window_has_intervening_extrema(maxima_group, contour=contour, mode="max")
+	True
+	"""
+	contour_index_range = [window[0][0], window[-1][0]]
+
+	# Two trivial cases
+	if len([x for x in window if 1 in x[1][1]]) == 1:  # Single extrema.
+		return True
+	elif window[0][0] + 1 == window[-1][0]:  # Two contiguous extrema.
+		if mode == "max":
+			return -1 in contour[contour_index_range[1]][1]
+		if mode == "min":
+			return 1 in contour[contour_index_range[1]][1]
+
+	"""
+	IMPORTANT NOTE: The conditions for intervening extrema are unclear from Schultz's paper.
+	For example, are beginning/ending contour elements allowed to contain the opposite extrema
+	value? I assume not, so I restrict the range.
+
+	Include start: intervening_range = contour[window[0][0]:window[-1][0]+1]
+	"""
+	intervening_range = contour[contour_index_range[0] + 1:contour_index_range[-1] - 1 + 1]
+	if mode == "max":  # Looking for min.
+		return any(-1 in x[1] for x in intervening_range)
+	if mode == "min":  # Looking for max.
+		return any(1 in x[1] for x in intervening_range)
+
+def _adjacency_and_intervening_checks(contour, mode, algorithm):
+	"""
+	See Step 6/7 in Morris & Schultz AND Step 8/9 of Schultz.
+	"""
+	if mode == "max":
+		extrema_elem = 1
+	else:
+		extrema_elem = -1
+
+	# For each cluster of maxima/minima, flag all/one unless:
+	# (1) one of the pitches in the string is the first or last element -> flag only the first/last.
+	# (2) both the first and last elements are in the string -> flag only the first and last.
+	extrema = [(i, x) for (i, x) in enumerate(contour) if extrema_elem in x[1]]
+	extrema_grouped = groupby(extrema, lambda x: x[1][0])
+	extrema_groups = [list(val) for _, val in extrema_grouped]
+	extrema_groups = [x for x in extrema_groups if len(x) > 1]
+	for max_grouping in extrema_groups:
+		if max_grouping[0][0] == 0 or max_grouping[-1][0] == len(contour) - 1:
+			for elem in max_grouping:
+				if elem[0] not in {0, len(contour) - 1}:
+					grouped_elem = contour[elem[0]]
+					grouped_elem[1].remove(extrema_elem)
+		else:
+			if algorithm == "morris":
+				# Flag only 1.
+				for elem in max_grouping[1:]:
+					elem[1][1].remove(extrema_elem)
+			elif algorithm == "schultz":
+				# Flag all FOLLOWED BY STEPS 8 and 9.
+				if not(_window_has_intervening_extrema(window=max_grouping, contour=contour, mode=mode)):  # noqa
+					for elem in max_grouping[1:]:
+						elem[1][1].remove(extrema_elem)

@@ -20,7 +20,7 @@ def test_get_initial_extrema():
 		[1, {-1, 1}],
 		[1, {-1, 1}]
 	]
-	assert contour._get_initial_extrema(c) == expected
+	assert contour._track_extrema(c) == expected
 
 # Examples from the Schultz article.
 def test_immediately_flagged_prime_contours_morris():
@@ -42,5 +42,18 @@ def test_contours_morris():
 	calculated = contour.prime_contour(contour=c)
 	assert calculated[0] == [1, 0, 2]
 	assert calculated[1] == 3
+
+def test_contour_ex14():
+	"""
+	See Morris (1993: 213).
+	"""
+	c = [0, 4, 3, 2, 5, 5, 1]
+	calculated = contour.prime_contour(contour=c)
+	expected = [0, 2, 1]
+	assert calculated[0] == expected
+	assert calculated[1] == 2
+
+print(test_contour_ex14())
+
 
 # All Schultz relevant tests are in tests/test_schultz.
