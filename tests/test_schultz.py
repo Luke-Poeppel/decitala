@@ -170,12 +170,60 @@ class TestSchultzNightingle:
 		schultz_contour = schultz.spc(nightingale_9)
 		assert schultz_contour[0] == expected
 	
+	def test_nightingale_10_schultz(self):
+		pitches = [93, 93, 93, 80, 80, 91, 80, 91, 80, 91, 80, 91, 80, 91, 80, 91, 80, 91]
+		nightingale_10 = contour.pitch_contour(pitches)
+		expected = [2, 0, 1]
+
+		calculated = schultz.spc(nightingale_10)[0]
+		assert calculated == expected
+	
+	def test_nightingale_11_schultz(self):
+		pitches = [89, 89, 89, 89, 89, 89, 89, 78, 80, 93]
+		nightingale_11 = contour.pitch_contour(pitches)
+		expected = [1, 0, 2]
+
+		calculated = schultz.spc(nightingale_11)[0]
+		assert calculated == expected
+	
+	def test_nightingale_12_schultz(self):
+		pitches = [83, 89, 83, 89, 89, 78, 78, 78]
+		nightingale_12 = contour.pitch_contour(pitches)
+		expected = [1, 2, 0]
+
+		calculated = schultz.spc(nightingale_12)[0]
+		assert calculated == expected
+
 	def test_nightingale_13_schultz(self):
 		pitches = [80, 86, 88, 88, 88, 88, 88, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78, 91]
 		nightingale_13 = contour.pitch_contour(pitches)
 		expected = [1, 0, 2]
 
 		calculated = schultz.spc(nightingale_13)[0]
+		assert calculated == expected
+	
+	def test_nightingale_14_schultz(self):
+		pitches = [93, 93, 93, 80, 86, 93]
+		nightingale_14 = contour.pitch_contour(pitches)
+		expected = [1, 0, 1]
+
+		calculated = schultz.spc(nightingale_14)[0]
+		assert calculated == expected
+	
+	def test_nightingale_15_schultz(self):
+		pitches = [80, 91, 78, 78, 78, 78, 78, 78, 78, 78, 78, 78]
+		nightingale_15 = contour.pitch_contour(pitches)
+		expected = [1, 2, 0]
+
+		calculated = schultz.spc(nightingale_15)[0]
+		assert calculated == expected
+	
+	def test_nightingale_16_schultz(self):
+		pitches = [91, 91, 81, 86, 89, 78, 84, 86, 75, 92, 78, 89, 78, 78, 78, 78, 78, 78, 78, 78, 78, 92]
+		nightingale_16 = contour.pitch_contour(pitches)
+		expected = [1, 0, 2]
+
+		calculated = schultz.spc(nightingale_16)[0]
 		assert calculated == expected
 	
 	def test_nightingale_17_schultz(self):
