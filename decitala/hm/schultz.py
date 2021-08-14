@@ -11,72 +11,22 @@ Implementation of Schultz's contour reduction algorithm (final version). See Sch
 Spectrum. This was originally in the contour module, but the implementation was complex enough to
 warrent its own module...
 """
+from collections import Counter
+
 from .contour_utils import (
 	_track_extrema,
 	_pitch_contour,
 	_recheck_extrema,
 	_adjacency_and_intervening_checks
 )
-from ..utils import roll_window
 
 class SchultzException(Exception):
 	pass
-
-def _window_has_intervening_extrema(window, contour, mode):
-	"""
-	Steps 8/9. If there exists a sequence of equal maxima or minima, check if the sequence
-	contains an intervening opposite extrema, i.e. if a sequence of two equal maxima contains
-	a minima between them.
-
-	>>> maxima_group = [
-	... 	(2, [2, {1}]),
-	... 	(4, [2, {1}])
-	... ]
-	>>> contour = [[1, {1, -1}], [0, {-1}], [2, {1}], [0, {-1}], [2, {1}], [1, {1, -1}]]
-	>>> _window_has_intervening_extrema(maxima_group, contour=contour, mode="max")
-	True
-	"""
-	if mode == "max":
-		# Only a single extrema found. Trivial case.
-		if len([x for x in window if 1 in x[1][1]]) == 1:
-			return True
-		else:
-			check = lambda x: 1 in x[1][1]
-	else:
-		# Only a single extrema found.
-		if len([x for x in window if -1 in x[1][1]]) == 1:
-			return True
-		check = lambda x: -1 in x[1][1]
-
-	for tiny_window in roll_window(window, window_size=2, fn=check):
-		contour_index_range = [tiny_window[0][0], tiny_window[1][0]]
-		if (contour_index_range[0] + 1) == contour_index_range[1]:
-			# import pdb; pdb.set_trace()
-			# Check if second element in tiny-window contains opposite flag.
-			if mode == "max":
-				if not(-1 in contour[contour_index_range[1]][1]):
-					return False
-			if mode == "min":
-				if not(1 in contour[contour_index_range[1]][1]):
-					return False
-		else:
-			# -1 + 1 because looking one element before ending, but list indexing so add 1.
-			intervening_range = contour[contour_index_range[0] + 1:contour_index_range[-1] - 1 + 1]
-			if mode == "max":  # Looking for min.
-				if not(any(-1 in x[1] for x in intervening_range)):
-					return False
-			if mode == "min":  # Looking for max.
-				if not(any(1 in x[1] for x in intervening_range)):
-					return False
-	return True
 
 def _schultz_extrema_check(contour):
 	"""
 	Steps 6-9.
 	"""
-	# Reiterate over maxima/minima
-	# Reflag because of first sentence in Steps 6 and 7. I think this is right...
-	# import pdb; pdb.set_trace()
 	# Step 6. Flag maxima and *keep* repetitions.
 	_recheck_extrema(contour, mode="max")
 	_adjacency_and_intervening_checks(contour, mode="max", algorithm="schultz")
@@ -115,19 +65,16 @@ def _schultz_get_closest_extrema(contour):
 	closest_end_extrema = next((len(contour) - i - 2, x) for (i, x) in enumerate(contour[1:-1][::-1]) if 1 in x[1] or -1 in x[1])  # noqa
 
 	if -1 in closest_start_extrema[1][1]:
-		closest_start_out = ("min", closest_start_extrema)
+		closest_start = ("min", closest_start_extrema)
 	else:
-		closest_start_out = ("max", closest_start_extrema)
+		closest_start = ("max", closest_start_extrema)
 
 	if -1 in closest_end_extrema[1][1]:
-		closest_end_out = ("min", closest_end_extrema)
+		closest_end = ("min", closest_end_extrema)
 	else:
-		closest_end_out = ("max", closest_end_extrema)
+		closest_end = ("max", closest_end_extrema)
 
-	return (
-		closest_start_out,
-		closest_end_out,
-	)
+	return (closest_start, closest_end)
 
 def _schultz_remove_flag_repetitions_except_closest(contour):
 	"""
@@ -139,6 +86,9 @@ def _schultz_remove_flag_repetitions_except_closest(contour):
 		closest_end_extrema,
 	) = _schultz_get_closest_extrema(contour)
 
+	counted = Counter([x[0] for x in contour])
+	repeated_keys = set([x[0] for x in counted.items() if x[1] > 1])
+
 	# Unflag all repeated maxes/mins that are not closest to first and last.
 	unflagged_maxima = []
 	unflagged_minima = []
@@ -147,12 +97,13 @@ def _schultz_remove_flag_repetitions_except_closest(contour):
 		if i in closest_indices or i in {0, len(contour) - 1}:
 			continue
 
-		if -1 in contour_elem[1]:
-			unflagged_minima.append((i, contour_elem))
-			contour_elem[1].clear()
-		elif 1 in contour_elem[1]:
-			unflagged_maxima.append((i, contour_elem))
-			contour_elem[1].clear()
+		# Use two ifs because an element might be both a maxima and minima.
+		if contour_elem[0] in repeated_keys:
+			if -1 in contour_elem[1]:
+				unflagged_minima.append((i, contour_elem))
+			if 1 in contour_elem[1]:
+				unflagged_maxima.append((i, contour_elem))
+			contour_elem[1].clear()  # "remove the flags" plural.
 
 	return (contour, closest_start_extrema, closest_end_extrema, unflagged_minima, unflagged_maxima)
 
@@ -167,13 +118,13 @@ def _schultz_reduce(contour, depth):
 			closest_end_extrema,
 			unflagged_minima,
 			unflagged_maxima
-		) = _schultz_remove_flag_repetitions_except_closest(contour) # noqa
+		) = _schultz_remove_flag_repetitions_except_closest(contour) # noqa Step 11
 
 		# Step 12
 		# If both are maxes or both are mins, reflag one of the opposite removed values.
 		# Not totally sure about the exception (would like to ask contour expert).
 		# Basically, what if there are no extrema flags of a certain type to flag/unflag?
-		if closest_start_extrema[0] == closest_end_extrema[0]:  # "max" == "max" or "min" == "min"
+		if closest_start_extrema[0] == closest_end_extrema[0]:  # both are maxes or mins.
 			if closest_start_extrema[0] == "max":
 				try:
 					reflag = unflagged_minima[0]

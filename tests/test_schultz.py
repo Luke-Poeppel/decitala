@@ -127,6 +127,15 @@ class TestSchultzNightingle:
 
 		schultz_contour = contour.spc(nightingale_3)
 		assert schultz_contour[0] == expected
+	
+	def test_nightingale_6_shultz():
+		pitches = [89, 78, 78, 78, 78, 78, 78, 78, 78, 86, 80, 93]
+		nightingale_6 = contour.pitch_contour(pitches)
+
+		expected = [1, 0, 2]
+
+		schultz_contour = schultz.spc(nightingale_6)
+		assert schultz_contour[0] == expected
 
 	def test_nightingale_8_schultz(self):
 		pitches = [81, 70, 70, 66, 79]

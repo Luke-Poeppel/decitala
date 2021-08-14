@@ -142,11 +142,58 @@ def _recheck_extrema(contour, mode):
 
 
 """
-The following function is used in both the Morris and Schultz reduction algorithms.
+The following functions are used in both the Morris and Schultz reduction algorithms.
 """
+def _window_has_intervening_extrema(window, contour, mode):
+	"""
+	Steps 8/9. If there exists a sequence of equal maxima or minima, check if the sequence
+	contains an intervening opposite extrema, i.e. if a sequence of two equal maxima contains
+	a minima between them.
+
+	>>> maxima_group = [
+	... 	(2, [2, {1}]),
+	... 	(4, [2, {1}])
+	... ]
+	>>> contour = [[1, {1, -1}], [0, {-1}], [2, {1}], [0, {-1}], [2, {1}], [1, {1, -1}]]
+	>>> _window_has_intervening_extrema(maxima_group, contour=contour, mode="max")
+	True
+	"""
+	if mode == "max":
+		# Only a single extrema found. Trivial case.
+		if len([x for x in window if 1 in x[1][1]]) == 1:
+			return True
+		else:
+			check = lambda x: 1 in x[1][1]
+	else:
+		# Only a single extrema found.
+		if len([x for x in window if -1 in x[1][1]]) == 1:
+			return True
+		check = lambda x: -1 in x[1][1]
+
+	for tiny_window in roll_window(window, window_size=2, fn=check):
+		contour_index_range = [tiny_window[0][0], tiny_window[1][0]]
+		if (contour_index_range[0] + 1) == contour_index_range[1]:
+			# Check if second element in tiny-window contains opposite flag.
+			if mode == "max":
+				if not(-1 in contour[contour_index_range[1]][1]):
+					return False
+			if mode == "min":
+				if not(1 in contour[contour_index_range[1]][1]):
+					return False
+		else:
+			# -1 + 1 because looking one element before ending, but list indexing so add 1.
+			intervening_range = contour[contour_index_range[0] + 1:contour_index_range[-1] - 1 + 1]
+			if mode == "max":  # Looking for min.
+				if not(any(-1 in x[1] for x in intervening_range)):
+					return False
+			if mode == "min":  # Looking for max.
+				if not(any(1 in x[1] for x in intervening_range)):
+					return False
+	return True
+
 def _adjacency_and_intervening_checks(contour, mode, algorithm):
 	"""
-	See Step 6/7 in Morris/Schultz.
+	See Step 6/7 in Morris & Schultz AND Step 8/9 of Schultz.
 	"""
 	if mode == "max":
 		extrema_elem = 1
@@ -172,5 +219,7 @@ def _adjacency_and_intervening_checks(contour, mode, algorithm):
 				for elem in max_grouping[1:]:
 					elem[1][1].remove(extrema_elem)
 			elif algorithm == "schultz":
-				# Flag all.
-				pass
+				# Flag all FOLLOWED BY STEPS 8 and 9.
+				if not(_window_has_intervening_extrema(window=max_grouping, contour=contour, mode=mode)):  # noqa
+					for elem in max_grouping[1:]:
+						elem[1][1].remove(extrema_elem)
