@@ -9,36 +9,6 @@ def test_doctests():
 
 ####################################################################################################
 # Tools
-def test_has_intervening_extrema_min():
-	# intervening maximum between indices 1 and 3?
-	window = [(1, [0, {-1}]), (3, [0, {-1}])]
-	c = [[1, {1, -1}], [0, {-1}], [2, {1}], [0, {-1}], [2, {1}], [1, {1, -1}]]
-	mode = "min"
-
-	expected = True
-	calculated = schultz._window_has_intervening_extrema(
-		window=window,
-		contour=c,
-		mode=mode
-	)
-	assert calculated == True
-
-def test_has_intervening_extrema_max():
-	"""
-	Example for checking when only a single value, in this case the ending, is flagged.
-	"""
-	window = [(1, [1, set()]), (3, [1, set()]), (5, [1, set()]), (7, [1, set()]), (9, [1, set()]), (11, [1, {-1, 1}])]
-	c = [[0, {1, -1}], [1, set()], [0, set()], [1, set()], [0, set()], [1, set()], [0, set()], [1, set()], [0, set()], [1, set()], [0, set()], [1, {-1, 1}]]
-	mode = "max" # Unneeded. 
-
-	expected = True
-	calculated = schultz._window_has_intervening_extrema(
-		window=window,
-		contour=c,
-		mode=mode
-	)
-	assert expected == calculated
-
 def test_no_schultz_repetition():
 	c = [[1, {1, -1}], [3, {1}], [0, {-1}], [3, {1}], [2, {1, -1}]]
 	checked = schultz._no_schultz_repetition(c)
@@ -119,6 +89,24 @@ ROSSIGNOL_DATA = [
 
 class TestSchultzNightingle:
 
+	def test_nightingale_1_schultz(self):
+		pitches = [92, 90, 92, 90, 92, 90, 92, 90, 86, 93, 80]
+		nightingale_1 = contour.pitch_contour(pitches)
+
+		expected = [1, 2, 0]
+
+		schultz_contour = contour.spc(nightingale_1)
+		assert schultz_contour[0] == expected
+
+	def test_nightingale_2_schultz(self):
+		pitches = [92, 90, 92, 90, 92, 90, 92, 90, 86, 93, 80, 80, 80, 86, 93, 80, 80, 80]
+		nightingale_2 = contour.pitch_contour(pitches)
+
+		expected = [1, 2, 0]
+
+		schultz_contour = contour.spc(nightingale_2)
+		assert schultz_contour[0] == expected
+
 	def test_nightingale_3_schultz(self):
 		pitches = [68, 68, 79, 68, 68, 74, 66, 68, 81]
 		nightingale_3 = [1, 1, 3, 1, 1, 2, 0, 1, 4]
@@ -128,7 +116,7 @@ class TestSchultzNightingle:
 		schultz_contour = contour.spc(nightingale_3)
 		assert schultz_contour[0] == expected
 	
-	def test_nightingale_6_shultz():
+	def test_nightingale_6_shultz(self):
 		pitches = [89, 78, 78, 78, 78, 78, 78, 78, 78, 86, 80, 93]
 		nightingale_6 = contour.pitch_contour(pitches)
 
@@ -182,12 +170,12 @@ class TestLongContour:
 	def test_long_contour_b(self):
 		c = [1, 4, 3, 6, 7, 5, 8, 5, 4, 0, 2, 1, 1, 1, 6, 1, 6, 3, 4, 1, 8, 0]
 		calculated = schultz.spc(contour=c)
-		assert calculated[0] == [1, 2, 2, 0]
+		assert calculated[0] == [1, 2, 0]
 		
 	def test_long_contour_c(self):
 		c = [1, 8, 6, 0, 8, 1, 4, 1, 7, 3, 4, 6, 2, 8, 6, 5, 1, 0]
 		calculated = schultz.spc(contour=c)
-		assert calculated[0] == [1, 2, 2, 0]
+		assert calculated[0] == [1, 2, 0]
 
 	def test_long_contour_d(self):
 		c = [0, 1, 0, 0, 0, 2, 1, 0, 1, 0, 1, 0, 1, 1, 1, 2, 0, 2]
