@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>utils &mdash; decitala 1.1.0 documentation</title>
+  <title>utils &mdash; decitala 1.1.1 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                1.1.0
+                1.1.1
               </div>
             
           
@@ -270,8 +270,8 @@ for two types of rhythmic values (long &amp; short).</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>array</strong> – a list, tuple, numpy array, etc.</p></li>
 <li><p><strong>window_size</strong> (<em>int</em>) – size of the window</p></li>
-<li><p><strong>fn</strong> (<em>lambda</em>) – a function evaluating a bool; will only iterate over elements satifying the
-function.</p></li>
+<li><p><strong>fn</strong> (<em>lambda</em>) – a function evaluating a bool; will only iterate over elements satifying a
+condition.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -288,12 +288,9 @@ function.</p></li>
 <span class="go">(&#39;Monteverdi&#39;, &#39;Messiaen&#39;, &#39;Mahler&#39;)</span>
 <span class="go">(&#39;Messiaen&#39;, &#39;Mahler&#39;, &#39;MacDowell&#39;)</span>
 <span class="go">(&#39;Mahler&#39;, &#39;MacDowell&#39;, &#39;Massenet&#39;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This function also allows the use of a function input for filtering.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Say we wanted to iterate over the elements of the following collection that have</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># 1s in the set.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">cseg_data</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">}]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">cseg_data</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">contour_extrema</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">}],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">}]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">max_check</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">this_frame</span> <span class="ow">in</span> <span class="n">roll_window</span><span class="p">(</span><span class="n">contour_extrema</span><span class="p">,</span> <span class="n">window_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">max_check</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">this_frame</span><span class="p">)</span>
 <span class="go">([0, {1, -1}], [4, {1}], [5, {1}])</span>
 <span class="go">([4, {1}], [5, {1}], [5, {1}])</span>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>decitala.utils &mdash; decitala 1.1.0 documentation</title>
+  <title>decitala.utils &mdash; decitala 1.1.1 documentation</title>
   
 
   
@@ -61,7 +61,7 @@
             
             
               <div class="version">
-                1.1.0
+                1.1.1
               </div>
             
           
@@ -344,8 +344,8 @@
 
 <span class="sd">	:param array: a list, tuple, numpy array, etc.</span>
 <span class="sd">	:param int window_size: size of the window</span>
-<span class="sd">	:param lambda fn: a function evaluating a bool; will only iterate over elements satifying the</span>
-<span class="sd">						function.</span>
+<span class="sd">	:param lambda fn: a function evaluating a bool; will only iterate over elements satifying a</span>
+<span class="sd">						condition.</span>
 <span class="sd">	:return: A rolling windows of array, each of length `window_size`.</span>
 <span class="sd">	:rtype: numpy.vstack</span>
 
@@ -356,12 +356,9 @@
 <span class="sd">	(&#39;Monteverdi&#39;, &#39;Messiaen&#39;, &#39;Mahler&#39;)</span>
 <span class="sd">	(&#39;Messiaen&#39;, &#39;Mahler&#39;, &#39;MacDowell&#39;)</span>
 <span class="sd">	(&#39;Mahler&#39;, &#39;MacDowell&#39;, &#39;Massenet&#39;)</span>
-<span class="sd">	&gt;&gt;&gt; # This function also allows the use of a function input for filtering.</span>
-<span class="sd">	&gt;&gt;&gt; # Say we wanted to iterate over the elements of the following collection that have</span>
-<span class="sd">	&gt;&gt;&gt; # 1s in the set.</span>
-<span class="sd">	&gt;&gt;&gt; cseg_data = [[0, {1, -1}], [4, {1}], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]</span>
-<span class="sd">	&gt;&gt;&gt; fn = lambda x: 1 in x[1]</span>
-<span class="sd">	&gt;&gt;&gt; for this_frame in roll_window(cseg_data, 3, fn):</span>
+<span class="sd">	&gt;&gt;&gt; contour_extrema = [[0, {1, -1}], [4, {1}], [2, {-1}], [5, {1}], [5, {1}], [1, {1, -1}]]</span>
+<span class="sd">	&gt;&gt;&gt; max_check = lambda x: 1 in x[1]</span>
+<span class="sd">	&gt;&gt;&gt; for this_frame in roll_window(contour_extrema, window_size=3, fn=max_check):</span>
 <span class="sd">	... 	print(this_frame)</span>
 <span class="sd">	([0, {1, -1}], [4, {1}], [5, {1}])</span>
 <span class="sd">	([4, {1}], [5, {1}], [5, {1}])</span>
