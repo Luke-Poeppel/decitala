@@ -250,7 +250,7 @@ def schultz_prime_contour(contour):
 	:rtype: tuple
 
 	>>> nightingale_5 = [2, 5, 3, 1, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-	>>> spc(alouette_5)
+	>>> spc(nightingale_5)
 	([1, 2, 0], 3)
 	"""
 	return spc(contour)
