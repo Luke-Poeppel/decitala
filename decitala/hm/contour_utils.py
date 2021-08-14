@@ -158,38 +158,29 @@ def _window_has_intervening_extrema(window, contour, mode):
 	>>> _window_has_intervening_extrema(maxima_group, contour=contour, mode="max")
 	True
 	"""
-	if mode == "max":
-		# Only a single extrema found. Trivial case.
-		if len([x for x in window if 1 in x[1][1]]) == 1:
-			return True
-		else:
-			check = lambda x: 1 in x[1][1]
-	else:
-		# Only a single extrema found.
-		if len([x for x in window if -1 in x[1][1]]) == 1:
-			return True
-		check = lambda x: -1 in x[1][1]
+	contour_index_range = [window[0][0], window[-1][0]]
 
-	for tiny_window in roll_window(window, window_size=2, fn=check):
-		contour_index_range = [tiny_window[0][0], tiny_window[1][0]]
-		if (contour_index_range[0] + 1) == contour_index_range[1]:
-			# Check if second element in tiny-window contains opposite flag.
-			if mode == "max":
-				if not(-1 in contour[contour_index_range[1]][1]):
-					return False
-			if mode == "min":
-				if not(1 in contour[contour_index_range[1]][1]):
-					return False
-		else:
-			# -1 + 1 because looking one element before ending, but list indexing so add 1.
-			intervening_range = contour[contour_index_range[0] + 1:contour_index_range[-1] - 1 + 1]
-			if mode == "max":  # Looking for min.
-				if not(any(-1 in x[1] for x in intervening_range)):
-					return False
-			if mode == "min":  # Looking for max.
-				if not(any(1 in x[1] for x in intervening_range)):
-					return False
-	return True
+	# Two trivial cases
+	if len([x for x in window if 1 in x[1][1]]) == 1:  # Single extrema.
+		return True
+	elif window[0][0] + 1 == window[-1][0]:  # Two contiguous extrema.
+		if mode == "max":
+			return -1 in contour[contour_index_range[1]][1]
+		if mode == "min":
+			return 1 in contour[contour_index_range[1]][1]
+
+	"""
+	IMPORTANT NOTE: The conditions for intervening extrema are unclear from Schultz's paper.
+	For example, are beginning/ending contour elements allowed to contain the opposite extrema
+	value? I assume not, so I restrict the range.
+
+	Include start: intervening_range = contour[window[0][0]:window[-1][0]+1]
+	"""
+	intervening_range = contour[contour_index_range[0] + 1:contour_index_range[-1] - 1 + 1]
+	if mode == "max":  # Looking for min.
+		return any(-1 in x[1] for x in intervening_range)
+	if mode == "min":  # Looking for max.
+		return any(1 in x[1] for x in intervening_range)
 
 def _adjacency_and_intervening_checks(contour, mode, algorithm):
 	"""
