@@ -3,6 +3,9 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.2](https://github.com/Luke-Poeppel/decitala/tree/v1.1.2) August 15, 2021
+#### Fixed
+
 ## [v1.1.1](https://github.com/Luke-Poeppel/decitala/tree/v1.1.1) August 14, 2021
 #### Fixed
 - Rewrote my implementation of the Morris (1993) and Schultz (2008) contour reduction algorithms. Greatly shortened and simplified the code. The Schultz implementation was still complex enough that I decided to move it to a new module (`decitala.hm.schultz`), but the function `schultz_prime_contour` is still used in the same way –– it's just wrapped now. 
