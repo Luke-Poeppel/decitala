@@ -35,7 +35,9 @@ PRIME_CONTOUR_CLASSES = {
 	(0, 2, 1): "L",
 	(1, 0, 2, 1): "P",
 	(1, 0, 3, 2): "X",
-	(1, 3, 0, 2): "Y"
+	(1, 3, 0, 2): "Y",
+	(1, 0, 2, 0, 1): "12a",
+	(1, 0, 3, 0, 2): "12b"
 }
 
 class ContourException(Exception):
