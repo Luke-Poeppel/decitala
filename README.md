@@ -34,6 +34,7 @@ If you would like to use the ``vis.create_tree_diagram`` function, it requires s
 
 ### Citation
 If you use `decitala`, please cite its DOI:
+
 [![DOI](https://zenodo.org/badge/275475667.svg)](https://zenodo.org/badge/latestdoi/275475667)
 
 ### Why is it called decitala?
