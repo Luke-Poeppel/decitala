@@ -3,8 +3,10 @@ All important changes to the decitala package will be documented here.
 
 The changelog format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v1.1.2](https://github.com/Luke-Poeppel/decitala/tree/v1.1.2) August 15, 2021
+## [v1.1.2](https://github.com/Luke-Poeppel/decitala/tree/v1.1.2) August 17, 2021
 #### Fixed
+- Fixed typo for Shattala (formerly Shaltala).
+- Added missing Schultz prime contour classes, 12a and 12b, to the contour module. 
 
 ## [v1.1.1](https://github.com/Luke-Poeppel/decitala/tree/v1.1.1) August 14, 2021
 #### Fixed
