@@ -254,3 +254,15 @@ def plot_pitch_class_distribution_by_species(species, save_path=None):
 		plt.savefig(save_path, dpi=350)
 
 	return plt
+
+def dijkstra_gif(
+		filepath,
+		part_num,
+		show=False,
+		save_path=None
+	):
+	"""
+	Function for creating a GIF file of the Dijkstra algorithm for a given
+	filepath-part-num combination using imagemagick.
+	"""
+	pass
