@@ -11,11 +11,17 @@ import matplotlib as mpl
 import os
 import treeplotter
 import natsort
+import shutil
+import itertools
+import subprocess
 
 from collections import Counter
 
 from music21 import converter
 from music21 import pitch
+
+from . import search
+from .path_finding import path_finding_utils
 
 here = os.path.abspath(os.path.dirname(__file__))
 treant_templates = here + "/treant_templates"
@@ -25,6 +31,9 @@ FONTSIZE_TITLE = 14
 FONTSIZE_LABEL = 14
 
 mpl.style.use("bmh")
+
+class VisException(Exception):
+	pass
 
 ####################################################################################################
 def create_tree_diagram(
@@ -258,11 +267,103 @@ def plot_pitch_class_distribution_by_species(species, save_path=None):
 def dijkstra_gif(
 		filepath,
 		part_num,
+		table,
+		windows=list(range(2, 19)),
+		allow_subdivision=False,
+		allow_contiguous_summation=False,
+		algorithm="dijkstra",
+		cost_function_class=path_finding_utils.CostFunction3D(),
+		split_dict=None,
+		slur_constraint=False,
+		enforce_earliest_start=False,
+		title=None,
+		rate=20,
 		show=False,
 		save_path=None
 	):
 	"""
 	Function for creating a GIF file of the Dijkstra algorithm for a given
 	filepath-part-num combination using imagemagick.
+
+	:param str save_path: path to a folder that will be created. This folder will contain the
+							GIF file along with a subfolder containing the source images for
+							the GIF.
 	"""
-	pass
+	if not(save_path):
+		raise VisException("No path provided.")
+
+	all_data = search.rolling_hash_search(
+		filepath=filepath,
+		part_num=part_num,
+		table=table,
+		windows=windows,
+		allow_subdivision=allow_subdivision,
+		allow_contiguous_summation=allow_contiguous_summation
+	)
+
+	xs = [x.onset_range[0] for x in all_data]
+	ys = [x.onset_range[1] for x in all_data]
+	plt.scatter(xs, ys, s=5, color="k")
+
+	plt.xticks(fontname="Times")
+	plt.yticks(fontname="Times")
+
+	if title:
+		plt.title(title, fontname="Times", fontsize=14)
+
+	plt.xlabel("Offset Start", fontname="Times", fontsize=12)
+	plt.ylabel("Offset End", fontname="Times", fontsize=12)
+
+	plt.tight_layout()
+
+	os.mkdir(save_path)
+
+	plt.savefig(save_path + "/f0.png", dpi=350)
+	i = 0
+	while i < 4:
+		shutil.copyfile(save_path + "/f0.png", save_path + f"/f{i+1}.png")
+		i += 1
+
+	################################################################################################
+	# Plot each pair
+	sources, sinks = path_finding_utils.sources_and_sinks(
+		data=all_data,
+		enforce_earliest_start=enforce_earliest_start
+	)
+	pairs = list(itertools.product(sources, sinks))
+
+	def _dijkstra_gif_pair(data, pair, save_path):
+		xs = [x.onset_range[0] for x in data]
+		ys = [x.onset_range[1] for x in data]
+		plt.scatter(xs, ys, s=5, color="k")
+
+		plt.title("hi!!!")
+
+		plt.tight_layout()
+
+		plt.savefig(save_path + "/f5.png", dpi=350)
+		i = 5
+		while i < 10:
+			shutil.copyfile(save_path + "/f5.png", save_path + f"/f{i+1}.png")
+			i += 1
+
+	for pair in pairs:
+		_dijkstra_gif_pair(all_data, pair, save_path)
+		break
+
+	################################################################################################
+	subprocess.run([
+		"convert",
+		"-delay",
+		str(rate),
+		os.path.join(save_path, "f*.png"),
+		"-loop",
+		"0",
+		os.path.join(save_path, "final.gif")
+	])
+
+	################################################################################################
+	if show:
+		plt.show()
+
+	# convert -delay 40 F_*.png -loop 0 movie.gif
