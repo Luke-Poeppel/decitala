@@ -102,3 +102,14 @@ def test_dijkstra_best_source_and_sink():
 	)
 	source, target, best_pred = dijkstra.dijkstra_best_source_and_sink(data=exact_bach_frags)
 	assert source == target
+
+def test_naive_dijkstra_path(s1_fragments):
+	path = dijkstra.naive_dijkstra_path(
+		data=s1_fragments,
+		source=s1_fragments[0],
+		target=s1_fragments[-2]
+	)
+	
+	path = sorted([x for x in s1_fragments if x.id_ in path], key=lambda x: x.onset_range[0])
+	assert path[0] == s1_fragments[0]
+	assert path[-1] == s1_fragments[-2]
