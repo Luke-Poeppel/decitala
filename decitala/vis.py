@@ -264,6 +264,15 @@ def plot_pitch_class_distribution_by_species(species, save_path=None):
 
 	return plt
 
+def _stupid_flatten(data):
+	out = []
+	for val in data:
+		if isinstance(val, list):
+			out.extend(_stupid_flatten(val))
+		else:
+			out.append(val)
+	return out
+
 def dijkstra_gif(
 		filepath,
 		part_num,
@@ -314,6 +323,8 @@ def dijkstra_gif(
 	plt.xlabel("Offset Start", fontname="Times", fontsize=12)
 	plt.ylabel("Offset End", fontname="Times", fontsize=12)
 
+	plt.title('oof')
+
 	plt.tight_layout()
 
 	os.mkdir(save_path)
@@ -337,9 +348,12 @@ def dijkstra_gif(
 		ys = [x.onset_range[1] for x in data]
 		plt.scatter(xs, ys, s=5, color="k")
 
+		plt.xlabel("Offset Start", fontname="Times", fontsize=12)
+		plt.ylabel("Offset End", fontname="Times", fontsize=12)
+
 		plt.title("hi!!!")
 
-		plt.tight_layout()
+		# plt.tight_layout()
 
 		plt.savefig(save_path + "/f5.png", dpi=350)
 		i = 5
@@ -347,20 +361,23 @@ def dijkstra_gif(
 			shutil.copyfile(save_path + "/f5.png", save_path + f"/f{i+1}.png")
 			i += 1
 
-	for pair in pairs:
+	for i, pair in enumerate(pairs):
+		if i > 0:
+			break
 		_dijkstra_gif_pair(all_data, pair, save_path)
-		break
 
 	################################################################################################
-	subprocess.run([
+	file_order = [os.path.join(save_path, f"f{i}.png") for i in range(0, 11)]
+	run_elems = [
 		"convert",
 		"-delay",
 		str(rate),
-		os.path.join(save_path, "f*.png"),
+		file_order,
 		"-loop",
 		"0",
 		os.path.join(save_path, "final.gif")
-	])
+	]
+	subprocess.run(_stupid_flatten(run_elems))
 
 	################################################################################################
 	if show:
