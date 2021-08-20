@@ -357,4 +357,5 @@ def net_cost(
 	while i < len(data) - 1:
 		curr_cost = cost_function_class.cost(vertex_a=data[i], vertex_b=data[i + 1])
 		net_cost += curr_cost
+		i += 1
 	return net_cost
