@@ -22,6 +22,7 @@ from music21 import pitch
 
 from . import search
 from .path_finding import path_finding_utils
+from .utils import get_logger
 
 here = os.path.abspath(os.path.dirname(__file__))
 treant_templates = here + "/treant_templates"
@@ -301,6 +302,11 @@ def dijkstra_gif(
 	if not(save_path):
 		raise VisException("No path provided.")
 
+	logger = get_logger(name=__file__)
+
+	os.mkdir(save_path)
+	################################################################################################
+	# Base Plot.
 	all_data = search.rolling_hash_search(
 		filepath=filepath,
 		part_num=part_num,
@@ -309,32 +315,26 @@ def dijkstra_gif(
 		allow_subdivision=allow_subdivision,
 		allow_contiguous_summation=allow_contiguous_summation
 	)
-
 	xs = [x.onset_range[0] for x in all_data]
 	ys = [x.onset_range[1] for x in all_data]
 	plt.scatter(xs, ys, s=5, color="k")
 
 	plt.xticks(fontname="Times")
+	plt.xlabel("Offset Start", fontname="Times", fontsize=12)
 	plt.yticks(fontname="Times")
+	plt.ylabel("Offset End", fontname="Times", fontsize=12)
 
 	if title:
 		plt.title(title, fontname="Times", fontsize=14)
-
-	plt.xlabel("Offset Start", fontname="Times", fontsize=12)
-	plt.ylabel("Offset End", fontname="Times", fontsize=12)
-
-	plt.title('oof')
-
 	plt.tight_layout()
 
-	os.mkdir(save_path)
+	logger.info("Saving base image...")
+	base_path = save_path + "/f1.png"
+	plt.savefig(base_path, dpi=350)
+	for i in range(2, 6):
+		shutil.copyfile(base_path, save_path + f"/f{i}.png")
 
-	plt.savefig(save_path + "/f0.png", dpi=350)
-	i = 0
-	while i < 4:
-		shutil.copyfile(save_path + "/f0.png", save_path + f"/f{i+1}.png")
-		i += 1
-
+	plt.clf()
 	################################################################################################
 	# Plot each pair
 	sources, sinks = path_finding_utils.sources_and_sinks(
@@ -343,31 +343,37 @@ def dijkstra_gif(
 	)
 	pairs = list(itertools.product(sources, sinks))
 
-	def _dijkstra_gif_pair(data, pair, save_path):
+	def _dijkstra_gif_pair(i, data, pair, title=None, save_path=None):
+		plt.text(0.05, pair[1].onset_range[1], f"Pair {i}...", fontname="Times")
+
 		xs = [x.onset_range[0] for x in data]
 		ys = [x.onset_range[1] for x in data]
 		plt.scatter(xs, ys, s=5, color="k")
 
+		plt.scatter(pair[0].onset_range[0], pair[0].onset_range[1], marker="d", s=25, color="r")
+		plt.scatter(pair[1].onset_range[0], pair[1].onset_range[1], marker="d", s=25, color="r")
+
+		plt.xticks(fontname="Times")
 		plt.xlabel("Offset Start", fontname="Times", fontsize=12)
+		plt.yticks(fontname="Times")
 		plt.ylabel("Offset End", fontname="Times", fontsize=12)
 
-		plt.title("hi!!!")
+		if title:
+			plt.title(title, fontname="Times", fontsize=14)
 
-		# plt.tight_layout()
+		curr_path = save_path + f"/f{5 * i}.png"
+		plt.savefig(curr_path, dpi=350)
+		for i in range((5 * i) + 1, (5 * i) + 5 + 1):
+			shutil.copyfile(curr_path, save_path + f"/f{i + 1}.png")
 
-		plt.savefig(save_path + "/f5.png", dpi=350)
-		i = 5
-		while i < 10:
-			shutil.copyfile(save_path + "/f5.png", save_path + f"/f{i+1}.png")
-			i += 1
-
-	for i, pair in enumerate(pairs):
-		if i > 0:
-			break
-		_dijkstra_gif_pair(all_data, pair, save_path)
+	for i, pair in enumerate(pairs, start=1):
+		_dijkstra_gif_pair(i, all_data, pair, title, save_path)
+		plt.clf()
 
 	################################################################################################
-	file_order = [os.path.join(save_path, f"f{i}.png") for i in range(0, 11)]
+	# Making the GIF:
+	gif_filepath = os.path.join(save_path, "final.gif")
+	file_order = [os.path.join(save_path, f"f{i}.png") for i in range(1, len(os.listdir(save_path)))]
 	run_elems = [
 		"convert",
 		"-delay",
@@ -375,12 +381,10 @@ def dijkstra_gif(
 		file_order,
 		"-loop",
 		"0",
-		os.path.join(save_path, "final.gif")
+		gif_filepath
 	]
 	subprocess.run(_stupid_flatten(run_elems))
 
 	################################################################################################
 	if show:
 		plt.show()
-
-	# convert -delay 40 F_*.png -loop 0 movie.gif

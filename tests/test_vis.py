@@ -20,19 +20,20 @@ def test_fragment_roll(monkeypatch):
 		title="Testing fragment roll."
 	)
 
-def test_dijkstra_gif():
-	# fp = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
-	fp = "/Users/lukepoeppel/Messiaen/Encodings/Sept_Haikai/1_Introduction.xml"
-	import uuid
-	vis.dijkstra_gif(
-		filepath=fp,
-		part_num=0,
-		table=DecitalaHashTable(),
-		allow_subdivision=True,
-		save_path=f"/Users/lukepoeppel/decitala/tests/dijkstra_gif_tests/dijkstra_{uuid.uuid4().hex}",
-		show=False
-	)
+# def test_dijkstra_gif():
+# 	# fp = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_1.xml"
+# 	fp = "/Users/lukepoeppel/Messiaen/Encodings/Sept_Haikai/1_Introduction.xml"
+# 	import uuid
+# 	vis.dijkstra_gif(
+# 		filepath=fp,
+# 		part_num=0,
+# 		table=DecitalaHashTable(),
+# 		allow_subdivision=True,
+# 		title="Iterated Dijkstra on Sept Haïkaï (Bois)",
+# 		save_path=f"/Users/lukepoeppel/decitala/tests/dijkstra_gif_tests/dijkstra_{uuid.uuid4().hex}",
+# 		show=False
+# 	)
 	
-print(test_dijkstra_gif())
+# print(test_dijkstra_gif())
 
 # convert -delay 40 F_*.png -loop 0 movie.gif
