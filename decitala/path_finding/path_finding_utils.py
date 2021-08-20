@@ -339,3 +339,23 @@ def check_accuracy(training_data, calculated_data, mode, return_list):
 		return (accurate / len(training_data)) * 100
 	else:
 		return [accurate, len(training_data)]
+
+def net_cost(
+		data,
+		cost_function_class=CostFunction3D()
+	):
+	"""
+	Function for calculating the net cost of a given path. Assumes the list is (probably) determined
+	by one of the path-finding algorithms. Calculates the contiguous cost between all elements.
+
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	:param `path_finding_utils.CostFunction` cost_function_class: a cost
+		function that will be used in calculating the weights between vertices.
+	"""
+	net_cost = 0
+	i = 0
+	while i < len(data) - 1:
+		curr_cost = cost_function_class.cost(vertex_a=data[i], vertex_b=data[i + 1])
+		net_cost += curr_cost
+		i += 1
+	return net_cost
