@@ -90,3 +90,16 @@ def test_nc_106_split_extractions():
 		(10.875, 11.5)
 	]
 	assert calculated_split_onset_ranges == expected_onset_ranges
+
+def test_net_cost():
+	filepath = os.path.dirname(here) + "/tests/static/Shuffled_Transcription_5.xml"
+	path = path_finder(
+		filepath=filepath,
+		part_num=0,
+		table=GreekFootHashTable(),
+		allow_subdivision=False,
+		cost_function_class=path_finding_utils.CostFunction3D(0.8, 0.1, 0.1),
+		split_dict=path_finding_utils.default_split_dict(),
+		enforce_earliest_start=True
+	)
+	assert path_finding_utils.net_cost(path) == 5.51047619047619

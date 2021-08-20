@@ -16,7 +16,6 @@ from . import path_finding_utils
 
 # Useful info here: https://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python.
 def dijkstra(
-		data,
 		graph,
 		source,
 		cost_function_class=path_finding_utils.CostFunction3D(),
@@ -25,7 +24,7 @@ def dijkstra(
 	Dijkstra path-finding algorithm from dynamic programming. Uses a min-heap
 	data structure for efficiency.
 
-	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	:param dict graph: a graph made from :obj:`decitala.search.Extraction` objects.
 	:param source: an :obj:`decitala.search.Extraction` object.
 	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost
 		function that will be used in calculating the weights between vertices.
@@ -90,7 +89,6 @@ def dijkstra_best_source_and_sink(
 		for possible_source in sources:
 			if possible_source.onset_range == (min_onset, max_onset):
 				dist, pred = dijkstra(
-					data,
 					graph,
 					possible_source,
 					cost_function_class
@@ -100,7 +98,6 @@ def dijkstra_best_source_and_sink(
 		# otherwise choose the longest source.
 		max_source = max(sources, key=lambda x: x.fragment.num_onsets)
 		dist, pred = dijkstra(
-			data,
 			graph,
 			max_source,
 			cost_function_class
@@ -114,7 +111,6 @@ def dijkstra_best_source_and_sink(
 
 	for source in tqdm(sources, disable=not(verbose)):
 		dist, pred = dijkstra(
-			data,
 			graph,
 			source,
 			cost_function_class
@@ -145,7 +141,9 @@ def dijkstra_best_source_and_sink(
 
 def generate_path(pred, source, target):
 	"""
-	Returns the optimal path extracted from Dijkstra.
+	Returns the optimal path extracted from Dijkstra. The pred object *must* correspond to
+	the pred object generated in :obj:`dijkstra.dijkstra_best_source_and_sink`. If you want
+	to provide a source, target and data, use the :obj:`dijkstra.naive_dijkstra_path` function.
 
 	:param dict pred: the ``pred`` dictionary returned from
 						:obj:`decitala.path_finding.dijkstra.dijkstra`.
@@ -165,3 +163,35 @@ def generate_path(pred, source, target):
 		if key == source_fragment_id:
 			break
 	return path
+
+def naive_dijkstra_path(
+		data,
+		source,
+		target,
+		cost_function_class=path_finding_utils.CostFunction3D(),
+		verbose=False
+	):
+	"""
+	Function for generating a path for a given source-target pair.
+
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	:param dict source: a :obj:`decitala.search.Extraction` object.
+	:param dict target: a :obj:`decitala.search.Extraction` object.
+	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost
+		function that will be used in calculating the weights between vertices.
+	"""
+	graph = path_finding_utils.build_graph(
+		data=data,
+		cost_function_class=cost_function_class,
+		verbose=verbose
+	)
+	dist, pred = dijkstra(
+		graph=graph,
+		source=source,
+		cost_function_class=cost_function_class
+	)
+	return generate_path(
+		pred=pred,
+		source=source,
+		target=target
+	)
