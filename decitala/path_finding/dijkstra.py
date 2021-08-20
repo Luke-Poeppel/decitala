@@ -141,7 +141,9 @@ def dijkstra_best_source_and_sink(
 
 def generate_path(pred, source, target):
 	"""
-	Returns the optimal path extracted from Dijkstra.
+	Returns the optimal path extracted from Dijkstra. The pred object *must* correspond to
+	the pred object generated in :obj:`dijkstra.dijkstra_best_source_and_sink`. If you want
+	to provide a source, target and data, use the :obj:`dijkstra.naive_dijkstra_path` function.
 
 	:param dict pred: the ``pred`` dictionary returned from
 						:obj:`decitala.path_finding.dijkstra.dijkstra`.
@@ -161,3 +163,35 @@ def generate_path(pred, source, target):
 		if key == source_fragment_id:
 			break
 	return path
+
+def naive_dijkstra_path(
+		data,
+		source,
+		target,
+		cost_function_class=path_finding_utils.CostFunction3D(),
+		verbose=False
+	):
+	"""
+	Function for generating a path for a given source-target pair.
+
+	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	:param dict source: a :obj:`decitala.search.Extraction` object.
+	:param dict target: a :obj:`decitala.search.Extraction` object.
+	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost
+		function that will be used in calculating the weights between vertices.
+	"""
+	graph = path_finding_utils.build_graph(
+		data=data,
+		cost_function_class=cost_function_class,
+		verbose=verbose
+	)
+	dist, pred = dijkstra(
+		graph=graph,
+		source=source,
+		cost_function_class=cost_function_class
+	)
+	return generate_path(
+		pred=pred,
+		source=source,
+		target=target
+	)
