@@ -35,5 +35,3 @@ def test_fragment_roll(monkeypatch):
 # 	)
 	
 # print(test_dijkstra_gif())
-
-# convert -delay 40 F_*.png -loop 0 movie.gif

@@ -11,6 +11,7 @@ import matplotlib as mpl
 import os
 import treeplotter
 import natsort
+import random
 import shutil
 import itertools
 import subprocess
@@ -265,6 +266,7 @@ def plot_pitch_class_distribution_by_species(species, save_path=None):
 
 	return plt
 
+####################################################################################################
 def _stupid_flatten(data):
 	out = []
 	for val in data:
@@ -273,6 +275,29 @@ def _stupid_flatten(data):
 		else:
 			out.append(val)
 	return out
+
+def _dijkstra_gif_pair(i, data, pair, title=None, save_path=None):
+	plt.text(0.05, pair[1].onset_range[1], f"Pair {i}...", fontname="Times")
+
+	xs = [x.onset_range[0] for x in data]
+	ys = [x.onset_range[1] for x in data]
+	plt.scatter(xs, ys, s=5, color="k")
+
+	plt.scatter(pair[0].onset_range[0], pair[0].onset_range[1], marker="d", s=25, color="g")
+	plt.scatter(pair[1].onset_range[0], pair[1].onset_range[1], marker="d", s=25, color="g")
+
+	plt.xticks(fontname="Times")
+	plt.xlabel("Offset Start", fontname="Times", fontsize=12)
+	plt.yticks(fontname="Times")
+	plt.ylabel("Offset End", fontname="Times", fontsize=12)
+
+	if title:
+		plt.title(title, fontname="Times", fontsize=14)
+
+	curr_path = save_path + f"/f{(5 * i) + 1}.png"
+	plt.savefig(curr_path, dpi=150)
+	for j in range(4):
+		shutil.copyfile(curr_path, save_path + f"/f{(5 * i) + 2 + j}.png")
 
 def dijkstra_gif(
 		filepath,
@@ -330,7 +355,7 @@ def dijkstra_gif(
 
 	logger.info("Saving base image...")
 	base_path = save_path + "/f1.png"
-	plt.savefig(base_path, dpi=350)
+	plt.savefig(base_path, dpi=150)
 	for i in range(2, 6):
 		shutil.copyfile(base_path, save_path + f"/f{i}.png")
 
@@ -342,38 +367,17 @@ def dijkstra_gif(
 		enforce_earliest_start=enforce_earliest_start
 	)
 	pairs = list(itertools.product(sources, sinks))
+	random.shuffle(pairs)
 
-	def _dijkstra_gif_pair(i, data, pair, title=None, save_path=None):
-		plt.text(0.05, pair[1].onset_range[1], f"Pair {i}...", fontname="Times")
-
-		xs = [x.onset_range[0] for x in data]
-		ys = [x.onset_range[1] for x in data]
-		plt.scatter(xs, ys, s=5, color="k")
-
-		plt.scatter(pair[0].onset_range[0], pair[0].onset_range[1], marker="d", s=25, color="r")
-		plt.scatter(pair[1].onset_range[0], pair[1].onset_range[1], marker="d", s=25, color="r")
-
-		plt.xticks(fontname="Times")
-		plt.xlabel("Offset Start", fontname="Times", fontsize=12)
-		plt.yticks(fontname="Times")
-		plt.ylabel("Offset End", fontname="Times", fontsize=12)
-
-		if title:
-			plt.title(title, fontname="Times", fontsize=14)
-
-		curr_path = save_path + f"/f{5 * i}.png"
-		plt.savefig(curr_path, dpi=350)
-		for i in range((5 * i) + 1, (5 * i) + 5 + 1):
-			shutil.copyfile(curr_path, save_path + f"/f{i + 1}.png")
-
-	for i, pair in enumerate(pairs, start=1):
+	for i, pair in enumerate(pairs[0:5], start=1):
+		logger.info(f"Writing pair {i}")
 		_dijkstra_gif_pair(i, all_data, pair, title, save_path)
 		plt.clf()
 
 	################################################################################################
 	# Making the GIF:
 	gif_filepath = os.path.join(save_path, "final.gif")
-	file_order = [os.path.join(save_path, f"f{i}.png") for i in range(1, len(os.listdir(save_path)))]
+	file_order = [os.path.join(save_path, f"f{i}.png") for i in range(1, len(os.listdir(save_path)) + 1)] # noqa
 	run_elems = [
 		"convert",
 		"-delay",
@@ -381,8 +385,9 @@ def dijkstra_gif(
 		file_order,
 		"-loop",
 		"0",
-		gif_filepath
+		gif_filepath,
 	]
+	logger.info("Creating GIF...")
 	subprocess.run(_stupid_flatten(run_elems))
 
 	################################################################################################
