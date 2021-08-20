@@ -20,7 +20,6 @@ from decitala.path_finding import (
 	dijkstra
 )
 from decitala.utils import get_logger
-from decitala.hash_table import DecitalaHashTable
 
 mpl.style.use("bmh")
 
@@ -59,17 +58,24 @@ def _plot_base(all_data, title=None):
 	if title:
 		plt.title(title, fontname="Times", fontsize=14)
 
-def _dijkstra_gif_animate_path(i, all_data, pair, cost_function, title=None, save_path=None):
+def _dijkstra_gif_animate_path(i, all_data, pair, cost_function, dpi, title=None, save_path=None):
 	path = dijkstra.naive_dijkstra_path(
 		data=all_data,
 		source=pair[0],
 		target=pair[1]
 	)
 	path = sorted([x for x in all_data if x.id_ in path], key=lambda x: x.onset_range[0])
-	net_cost = path_finding_utils.net_cost(path)
+	net_cost = round(path_finding_utils.net_cost(path), 2)
 	j = 0
 	while j < len(path):
-		plt.text(0.05, pair[1].onset_range[1], f"Pair {i}: {net_cost}", fontname="Times")
+		plt.text(
+			0.05,
+			all_data[-2].onset_range[1] - 5,
+			f"Pair {i}. Net Cost = {net_cost}",
+			fontname="Times",
+			fontsize=13,
+			weight="bold"
+		)
 		_plot_base(all_data)
 		plt.scatter(pair[0].onset_range[0], pair[0].onset_range[1], marker="d", s=25, color="g")
 		plt.scatter(pair[1].onset_range[0], pair[1].onset_range[1], marker="d", s=25, color="g")
@@ -82,7 +88,7 @@ def _dijkstra_gif_animate_path(i, all_data, pair, cost_function, title=None, sav
 			plt.title(title, fontname="Times", fontsize=12)
 
 		out = os.path.join(save_path, f"animate_path_{i}_elem{j}.png")
-		plt.savefig(out, dpi=150)
+		plt.savefig(out, dpi=dpi)
 		plt.clf()
 		j += 1
 
@@ -97,7 +103,9 @@ def dijkstra_gif(
 		split_dict=None,
 		slur_constraint=False,
 		enforce_earliest_start=False,
+		num_pairs=None,
 		title=None,
+		dpi=200,
 		rate=20,
 		save_path=None
 	):
@@ -135,13 +143,13 @@ def dijkstra_gif(
 	pairs = list(itertools.product(sources, sinks))
 	random.shuffle(pairs)
 
-	# REMOVE –– JUST FOR TESTING
-	pairs = pairs[0:4]
+	if num_pairs:
+		pairs = pairs[:num_pairs]
 
 	for i, pair in enumerate(pairs, start=1):
-		logger.info(f"Writing pair {i}")
+		logger.info(f"Writing pair {i}...")
 		plt.clf()
-		_dijkstra_gif_animate_path(i, all_data, pair, cost_function_class, title=title, save_path=save_path) # noqa
+		_dijkstra_gif_animate_path(i, all_data, pair, cost_function_class, dpi=dpi, title=title, save_path=save_path) # noqa
 
 	# ################################################################################################
 	# Making the component GIFS:
@@ -162,19 +170,3 @@ def dijkstra_gif(
 	)
 	components = [curr_path_source_gifs]
 	_gif_from_source(fps=components, save_path=final_filepath)
-
-	################################################################################################
-
-def test_dijkstra_gif():
-	fp = "/Users/lukepoeppel/Messiaen/Encodings/Sept_Haikai/1_Introduction.xml"
-	import uuid
-	dijkstra_gif(
-		filepath=fp,
-		part_num=0,
-		table=DecitalaHashTable(),
-		allow_subdivision=True,
-		title="Iterated Dijkstra on Sept Haïkaï (Bois)",
-		save_path=f"/Users/lukepoeppel/decitala/tests/dijkstra_gif_tests/dijkstra_{uuid.uuid4().hex}",
-	)
-
-# print(test_dijkstra_gif())
