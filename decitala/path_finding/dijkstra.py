@@ -16,7 +16,6 @@ from . import path_finding_utils
 
 # Useful info here: https://stackoverflow.com/questions/22897209/dijkstras-algorithm-in-python.
 def dijkstra(
-		data,
 		graph,
 		source,
 		cost_function_class=path_finding_utils.CostFunction3D(),
@@ -25,7 +24,7 @@ def dijkstra(
 	Dijkstra path-finding algorithm from dynamic programming. Uses a min-heap
 	data structure for efficiency.
 
-	:param list data: a list of :obj:`decitala.search.Extraction` objects.
+	:param dict graph: a graph made from :obj:`decitala.search.Extraction` objects.
 	:param source: an :obj:`decitala.search.Extraction` object.
 	:param `decitala.path_finding.path_finding_utils.CostFunction` cost_function_class: a cost
 		function that will be used in calculating the weights between vertices.
@@ -90,7 +89,6 @@ def dijkstra_best_source_and_sink(
 		for possible_source in sources:
 			if possible_source.onset_range == (min_onset, max_onset):
 				dist, pred = dijkstra(
-					data,
 					graph,
 					possible_source,
 					cost_function_class
@@ -100,7 +98,6 @@ def dijkstra_best_source_and_sink(
 		# otherwise choose the longest source.
 		max_source = max(sources, key=lambda x: x.fragment.num_onsets)
 		dist, pred = dijkstra(
-			data,
 			graph,
 			max_source,
 			cost_function_class
@@ -114,7 +111,6 @@ def dijkstra_best_source_and_sink(
 
 	for source in tqdm(sources, disable=not(verbose)):
 		dist, pred = dijkstra(
-			data,
 			graph,
 			source,
 			cost_function_class
