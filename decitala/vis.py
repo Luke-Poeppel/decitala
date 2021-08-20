@@ -26,6 +26,9 @@ FONTSIZE_LABEL = 14
 
 mpl.style.use("bmh")
 
+class VisException(Exception):
+	pass
+
 ####################################################################################################
 def create_tree_diagram(
 		FragmentTree,
