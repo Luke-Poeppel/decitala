@@ -73,12 +73,12 @@ def _dijkstra_gif_animate_path(
 		source=pair[0],
 		target=pair[1]
 	)
+	path = sorted([x for x in all_data if x.id_ in path], key=lambda x: x.onset_range[0])
 	path = path_finding_utils.split_extractions(
 		data=path,
 		split_dict=split_dict,
 		all_res=all_data
 	)
-	path = sorted([x for x in all_data if x.id_ in path], key=lambda x: x.onset_range[0])
 	net_cost = round(path_finding_utils.net_cost(path), 2)
 	j = 0
 	while j < len(path):
