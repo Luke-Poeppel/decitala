@@ -58,11 +58,25 @@ def _plot_base(all_data, title=None):
 	if title:
 		plt.title(title, fontname="Times", fontsize=14)
 
-def _dijkstra_gif_animate_path(i, all_data, pair, cost_function, dpi, title=None, save_path=None):
+def _dijkstra_gif_animate_path(
+		i,
+		all_data,
+		pair,
+		cost_function,
+		split_dict,
+		dpi,
+		title=None,
+		save_path=None
+	):
 	path = dijkstra.naive_dijkstra_path(
 		data=all_data,
 		source=pair[0],
 		target=pair[1]
+	)
+	path = path_finding_utils.split_extractions(
+		data=path,
+		split_dict=split_dict,
+		all_res=all_data
 	)
 	path = sorted([x for x in all_data if x.id_ in path], key=lambda x: x.onset_range[0])
 	net_cost = round(path_finding_utils.net_cost(path), 2)
@@ -149,7 +163,7 @@ def dijkstra_gif(
 	for i, pair in enumerate(pairs, start=1):
 		logger.info(f"Writing pair {i}...")
 		plt.clf()
-		_dijkstra_gif_animate_path(i, all_data, pair, cost_function_class, dpi=dpi, title=title, save_path=save_path) # noqa
+		_dijkstra_gif_animate_path(i, all_data, pair, cost_function_class, split_dict, dpi=dpi, title=title, save_path=save_path) # noqa
 
 	# ################################################################################################
 	# Making the component GIFS:
