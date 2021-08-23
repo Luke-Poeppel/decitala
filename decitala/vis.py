@@ -105,7 +105,7 @@ def fragment_roll(
 		plt.xlim(-2.0, highest_onset + 2.0)
 
 	plt.xticks(list(range(0, int(highest_onset), 10)), fontname="Times")
-	plt.xlabel("Onset", fontsize=12, fontname="Times")
+	plt.xlabel("Offset", fontsize=12, fontname="Times")
 	plt.ylabel("Fragment", fontsize=12, fontname="Times")
 	plt.yticks(fontname="Times")
 
