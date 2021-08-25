@@ -39,10 +39,10 @@ def pad_samples(samples, final_duration, fs=44100):
 	Function for zero-padding a list of samples.
 
 	:param samples: an array of samples.
-	:param float expected_duration: the desired final duration (with padding) in seconds.
+	:param float expected_duration: the desired final duration (with padding) in ms.
 	:param int fs: sample rate. Default is 44.1k.
 	"""
-	expected_length = int(fs * final_duration)
+	expected_length = int(fs * (1000 / fs) * final_duration)
 	if len(samples) < expected_length:
 		diff = expected_length - len(samples)
 		padding = np.zeros(diff)
@@ -51,6 +51,22 @@ def pad_samples(samples, final_duration, fs=44100):
 		padded_samples = samples[:expected_length]
 
 	return padded_samples
+
+def ms_to_samples(ms, fs):
+	"""
+	Function for converting a given number of milliseconds to the number of samples (with
+	sample rate ``fs``).
+
+	>>> ms_to_samples(107, fs=44100)
+	4719
+	"""
+	return int(np.floor(ms / 1000 * fs) + 1)
+
+def samples_to_ms(sample, fs):
+	"""
+	Function for converting a given number of samples (and a sample rate `fs`) to milliseconds.
+	"""
+	return sample * 1000 / fs
 
 def freq2midi(f0):
 	"""
