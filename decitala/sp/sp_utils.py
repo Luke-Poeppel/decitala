@@ -111,7 +111,7 @@ def build_filter(window):
 	b, a = butter(2, window, btype='band', analog=False, output="ba")
 	return (b, a)
 
-def band_pass_sharp(samples, lower, upper, fs=44100):
+def sharp_butterworth_bandpass(samples, lower, upper, fs=44100):
 	"""
 	Doubly-applied (i.e. sharp) butterworth bandpass filter. CAP.
 
