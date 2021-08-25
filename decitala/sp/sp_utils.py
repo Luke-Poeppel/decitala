@@ -30,6 +30,24 @@ def resample_(samples, source_rate, target_rate):
 	resampled = resample(samples, int(len(samples) * resample_factor))
 	return resampled
 
+def pad_samples(samples, final_duration, fs=44100):
+	"""
+	Function for zero-padding a list of samples.
+
+	:param samples: an array of samples.
+	:param float expected_duration: the desired final duration (with padding) in seconds.
+	:param int fs: sample rate. Default is 44.1k.
+	"""
+	expected_length = int(fs * final_duration)
+	if len(samples) < expected_length:
+		diff = expected_length - len(samples)
+		padding = np.zeros(diff)
+		padded_samples = np.concatenate((samples, padding))
+	else:
+		padded_samples = samples[:expected_length]
+
+	return padded_samples
+
 def plot_audio_file(filepath, title=None, save_path=None):
 	"""
 	Function for plotting an audio file.
