@@ -20,7 +20,9 @@ from . import (
 	database,
 	trees
 )
-
+from .sp import (
+	sp_utils
+)
 from .path_finding import (
 	dijkstra,
 	floyd_warshall,
@@ -50,7 +52,8 @@ ALL_MODULES = [
 	pofp,
 	schultz,
 	molt,
-	hm_utils
+	hm_utils,
+	sp_utils
 ]
 
 logger = utils.get_logger(name=__file__)

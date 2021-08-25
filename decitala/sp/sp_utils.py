@@ -55,7 +55,7 @@ def pad_samples(samples, final_duration, fs=44100):
 def ms_to_samples(ms, fs):
 	"""
 	Function for converting a given number of milliseconds to the number of samples (with
-	sample rate ``fs``).
+	sample rate ``fs``). CAP.
 
 	>>> ms_to_samples(107, fs=44100)
 	4719
@@ -65,6 +65,7 @@ def ms_to_samples(ms, fs):
 def samples_to_ms(sample, fs):
 	"""
 	Function for converting a given number of samples (and a sample rate `fs`) to milliseconds.
+	CAP.
 	"""
 	return sample * 1000 / fs
 
