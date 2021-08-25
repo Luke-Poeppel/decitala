@@ -16,7 +16,11 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
 
-from scipy.signal import resample
+from scipy.signal import (
+	resample,
+	butter,
+	filtfilt
+)
 
 mpl.style.use("bmh")
 
@@ -95,6 +99,32 @@ def midi2freq(midi):
 	:rtype: float
 	"""
 	return (440 / 32) * (2 ** ((midi - 9) / 12))
+
+def freq2nyq(freq, fs):
+	"""
+	Calculates the nyquist frequency.
+	"""
+	nyquist = fs / 2.0
+	return freq / nyquist
+
+def build_filter(window):
+	b, a = butter(2, window, btype='band', analog=False, output="ba")
+	return (b, a)
+
+def band_pass_sharp(samples, lower, upper, fs=44100):
+	"""
+	Doubly-applied (i.e. sharp) butterworth bandpass filter. CAP.
+
+	:param samples: an array of samples.
+	:param lower: lowest frequency in Hertz.
+	:param upper: highest frequency in Hertz.
+	:param int fs: sample rate.
+	"""
+	window = [freq2nyq(lower, fs), freq2nyq(upper, fs)]
+	b, a = build_filter(window)
+	filtered_signal_1 = filtfilt(b, a, samples)
+	filtered_signal_2 = filtfilt(b, a, filtered_signal_1)
+	return filtered_signal_2
 
 def plot_audio_file(filepath, title=None, save_path=None):
 	"""
