@@ -57,6 +57,8 @@ def freq2midi(f0):
 	Function for converting a frequency to MIDI. CAP.
 
 	:param f0: frequency in Hertz.
+	:return: ``f0`` in MIDI.
+	:rtype: float
 	"""
 	if f0 <= 0:
 		return 0
@@ -66,6 +68,16 @@ def freq2midi(f0):
 			return res
 		else:
 			return 0
+
+def midi2freq(midi):
+	"""
+	Function for converting a MIDI number to the associated frequency. CAP.
+
+	:param midi: MIDI number.
+	:return: ``midi`` in Hertz.
+	:rtype: float
+	"""
+	return (440 / 32) * (2 ** ((midi - 9) / 12))
 
 def plot_audio_file(filepath, title=None, save_path=None):
 	"""
