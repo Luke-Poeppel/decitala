@@ -47,6 +47,7 @@ setup(
 		"treeplotter==0.4.3",
 		"unidecode",
 		"Wand",
+		"librosa"
 	],
 	extras_require={
 		"dev": [
