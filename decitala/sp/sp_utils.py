@@ -6,6 +6,10 @@
 #
 # Location: Kent, 2021
 ####################################################################################################
+"""
+Signal processing tools. Some of these tools are from Dr. Nori Jacoby's Computational Auditory
+Perception group. These are noted with "CAP" in the docstring.
+"""
 import librosa
 import librosa.display
 import matplotlib.pyplot as plt
@@ -47,6 +51,21 @@ def pad_samples(samples, final_duration, fs=44100):
 		padded_samples = samples[:expected_length]
 
 	return padded_samples
+
+def freq2midi(f0):
+	"""
+	Function for converting a frequency to MIDI. CAP.
+
+	:param f0: frequency in Hertz.
+	"""
+	if f0 <= 0:
+		return 0
+	else:
+		res = 12 * (np.log2(f0) - np.log2(440)) + 69
+		if not(res < 0):
+			return res
+		else:
+			return 0
 
 def plot_audio_file(filepath, title=None, save_path=None):
 	"""
