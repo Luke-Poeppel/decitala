@@ -51,9 +51,9 @@ def _plot_base(all_data, title=None):
 	plt.scatter(xs, ys, s=5, color="k")
 
 	plt.xticks(fontname="Times")
-	plt.xlabel("Offset Start", fontname="Times", fontsize=12)
+	plt.xlabel("Lowest Offset", fontname="Times", fontsize=12)
 	plt.yticks(fontname="Times")
-	plt.ylabel("Offset End", fontname="Times", fontsize=12)
+	plt.ylabel("Highest Offset", fontname="Times", fontsize=12)
 
 	if title:
 		plt.title(title, fontname="Times", fontsize=14)
