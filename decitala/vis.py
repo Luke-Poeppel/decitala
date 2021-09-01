@@ -217,8 +217,8 @@ def plot_2D_search_results(
 	if title:
 		plt.title(title, fontname="Times", fontsize=14)
 
-	plt.xlabel("Onset Start", fontname="Times", fontsize=12)
-	plt.ylabel("Onset Stop", fontname="Times", fontsize=12)
+	plt.xlabel("Lowest Offset", fontname="Times", fontsize=12)
+	plt.ylabel("Highest Offset", fontname="Times", fontsize=12)
 
 	if legend:
 		plt.legend(prop="Times")
