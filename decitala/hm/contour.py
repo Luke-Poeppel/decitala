@@ -182,6 +182,21 @@ def contour_class(
 	except KeyError:
 		ContourException(f"The contour {contour} is not prime.")
 
+def invert_contour(contour):
+	"""
+	Returns the inversion of a contour. From Morris (1993, p. 207):
+	I: "inverts the contour; each pitch x in the contour becomes pitch n-x in the inverted
+	contour; n is the highest pitch in the contour."
+	>>> c = (0, 1, 3, 2)
+	>>> invert_contour(c)
+	[3, 2, 0, 1]
+	>>> c2 = (0, 2, 1, 3)
+	>>> invert_contour(c2)
+	[3, 1, 2, 0]
+	"""
+	max_contour_val = max(contour)
+	return [max_contour_val - c for c in contour]
+
 ####################################################################################################
 # Contour reduction tools.
 # Implementation of Morris contour reduction algorithm (1993).
