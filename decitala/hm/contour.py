@@ -6,6 +6,9 @@
 #
 # Location: Kent, 2021
 ####################################################################################################
+import os
+import json
+
 from .schultz import spc
 from .contour_utils import (
 	_track_extrema,
@@ -181,6 +184,21 @@ def contour_class(
 			return match
 	except KeyError:
 		ContourException(f"The contour {contour} is not prime.")
+
+def fuzzy_contour_class(contour):
+	"""
+	Function for retrieving the exact transformation of a fuzzy input
+	contour.
+	"""
+	base = os.path.dirname(os.path.dirname(__file__))
+	fuzzy_contour_data_path = os.path.join(base, "extra/PCC_permutation_data.json")
+	with open(fuzzy_contour_data_path, "r") as fp:
+		fuzzy_data = json.load(fp)
+
+	try:
+		return fuzzy_data[str(contour)]
+	except KeyError:
+		ContourException(f"Contour {contour} not found.")
 
 def invert_contour(contour):
 	"""
